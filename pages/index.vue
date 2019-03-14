@@ -12,13 +12,13 @@
       <div class="text-xs-center">
         <h1>BitWave.tv</h1>
       </div>
-	  
+
 	  <v-card class="my-4">
 			<video playsinline id="myPlayer" class="video-js vjs-default-skin" width="100%" controls autoplay muted preload="auto" data-setup='{ "aspectRatio":"16:9" }'>
 				<source src="https://bitwave.tv/stream/dispatch.m3u8" type="application/x-mpegURL">
 			</video>
 	  </v-card>
-	  
+
       <v-card>
         <v-card-title class="headline">Welcome to BitWave</v-card-title>
         <v-card-text>
@@ -67,9 +67,6 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
-
 // videojs
 // if (process.browser) window.videojs = require('video.js');
 import videojs from 'video.js';
@@ -77,7 +74,7 @@ import videojs from 'video.js';
 export default {
   components: {
   },
-  
+
   data() {
 	return {
 		player: null,
@@ -94,28 +91,28 @@ export default {
 	  },
 	}
   },
-	
+
     computed: {
-      
+
     },
-	
+
 	methods: {
-		playerInitialize(){ 
+		playerInitialize(){
 			this.player = videojs('myPlayer');
 			this.initialized = true;
 		},
-		playerDispose(){ 
-			this.player.dispose(); 
+		playerDispose(){
+			this.player.dispose();
 		},
 	},
-  
+
     mounted() {
 		if (process.browser) window.videojs = require('video.js');
 		this.playerInitialize();
     },
-	
-	beforeDestroy() { 
-		this.playerDispose(); 
+
+	beforeDestroy() {
+		this.playerDispose();
 	},
 }
 </script>
