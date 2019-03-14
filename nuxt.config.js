@@ -1,7 +1,7 @@
-const pkg = require('./package')
+const pkg = require('./package');
 
 
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 
 module.exports = {
   mode: 'universal',
@@ -36,7 +36,7 @@ module.exports = {
   */
   css: [
     '~/assets/style/app.styl',
-	'video.js/dist/video-js.css',
+    'video.js/dist/video-js.css',
   ],
 
   /*
@@ -44,7 +44,7 @@ module.exports = {
   */
   plugins: [
     '@/plugins/vuetify',
-	{ src: '@/plugins/video-player-plugin.js', ssr: false },
+    { src: '@/plugins/video-player-plugin.js', ssr: false, },
   ],
 
   /*
@@ -54,8 +54,7 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-	['@nuxtjs/google-analytics', { id: 'UA-133753190-2' }],
-	// 'videojs-contrib-hls',
+    [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' }, ],
   ],
   /*
   ** Axios module configuration
@@ -68,19 +67,19 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    transpile: ['vuetify/lib'],
-    plugins: [new VuetifyLoaderPlugin()],
+    transpile: [ 'vuetify/lib' ],
+    plugins: [ new VuetifyLoaderPlugin() ],
     loaders: {
       stylus: {
-        import: ["~assets/style/variables.styl"]
-      }
+        import: [ '~assets/style/variables.styl' ],
+      },
     },
-    
+
     /*
     ** You can extend webpack config here
     */
     extend(config, ctx) {
-      
-    }
-  }
-}
+
+    },
+  },
+};
