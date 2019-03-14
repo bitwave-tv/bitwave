@@ -1,5 +1,7 @@
 <template>
-  <v-app :dark="dark">
+  <v-app
+    :dark="dark"
+  >
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -24,8 +26,29 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+
+    <v-navigation-drawer
+      v-model="rightDrawer"
+      :right="right"
+      width="375px"
+      clipped
+      fixed
+      app
+    >
+      <v-list>
+        <v-list-tile @click.native="right = !right">
+          <v-list-tile-action>
+            <v-icon light>compare_arrows</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+
     <v-toolbar
       :clipped-left="clipped"
+      clipped-right
+      dense
       fixed
       app
     >
@@ -57,27 +80,14 @@
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
+
     <v-content>
-      <v-container>
-        <nuxt />
-      </v-container>
+      <nuxt />
     </v-content>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-tile @click.native="right = !right">
-          <v-list-tile-action>
-            <v-icon light>compare_arrows</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
+
+
     <v-footer
+      v-if="false"
       :fixed="fixed"
       class="px-2"
       app
@@ -92,17 +102,17 @@
     data() {
       return {
         clipped: true,
-        drawer: false,
+        drawer: true,
         fixed: false,
         dark: true,
         items: [
           {
-            icon: 'apps',
+            icon: 'home',
             title: 'Welcome',
             to: '/',
           },
           {
-            icon: 'bubble_chart',
+            icon: 'apps',
             title: 'Inspire',
             to: '/inspire',
           },
@@ -112,9 +122,9 @@
             to: '/dispatch',
           },
         ],
-        miniVariant: false,
+        miniVariant: true,
         right: true,
-        rightDrawer: false,
+        rightDrawer: true,
         title: 'BitWave.tv',
       }
     }
