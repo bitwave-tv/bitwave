@@ -9,9 +9,9 @@
       sm8
       md6
     >
-      <div class="text-xs-center">
+      <!--<div class="text-xs-center">
         <h1>BitWave.tv</h1>
-      </div>
+      </div>-->
 
 	  <v-card class="my-4">
 			<video playsinline id="myPlayer" class="video-js vjs-default-skin" width="100%" controls autoplay muted preload="auto" data-setup='{ "aspectRatio":"16:9" }'>

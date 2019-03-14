@@ -1,5 +1,5 @@
 <template>
-  <v-app dark="dark">
+  <v-app :dark="dark">
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -46,7 +46,7 @@
         icon
         @click.stop="dark = !dark"
       >
-        <v-icon>remove</v-icon>
+        <v-icon>brightness_medium</v-icon>
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
@@ -79,7 +79,7 @@
     </v-navigation-drawer>
     <v-footer
       :fixed="fixed"
-	  class="px-2"
+      class="px-2"
       app
     >
       <span>BitWave TV &copy; 2019</span>
@@ -88,35 +88,35 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-	  dark: false,
-      items: [
-        {
-          icon: 'apps',
-          title: 'Welcome',
-          to: '/',
-        },
-        {
-          icon: 'bubble_chart',
-          title: 'Inspire',
-          to: '/inspire',
-        },
-        {
-          icon: 'ondemand_video',
-          title: 'Dispatch',
-          to: '/dispatch',
-        },
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'BitWave.tv',
+  export default {
+    data() {
+      return {
+        clipped: true,
+        drawer: false,
+        fixed: false,
+        dark: true,
+        items: [
+          {
+            icon: 'apps',
+            title: 'Welcome',
+            to: '/',
+          },
+          {
+            icon: 'bubble_chart',
+            title: 'Inspire',
+            to: '/inspire',
+          },
+          {
+            icon: 'ondemand_video',
+            title: 'Dispatch',
+            to: '/dispatch',
+          },
+        ],
+        miniVariant: false,
+        right: true,
+        rightDrawer: false,
+        title: 'BitWave.tv',
+      }
     }
   }
-}
 </script>
