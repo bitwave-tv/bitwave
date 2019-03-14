@@ -6,7 +6,7 @@
 // require('videojs-contrib-hls/dist/videojs-contrib-hls.js')
 // import 'videojs-contrib-hls'
 
-import '@videojs/http-streaming'
-import videojs from 'video.js'
+// import '@videojs/http-streaming'
+// import videojs from 'video.js'
 
 // Vue.use(VueVideoPlayer);

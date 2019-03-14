@@ -1,4 +1,4 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 
-const VueVideoPlayer = require('vue-video-player/dist/ssr')
-Vue.use(VueVideoPlayer)
+// const VueVideoPlayer = require('vue-video-player/dist/ssr')
+// Vue.use(VueVideoPlayer)
