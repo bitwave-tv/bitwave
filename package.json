@@ -1,0 +1,32 @@
+{
+  "name": "BitWave.tv",
+  "version": "1.0.0",
+  "description": "A &#39;no bs&#39; streaming platform.",
+  "author": "Dispatch",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "build": "nuxt build",
+    "start": "cross-env NODE_ENV=production node server/index.js",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/google-analytics": "^2.2.0",
+    "@nuxtjs/pwa": "^2.6.0",
+    "@videojs/http-streaming": "^1.9.1",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "nuxt": "^2.4.0",
+    "video.js": "^7.4.1",
+    "videojs-contrib-hls": "^5.15.0",
+    "vue-video-player": "^5.0.2",
+    "vuetify": "^1.5.5",
+    "vuetify-loader": "^1.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2"
+  }
+}
