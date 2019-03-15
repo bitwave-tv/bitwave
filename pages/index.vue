@@ -63,6 +63,9 @@
             poster="/bitwave_cover.png"
           >
             <source
+              src="https://dispatch.sfo2.digitaloceanspaces.com/Archives/NZ-CLIP.mp4"
+            >
+            <source
               src="https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
               type="application/x-mpegURL"
             >
