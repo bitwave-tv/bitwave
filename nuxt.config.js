@@ -20,8 +20,7 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'stylesheet',
-        href:
-          'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons',
+        href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons',
       },
     ],
   },
@@ -44,7 +43,7 @@ module.exports = {
   */
   plugins: [
     '@/plugins/vuetify',
-    { src: '@/plugins/video-player-plugin.js', ssr: false, },
+    // { src: '@/plugins/video-player-plugin.js', ssr: false },
   ],
 
   /*
@@ -54,8 +53,9 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' }, ],
+    [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
   ],
+
   /*
   ** Axios module configuration
   */
