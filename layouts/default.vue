@@ -2,6 +2,8 @@
   <v-app
     :dark="dark"
   >
+
+    <!-- Nav Drawer -->
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -28,6 +30,7 @@
       </v-list>
     </v-navigation-drawer>
 
+    <!-- Chat -->
     <v-navigation-drawer
       v-model="rightDrawer"
       :right="right"
@@ -37,146 +40,10 @@
       flat
       app
     >
-
-      <v-layout
-        column
-        fill-height
-      >
-
-        <v-layout
-          column
-          py-1
-        >
-          <v-flex class="title text-xs-center py-2">
-            Live Chat
-          </v-flex>
-
-          <v-flex class="subheading text-xs-center red--text mb-3">
-            <v-icon small color="red" class="px-1">warning</v-icon>
-            WORK IN PROGRESS
-            <v-icon small color="red" class="px-1">warning</v-icon>
-          </v-flex>
-
-        </v-layout>
-
-        <v-divider/>
-
-        <v-layout
-          column
-          fill-height
-          style="overflow-y: scroll"
-          ref="chat"
-        >
-
-          <v-flex>
-
-            <v-layout
-              column
-              fill-height
-              justify-end
-            >
-              <v-spacer fill-height></v-spacer>
-
-              <template v-for="x in 10">
-
-                <v-flex
-                  shrink
-                  my-2
-                >
-                  <v-layout
-                    row
-                    px-3
-                  >
-                    <v-list-tile-avatar>
-                      <v-icon :class="['orange lighten-1 white--text']">person</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-content>
-                      <v-list-tile-sub-title>
-                        ANON
-                      </v-list-tile-sub-title>
-                      This is a troll friendly chat.
-                    </v-list-tile-content>
-                  </v-layout>
-                </v-flex>
-
-                <v-flex
-                  shrink
-                  my-2
-                >
-                  <v-layout
-                    row
-                    px-3
-                  >
-                    <v-list-tile-avatar>
-                      <img src="https://www.gravatar.com/avatar/4c016fba937df454004cf4c2ac5aef80?d=identicon" alt="Dispatch">
-                    </v-list-tile-avatar>
-                    <v-list-tile-content>
-                      <v-list-tile-sub-title>
-                        Murderder
-                      </v-list-tile-sub-title>
-                      This is an example message.
-                    </v-list-tile-content>
-                  </v-layout>
-                </v-flex>
-
-                <v-flex
-                  shrink
-                  my-2
-                >
-                  <v-layout
-                    row
-                    px-3
-                  >
-                    <v-list-tile-avatar>
-                      <img src="https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb" alt="Dispatch">
-                    </v-list-tile-avatar>
-                    <v-list-tile-content>
-                      <v-list-tile-sub-title>
-                        Dispatch
-                      </v-list-tile-sub-title>
-                      This is an example message which is supposed to be a multiline comment to test to see
-                      if the interface can handle very long comments that go across multiple lines and
-                      therefore can overflow or stretch or grow or whatever.
-                    </v-list-tile-content>
-                  </v-layout>
-                </v-flex>
-
-              </template>
-
-            </v-layout>
-
-          </v-flex>
-
-        </v-layout>
-
-        <v-divider/>
-
-        <v-flex>
-          <v-layout
-            row
-            justify-center
-            py-3
-          >
-            <v-flex
-              xs11
-            >
-              <v-text-field
-                v-model="message"
-                outline
-                label="Chat"
-                clearable
-                hide-details
-                append-outer-icon="message"
-                @click:append-outer="scrollToBottom"
-              ></v-text-field>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-
-      </v-layout>
-
+      <chat/>
     </v-navigation-drawer>
 
+    <!-- Toolbar -->
     <v-toolbar
       :clipped-left="clipped"
       clipped-right
@@ -214,11 +81,12 @@
       </v-btn>
     </v-toolbar>
 
+    <!-- Content -->
     <v-content>
       <nuxt />
     </v-content>
 
-
+    <!-- Footer -->
     <v-footer
       v-if="false"
       :fixed="fixed"
@@ -227,11 +95,18 @@
     >
       <span>BitWave TV &copy; 2019</span>
     </v-footer>
+
   </v-app>
 </template>
 
 <script>
+  import Chat from '~/components/Chat'
+
   export default {
+    components: {
+      Chat,
+    },
+
     data() {
       return {
         clipped: true,
@@ -264,17 +139,15 @@
         right: true,
         rightDrawer: true,
         title: 'BitWave.tv',
-
-        message: '',
       }
     },
+
     methods: {
-      scrollToBottom() {
-        this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight;
-      },
+
     },
+
     mounted() {
-      this.scrollToBottom();
+
     },
   }
 </script>
