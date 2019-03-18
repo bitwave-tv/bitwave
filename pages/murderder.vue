@@ -10,7 +10,7 @@
           slider-color="#2196f3"
         >
           <v-tab>
-            DISPATCH
+            MURDERDER
           </v-tab>
           <v-tab>
             ARCHIVE
@@ -47,7 +47,7 @@
       </v-flex>
 
       <v-flex class="px-3">
-        <h2>STREAM TITLE</h2>
+        <h2>MURDERDER'S SHIT POSTING SHIT SHOW</h2>
       </v-flex>
 
     </v-layout>
