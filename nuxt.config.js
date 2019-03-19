@@ -17,7 +17,7 @@ module.exports = {
       { hid: 'description', name: 'description', content: pkg.description },
     ],
     script: [
-      { src: 'http://tlk.io/embed.js' }
+      { src: 'https://tlk.io/embed.js' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
