@@ -35,12 +35,14 @@
       v-model="rightDrawer"
       :right="right"
       width="400px"
+      stateless
       clipped
       fixed
       flat
       app
     >
-      <chat/>
+      <!--<chat />-->
+      <tlk-chat />
     </v-navigation-drawer>
 
     <!-- Toolbar -->
@@ -53,32 +55,38 @@
       app
     >
       <v-toolbar-side-icon @click="drawer = !drawer" />
+
       <v-btn
         icon
         @click.stop="miniVariant = !miniVariant"
       >
         <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>web</v-icon>
-      </v-btn>
+
       <v-btn
         icon
         @click.stop="dark = !dark"
       >
         <v-icon>brightness_medium</v-icon>
       </v-btn>
-      <v-toolbar-title v-text="title" />
+
+      <v-toolbar-title
+        class="mx-2"
+        v-text="title"
+      />
+
       <v-spacer />
+
+      <!--<user v-if="currentUser && currentUser.displayName" />-->
+      <!--<login v-else />-->
+
       <v-btn
         icon
         @click.stop="rightDrawer = !rightDrawer"
       >
         <v-icon>menu</v-icon>
       </v-btn>
+
     </v-toolbar>
 
     <!-- Content -->
@@ -100,11 +108,20 @@
 </template>
 
 <script>
+  import Login from '~/components/Login'
+  import User from '~~/components/User'
+
   import Chat from '~/components/Chat'
+  import TlkChat from '~/components/TlkChat'
+
+  import { mapState } from 'vuex'
 
   export default {
     components: {
+      Login,
+      User,
       Chat,
+      TlkChat,
     },
 
     data() {
@@ -144,6 +161,12 @@
 
     methods: {
 
+    },
+
+    computed: {
+      ...mapState({
+        currentUser: state => state.user.currentUser
+      })
     },
 
     mounted() {

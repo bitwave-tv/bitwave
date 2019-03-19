@@ -98,6 +98,8 @@
 <script>
   import ChatMessage from './ChatMessage'
 
+  import { mapState } from 'vuex'
+
   export default {
     name: 'Chat',
 
@@ -117,7 +119,11 @@
       },
     },
 
-    computed: {},
+    computed: {
+      ...mapState({
+        currentUser: state => state.user.currentUser
+      })
+    },
 
     mounted() {
       this.scrollToBottom();
