@@ -6,11 +6,16 @@
       row
       justify-space-around
     >
-      <v-flex class="ma-2">
+
+      <v-flex
+        v-for="(stream, index) in streams"
+        :key="stream.src"
+        class="ma-2"
+      >
         <v-card>
           <video
             playsinline
-            id="myPlayer1"
+            :id="`player-${index}`"
             class="video-js vjs-default-skin"
             width="100%"
             controls
@@ -18,78 +23,16 @@
             muted
             preload="auto"
             data-setup='{ "aspectRatio":"16:9" }'
-            poster="/bitwave_cover.png"
+            :poster="poster"
           >
             <source
-              src="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-              type="application/x-mpegURL"
+              :src="stream.src"
+              :type="stream.type"
             >
           </video>
         </v-card>
       </v-flex>
-      <v-flex class="ma-2">
-        <v-card>
-          <video
-            playsinline
-            id="myPlayer2"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            poster="/bitwave_cover.png"
-          >
-            <source
-              src="https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
-              type="application/x-mpegURL"
-            >
-          </video>
-        </v-card>
-      </v-flex>
-      <v-flex class="ma-2">
-        <v-card>
-          <video
-            playsinline
-            id="myPlayer3"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            poster="/bitwave_cover.png"
-          >
-            <source
-              src="https://content.jwplatform.com/manifests/yp34SRmf.m3u8"
-              type="application/x-mpegURL"
-            >
-          </video>
-        </v-card>
-      </v-flex>
-      <v-flex class="ma-2">
-        <v-card>
-          <video
-            playsinline
-            id="myPlayer4"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            poster="/bitwave_cover.png"
-          >
-            <source
-              src="https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8"
-              type="application/x-mpegURL"
-            >
-          </video>
-        </v-card>
-      </v-flex>
+
     </v-layout>
 
 
@@ -110,16 +53,19 @@
         <v-card class="mb-3">
           <video
             playsinline
-            id="myPlayer"
+            id="solo-player"
             class="video-js vjs-default-skin"
             width="100%"
             controls
             muted
             preload="auto"
             data-setup='{ "aspectRatio":"16:9" }'
-            poster="/bitwave_cover.png"
+            :poster="poster"
           >
-            <source src="https://dispatch.sfo2.digitaloceanspaces.com/Archives/NZ-CLIP.mp4">
+            <source
+              :src="live[0].src"
+              :type="live[0].type"
+            >
           </video>
         </v-card>
 
@@ -176,6 +122,7 @@
 <script>
   // videojs
   import videojs from 'video.js';
+  import 'videojs-contrib-dash';
 
   export default {
     components: {
@@ -185,6 +132,9 @@
       return {
         player: null,
         initialized: false,
+
+        poster: '/bitwave_cover.png',
+
         playerOptions: {
           // videojs options
           muted: true,
@@ -195,6 +145,7 @@
             src: "http://bitwave.tv/stream/dispatch/",
           }],
         },
+
       }
     },
 
@@ -204,14 +155,25 @@
 
     methods: {
       playerInitialize(){
-        this.player = videojs('myPlayer', {
+        this.player = videojs('solo-player', {
           liveui: true,
+          playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
         });
         this.initialized = true;
       },
       playerDispose(){
         this.player.dispose();
       },
+    },
+
+    async asyncData({ $axios, params }) {
+      const host = process.env_production ? 'localhost:4000' : 'api.bitwave.tv';
+      const { data } = await $axios.get(`http://${host}/api/sources/list`);
+      return {
+        streams: data.streams,
+        videos: data.videos,
+        live: data.live,
+      };
     },
 
     mounted() {

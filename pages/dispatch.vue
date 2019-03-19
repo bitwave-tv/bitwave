@@ -27,7 +27,7 @@
           >
             <video
               playsinline
-              id="myPlayer"
+              id="stream-player"
               class="video-js vjs-default-skin"
               width="50%"
               controls
@@ -35,7 +35,7 @@
               muted
               preload="auto"
               data-setup='{ "aspectRatio":"16:9" }'
-              poster="/bitwave_cover.png"
+              :poster="poster"
             >
               <source
                 src="https://bitwave.tv/stream/dispatch/index.m3u8"
@@ -65,6 +65,7 @@
 
     data() {
       return {
+        poster: '/bitwave_cover.png',
         player: null,
         initialized: false,
         streams: {
@@ -79,8 +80,9 @@
 
     methods: {
       playerInitialize(){
-        this.player = videojs('myPlayer', {
+        this.player = videojs('stream-player', {
           liveui: true,
+          playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
         });
         this.initialized = true;
       },
@@ -91,10 +93,8 @@
     },
 
     mounted() {
-      // if (process.browser) window.videojs = require('video.js');
       this.playerInitialize();
 
-      // window.playerEvents = this;
       console.log('this is current player instance object:', this.player);
     },
 

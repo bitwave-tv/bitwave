@@ -19,6 +19,7 @@
     "firebase": "^5.9.0",
     "nuxt": "^2.4.0",
     "video.js": "^7.4.1",
+    "videojs-contrib-dash": "^2.11.0",
     "vuetify": "^1.5.5",
     "vuetify-loader": "^1.2.1"
   },
