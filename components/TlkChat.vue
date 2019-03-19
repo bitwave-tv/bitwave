@@ -3,27 +3,27 @@
     column
     fill-height
   >
-      <div
-        id="tlkio"
-        data-channel="BitWave"
-        data-theme="theme--night"
-        style="width:100%;height:100%;"
-      ></div>
+    <div
+      id="tlkio"
+      data-channel="murderder"
+      data-theme="theme--night"
+      style="width:100%;height:100%;"
+    ></div>
   </v-layout>
 </template>
 
 <script>
-    export default {
-        name: 'TlkChat',
+  export default {
+    name: 'TlkChat',
 
-        data() {
-            return {}
-        },
+    data() {
+      return {}
+    },
 
-        methods: {},
+    methods: {},
 
-        computed: {},
-    }
+    computed: {},
+  }
 </script>
 
 <style lang='scss'>
