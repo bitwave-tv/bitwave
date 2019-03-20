@@ -37,7 +37,7 @@
               :poster="poster"
             >
               <source
-                src="https://bitwave.tv/stream/BarryO/index.m3u8"
+                src="https://bitwave.tv/stream/FearAndLoading/index.m3u8"
                 type="application/x-mpegURL"
               >
             </video>
@@ -46,7 +46,7 @@
       </v-flex>
 
       <v-flex class="px-3">
-        <h2>BARRY BOOMER O's</h2>
+        <h2>Fear & Loading</h2>
       </v-flex>
 
     </v-layout>
@@ -64,11 +64,11 @@
 
     data() {
       return {
-        poster: '/bitwave_cover.png',
+        poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/FearAndLoading_bg.jpg',
         player: null,
         initialized: false,
         streams: {
-          hls: 'https://bitwave.tv/stream/BarryO/',
+          hls: 'https://bitwave.tv/stream/FearAndLoading/',
         },
       }
     },
