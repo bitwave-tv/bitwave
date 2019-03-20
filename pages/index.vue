@@ -174,8 +174,8 @@
     },
 
     async asyncData({ $axios, params }) {
-      const host = process.env_production ? 'localhost:4000' : 'api.bitwave.tv';
-      const { data } = await $axios.get(`http://${host}/api/sources/list`);
+      const host = process.env.NODE_ENV !== 'production' ? 'http://localhost:4000' : 'https://api.bitwave.tv';
+      const { data } = await $axios.get(`${host}/api/sources/list`);
       return {
         streams: data.streams,
         videos: data.videos,
