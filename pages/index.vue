@@ -72,8 +72,8 @@
         <v-card class="mb-3">
 
           <v-card-title class="headline pb-0">
-            <h3 class="headline">Welcome to BitWave</h3>
-            <div class="subheading grey--text">IPs scratched. /comfychat/ approved. Trolls welcome. Blobby Posting. </div>
+            <h6 class="headline">Welcome to BitWave</h6>
+            <div style="width: 100%;" class="subheading grey--text">IPs scratched. /comfychat/ approved. Trolls welcome. Blobby Posting. </div>
           </v-card-title>
 
           <v-card-text>
@@ -149,7 +149,7 @@
           sources: [{
             withCredentials: false,
             type: "application/x-mpegURL",
-            src: "http://bitwave.tv/stream/dispatch/",
+            src: "https://bitwave.tv/stream/dispatch/",
           }],
         },
 

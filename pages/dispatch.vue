@@ -7,7 +7,7 @@
       <v-flex>
         <v-tabs
           dark
-          slider-color="#2196f3"
+          slider-color="yellow"
         >
           <v-tab>
             DISPATCH
@@ -20,7 +20,7 @@
 
       <hr class="v-divider theme--light">
 
-      <v-flex class="px-3 py-2">
+      <v-flex class="px-0 py-3">
         <v-card>
           <v-responsive
             :aspect-ratio="16/9"
@@ -29,7 +29,7 @@
               playsinline
               id="stream-player"
               class="video-js vjs-default-skin"
-              width="50%"
+              width="100%"
               controls
               autoplay
               muted
@@ -51,7 +51,7 @@
       </v-flex>
 
     </v-layout>
-
+    <hr>
   </div>
 </template>
 
