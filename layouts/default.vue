@@ -258,6 +258,16 @@
             avatar: 'https://cdn.discordapp.com/avatars/433856881673633792/3b7549128384709ec9340145a9b46b78.webp?size=128',
             to: '/oldangrynormie',
           },
+          {
+            name: 'Lucky Hecks',
+            avatar: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/LuckHecksPFP.PNG',
+            to: '/heckslucky',
+          },
+          {
+            name: 'Barry O',
+            avatar: 'https://cdn.discordapp.com/avatars/318274742081814529/4ded8657bb418dbfba6e8356ae6ce2f4.webp?size=128',
+            to: '/barryo',
+          },
         ],
 
         right: true,
