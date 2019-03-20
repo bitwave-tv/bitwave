@@ -70,39 +70,45 @@
         </v-card>
 
         <v-card class="mb-3">
-          <v-card-title class="headline">Welcome to BitWave</v-card-title>
+
+          <v-card-title class="headline pb-0">
+            <h3 class="headline">Welcome to BitWave</h3>
+            <div class="subheading grey--text">IPs scratched. /comfychat/ approved. Trolls welcome. Blobby Posting. </div>
+          </v-card-title>
+
           <v-card-text>
-            <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-            <p>For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
+
+            <p>A straight forward streaming service built from the ground up on open source software.
+              Bitwave is a project that has grown from the ashes of Stream.me, with all the features Stream.me never implemented.</p>
+
+            <p>For more information on BitWave's front-end source code, check out the <a
+              href="https://github.com/DispatchCommit/BitWave"
               target="_blank"
-            >documentation</a>.</p>
+            >Github</a>.</p>
+
             <p>If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
+              href="https://riot.im/app/#/group/+ops:ethanralph.com?hs_url=https://ethanralph.com"
               target="_blank"
               title="chat"
-            >discord</a>.</p>
-            <p>Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
+            >Riot Server</a>.</p>
+
+            <p>Find a bug? Report it on Github's <a
+              href="https://github.com/DispatchCommit/BitWave/issues"
               target="_blank"
               title="contribute"
             >issue board</a>.</p>
-            <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
+
+            <p>Thank you for helping alpha test BitWave.tv and I look forward to bringing more exciting features in the future.</p>
+
             <div class="text-xs-right">
-              <em><small>&mdash; John Leider</small></em>
+              <em><small>&mdash; Dispatch</small></em>
             </div>
-            <hr class="my-3">
-            <a
-              href="https://nuxtjs.org/"
-              target="_blank"
-            >Nuxt Documentation</a>
-            <br>
-            <a
-              href="https://github.com/nuxt/nuxt.js"
-              target="_blank"
-            >Nuxt GitHub</a>
+
+            <hr class="mt-3">
+
           </v-card-text>
-          <v-card-actions>
+
+          <v-card-actions class="pt-0">
             <v-spacer />
             <v-btn
               color="primary"
@@ -112,6 +118,7 @@
             >Continue</v-btn>
           </v-card-actions>
         </v-card>
+
       </v-flex>
     </v-layout>
   </v-container>

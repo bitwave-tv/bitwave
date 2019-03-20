@@ -3,7 +3,7 @@
     :dark="dark"
   >
 
-    <!-- Nav Drawer -->
+    <!-- L-Nav Drawer -->
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -12,25 +12,92 @@
       fixed
       app
     >
-      <v-list>
-        <v-list-tile
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+      <v-layout
+        fill-height
+        column
+      >
+        <v-flex
+          shrink
         >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title" />
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
+
+          <v-list>
+            <v-list-tile
+              v-for="(item, i) in items"
+              :key="i"
+              :to="item.to"
+              router
+              exact
+            >
+
+              <v-list-tile-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title v-text="item.title" />
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+          <hr/>
+        </v-flex>
+
+        <!-- User Channels -->
+        <v-flex>
+          <v-list class="py-1">
+            <v-list-tile
+              class="py-1"
+              v-for="(user, i) in users"
+              :key="i"
+              :to="user.to"
+              router
+              exact
+            >
+              <v-list-tile-avatar
+              >
+                <img :src="user.avatar" :alt="user.name">
+              </v-list-tile-avatar>
+              <v-list-tile-content>{{ user.name }}</v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-flex>
+
+        <!--<hr>-->
+
+        <!-- Minify Panel -->
+        <v-flex
+          shrink
+          :align-self-center="!!miniVariant"
+          :align-self-end="!miniVariant"
+          class="px-2"
+        >
+
+          <v-btn
+            style="min-width: 32px;"
+            color="blue"
+            block
+            outline
+            @click.stop="miniVariant = !miniVariant"
+          >
+            <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
+          </v-btn>
+
+          <!--<v-btn
+            class="px&#45;&#45;2"
+            style="min-width: 32px;"
+            :block="miniVariant"
+            color="blue"
+            outline
+            @click.stop="miniVariant = !miniVariant"
+          >
+            <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
+          </v-btn>-->
+        </v-flex>
+
+      </v-layout>
+
     </v-navigation-drawer>
 
-    <!-- Chat -->
+
+    <!-- R-Nav Chat Drawer -->
     <v-navigation-drawer
       v-model="rightDrawer"
       :right="right"
@@ -41,9 +108,10 @@
       flat
       app
     >
-      <!--<chat />-->
       <tlk-chat />
+      <!--<chat />-->
     </v-navigation-drawer>
+
 
     <!-- Toolbar -->
     <v-toolbar
@@ -55,13 +123,6 @@
       app
     >
       <v-toolbar-side-icon @click="drawer = !drawer" />
-
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
 
       <v-btn
         icon
@@ -126,10 +187,15 @@
 
     data() {
       return {
-        clipped: true,
-        drawer: true,
-        fixed: false,
+        title: 'BitWave.tv',
+
         dark: true,
+        clipped: true,
+        fixed: false,
+
+        miniVariant: true,
+        drawer: true,
+
         items: [
           {
             icon: 'home',
@@ -141,21 +207,23 @@
             title: 'Inspire',
             to: '/inspire',
           },
+        ],
+
+        users: [
           {
-            icon: 'ondemand_video',
-            title: 'Dispatch',
+            name: 'Dispatch',
+            avatar: 'https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon',
             to: '/dispatch',
           },
           {
-            icon: 'ondemand_video',
-            title: 'Murderder',
+            name: 'Murderder',
+            avatar: 'https://cdn.discordapp.com/avatars/523643556133601284/8062a6e3870f355ff04b3ca04dd12efd.webp?size=128',
             to: '/murderder',
           },
         ],
-        miniVariant: true,
+
         right: true,
         rightDrawer: true,
-        title: 'BitWave.tv',
       }
     },
 
@@ -165,8 +233,8 @@
 
     computed: {
       ...mapState({
-        currentUser: state => state.user.currentUser
-      })
+        currentUser: state => state.user.currentUser,
+      }),
     },
 
     mounted() {
