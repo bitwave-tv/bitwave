@@ -28,18 +28,18 @@
       fixed
       app
     >
-      <v-toolbar-side-icon @click="drawer = !drawer">
+      <!--<v-toolbar-side-icon @click="drawer = !drawer">
         <v-icon large>devices</v-icon>
-      </v-toolbar-side-icon>
+      </v-toolbar-side-icon>-->
 
       <!--<v-toolbar-side-icon @click="drawer = !drawer" />-->
 
-      <v-toolbar-title class="mx-1">
+      <v-toolbar-title class="ml-0 mr-1">
         <v-btn
           o="/"
           flat
           exact
-          class="text-none title"
+          class="text-none title px-2"
         >{{ title }}</v-btn>
       </v-toolbar-title>
 
@@ -71,6 +71,7 @@
       :clipped="clipped"
       stateless
       fixed
+      flat
       dark
       app
     >
@@ -81,6 +82,7 @@
         <v-flex shrink>
           <v-list class="pb-0">
             <v-list-tile
+              class="py-1"
               v-for="(item, i) in items"
               :key="i"
               :to="item.to"
@@ -102,7 +104,7 @@
 
         <!-- User Channels -->
         <v-flex>
-          <v-list class="py-1">
+          <v-list class="pt-0">
             <v-list-tile
               class="py-1"
               v-for="(user, i) in users"
@@ -278,3 +280,9 @@
     },
   }
 </script>
+
+<style >
+  .v-toolbar__content {
+    padding-left: 0;
+  }
+</style>

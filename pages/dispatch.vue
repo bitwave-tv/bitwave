@@ -32,7 +32,6 @@
               width="100%"
               controls
               autoplay
-              muted
               preload="auto"
               data-setup='{ "aspectRatio":"16:9" }'
               :poster="poster"
