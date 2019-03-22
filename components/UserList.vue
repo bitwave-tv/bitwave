@@ -48,7 +48,19 @@
             exact
           >
             <v-list-tile-avatar>
-              <img :src="user.avatar" :alt="user.name">
+
+              <v-badge
+                v-model="user.live"
+                overlap
+              >
+                <template v-slot:badge>
+                  <v-icon>done</v-icon>
+                </template>
+                <v-avatar>
+                  <img :src="user.avatar" :alt="user.name">
+                </v-avatar>
+              </v-badge>
+
             </v-list-tile-avatar>
             <v-list-tile-content>{{ user.name }}</v-list-tile-content>
           </v-list-tile>
