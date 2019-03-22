@@ -167,6 +167,7 @@
   import Chat from '~/components/Chat'
   import TlkChat from '~/components/TlkChat'
 
+  import axios from 'axios'
   import { mapState } from 'vuex'
 
   export default {
@@ -202,73 +203,7 @@
           },*/
         ],
 
-        users: [
-          {
-            name: 'Dispatch',
-            avatar: 'https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon',
-            to: '/dispatch',
-          },
-          {
-            name: 'Murderder',
-            avatar: 'https://cdn.discordapp.com/avatars/523643556133601284/8062a6e3870f355ff04b3ca04dd12efd.webp?size=128',
-            to: '/murderder',
-          },
-          {
-            name: '/COMFY/ Stream',
-            avatar: 'https://cdn.discordapp.com/avatars/477288173236649997/446c7ab924d47023b360b311264b1b7a.webp?size=128',
-            to: '/comfystream',
-          },
-          {
-            name: 'FearAndLoading',
-            avatar: 'https://cdn.discordapp.com/avatars/137756332819218432/dd7beae75c3601d31fcbf6649dc28b93.webp?size=128',
-            to: '/FearAndLoading',
-          },
-          {
-            name: 'GodSpeed',
-            avatar: 'https://cdn.discordapp.com/avatars/556937797932679168/427e415500c2855b6771b3e8336e3ddf.webp?size=128"',
-            to: '/GodSpeed',
-          },
-          {
-            name: 'SPCC',
-            avatar: 'https://static1.squarespace.com/static/5c7df4da51f4d4e78749e3fa/t/5c860f62e4966b5f3f4943e4/1552289634671/FavPhone.png?format=1000w',
-            to: '/SPCC',
-          },
-          {
-            name: 'WildGoose',
-            avatar: 'https://cdn.discordapp.com/avatars/484163031211835405/53b6ee2a4f07a17f6ee443a90ab3c2ec.webp?size=128',
-            to: '/wildgoose',
-          },
-          {
-            name: 'cookie',
-            avatar: 'https://cdn.discordapp.com/avatars/237946637903724545/58e9e7e2425a4b3cbd79fa6bb830fc61.png?size=128',
-            to: '/cookie',
-          },
-          {
-            name: 'KOVALSKI',
-            avatar: 'https://cdn.discordapp.com/avatars/203150454547415040/bb8853ae2a244b3c02b3aca32de89442.webp?size=128',
-            to: '/kovalski',
-          },
-          {
-            name: 'NPCAnon88',
-            avatar: 'https://cdn.discordapp.com/avatars/205981217236058112/d1375b75c6ebf9bd7fe4291bfb7c5456.webp?size=128',
-            to: '/npcanon88',
-          },
-          {
-            name: 'Old Angry Normie',
-            avatar: 'https://cdn.discordapp.com/avatars/433856881673633792/3b7549128384709ec9340145a9b46b78.webp?size=128',
-            to: '/oldangrynormie',
-          },
-          {
-            name: 'Lucky Hecks',
-            avatar: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/LuckHecksPFP.PNG',
-            to: '/heckslucky',
-          },
-          {
-            name: 'Barry O',
-            avatar: 'https://cdn.discordapp.com/avatars/318274742081814529/4ded8657bb418dbfba6e8356ae6ce2f4.webp?size=128',
-            to: '/barryo',
-          },
-        ],
+        users: [],
 
         right: true,
         rightDrawer: true,
@@ -285,13 +220,14 @@
       }),
     },
 
-    mounted() {
-
+    async mounted() {
+      const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
+      this.users = data.users;
     },
   }
 </script>
 
-<style >
+<style>
   .v-toolbar__content {
     padding-left: 0;
   }

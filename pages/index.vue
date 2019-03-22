@@ -153,7 +153,6 @@
             src: "https://bitwave.tv/stream/dispatch/",
           }],
         },
-
       }
     },
 
