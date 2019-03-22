@@ -56,7 +56,9 @@
                 <template v-slot:badge>
                   <v-icon>done</v-icon>
                 </template>
-                <v-avatar>
+                <v-avatar
+                  size="40"
+                >
                   <img :src="user.avatar" :alt="user.name">
                 </v-avatar>
               </v-badge>
