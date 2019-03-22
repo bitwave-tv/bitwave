@@ -64,7 +64,7 @@
 
     data() {
       return {
-        poster: '/bitwave_cover.png',
+        poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover.png',
         player: null,
         initialized: false,
         streams: {

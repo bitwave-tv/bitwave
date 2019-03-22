@@ -10,7 +10,7 @@
           slider-color="#ff9800"
         >
           <v-tab>
-            MURDERDER
+            FearAndLoading
           </v-tab>
           <v-tab>
             ARCHIVE
@@ -46,7 +46,7 @@
       </v-flex>
 
       <v-flex class="px-3">
-        <h2>Fear & Loading</h2>
+        <h2>FearAndLoading</h2>
       </v-flex>
 
     </v-layout>
