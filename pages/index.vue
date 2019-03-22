@@ -101,6 +101,8 @@
 
             <p>Thank you for helping alpha test BitWave.tv and I look forward to bringing more exciting features in the future.</p>
 
+            <p>Need to report a stream? <a href="/report">File a report</a></p>
+
             <div class="text-xs-right">
               <em><small>&mdash; Dispatch</small></em>
             </div>
