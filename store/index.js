@@ -1,30 +1,78 @@
-/*import * as firebase from 'firebase/app';
+import { auth, db } from '@/plugins/firebase.js';
 
-import 'firebase/auth'
-import 'firebase/firestore'
+const cookieparser = process.server ? require('cookieparser') : undefined;
+const Cookie = process.client ? require('js-cookie') : undefined;
 
-let app, auth, db;
+let unsubscribeUser = null;
 
-if ( !firebase.apps.length ) {
-  app = firebase.initializeApp({
-    apiKey: "AIzaSyCgIwubBz-nTd0mof6l7eklzJk1evuwzhg",
-    authDomain: "bitwave-7f415.firebaseapp.com",
-    databaseURL: "https://bitwave-7f415.firebaseio.com",
-    projectId: "bitwave-7f415",
-    storageBucket: "bitwave-7f415.appspot.com",
-    messagingSenderId: "246532190856"
-  });
+export const state = () => ({
 
-  auth = firebase.auth();
-  db = firebase.firestore();
+  auth: null,
+  user: null,
 
-  db.settings({ timestampsInSnapshots: true });
-}*/
+});
 
-// export const state = {
-/*  app,
-  auth,
-  db,*/
-// };
+export const getters = {
 
-// export default { state };
+  isAuth : state => {
+    return !!state.auth;
+  },
+
+};
+
+export const mutations = {
+
+  setAuth(state, auth) {
+    state.auth = auth
+  },
+
+  setUser(state, user) {
+    state.user = user;
+  },
+
+};
+
+export const actions = {
+
+  nuxtServerInit({ commit }, { req }) {
+    let auth = null;
+    if (req.headers.cookie) {
+      const parsed = cookieparser.parse(req.headers.cookie);
+      try {
+        auth = JSON.parse(parsed.auth);
+      } catch (err) {
+        // No valid cookie found
+      }
+    }
+    commit('setAuth', auth);
+  },
+
+  async login({ commit }, user) {
+    const token = await user.getIdToken();
+    const uid = user.uid;
+
+    const _auth = {
+      accessToken: token,
+      uid: uid,
+    };
+
+    commit('setAuth', _auth);
+    Cookie.set('auth', _auth);
+
+    const userdocRef = db.collection('users').doc(uid);
+    unsubscribeUser = userdocRef.onSnapshot( doc => {
+      commit('setUser', doc.data());
+    });
+  },
+
+  async logout({ commit }) {
+    if (unsubscribeUser) unsubscribeUser();
+    commit('setUser', null);
+
+    commit('setAuth', null);
+    Cookie.remove('auth');
+
+    await auth.signOut();
+  },
+
+};

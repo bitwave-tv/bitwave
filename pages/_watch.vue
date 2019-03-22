@@ -85,6 +85,7 @@
       playerInitialize(){
         this.player = videojs('myPlayer', {
           liveui: true,
+          playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
         });
         this.initialized = true;
       },
@@ -97,9 +98,10 @@
     async asyncData ({ params }) {
       const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
       const users = data.users;
-      // console.log(users);
+
       let poster = '';
       let streamTitle = 'STREAM NOT FOUND';
+
       for ( let i=0, max=users.length; i<max; i++ ) {
         if (users[i].username === params.watch) {
           poster = users[i].poster;
