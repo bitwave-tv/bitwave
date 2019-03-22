@@ -37,7 +37,10 @@
       </v-flex>
 
       <!-- User Channels -->
-      <v-flex>
+      <v-flex
+        class="hide-scrollbar"
+        style="overflow-y: auto"
+      >
         <v-list class="pt-0">
           <v-list-tile
             class="py-1"
@@ -132,5 +135,15 @@
 </script>
 
 <style lang='scss'>
+  .hide-scrollbar {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
 
+    &::-webkit-scrollbar {
+      /* WebKit */
+      width: 0;
+      height: 0;
+    }
+  }
 </style>

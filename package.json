@@ -20,12 +20,14 @@
     "firebase": "^5.9.0",
     "js-cookie": "^2.2.0",
     "nuxt": "^2.4.0",
+    "sass-loader": "^7.1.0",
     "video.js": "^7.4.1",
     "videojs-contrib-dash": "^2.11.0",
     "vuetify": "^1.5.5",
     "vuetify-loader": "^1.2.1"
   },
   "devDependencies": {
+    "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2"
