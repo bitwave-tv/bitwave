@@ -10,7 +10,7 @@
           slider-color="#ff9800"
         >
           <v-tab>
-            CallMeTxt
+            .txt
           </v-tab>
           <v-tab>
             ARCHIVE
@@ -37,7 +37,7 @@
               :poster="poster"
             >
               <source
-                src="https://bitwave.tv/stream/FearAndLoading/index.m3u8"
+                src="https://bitwave.tv/stream/txt/index.m3u8"
                 type="application/x-mpegURL"
               >
             </video>
@@ -46,7 +46,7 @@
       </v-flex>
 
       <v-flex class="px-3">
-        <h2>Call Me Txt</h2>
+        <h2>.txt</h2>
       </v-flex>
 
     </v-layout>
@@ -68,7 +68,7 @@
         player: null,
         initialized: false,
         streams: {
-          hls: 'https://bitwave.tv/stream/callmetxt/',
+          hls: 'https://bitwave.tv/stream/txt/',
         },
       }
     },
