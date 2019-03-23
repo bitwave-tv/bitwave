@@ -79,7 +79,7 @@
 
           <v-card-text>
 
-            <p>Want to help support the site? <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url">Donate Here</a></p>
+            <p>Want to help support the site? <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url" rel="noopener noreferrer" target="_blank">Donate Here</a></p>
 
             <p>A straight forward streaming service built from the ground up on open source software.
               Bitwave is a project that has grown from the ashes of Stream.me, with all the features Stream.me never implemented.</p>
