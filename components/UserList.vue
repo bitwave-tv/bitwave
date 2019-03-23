@@ -123,13 +123,17 @@
       toggleMini() {
         this.miniVariant = !this.miniVariant;
       },
+      async updateList() {
+        const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
+        this.users = data.users;
+        setTimeout(() => this.updateList(), 1000 * 60);
+      },
     },
 
     computed: {},
 
     async mounted() {
-      const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
-      this.users = data.users;
+      await this.updateList();
     },
   }
 </script>
