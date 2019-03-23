@@ -37,6 +37,10 @@
               :poster="poster"
             >
               <source
+                :src="`https://stream.bitwave.tv/stream/${user}/index.m3u8`"
+                type="application/x-mpegURL"
+              >
+              <source
                 :src="`https://bitwave.tv/stream/${user}.m3u8`"
                 type="application/x-mpegURL"
               >
@@ -76,9 +80,6 @@
         player: null,
         qualityLevels: null,
         initialized: false,
-        streams: {
-          hls: `https://bitwave.tv/stream/${this.user}/`,
-        },
       }
     },
 
