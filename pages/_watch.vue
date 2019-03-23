@@ -37,6 +37,10 @@
               :poster="poster"
             >
               <source
+                :src="`https://bitwave.tv/stream/${user}.m3u8`"
+                type="application/x-mpegURL"
+              >
+              <source
                 :src="`https://bitwave.tv/stream/${user}/index.m3u8`"
                 type="application/x-mpegURL"
               >
@@ -56,6 +60,8 @@
 
 <script>
   import videojs from 'video.js';
+  import 'videojs-contrib-quality-levels';
+
   import axios from 'axios';
 
   export default {
@@ -68,6 +74,7 @@
         poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover.png',
         streamTitle: '',
         player: null,
+        qualityLevels: null,
         initialized: false,
         streams: {
           hls: `https://bitwave.tv/stream/${this.user}/`,
@@ -87,6 +94,7 @@
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
         });
+        this.qualityLevels = this.player.qualityLevels();
         this.initialized = true;
       },
 
