@@ -36,7 +36,7 @@
 
       <v-toolbar-title class="ml-0 mr-1">
         <v-btn
-          o="/"
+          to="/"
           flat
           exact
           class="text-none title px-2"
