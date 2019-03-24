@@ -37,6 +37,7 @@
       <v-toolbar-title class="ml-0 mr-1">
         <v-btn
           to="/"
+          depressed
           flat
           exact
           class="text-none title px-2"
@@ -52,8 +53,7 @@
 
       <v-spacer />
 
-      <!--<user v-if="currentUser && currentUser.displayName" />-->
-      <!--<login v-else />-->
+      <user/>
 
       <v-btn
         icon
@@ -86,8 +86,7 @@
 </template>
 
 <script>
-  import Login from '~/components/Login'
-  import User from '~~/components/User'
+  import User from '~/components/User'
 
   import Chat from '~/components/Chat'
   import TlkChat from '~/components/TlkChat'
@@ -98,7 +97,6 @@
 
   export default {
     components: {
-      Login,
       User,
       Chat,
       TlkChat,

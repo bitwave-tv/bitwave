@@ -13,7 +13,7 @@
             {{ user }}
           </v-tab>
           <v-tab>
-            ARCHIVE
+            ARCHIVES
           </v-tab>
         </v-tabs>
       </v-flex>
@@ -63,10 +63,8 @@
 </template>
 
 <script>
-  import videojs from 'video.js';
-  import 'videojs-contrib-quality-levels';
-
-  import axios from 'axios';
+  import videojs from 'video.js'
+  import 'videojs-contrib-quality-levels'
 
   export default {
     components: {
@@ -104,12 +102,12 @@
       },
     },
 
-    async asyncData ({ params }) {
-      const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
+    async asyncData ({ $axios, params }) {
+      const { data } = await $axios.get('https://api.bitwave.tv/api/channels/list');
       const users = data.users;
 
       let poster = '';
-      let streamTitle = 'STREAM NOT FOUND';
+      let streamTitle = '⚠ STREAM NOT FOUND ⚠';
 
       for ( let i=0, max=users.length; i<max; i++ ) {
         if (users[i].username === params.watch) {
@@ -117,6 +115,7 @@
           streamTitle = users[i].name;
         }
       }
+
       return {
         poster: poster,
         streamTitle: streamTitle,
@@ -126,8 +125,6 @@
     mounted() {
       // if (process.browser) window.videojs = require('video.js');
       this.playerInitialize();
-
-      // window.playerEvents = this;
       console.log('this is current player instance object:', this.player);
     },
 

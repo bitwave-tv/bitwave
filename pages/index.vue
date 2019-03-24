@@ -148,14 +148,7 @@
         poster: '/bitwave_cover.png',
 
         playerOptions: {
-          // videojs options
-          muted: true,
-          html5: { hls: { withCredentials: false, } },
-          sources: [{
-            withCredentials: false,
-            type: "application/x-mpegURL",
-            src: "https://bitwave.tv/stream/dispatch/",
-          }],
+
         },
       }
     },

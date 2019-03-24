@@ -1,95 +1,176 @@
 <template>
   <v-container
-    class="pt-0"
-    fluid
+    grid-list-md
   >
     <v-layout
-      column
-      justify-center
-      align-center
+      row
+      justify-space-around
+      class="mb-4"
     >
-      <v-flex>
+      <v-flex xs12 md8 lg6>
+        <v-img src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_banner.png" alt="bitwave tv streaming platform banner" />
+      </v-flex>
+    </v-layout>
+
+    <v-layout
+      row
+      justify-space-around
+    >
+      <v-flex xs12 md8 lg4>
         <v-card class="my-3">
 
           <v-card-title>
-            <h3>My Account</h3>
+            <h2>
+              <v-icon class="mr-1">ondemand_video</v-icon>
+              {{ `${signUp ? 'Create a' : ''} BitWave.tv Account` }}
+            </h2>
           </v-card-title>
 
           <hr>
 
           <v-card-text>
             <v-form
-              ref="form"
+              ref="loginForm"
               v-model="valid"
-              lazy-validation
             >
               <v-text-field
-                v-model="username"
+                v-if="signUp"
+                id="display-name"
+                key="display-name"
+                v-model="user.username"
                 :counter="true"
-                :rules="[rules.name]"
+                :rules="[ rules.name ]"
                 label="Username"
                 required
+                validate-on-blur
+                :loading="loading"
+                :disabled="loading"
               ></v-text-field>
 
               <v-text-field
-                v-model="email"
+                id="email"
+                key="email"
+                v-model="user.email"
                 :rules="rules.email"
                 label="E-mail"
                 required
+                validate-on-blur
+                :loading="loading"
+                :disabled="loading"
               ></v-text-field>
 
               <v-text-field
-                v-model="password"
+                id="password"
+                key="password"
+                v-model="user.password"
                 :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                :rules="[rules.required]"
+                :rules="[ rules.required, v => v.length > 8 || 'Min 8 Characters' ]"
                 :type="showPassword ? 'text' : 'password'"
                 name="input-10-1"
                 label="Password"
                 hint="At least 8 characters"
                 counter
+                validate-on-blur
+                :loading="loading"
+                :disabled="loading"
                 @click:append="showPassword = !showPassword"
               ></v-text-field>
 
               <v-checkbox
-                v-model="checkbox"
-                :rules="[v => !!v || 'You must agree to continue!']"
-                label="I have read and agree to the ToS."
-                color="success"
-                required
+                v-if="!signUp"
+                id="remember-me"
+                v-model="shouldStayLoggedIn"
+                label="Stay logged in?"
+                hide-details
+                color="yellow"
+                class="pt-0 mb-3"
+                :disabled="loading"
               ></v-checkbox>
 
-              <v-btn
-                :disabled="!valid"
-                color="success"
-                @click="validate"
+              <v-alert
+                v-model="alert"
+                dismissible
+                :type="alertType"
               >
-                Validate
+                {{ alertMessage }}
+              </v-alert>
+
+              <v-btn
+                v-if="!signUp"
+                block
+                color="yellow"
+                light
+                :loading="loading"
+                @click="signIn(user.email, user.password)"
+              >
+                Login
               </v-btn>
 
               <v-btn
-                color="error"
-                @click="reset"
+                v-if="signUp"
+                block
+                color="yellow"
+                light
+                :loading="loading"
+                @click="createUser(user.username, user.email, user.password)"
               >
-                Reset Form
+                Register
               </v-btn>
 
-              <v-btn
-                color="warning"
-                @click="resetValidation"
+              <v-layout
+                v-if="false"
+                justify-space-between
+                row
               >
-                Reset Validation
-              </v-btn>
+                <v-flex>
+                  <v-btn
+                    :disabled="!valid"
+                    color="success"
+                    @click="validate"
+                  >
+                    Validate
+                  </v-btn>
+                </v-flex>
+
+                <v-flex>
+                  <v-btn
+                    color="error"
+                    @click="reset"
+                  >
+                    Reset Form
+                  </v-btn>
+                </v-flex>
+
+                <v-flex>
+                  <v-btn
+                    color="warning"
+                    @click="resetValidation"
+                  >
+                    Reset Validity
+                  </v-btn>
+                </v-flex>
+
+              </v-layout>
             </v-form>
           </v-card-text>
 
+          <hr/>
+
           <v-card-actions>
+            <v-btn
+              small
+              href="#"
+              flat color="#2196f3"
+            >
+              Forgot Password?
+            </v-btn>
             <v-spacer />
             <v-btn
-              color="primary"
-              flat
-              nuxt
-              to="/"
-            >Login</v-btn>
+              small
+              color="#2196f3"
+              outline
+              @click="switchForm"
+            >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
           </v-card-actions>
 
         </v-card>
@@ -104,16 +185,26 @@
   const Cookie = process.client ? require('js-cookie') : undefined;
 
   export default {
+
     name: 'login',
+
+    middleware: 'not-auth',
 
     data() {
       return {
+        signUp: false,
+        loading: false,
+        alert: false,
+        alertMessage: '',
+        alertType: 'error',
         valid: true,
-        username: '',
-        email: '',
-        password: '',
+        user: {
+          username: '',
+          email: '',
+          password: '',
+        },
         showPassword: false,
-        checkbox: false,
+        shouldStayLoggedIn: true,
         rules: {
           required: value => !!value || 'Required.',
           min: value => value.length >= 8 || 'Min 8 characters',
@@ -128,31 +219,99 @@
     },
 
     methods: {
-      validate () {
-        if (this.$refs.form.validate()) {
-          this.snackbar = true
+      switchForm() {
+        this.signUp = !this.signUp;
+        this.resetValidation();
+        this.hideAlert();
+      },
+
+      // Create User
+      async createUser(username, email, password) {
+        if ( !this.$refs.loginForm.validate() ) return;
+
+        this.loading = true;
+        try {
+          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          await userCredential.user.updateProfile({
+            displayName: username,
+          });
+          console.log(userCredential);
+          const userId = userCredential.user.uid;
+          const docRef = await db.collection('users').doc(userId).set({
+            uid: userId,
+            username: username,
+            email: email,
+          });
+          console.log(docRef);
+          this.showSuccess('User Created!');
+        } catch (error) {
+          this.showError(error.message);
+          console.log(error.message);
+          this.loading = false;
         }
       },
+
+      // Sign In
+      async signIn(email, password) {
+        if (!this.$refs.loginForm.validate()) return;
+
+        this.loading = true;
+        try {
+          await auth.setPersistence(this.shouldStayLoggedIn ? 'local' : 'session'); // firebase.auth.Auth.Persistence.SESSION
+          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+
+          console.log(`%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user);
+        } catch (error) {
+          this.showError(error.message);
+          console.log(error.message);
+          this.loading = false;
+        }
+      },
+
+      validate () {
+        if (this.$refs.form.validate()) {
+          this.showError('Please fix errors highlighted in red.');
+        }
+      },
+
       reset () {
         this.$refs.form.reset()
       },
+
       resetValidation () {
-        this.$refs.form.resetValidation()
+        this.$refs.loginForm.resetValidation();
+        this.hideAlert();
       },
 
       async authenticated(user) {
         if (user) {
           console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
 
+          this.showSuccess(`Logged in! Welcome back, user.displayName`);
+
           await this.$store.dispatch('login', user);
 
-          // this.showSuccessToast(`Logged in!`);
-
-          this.$router.push('/profile');
+          setTimeout( () => this.$router.push('/profile'), 1500 );
         } else {
-          // this.showErrorToast(`Not Logged In!`);
+          // this.showSuccess(`Successfully logged out! See you later. `);
           console.log(`%cLogin.vue:%c Not Logged In!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
         }
+      },
+
+      showError(message) {
+        this.alertType = 'error';
+        this.alert = true;
+        this.alertMessage = message;
+      },
+
+      showSuccess(message) {
+        this.alertType = 'success';
+        this.alert = true;
+        this.alertMessage = message;
+      },
+
+      hideAlert() {
+        this.alert = false;
       },
     },
 

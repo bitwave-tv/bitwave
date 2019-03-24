@@ -47,7 +47,6 @@ module.exports = {
   plugins: [
     '@/plugins/vuetify',
     '@/plugins/firebase',
-    // { src: '@/plugins/video-player-plugin.js', ssr: false },
   ],
 
   /*

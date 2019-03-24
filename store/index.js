@@ -1,4 +1,4 @@
-import { auth, db } from '@/plugins/firebase.js';
+import { auth, db } from '~/plugins/firebase.js';
 
 const cookieparser = process.server ? require('cookieparser') : undefined;
 const Cookie = process.client ? require('js-cookie') : undefined;
