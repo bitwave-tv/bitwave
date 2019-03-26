@@ -32,11 +32,13 @@
             <v-form
               ref="loginForm"
               v-model="valid"
+              onSubmit="return false"
             >
               <v-text-field
                 v-if="signUp"
-                id="display-name"
-                key="display-name"
+                id="username"
+                key="username"
+                ref="username"
                 v-model="user.username"
                 :counter="true"
                 :rules="[ rules.name ]"
@@ -101,6 +103,7 @@
                 color="yellow"
                 light
                 :loading="loading"
+                type="submit"
                 @click="signIn(user.email, user.password)"
               >
                 Login
@@ -112,6 +115,7 @@
                 color="yellow"
                 light
                 :loading="loading"
+                type="submit"
                 @click="createUser(user.username, user.email, user.password)"
               >
                 Register
@@ -182,6 +186,7 @@
 
 <script>
   import { auth, db } from '@/plugins/firebase.js'
+  import axios from '../.nuxt/axios';
 
   const Cookie = process.client ? require('js-cookie') : undefined;
 
@@ -231,6 +236,22 @@
         if ( !this.$refs.loginForm.validate() ) return;
 
         this.loading = true;
+
+        // Verify Username is valid and not taken
+        try {
+          const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: username });
+          if (!checkUsername.valid) {
+            this.showError(checkUsername.error);
+            this.loading = false;
+            return;
+          }
+        } catch (error) {
+          console.log(error);
+          this.showError(error);
+          this.loading = false;
+          return;
+        }
+
         try {
           const userCredential = await auth.createUserWithEmailAndPassword(email, password);
           await userCredential.user.updateProfile({
