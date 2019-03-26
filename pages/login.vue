@@ -161,6 +161,7 @@
               small
               href="#"
               flat color="#2196f3"
+              @click="resetPassword(user.email)"
             >
               Forgot Password?
             </v-btn>
@@ -268,6 +269,15 @@
         }
       },
 
+      async resetPassword(email) {
+        try {
+          await auth.sendPasswordResetEmail(email);
+          this.showSuccess('Check email for reset link.');
+        } catch (error) {
+          this.showError(error.message);
+        }
+      },
+
       validate () {
         if (this.$refs.form.validate()) {
           this.showError('Please fix errors highlighted in red.');
@@ -287,7 +297,7 @@
         if (user) {
           console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
 
-          this.showSuccess(`Logged in! Welcome back, user.displayName`);
+          this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
 
           await this.$store.dispatch('login', user);
 
