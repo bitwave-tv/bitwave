@@ -1,31 +1,52 @@
 <template>
   <v-container
-    class="pt-0"
-    fluid
+    grid-list-sm
   >
     <v-layout
-      column
-      justify-center
-      align-center
+      row
+      justify-space-around
     >
-      <v-flex>
+      <v-flex xs12 md8 lg6 xl4>
         <v-card class="my-3">
-
           <v-card-title>
-            <h3>Report Issue</h3>
+            <h3>
+              <v-icon>warning</v-icon>
+              Report Content
+            </h3>
           </v-card-title>
+          <hr>
           <v-card-text>
-            <form action="https://formspree.io/dispatchcommit@gmail.com" method="POST">
-              <input type="hidden" name="_subject" value="BitWave - New report!" />
-              Name: <input type="text" name="name" style="width: 100%; border: solid 1px white;"><br>
-              Email: <input type="email" name="_replyto" style="width: 100%; border: solid 1px white;"><br>
-              Message: <br>
-              <textarea name="report" style="width: 100%; border: solid 1px white;"></textarea>
-              <br>
-              <input type="submit" value="Send" style="width: 100%; border: solid 1px white;">
-            </form>
+            <v-form action="https://formspree.io/dispatchcommit@gmail.com" method="POST">
+            <v-layout column>
+              <v-flex>
+                <v-text-field
+                  label="legal name"
+                  name="name"
+                  outline
+                ></v-text-field>
+                <v-text-field
+                  label="email"
+                  name="_replyto"
+                  outline
+                ></v-text-field>
+                <v-textarea
+                  name="report"
+                  outline
+                  label="message"
+                  counter
+                  ></v-textarea>
+              </v-flex>
+              <v-btn
+                block
+                color="red"
+                type="submit"
+                value="Send"
+                >submit</v-btn>
+            </v-layout>
+            </v-form>
           </v-card-text>
         </v-card>
+
       </v-flex>
     </v-layout>
   </v-container>

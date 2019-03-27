@@ -33,7 +33,6 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-        <!--<hr/>-->
       </v-flex>
 
       <!-- User Channels -->

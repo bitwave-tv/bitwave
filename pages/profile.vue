@@ -169,13 +169,7 @@
         }
       },
       user() {
-        // return this.$store.state.user;
         return this.$store.state.metaUser;
-        /*if (this.$store.state.user) {
-          return this.$store.state.user;
-        } else {
-          return null;
-        }*/
       },
     },
 

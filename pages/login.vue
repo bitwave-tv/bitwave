@@ -7,7 +7,7 @@
       justify-space-around
       class="mb-4"
     >
-      <v-flex xs12 md8 lg6>
+      <v-flex xs12 md10 lg8 xl6>
         <v-img src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_banner.png" alt="bitwave tv streaming platform banner" />
       </v-flex>
     </v-layout>
@@ -16,7 +16,7 @@
       row
       justify-space-around
     >
-      <v-flex xs12 md8 lg4>
+      <v-flex xs12 md8 lg6 xl4>
         <v-card class="my-3">
 
           <v-card-title>
@@ -78,25 +78,6 @@
                 @click:append="showPassword = !showPassword"
               ></v-text-field>
 
-              <v-checkbox
-                v-if="!signUp"
-                id="remember-me"
-                v-model="shouldStayLoggedIn"
-                label="Stay logged in?"
-                hide-details
-                color="yellow"
-                class="pt-0 mb-3"
-                :disabled="loading"
-              ></v-checkbox>
-
-              <v-alert
-                v-model="alert"
-                dismissible
-                :type="alertType"
-              >
-                {{ alertMessage }}
-              </v-alert>
-
               <v-btn
                 v-if="!signUp"
                 block
@@ -120,6 +101,25 @@
               >
                 Register
               </v-btn>
+
+              <v-checkbox
+                v-if="!signUp"
+                id="remember-me"
+                v-model="shouldStayLoggedIn"
+                label="Stay logged in?"
+                hide-details
+                color="yellow"
+                class="pt-0 mb-3"
+                :disabled="loading"
+              ></v-checkbox>
+
+              <v-alert
+                v-model="alert"
+                dismissible
+                :type="alertType"
+              >
+                {{ alertMessage }}
+              </v-alert>
 
               <v-layout
                 v-if="false"

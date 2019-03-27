@@ -7,8 +7,7 @@
     <v-navigation-drawer
       v-model="rightDrawer"
       :right="right"
-      width="400px"
-      stateless
+      width="450px"
       clipped
       fixed
       flat
