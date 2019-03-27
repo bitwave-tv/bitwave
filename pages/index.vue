@@ -2,6 +2,7 @@
   <div>
 
     <v-layout
+      v-if="false"
       class="pa-2"
       row
       justify-space-around
