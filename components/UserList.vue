@@ -53,10 +53,11 @@
 
               <v-badge
                 v-model="user.live"
+                :color="!!user.nsfw ? 'orange' : 'green'"
                 overlap
               >
                 <template v-slot:badge>
-                  <v-icon>done</v-icon>
+                  <v-icon>{{ !!user.nsfw ? 'priority_high' : 'play_arrow' }}</v-icon>
                 </template>
                 <v-avatar
                   size="40"
