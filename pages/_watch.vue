@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-layout
       column
     >
@@ -10,7 +9,7 @@
           slider-color="#ff9800"
         >
           <v-tab>
-            {{ user }}
+            {{ name }}
           </v-tab>
           <v-tab>
             ARCHIVES
@@ -37,28 +36,17 @@
               :poster="poster"
             >
               <source
-                :src="`https://stream.bitwave.tv/stream/${user}/index.m3u8`"
-                type="application/x-mpegURL"
-              >
-              <source
-                :src="`https://bitwave.tv/stream/${user}.m3u8`"
-                type="application/x-mpegURL"
-              >
-              <source
-                :src="`https://bitwave.tv/stream/${user}/index.m3u8`"
+                :src="`https://stream.bitwave.tv/stream/${name}/index.m3u8`"
                 type="application/x-mpegURL"
               >
             </video>
           </v-responsive>
         </v-card>
       </v-flex>
-
       <v-flex class="px-3">
         <h2>{{ streamTitle }}</h2>
       </v-flex>
-
     </v-layout>
-
   </div>
 </template>
 
@@ -82,9 +70,7 @@
     },
 
     computed: {
-      user() {
-        return this.$route.params.watch;
-      }
+
     },
 
     methods: {
@@ -103,27 +89,23 @@
     },
 
     async asyncData ({ $axios, params }) {
-      const { data } = await $axios.get('https://api.bitwave.tv/api/channels/list');
-      const users = data.users;
+      const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${params.watch}`);
 
       let poster = '';
       let streamTitle = '⚠ STREAM NOT FOUND ⚠';
 
-      for ( let i=0, max=users.length; i<max; i++ ) {
-        if (users[i].username === params.watch) {
-          poster = users[i].poster;
-          streamTitle = users[i].name;
-        }
-      }
+      const name = data.name;
+      poster = data.poster;
+      streamTitle = data.title;
 
       return {
+        name: name,
         poster: poster,
         streamTitle: streamTitle,
       }
     },
 
     mounted() {
-      // if (process.browser) window.videojs = require('video.js');
       this.playerInitialize();
       console.log('this is current player instance object:', this.player);
     },

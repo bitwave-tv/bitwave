@@ -1,7 +1,5 @@
 <template>
-  <v-app
-    :dark="dark"
-  >
+  <v-app :dark="dark">
 
     <!-- Toolbar -->
     <v-toolbar
@@ -29,18 +27,21 @@
         >{{ title }}</v-btn>
       </v-toolbar-title>
 
-      <v-switch
-        v-model="dark"
-        :label="`${ !!dark ? 'Night' : 'Day' }`"
-        color="yellow"
-        hide-details
-      ></v-switch>
+      <v-flex shrink>
+        <v-switch
+          v-model="dark"
+          :label="`${ !!dark ? 'Night' : 'Day' }`"
+          color="yellow"
+          hide-details
+        ></v-switch>
+      </v-flex>
 
       <v-spacer />
 
       <user/>
 
       <v-btn
+        v-show="!$vuetify.breakpoint.mdAndUp"
         icon
         @click.stop="rightDrawer = !rightDrawer"
       >
@@ -52,9 +53,9 @@
     <!-- R-Nav Chat Drawer -->
     <v-navigation-drawer
       v-model="rightDrawer"
-      :right="right"
       :width="width"
       :permanent="$vuetify.breakpoint.mdAndUp"
+      right
       clipped
       fixed
       flat
@@ -128,10 +129,6 @@
       ...mapState({
         currentUser: state => state.user.currentUser,
       }),
-    },
-
-    mounted() {
-      // this.rightDrawer = this.$vuetify.breakpoint.smAndUp;
     },
   }
 </script>

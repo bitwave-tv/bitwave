@@ -1,13 +1,11 @@
 <template>
   <div>
-
     <v-layout
       v-if="false"
       class="pa-2"
       row
       justify-space-around
     >
-
       <v-flex
         v-for="(stream, index) in streams"
         :key="stream.src"
@@ -33,9 +31,7 @@
           </video>
         </v-card>
       </v-flex>
-
     </v-layout>
-
 
   <v-container
     class="pt-2"
@@ -72,7 +68,6 @@
         </v-card>
 
         <v-card class="mb-3">
-
           <v-card-title class="headline pb-0">
             <h6 class="headline" style="width:100%">Welcome to BitWave</h6>
             <v-layout wrap>
@@ -81,7 +76,6 @@
               </div>
               <v-flex class="ml-2">
                 <v-img
-                  v-if="false"
                   contain
                   max-height="2rem"
                   max-width="2rem"
@@ -93,8 +87,7 @@
           </v-card-title>
 
           <v-card-text>
-
-            <v-flex>
+            <v-flex class="mb-2">
               <v-btn
                 small
                 outline
@@ -143,7 +136,7 @@
               Find a bug? Report it on Github.
             </v-flex>
 
-            <v-flex class="my-3">
+            <v-flex class="my-2">
               <v-btn
                 small
                 outline
@@ -153,28 +146,29 @@
               Need to report content?
             </v-flex>
 
-            <p>Thank you for helping alpha test BitWave.tv and I look forward to bringing more exciting features in the future.</p>
+            <div class="mb-0">Thank you for helping ALPHA test BitWave.tv and I look forward to bringing more exciting features in the future.</div>
 
             <div class="text-xs-right">
               <em><small>&mdash; Dispatch</small></em>
             </div>
-
           </v-card-text>
 
           <hr class="mb-3">
 
           <v-card-actions class="pt-0">
             <v-flex>
-              <p>BitWave Media &copy; {{ new Date().getFullYear() }}</p>
+              <span>BitWave Media &copy; {{ new Date().getFullYear() }}</span>
             </v-flex>
             <v-spacer />
             <v-btn
+              small
               color="yellow"
               outline
               nuxt
               to="/login"
             >Login</v-btn>
             <v-btn
+              small
               light
               color="yellow"
               nuxt
@@ -186,7 +180,6 @@
       </v-flex>
     </v-layout>
   </v-container>
-
   </div>
 </template>
 
@@ -230,8 +223,6 @@
     },
 
     async asyncData({ $axios, params }) {
-      // process.env.NODE_ENV !== 'production'
-
       const host =  'https://api.bitwave.tv';
       const { data } = await $axios.get(`${host}/api/sources/list`);
 
