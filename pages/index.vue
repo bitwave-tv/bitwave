@@ -81,47 +81,45 @@
               </div>
               <v-flex class="ml-2">
                 <v-img
+                  v-if="false"
                   contain
                   max-height="2rem"
                   max-width="2rem"
                   src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/emotes/cool_blobby.gif"
                   alt="Cool blobby with sunglasses"
-                />
+                ></v-img>
               </v-flex>
             </v-layout>
           </v-card-title>
 
           <v-card-text>
 
-            <p>
+            <v-flex>
               <v-btn
                 small
                 outline
                 color="yellow"
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
-                rel="noopener noreferrer"
                 target="_blank"
-              >
-                Donate
-              </v-btn>
+              >Donate</v-btn>
               Want to help support the site?
-            </p>
+            </v-flex>
 
             <p>A straight forward streaming service built from the ground up on open source software.
               Bitwave is a project that has grown from the ashes of Stream.me, with all the features Stream.me never implemented.</p>
 
-            <p>
+            <v-flex>
               <v-btn
                 small
                 outline
                 color="light-blue"
                 href="https://github.com/DispatchCommit/BitWave"
                 target="_blank"
-              >Github Repo</v-btn>
-              For more information on BitWave's source code
-            </p>
+              >Github</v-btn>
+              For more information on BitWave's source code.
+            </v-flex>
 
-            <p>
+            <v-flex>
               <v-btn
                 small
                 outline
@@ -129,11 +127,11 @@
                 href="https://riot.im/app/#/group/+ops:ethanralph.com?hs_url=https://ethanralph.com"
                 target="_blank"
                 title="chat"
-              >Riot Server</v-btn>
-              If you have questions, please join the official
-            </p>
+              >Riot</v-btn>
+              If you have questions, join the riot chat.
+            </v-flex>
 
-            <p>
+            <v-flex>
               <v-btn
                 small
                 outline
@@ -141,21 +139,19 @@
                 href="https://github.com/DispatchCommit/BitWave/issues"
                 target="_blank"
                 title="contribute"
-              >issue board</v-btn>
-              Find a bug? Report it on Github
-            </p>
+              >issue</v-btn>
+              Find a bug? Report it on Github.
+            </v-flex>
 
-            <p>
+            <v-flex class="my-3">
               <v-btn
                 small
                 outline
                 color="red"
-                href="/report"
-              >
-                File a report
-              </v-btn>
-              Need to report a stream?
-            </p>
+                to="/report"
+              >File a report</v-btn>
+              Need to report content?
+            </v-flex>
 
             <p>Thank you for helping alpha test BitWave.tv and I look forward to bringing more exciting features in the future.</p>
 

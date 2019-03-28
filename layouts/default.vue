@@ -3,20 +3,6 @@
     :dark="dark"
   >
 
-    <!-- R-Nav Chat Drawer -->
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      width="450px"
-      clipped
-      fixed
-      flat
-      app
-    >
-      <tlk-chat />
-      <!--<chat />-->
-    </v-navigation-drawer>
-
     <!-- Toolbar -->
     <v-toolbar
       :clipped-left="clipped"
@@ -62,6 +48,21 @@
       </v-btn>
 
     </v-toolbar>
+
+    <!-- R-Nav Chat Drawer -->
+    <v-navigation-drawer
+      v-model="rightDrawer"
+      :right="right"
+      :width="width"
+      :permanent="$vuetify.breakpoint.mdAndUp"
+      clipped
+      fixed
+      flat
+      app
+    >
+      <tlk-chat />
+      <!--<chat />-->
+    </v-navigation-drawer>
 
     <!-- L-Nav Drawer -->
     <user-list />
@@ -114,7 +115,8 @@
         drawer: true,
 
         right: true,
-        rightDrawer: true,
+        rightDrawer: this.$vuetify.breakpoint.smAndUp,
+        width: this.$vuetify.breakpoint.smAndUp ? 450 : 300,
       }
     },
 
@@ -128,7 +130,9 @@
       }),
     },
 
-    mounted() {},
+    mounted() {
+      // this.rightDrawer = this.$vuetify.breakpoint.smAndUp;
+    },
   }
 </script>
 
