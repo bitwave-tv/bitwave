@@ -36,8 +36,14 @@
               :poster="poster"
             >
               <source
+                v-if="name !== '404'"
                 :src="`https://stream.bitwave.tv/stream/${name}/index.m3u8`"
                 type="application/x-mpegURL"
+              >
+              <source
+                v-else
+                :src="getRandomBump()"
+                type="video/mp4"
               >
             </video>
           </v-responsive>
@@ -71,7 +77,7 @@
 
     data() {
       return {
-        poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover.png',
+        poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg',
         streamTitle: '',
         player: null,
         qualityLevels: null,
@@ -110,35 +116,52 @@
           eventValue: this.watchDuration,
         });
         console.log(`Watch Time: ${this.watchDuration}s on ${this.name}`);
-        this.watchTimer = setTimeout( () => this.trackWatchTime(), 1000 * this.watchInterval );
+      },
+
+      getRandomBump() {
+        // random id between 1 and 29
+        const id = (Math.floor(Math.random() * 29) + 1).toString().padStart(2, '0');
+        return `https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/bumps/Bump${id}-sm.mp4`;
       },
     },
 
     async asyncData ({ $axios, params }) {
-      const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${params.watch}`);
+      try {
+        const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${params.watch}`);
 
-      let poster = '';
-      let streamTitle = '⚠ STREAM NOT FOUND ⚠';
+        let poster = '';
+        let streamTitle = '⚠ STREAM NOT FOUND ⚠';
 
-      const name = data.name;
-      poster = data.poster;
-      streamTitle = data.title;
+        const name = data.name;
+        poster = data.poster;
+        streamTitle = data.title;
 
-      return {
-        name: name,
-        poster: poster,
-        streamTitle: streamTitle,
+        return {
+          name: name,
+          poster: poster,
+          streamTitle: streamTitle,
+        }
+      } catch (error) {
+        console.log(`ERROR: Failed to find user.`);
+        console.error(error);
+
+        return {
+          name: '404',
+          poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg',
+          streamTitle: '404 - Stream not found',
+        }
       }
     },
 
     mounted() {
       this.playerInitialize();
       console.log('this is current player instance object:', this.player);
-      setTimeout( () => this.trackWatchTime(), 1000 * this.watchInterval );
+      if (this.name !== '404')
+        this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
     },
 
     beforeDestroy() {
-      if (this.watchTimer) clearTimeout(this.watchTimer);
+      if (this.watchTimer) clearInterval(this.watchTimer);
       this.playerDispose();
     },
   }

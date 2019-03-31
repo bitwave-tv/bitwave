@@ -29,7 +29,7 @@
       methods: {
         async logout() {
           await this.$store.dispatch('logout');
-          setTimeout(() => this.$router.push('/login'), 1000);
+          setTimeout( () => this.$router.push('/login'), 1500 );
         },
       },
 

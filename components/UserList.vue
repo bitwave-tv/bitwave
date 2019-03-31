@@ -114,6 +114,8 @@
           },
         ],
         users: [],
+        userUpdateRate: 30,
+        userListTimer: null,
       }
     },
 
@@ -122,9 +124,13 @@
         this.miniVariant = !this.miniVariant;
       },
       async updateList() {
-        const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
-        this.users = data.users;
-        setTimeout(() => this.updateList(), 1000 * 60);
+        try {
+          const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
+          this.users = data.users;
+        } catch (error) {
+          console.error(`ERROR: Failed to update user list.`);
+          console.log(error);
+        }
       },
     },
 
@@ -132,6 +138,11 @@
 
     async mounted() {
       await this.updateList();
+      this.userListTimer = setInterval( async () => await this.updateList(), 1000 * this.userUpdateRate );
+    },
+
+    beforeDestroy() {
+      if (this.userListTimer) clearInterval(this.userListTimer);
     },
   }
 </script>

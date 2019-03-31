@@ -59,18 +59,16 @@
 
     computed: {
       username () {
-        if (!this.user || !this.user.displayName) return 'PROFILE';
-        return this.user.displayName;
+        if (!this.user || !this.user.username)
+          return 'PROFILE';
+        else
+          return this.user.username;
       },
       isAuth() {
         return this.$store.getters.isAuth;
       },
       user() {
-        if (this.$store.state.user) {
-          return this.$store.state.user;
-        } else {
-          return null;
-        }
+        return this.$store.state.user;
       },
     },
 

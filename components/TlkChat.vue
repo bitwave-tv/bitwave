@@ -20,7 +20,7 @@
 
     data() {
       return {
-        channel: 'default',
+        channel: 'bitwave',
       }
     },
 
@@ -28,16 +28,22 @@
 
     computed: {
       username () {
-        const id = [...Array(4)].map(i=>(~~(Math.random()*36)).toString(36)).join('');
+        const id = [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
         if (!this.user || !this.user.displayName) return `TROLL:${id}`;
         return this.user.displayName;
-      },},
+      },
+    },
 
     async mounted() {
-      const host = process.env_production ? 'http://localhost:4000' : 'https://api.bitwave.tv';
-      const { data } = await axios.get(`${host}/api/chat/channel`);
-      console.log(data);
-      this.channel = data.chatroom;
+      try {
+        const host = process.env_production ? 'http://localhost:4000' : 'https://api.bitwave.tv';
+        const { data } = await axios.get(`${host}/api/chat/channel`);
+        console.log(data);
+        this.channel = data.chatroom;
+      } catch (error) {
+        console.error('ERROR: Failed to retrieve chat location.');
+        console.error(error);
+      }
     },
 
     created() {

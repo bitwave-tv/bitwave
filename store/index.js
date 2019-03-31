@@ -1,4 +1,4 @@
-import { auth, db } from '~/plugins/firebase.js';
+import { auth, db } from '@/plugins/firebase.js';
 
 const cookieparser = process.server ? require('cookieparser') : undefined;
 const Cookie = process.client ? require('js-cookie') : undefined;
@@ -41,16 +41,23 @@ export const actions = {
 
   nuxtServerInit({ commit }, { req }) {
     let auth = null;
+    let metaUser = null;
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie);
-      console.log('\n - - - - - Cookie Parsed - - - - -');
-      console.log(parsed);
+      // console.log('\n - - - - - Cookie Parsed - - - - -');
+      // console.log(parsed);
       try {
         auth = JSON.parse(parsed.auth);
-        console.log('\n - - - - - Cookie Object - - - - -');
+        console.log('\n - - - - - Cookie Object - AUTH - - - - -');
         console.log(auth);
-      } catch (err) {
+
+        metaUser = JSON.parse(parsed.metaUser);
+        console.log('\n - - - - - Cookie Object - User - - - - -');
+        console.log(metaUser);
+      } catch (error) {
         // No valid cookie found
+        console.log(`ERROR: No cookie found.`);
+        console.log(`ERROR: ${error}`);
       }
     }
     commit('setAuth', auth);
@@ -82,16 +89,20 @@ export const actions = {
   },
 
   async logout({ commit }) {
-    if (unsubscribeUser) unsubscribeUser();
-    commit('setUser', null);
+    try {
+      if (unsubscribeUser) unsubscribeUser();
+      await auth.signOut();
 
-    commit('setAuth', null);
-    Cookie.remove('auth');
+      commit('setUser', null);
 
-    commit('setMetaUser', null);
-    Cookie.remove('metaUser');
+      commit('setAuth', null);
+      Cookie.remove('auth');
 
-    await auth.signOut();
+      commit('setMetaUser', null);
+      Cookie.remove('metaUser');
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    }
   },
 
 };

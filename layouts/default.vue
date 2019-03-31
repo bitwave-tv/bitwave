@@ -23,6 +23,7 @@
           depressed
           flat
           exact
+          active-class
           class="text-none title px-2"
         >{{ title }}</v-btn>
       </v-toolbar-title>

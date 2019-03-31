@@ -196,12 +196,7 @@
       return {
         player: null,
         initialized: false,
-
-        poster: '/bitwave_cover.png',
-
-        playerOptions: {
-
-        },
+        poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg',
       }
     },
 
@@ -222,7 +217,7 @@
       },
     },
 
-    async asyncData({ $axios, params }) {
+    async asyncData({ $axios }) {
       const host =  'https://api.bitwave.tv';
       const { data } = await $axios.get(`${host}/api/sources/list`);
 
