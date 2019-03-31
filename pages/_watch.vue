@@ -66,6 +66,10 @@
         player: null,
         qualityLevels: null,
         initialized: false,
+        watchDuration: 0,
+        watchInterval: 30,
+        lastWatch: null,
+        watchTimer: null,
       }
     },
 
@@ -85,6 +89,18 @@
 
       playerDispose(){
         if (this.initialized) this.player.dispose();
+      },
+
+      trackWatchTime() {
+        this.watchDuration += this.watchInterval;
+        this.$ga.event({
+          eventCategory: 'stream',
+          eventAction: 'watch-time',
+          eventLabel: this.name,
+          eventValue: this.watchDuration,
+        });
+        console.log(`Watch Time: ${this.watchDuration}s on ${this.name}`);
+        this.watchTimer = setTimeout( () => this.trackWatchTime(), 1000 * this.watchInterval );
       },
     },
 
@@ -108,9 +124,11 @@
     mounted() {
       this.playerInitialize();
       console.log('this is current player instance object:', this.player);
+      setTimeout( () => this.trackWatchTime(), 1000 * this.watchInterval );
     },
 
     beforeDestroy() {
+      if (this.watchTimer) clearTimeout(this.watchTimer);
       this.playerDispose();
     },
   }

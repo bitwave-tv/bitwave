@@ -15,6 +15,8 @@ module.exports = {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: pkg.description },
+      { name: 'og:site_name', content: 'BitWave.tv' },
+      { name: 'og:image', content: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg' },
     ],
     script: [
       { src: 'https://tlk.io/embed.js' }

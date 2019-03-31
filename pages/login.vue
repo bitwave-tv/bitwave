@@ -8,7 +8,9 @@
       class="mb-4"
     >
       <v-flex xs12 md10 lg8 xl6>
-        <v-img src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_banner.png" alt="bitwave tv streaming platform banner" />
+        <v-img
+          src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_banner.png"
+          alt="bitwave tv streaming platform banner" />
       </v-flex>
     </v-layout>
 
@@ -324,7 +326,6 @@
 
           setTimeout( () => this.$router.push('/profile'), 1500 );
         } else {
-          // this.showSuccess(`Successfully logged out! See you later. `);
           console.log(`%cLogin.vue:%c Not Logged In!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
         }
       },
@@ -353,7 +354,3 @@
     },
   }
 </script>
-
-<style lang='scss'>
-
-</style>

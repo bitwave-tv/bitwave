@@ -18,7 +18,9 @@
               >
                 <v-flex shrink class="ma-3">
                   <v-avatar color="white" size="64">
-                    <v-img src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/shield.png" alt="avatar" />
+                    <v-img
+                      src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/shield.png"
+                      alt="avatar" />
                   </v-avatar>
                 </v-flex>
                 <v-flex shrink class="text-xs-center my-1">
@@ -89,15 +91,11 @@
                     light
                   >Logout</v-btn>
                 </v-layout>
-
               </v-layout>
-
             </v-flex>
-
           </v-layout>
         </v-card>
       </v-flex>
-
     </v-layout>
   </v-container>
 </template>
@@ -125,7 +123,7 @@
         showSuccess: false,
         success: {
           message: '',
-        }
+        },
       }
     },
 
@@ -133,16 +131,6 @@
       async logout() {
         await auth.signOut();
         this.$router.push('/signout');
-      },
-
-      showErrorToast(message) {
-        this.showError = true;
-        this.error.message = message;
-      },
-
-      showSuccessToast(message) {
-        this.showSuccess = true;
-        this.success.message = message;
       },
 
       async authenticated(user) {
@@ -157,9 +145,7 @@
 
     computed: {
       username() {
-        if (!!this.user) {
-          return this.user.displayName || 'null';
-        }
+        if ( !!this.user ) return this.user.displayName || 'null';
       },
       uid() {
         if (this.$store.state.auth) {
@@ -176,6 +162,5 @@
     created() {
       auth.onAuthStateChanged( user => this.authenticated(user) );
     },
-
   }
 </script>

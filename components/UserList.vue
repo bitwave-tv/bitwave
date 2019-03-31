@@ -79,7 +79,6 @@
         :align-self-end="!miniVariant"
         class="px-2"
       >
-
         <v-btn
           style="min-width: 32px;"
           color="yellow"
