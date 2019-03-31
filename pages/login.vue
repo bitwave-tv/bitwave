@@ -320,7 +320,7 @@
         if (user) {
           console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
 
-          this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
+          if (user.displayName) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
 
           await this.$store.dispatch('login', user);
 

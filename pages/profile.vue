@@ -145,7 +145,8 @@
 
     computed: {
       username() {
-        if ( !!this.user ) return this.user.displayName || 'null';
+        // return this.user.displayName || 'null';
+        return this.user.username || 'null';
       },
       uid() {
         if (this.$store.state.auth) {
@@ -155,11 +156,12 @@
         }
       },
       user() {
-        return this.$store.state.metaUser;
+        // return this.$store.state.metaUser;
+        return this.$store.state.user;
       },
     },
 
-    created() {
+    mounted() {
       auth.onAuthStateChanged( user => this.authenticated(user) );
     },
   }
