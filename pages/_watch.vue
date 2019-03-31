@@ -55,6 +55,15 @@
   import 'videojs-contrib-quality-levels'
 
   export default {
+    head() {
+      return {
+        title: `${this.name} - BitWave.tv`,
+        meta: [
+          { name: 'og:image', content: this.poster },
+        ],
+      }
+    },
+
     components: {
 
     },
