@@ -59,6 +59,7 @@
       return {
         title: `${this.name} - BitWave.tv`,
         meta: [
+          { name: 'og:title', hid: 'og:title', content: `${this.name} - BitWave.tv` },
           { name: 'og:image', content: this.poster },
         ],
       }
