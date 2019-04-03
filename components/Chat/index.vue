@@ -176,7 +176,7 @@
       },
 
       connectChat(user) {
-        const socket = socketio('localhost:4000');
+        const socket = socketio('api.bitwave.tv:4000');
         this.socket = socket;
         socket.on('connect', () => {
           if (!!user) socket.emit('new user', user);
