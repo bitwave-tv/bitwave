@@ -62,7 +62,7 @@
                 <v-avatar
                   size="40"
                 >
-                  <img :src="user.avatar" :alt="user.name">
+                  <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
                 </v-avatar>
               </v-badge>
 
@@ -114,7 +114,7 @@
           },
         ],
         users: [],
-        userUpdateRate: 30,
+        userUpdateRate: 15,
         userListTimer: null,
       }
     },
@@ -123,21 +123,24 @@
       toggleMini() {
         this.miniVariant = !this.miniVariant;
       },
+
       async updateList() {
         try {
           const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
           this.users = data.users;
         } catch (error) {
           console.error(`ERROR: Failed to update user list.`);
-          console.log(error);
+          console.log(error.message);
         }
       },
+
     },
 
-    computed: {},
+    async created() {
+      await this.updateList();
+    },
 
     async mounted() {
-      await this.updateList();
       this.userListTimer = setInterval( async () => await this.updateList(), 1000 * this.userUpdateRate );
     },
 
@@ -154,9 +157,13 @@
     -ms-overflow-style: none;  /* IE 10+ */
 
     &::-webkit-scrollbar {
-      /* WebKit */
       width: 0;
       height: 0;
     }
+  }
+
+  .offline {
+    -webkit-filter: grayscale(60%);
+    filter: grayscale(60%);
   }
 </style>

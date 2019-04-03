@@ -36,7 +36,8 @@
 
     async mounted() {
       try {
-        const host = process.env_production ? 'http://localhost:4000' : 'https://api.bitwave.tv';
+        // const host = process.env_production ? 'http://localhost:4000' : 'https://api.bitwave.tv';
+        const host = 'https://api.bitwave.tv';
         const { data } = await axios.get(`${host}/api/chat/channel`);
         console.log(data);
         this.channel = data.chatroom;

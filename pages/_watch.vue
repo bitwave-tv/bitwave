@@ -26,7 +26,7 @@
           >
             <video
               playsinline
-              id="myPlayer"
+              id="streamplayer"
               class="video-js vjs-default-skin"
               width="100%"
               controls
@@ -95,16 +95,12 @@
 
     methods: {
       playerInitialize(){
-        this.player = videojs('myPlayer', {
+        this.player = videojs('streamplayer', {
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
         });
         this.qualityLevels = this.player.qualityLevels();
         this.initialized = true;
-      },
-
-      playerDispose(){
-        if (this.initialized) this.player.dispose();
       },
 
       trackWatchTime() {
@@ -123,18 +119,19 @@
         const id = (Math.floor(Math.random() * 29) + 1).toString().padStart(2, '0');
         return `https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/bumps/Bump${id}-sm.mp4`;
       },
+
+      playerDispose(){
+        if (this.initialized) this.player.dispose();
+      },
     },
 
     async asyncData ({ $axios, params }) {
       try {
         const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${params.watch}`);
 
-        let poster = '';
-        let streamTitle = '⚠ STREAM NOT FOUND ⚠';
-
-        const name = data.name;
-        poster = data.poster;
-        streamTitle = data.title;
+        const name = data.name || 'ERROR';
+        const poster = data.poster || 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg';
+        const streamTitle = data.title || '⚠ STREAM NOT FOUND ⚠';
 
         return {
           name: name,
@@ -143,7 +140,7 @@
         }
       } catch (error) {
         console.log(`ERROR: Failed to find user.`);
-        console.error(error);
+        console.error(error.message);
 
         return {
           name: '404',

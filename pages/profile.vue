@@ -145,7 +145,6 @@
 
     computed: {
       username() {
-        // return this.user.displayName || 'null';
         return this.user.username || 'null';
       },
       uid() {
@@ -156,7 +155,6 @@
         }
       },
       user() {
-        // return this.$store.state.metaUser;
         return this.$store.state.user;
       },
     },

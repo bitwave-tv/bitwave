@@ -47,7 +47,10 @@
         sm10
         md8
       >
-        <v-card class="mb-3">
+        <v-card
+          v-if="live"
+          class="mb-3"
+        >
           <video
             playsinline
             id="solo-player"
@@ -81,6 +84,7 @@
                   max-width="2rem"
                   src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/emotes/cool_blobby.gif"
                   alt="Cool blobby with sunglasses"
+                  @click="updatePlayerSrc"
                 ></v-img>
               </v-flex>
             </v-layout>
@@ -159,7 +163,7 @@
             <v-flex>
               <span>BitWave Media &copy; {{ new Date().getFullYear() }}</span>
             </v-flex>
-            <v-spacer />
+            <v-spacer/>
             <v-btn
               small
               color="yellow"
@@ -168,15 +172,14 @@
               to="/login"
             >Login</v-btn>
             <v-btn
-              small
               light
+              small
               color="yellow"
               nuxt
               to="/login"
             >Register</v-btn>
           </v-card-actions>
         </v-card>
-
       </v-flex>
     </v-layout>
   </v-container>
@@ -215,15 +218,15 @@
       playerDispose(){
         this.player.dispose();
       },
+      updatePlayerSrc() {
+        this.player.src({ type: 'video/mp4', src: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/bumps/Bump33-sm.mp4' });
+      },
     },
 
     async asyncData({ $axios }) {
       const host =  'https://api.bitwave.tv';
       const { data } = await $axios.get(`${host}/api/sources/list`);
-
       return {
-        streams: data.streams,
-        videos: data.videos,
         live: data.live,
       };
     },

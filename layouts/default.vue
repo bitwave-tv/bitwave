@@ -42,7 +42,7 @@
       <user/>
 
       <v-btn
-        v-show="!$vuetify.breakpoint.mdAndUp"
+        v-if="!$vuetify.breakpoint.mdAndUp"
         icon
         @click.stop="rightDrawer = !rightDrawer"
       >

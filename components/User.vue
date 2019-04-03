@@ -59,10 +59,7 @@
 
     computed: {
       username () {
-        if (!this.user || !this.user.username)
-          return 'PROFILE';
-        else
-          return this.user.username;
+        return this.user.username;
       },
       isAuth() {
         return this.$store.getters.isAuth;
@@ -79,11 +76,10 @@
     beforeDestroy() {
       if (this.unsubscribeUser) this.unsubscribeUser();
     },
-
   };
 </script>
 
-<style lang="scss">
+<style lang='scss'>
   .profile-link {
       min-width: 100px;
     }

@@ -39,28 +39,38 @@ export const mutations = {
 
 export const actions = {
 
-  nuxtServerInit({ commit }, { req }) {
-    let auth = null;
+  nuxtServerInit({ commit }, { req, params }) {
+    let authUser = null;
     let metaUser = null;
-    if (req.headers.cookie) {
-      const parsed = cookieparser.parse(req.headers.cookie);
-      // console.log('\n - - - - - Cookie Parsed - - - - -');
-      // console.log(parsed);
+    let user     = null;
+    const cookie = req.headers.cookie;
+    if (!cookie) {
+      console.log('No cookies found.')
+    } else {
+      const parsed = cookieparser.parse(cookie);
       try {
-        auth = JSON.parse(parsed.auth);
-        console.log('\n - - - - - Cookie Object - AUTH - - - - -');
-        console.log(auth);
+        authUser = JSON.parse(parsed.auth);
+        // console.log('\n - - - - - Cookie Object - AUTH - - - - -');
+        // console.log(authUser);
 
         metaUser = JSON.parse(parsed.metaUser);
-        console.log('\n - - - - - Cookie Object - User - - - - -');
-        console.log(metaUser);
+        // console.log('\n - - - - - Cookie Object - MetaUser - - - - -');
+        // console.log(metaUser);
+
+        user = JSON.parse(parsed.user);
+        // console.log('\n - - - - - Cookie Object - User - - - - -');
+        // console.log(metaUser);
+
+        console.log(`${user.username} logged in via server init. `, params);
       } catch (error) {
         // No valid cookie found
-        console.log(`ERROR: No cookie found.`);
+        console.log(`ERROR: No valid cookie found.`);
         console.log(`ERROR: ${error}`);
       }
     }
-    commit('setAuth', auth);
+    commit('setAuth', authUser);
+    commit('setMetaUser', metaUser);
+    commit('setUser', user);
   },
 
   async login({ commit }, user) {
@@ -84,7 +94,9 @@ export const actions = {
 
     const userdocRef = db.collection('users').doc(uid);
     unsubscribeUser = userdocRef.onSnapshot( doc => {
-      commit('setUser', doc.data());
+      const data = doc.data();
+      commit('setUser', data);
+      Cookie.set('user', data);
     });
   },
 
@@ -94,6 +106,7 @@ export const actions = {
       await auth.signOut();
 
       commit('setUser', null);
+      Cookie.remove('user');
 
       commit('setAuth', null);
       Cookie.remove('auth');
