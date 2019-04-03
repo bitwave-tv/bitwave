@@ -59,7 +59,8 @@
 
     computed: {
       username () {
-        return this.user.username;
+        if (this.user) return this.user.username;
+        else return 'PROFILE';
       },
       isAuth() {
         return this.$store.getters.isAuth;
