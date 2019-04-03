@@ -98,6 +98,10 @@
               v-model="message"
               :label="`Chatting as ${this.username}`"
               color="yellow"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
               outline
               clearable
               append-icon="message"
