@@ -176,7 +176,12 @@
       },
 
       connectChat(user) {
-        if (!user) return;
+        if (!user) {
+          if (this.socket) {
+            this.socket.disconnect();
+          }
+          return;
+        }
         const socket = socketio('api.bitwave.tv:443');
         this.socket = socket;
         socket.on('connect', () => {
