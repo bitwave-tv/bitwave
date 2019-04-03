@@ -141,7 +141,7 @@
           live: live,
         }
       } catch (error) {
-        console.log(`ERROR: Failed to find user.`);
+        console.log(`ERROR: Failed to find user ${params.watch}`);
         console.error(error.message);
 
         return {
