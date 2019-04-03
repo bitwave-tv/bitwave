@@ -190,6 +190,7 @@
         socket.on( 'update usernames', data => this.updateUsernames(data) );
         socket.on( 'hydrate', data => this.hydrate(data) );
         socket.on( 'message', data => this.rcvMessage(data) );
+        socket.on( 'blocked', data => this.message = data.message );
       },
 
       updateUsernames(data) {
