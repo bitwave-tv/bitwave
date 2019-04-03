@@ -14,8 +14,13 @@
       </v-list-tile-avatar>
       <v-list-tile-content>
         <v-list-tile-sub-title>
-          <kbd class="mr-1" style="background-color: #607D8B;">{{ channel || 'global' }}</kbd>
-          <span class="font-weight-medium">{{ username }}</span>
+          <v-layout>
+            <v-flex shrink class="font-weight-medium">{{ username }}</v-flex>
+            <v-spacer/>
+            <v-flex shrink>
+              <kbd class="mr-1" style="background-color: #607D8B;">{{ channel || 'global' }}</kbd>
+            </v-flex>
+          </v-layout>
         </v-list-tile-sub-title>
         <slot name="message"></slot>
       </v-list-tile-content>
