@@ -51,6 +51,7 @@ export const actions = {
         parsed = cookieparser.parse(cookie);
       } catch (error) {
         console.log(`WARNING: No valid cookie.`);
+        if (cookie.length > 72) console.log(cookie);
       }
 
       if (!!parsed) {
