@@ -37,37 +37,11 @@
         >
           <v-spacer fill-height></v-spacer>
 
-          <template v-if="false">
-
-            <chat-message username="Kovalski">
-              <img slot="avatar" src="https://www.gravatar.com/avatar/5C016fba937df454004cf4c2ac5aef80?d=identicon" alt="Dispatch">
-              <template slot="message">This is an example message.</template>
-            </chat-message>
-
-            <chat-message username="ANON">
-              <template slot="message">This is a troll friendly chat.</template>
-            </chat-message>
-
-            <chat-message username="Murderder">
-              <img slot="avatar" src="https://www.gravatar.com/avatar/4c016fba937df454004cf4c2ac5aef80?d=identicon" alt="Dispatch">
-              <template slot="message">This is an example message.</template>
-            </chat-message>
-
-            <chat-message username="Dispatch">
-              <img slot="avatar" src="https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon" alt="Dispatch">
-              <template slot="message">
-                This is an example message which is supposed to be a multiline comment to test to see
-                if the interface can handle very long comments that go across multiple lines and
-                therefore can overflow or stretch or grow or whatever.
-              </template>
-            </chat-message>
-
-          </template>
-
           <chat-message
             v-for="message in messages"
             :key="message.timestamp"
             :username="message.username"
+            :channel="message.channel"
           >
             <img
               v-if="message.avatar"
@@ -152,6 +126,7 @@
             username: 'Dispatch',
             avatar: 'https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon',
             message: 'Loading messages...',
+            channel: 'global',
           },
         ],
         uid: null,
@@ -217,7 +192,8 @@
       },
 
       rcvMessage(message) {
-        this.messages.push(message);
+        // this.messages.push(message);
+        this.messages.push({ ...{ channel: 'null' }, ...message });
         setTimeout(() => this.scrollToBottom(), 250);
         if (this.messages.length > this.chatLimit) this.messages.shift();
       },
@@ -229,6 +205,7 @@
 
         const msg = {
           message: this.message,
+          channel: this.page,
         };
         this.socket.emit('message', msg);
         this.$refs.chatmessageinput.value = '';
@@ -253,6 +230,12 @@
         } else {
           return this.user.username;
         }
+      },
+
+      page () {
+        const route = this.$route.params;
+        if (route) return route.watch;
+        else return 'global';
       },
     },
 

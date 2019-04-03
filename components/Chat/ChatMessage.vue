@@ -9,13 +9,13 @@
     >
       <v-list-tile-avatar>
         <slot name="avatar">
-          <!--<v-icon :class="['orange lighten-1 white&#45;&#45;text']">person</v-icon>-->
           <v-icon :class="classList">person</v-icon>
         </slot>
       </v-list-tile-avatar>
       <v-list-tile-content>
         <v-list-tile-sub-title>
-          {{ username }}
+          <kbd class="mr-1" style="background-color: #607D8B;">{{ channel || 'global' }}</kbd>
+          <span class="font-weight-medium">{{ username }}</span>
         </v-list-tile-sub-title>
         <slot name="message"></slot>
       </v-list-tile-content>
@@ -29,6 +29,9 @@
 
     props: {
       username: {
+        type: String,
+      },
+      channel: {
         type: String,
       },
     },
