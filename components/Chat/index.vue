@@ -95,6 +95,7 @@
             xs11
           >
             <v-text-field
+              ref="chatmessageinput"
               :label="`Chatting as ${this.username}`"
               :color="dark ? 'yellow' : 'blue'"
               autocomplete="off"
@@ -230,6 +231,7 @@
           message: this.message,
         };
         this.socket.emit('message', msg);
+        this.$refs.chatmessageinput.value = '';
         this.message = '';
         // this.scrollToBottom();
       },
