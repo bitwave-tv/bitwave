@@ -62,8 +62,8 @@
       flat
       app
     >
-      <tlk-chat />
-      <!--<chat />-->
+      <!--<tlk-chat />-->
+      <chat />
     </v-navigation-drawer>
 
     <!-- L-Nav Drawer -->
@@ -137,5 +137,6 @@
 <style>
   .v-toolbar__content {
     padding-left: 0;
+    padding-right: 0;
   }
 </style>

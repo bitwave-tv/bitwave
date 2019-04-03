@@ -19,7 +19,7 @@ module.exports = {
       { name: 'og:image', content: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg' },
     ],
     script: [
-      { src: 'https://tlk.io/embed.js' }
+      // { src: 'https://tlk.io/embed.js' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

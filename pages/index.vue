@@ -167,7 +167,7 @@
             <v-btn
               small
               color="yellow"
-              outline
+              flat
               nuxt
               to="/login"
             >Login</v-btn>

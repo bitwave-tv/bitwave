@@ -10,10 +10,10 @@
       py-1
     >
       <v-flex class="title text-xs-center py-2">
-        Live Chat
+        Live Chat: {{ viewerCount }}
       </v-flex>
 
-      <v-flex class="subheading text-xs-center red--text mb-3">
+      <v-flex class="caption text-xs-center red--text mb-3">
         <v-icon small color="red" class="px-1">warning</v-icon>
         WORK IN PROGRESS
         <v-icon small color="red" class="px-1">warning</v-icon>
@@ -37,7 +37,7 @@
         >
           <v-spacer fill-height></v-spacer>
 
-          <template v-for="x in 10">
+          <template v-if="false">
 
             <chat-message username="Kovalski">
               <img slot="avatar" src="https://www.gravatar.com/avatar/5C016fba937df454004cf4c2ac5aef80?d=identicon" alt="Dispatch">
@@ -63,6 +63,20 @@
             </chat-message>
 
           </template>
+
+          <chat-message
+            v-for="message in messages"
+            :key="message.timestamp"
+            :username="message.username"
+          >
+            <img
+              v-if="message.avatar"
+              slot="avatar"
+              :src="message.avatar"
+              :alt="message.username"
+            >
+            <template slot="message">{{ message.message }}</template>
+          </chat-message>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -71,34 +85,41 @@
 
     <!-- Chat Input -->
     <v-flex>
-      <v-layout
-        row
-        justify-center
-        py-3
-      >
-        <v-flex
-          xs11
+      <v-sheet>
+        <v-layout
+          row
+          justify-center
+          pt-3
         >
-          <v-text-field
-            v-model="message"
-            outline
-            label="Chat"
-            clearable
-            hide-details
-            append-outer-icon="message"
-            @click:append-outer="scrollToBottom"
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
+          <v-flex
+            xs11
+          >
+            <v-text-field
+              v-model="message"
+              :label="`Chatting as ${this.username}`"
+              color="yellow"
+              outline
+              clearable
+              append-icon="message"
+              counter="300"
+              @click:append-outer="sendMessage"
+              @keydown.enter="sendMessage"
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
+      </v-sheet>
     </v-flex>
 
   </v-layout>
 </template>
 
 <script>
+  import { auth, db } from '@/plugins/firebase.js'
   import ChatMessage from './ChatMessage'
 
   import { mapState } from 'vuex'
+
+  import socketio from 'socket.io-client'
 
   export default {
     name: 'Chat',
@@ -109,24 +130,120 @@
 
     data() {
       return {
+        unsubscribeUser: null,
+        loading: true,
+        socket: null,
         message: '',
+        messages: [
+          {
+            timestamp: Date.now(),
+            username: 'Dispatch',
+            avatar: 'https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon',
+            message: 'No prior messages.',
+          },
+        ],
+        uid: null,
+        viewerCount: 0,
       }
     },
 
     methods: {
+      authenticated(user) {
+        if (user) {
+          this.subscribeToUser(user.uid);
+          this.connectChat(this.user);
+        } else {
+          if (this.unsubscribeUser) this.unsubscribeUser();
+          const trollUser = {
+            email: null,
+            username: this.username,
+            uid: this.uid,
+          };
+          this.connectChat(trollUser);
+        }
+        this.loading = false;
+      },
+
+      subscribeToUser(uid) {
+        const userdocRef = db.collection('users').doc(uid);
+        this.unsubscribeUser = userdocRef.onSnapshot( doc => {
+          this.$store.commit('setUser', doc.data());
+        });
+      },
+
       scrollToBottom() {
         this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight;
+      },
+
+      connectChat(user) {
+        const socket = socketio('localhost:4000');
+        this.socket = socket;
+        socket.on('connect', () => {
+          if (!!user) socket.emit('new user', user);
+        });
+        socket.on( 'update usernames', data => this.updateUsernames(data) );
+        socket.on( 'hydrate', data => this.hydrate(data) );
+        socket.on( 'message', data => this.rcvMessage(data) );
+      },
+
+      updateUsernames(data) {
+        this.viewerCount = data.length;
+        console.log(data);
+      },
+
+      hydrate(data) {
+        this.messages = data;
+        setTimeout(() => this.scrollToBottom(), 250);
+      },
+
+      rcvMessage(message) {
+        this.messages.push(message);
+        setTimeout(() => this.scrollToBottom(), 250);
+      },
+
+      sendMessage() {
+        if (this.message.length > 300) {
+          return false;
+        }
+
+        const msg = {
+          message: this.message,
+        };
+        this.socket.emit('message', msg);
+        this.message = '';
+        // this.scrollToBottom();
+      },
+
+      createUID() {
+        return [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
       },
     },
 
     computed: {
       ...mapState({
-        currentUser: state => state.user.currentUser
-      })
+        user: state => state.user,
+      }),
+
+      username () {
+        if (!this.user || !this.user.username) {
+          this.uid = this.createUID();
+          return `troll:${this.uid}`;
+        } else {
+          return this.user.username;
+        }
+      },
+    },
+
+    created() {
+      auth.onAuthStateChanged( async user => await this.authenticated(user) );
     },
 
     mounted() {
       this.scrollToBottom();
+    },
+
+    beforeDestroy() {
+      if (this.unsubscribeUser) this.unsubscribeUser();
     },
   }
 </script>
