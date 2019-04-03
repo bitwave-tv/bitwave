@@ -95,20 +95,20 @@
             xs11
           >
             <v-text-field
-              v-model="message"
               :label="`Chatting as ${this.username}`"
-              :color="dark ? yellow : blue"
+              :color="dark ? 'yellow' : 'blue'"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
               spellcheck="false"
               single-line
               outline
-              clearable
               append-icon="message"
               counter="300"
-              @click:append-outer="sendMessage"
-              @keydown.enter="sendMessage"
+              validate-on-blur
+              @change="v => message = v"
+              @click:append="sendMessage"
+              @keyup.enter.stop="sendMessage"
             ></v-text-field>
           </v-flex>
         </v-layout>
@@ -150,7 +150,7 @@
             timestamp: Date.now(),
             username: 'Dispatch',
             avatar: 'https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon',
-            message: 'No prior messages.',
+            message: 'Loading messages...',
           },
         ],
         uid: null,
