@@ -50,17 +50,20 @@ export const actions = {
       try {
         parsed = cookieparser.parse(cookie);
       } catch (error) {
-        console.log(`WARNING: No valid cookie.`);
-        if (cookie.length > 72) console.log(cookie);
+        console.log(`ERROR: Failed to parse cookie.`);
+        console.log(cookie);
       }
 
       if (!!parsed) {
         try {
-          authUser = JSON.parse(parsed.auth);
-          metaUser = JSON.parse(parsed.metaUser);
-          user     = JSON.parse(parsed.user);
-
-          console.log(`${user.username} logged in via nuxtServerInit. `, params);
+          if (!!parsed.auth && !!parsed.user) {
+            authUser = JSON.parse(parsed.auth);
+            metaUser = JSON.parse(parsed.metaUser);
+            user     = JSON.parse(parsed.user);
+            console.log(`${user.username} logged in via nuxtServerInit: `, params);
+          } else {
+            console.log(`User is not logged in.`);
+          }
         } catch (error) {
           // No valid cookie found
           console.log(`ERROR: No valid cookie found.`);

@@ -3,8 +3,7 @@ import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 
-if ( !firebase.apps.length )
-{
+if ( !firebase.apps.length ) {
   firebase.initializeApp({
     apiKey: "AIzaSyCgIwubBz-nTd0mof6l7eklzJk1evuwzhg",
     authDomain: "bitwave.tv",
@@ -18,7 +17,4 @@ if ( !firebase.apps.length )
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-export {
-  auth,
-  db,
-}
+export { auth, db }
