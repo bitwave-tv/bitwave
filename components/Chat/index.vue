@@ -102,6 +102,7 @@
               autocorrect="off"
               autocapitalize="off"
               spellcheck="false"
+              single-line
               outline
               clearable
               append-icon="message"
@@ -130,7 +131,7 @@
 
     props: {
       dark: {
-        type: String,
+        type: Boolean,
       },
     },
 
@@ -154,6 +155,7 @@
         ],
         uid: null,
         viewerCount: 0,
+        chatLimit: 100,
       }
     },
 
@@ -216,6 +218,7 @@
       rcvMessage(message) {
         this.messages.push(message);
         setTimeout(() => this.scrollToBottom(), 250);
+        if (this.messages.length > this.chatLimit) this.messages.shift();
       },
 
       sendMessage() {
