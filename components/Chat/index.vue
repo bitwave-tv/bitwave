@@ -97,7 +97,7 @@
             <v-text-field
               v-model="message"
               :label="`Chatting as ${this.username}`"
-              color="yellow"
+              :color="dark ? yellow : blue"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
@@ -127,6 +127,12 @@
 
   export default {
     name: 'Chat',
+
+    props: {
+      dark: {
+        type: String,
+      },
+    },
 
     components: {
       ChatMessage,

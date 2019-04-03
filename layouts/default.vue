@@ -63,7 +63,7 @@
       app
     >
       <!--<tlk-chat />-->
-      <chat />
+      <chat :dark="dark" />
     </v-navigation-drawer>
 
     <!-- L-Nav Drawer -->
