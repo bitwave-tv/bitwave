@@ -44,11 +44,10 @@ export const actions = {
     let metaUser = null;
     let user     = null;
     const cookie = req.headers.cookie;
-    if (!cookie) {
-      console.log('No cookies found.')
-    } else {
-      const parsed = cookieparser.parse(cookie);
+    if (!!cookie) {
       try {
+        const parsed = cookieparser.parse(cookie);
+
         authUser = JSON.parse(parsed.auth);
         // console.log('\n - - - - - Cookie Object - AUTH - - - - -');
         // console.log(authUser);
@@ -66,6 +65,7 @@ export const actions = {
         // No valid cookie found
         console.log(`ERROR: No valid cookie found.`);
         console.log(`ERROR: ${error}`);
+        console.log(cookie);
       }
     }
     commit('setAuth', authUser);

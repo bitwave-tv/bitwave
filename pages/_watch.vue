@@ -30,13 +30,13 @@
               class="video-js vjs-default-skin"
               width="100%"
               controls
-              autoplay
+              :autoplay="live"
               preload="auto"
               data-setup='{ "aspectRatio":"16:9" }'
               :poster="poster"
             >
               <source
-                v-if="name !== '404'"
+                v-if="name !== '404' && live"
                 :src="`https://stream.bitwave.tv/stream/${name}/index.m3u8`"
                 type="application/x-mpegURL"
               >
@@ -132,11 +132,13 @@
         const name = data.name || 'ERROR';
         const poster = data.poster || 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg';
         const streamTitle = data.title || '⚠ STREAM NOT FOUND ⚠';
+        const live = data.live || false;
 
         return {
           name: name,
           poster: poster,
           streamTitle: streamTitle,
+          live: live,
         }
       } catch (error) {
         console.log(`ERROR: Failed to find user.`);
@@ -146,6 +148,7 @@
           name: '404',
           poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg',
           streamTitle: '404 - Stream not found',
+          live: false,
         }
       }
     },
