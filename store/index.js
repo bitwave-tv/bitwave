@@ -45,27 +45,27 @@ export const actions = {
     let user     = null;
     const cookie = req.headers.cookie;
     if (!!cookie) {
+      let parsed = null;
+
       try {
-        const parsed = cookieparser.parse(cookie);
-
-        authUser = JSON.parse(parsed.auth);
-        // console.log('\n - - - - - Cookie Object - AUTH - - - - -');
-        // console.log(authUser);
-
-        metaUser = JSON.parse(parsed.metaUser);
-        // console.log('\n - - - - - Cookie Object - MetaUser - - - - -');
-        // console.log(metaUser);
-
-        user = JSON.parse(parsed.user);
-        // console.log('\n - - - - - Cookie Object - User - - - - -');
-        // console.log(metaUser);
-
-        console.log(`${user.username} logged in via server init. `, params);
+        parsed = cookieparser.parse(cookie);
       } catch (error) {
-        // No valid cookie found
-        console.log(`ERROR: No valid cookie found.`);
-        console.log(`ERROR: ${error}`);
-        console.log(cookie);
+        console.log(`WARNING: No valid cookie.`);
+      }
+
+      if (!!parsed) {
+        try {
+          authUser = JSON.parse(parsed.auth);
+          metaUser = JSON.parse(parsed.metaUser);
+          user     = JSON.parse(parsed.user);
+
+          console.log(`${user.username} logged in via nuxtServerInit. `, params);
+        } catch (error) {
+          // No valid cookie found
+          console.log(`ERROR: No valid cookie found.`);
+          console.log(`ERROR: ${error}`);
+          console.log(cookie);
+        }
       }
     }
     commit('setAuth', authUser);
