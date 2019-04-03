@@ -5,9 +5,9 @@
   >
     <v-layout
       row
-      px-3
+      px-2
     >
-      <v-list-tile-avatar>
+      <v-list-tile-avatar size="34">
         <slot name="avatar">
           <v-icon :class="classList">person</v-icon>
         </slot>
@@ -15,6 +15,7 @@
       <v-list-tile-content>
         <v-list-tile-sub-title>
           <v-layout>
+            <v-flex shrink class="mr-1 grey--text">[{{ time }}]</v-flex>
             <v-flex shrink class="font-weight-medium">{{ username }}</v-flex>
             <v-spacer/>
             <v-flex shrink>
@@ -29,6 +30,8 @@
 </template>
 
 <script>
+  import moment from 'moment'
+
   export default {
     name: 'ChatMessage',
 
@@ -38,6 +41,9 @@
       },
       channel: {
         type: String,
+      },
+      timestamp: {
+        type: Number,
       },
     },
 
@@ -52,6 +58,9 @@
       classList() {
         return [this.color, 'lighten-1', 'white--text'];
       },
+      time() {
+        return moment(this.timestamp).format('HH:mm');
+      },
     },
 
     mounted() {
@@ -59,3 +68,9 @@
     },
   }
 </script>
+
+<style lang='scss'>
+  .v-list__tile__avatar {
+    min-width: 42px;
+  }
+</style>

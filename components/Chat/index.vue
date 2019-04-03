@@ -42,6 +42,7 @@
             :key="message.timestamp"
             :username="message.username"
             :channel="message.channel"
+            :timestamp="message.timestamp"
           >
             <img
               v-if="message.avatar"
@@ -170,6 +171,7 @@
           }
           return;
         }
+
         const socket = socketio('api.bitwave.tv:443');
         this.socket = socket;
         socket.on('connect', () => {

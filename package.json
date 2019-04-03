@@ -1,6 +1,6 @@
 {
   "name": "BitWave.tv",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "A &#39;no bs&#39; streaming platform.",
   "author": "Dispatch",
   "private": true,
@@ -19,6 +19,7 @@
     "express": "^4.16.4",
     "firebase": "^5.9.0",
     "js-cookie": "^2.2.0",
+    "moment": "^2.24.0",
     "nuxt": "^2.4.0",
     "sass-loader": "^7.1.0",
     "socket.io-client": "^2.2.0",
