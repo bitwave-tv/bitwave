@@ -176,10 +176,11 @@
       },
 
       connectChat(user) {
+        if (!user) return;
         const socket = socketio('api.bitwave.tv:443');
         this.socket = socket;
         socket.on('connect', () => {
-          if (!!user) socket.emit('new user', user);
+          socket.emit('new user', user);
         });
         socket.on( 'update usernames', data => this.updateUsernames(data) );
         socket.on( 'hydrate', data => this.hydrate(data) );
