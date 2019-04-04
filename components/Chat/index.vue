@@ -4,7 +4,6 @@
     column
     fill-height
   >
-
     <!-- Chat Header -->
     <v-flex>
       <v-sheet>
@@ -16,7 +15,6 @@
           <v-flex class="title text-xs-center py-2">
             Live Chat: {{ viewerCount }}
           </v-flex>
-
           <v-flex class="caption text-xs-center red--text">
             <v-icon small color="red" class="px-1">warning</v-icon>
             WORK IN PROGRESS
@@ -41,8 +39,7 @@
           fill-height
           justify-end
         >
-          <v-spacer fill-height></v-spacer>
-
+          <v-spacer fill-height/>
           <chat-message
             v-for="message in messages"
             :key="message.timestamp"
@@ -83,21 +80,20 @@
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
-              spellcheck="false"
+              spellcheck="true"
               single-line
               outline
               append-icon="message"
               counter="300"
               validate-on-blur
-              @change="v => message = v"
-              @click:append="sendMessage"
-              @keyup.enter.stop="sendMessage"
+              @change="value => this.message = value"
+              @click:append.prevent="sendMessage"
+              @keyup.enter.prevent="sendMessage"
             ></v-text-field>
           </v-flex>
         </v-layout>
       </v-sheet>
     </v-flex>
-
   </v-layout>
 </template>
 
@@ -172,12 +168,8 @@
       },
 
       connectChat(user) {
-        if (!user) {
-          if (this.socket) {
-            this.socket.disconnect();
-          }
-          return;
-        }
+        if (this.socket) this.socket.disconnect();
+        if (!user) return;
 
         const socket = socketio('api.bitwave.tv:443');
         this.socket = socket;
@@ -197,13 +189,12 @@
 
       hydrate(data) {
         this.messages = data;
-        setTimeout(() => this.scrollToBottom(), 250);
+        setTimeout(() => this.scrollToBottom(), 50);
       },
 
       rcvMessage(message) {
-        // this.messages.push(message);
         this.messages.push({ ...{ channel: 'null' }, ...message });
-        setTimeout(() => this.scrollToBottom(), 250);
+        setTimeout(() => this.scrollToBottom(), 50);
         if (this.messages.length > this.chatLimit) this.messages.shift();
       },
 
@@ -217,9 +208,7 @@
           channel: this.page,
         };
         this.socket.emit('message', msg);
-        // this.$refs.chatmessageinput.value = '';
         this.message = '';
-        // this.scrollToBottom();
       },
 
       createUID() {

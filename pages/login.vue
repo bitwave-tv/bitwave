@@ -122,41 +122,6 @@
               >
                 {{ alertMessage }}
               </v-alert>
-
-              <v-layout
-                v-if="false"
-                justify-space-between
-                row
-              >
-                <v-flex>
-                  <v-btn
-                    :disabled="!valid"
-                    color="success"
-                    @click="validate"
-                  >
-                    Validate
-                  </v-btn>
-                </v-flex>
-
-                <v-flex>
-                  <v-btn
-                    color="error"
-                    @click="reset"
-                  >
-                    Reset Form
-                  </v-btn>
-                </v-flex>
-
-                <v-flex>
-                  <v-btn
-                    color="warning"
-                    @click="resetValidation"
-                  >
-                    Reset Validity
-                  </v-btn>
-                </v-flex>
-
-              </v-layout>
             </v-form>
           </v-card-text>
 
@@ -168,9 +133,7 @@
               href="#"
               flat color="#2196f3"
               @click="resetPassword(user.email)"
-            >
-              Forgot Password?
-            </v-btn>
+            >Forgot Password?</v-btn>
             <v-spacer />
             <v-btn
               small
@@ -188,9 +151,6 @@
 
 <script>
   import { auth, db } from '@/plugins/firebase.js'
-  import axios from '../.nuxt/axios';
-
-  const Cookie = process.client ? require('js-cookie') : undefined;
 
   export default {
 
@@ -231,6 +191,7 @@
         this.signUp = !this.signUp;
         this.resetValidation();
         this.hideAlert();
+        this.reset();
       },
 
       // Create User
@@ -284,7 +245,10 @@
           await auth.setPersistence(this.shouldStayLoggedIn ? 'local' : 'session'); // firebase.auth.Auth.Persistence.SESSION
           const userCredential = await auth.signInWithEmailAndPassword(email, password);
 
-          console.log(`%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user);
+          if (process.client)
+            console.log(`%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user);
+          else
+            console.log('Login.vue: Signing in...', userCredential.user);
         } catch (error) {
           this.showError(error.message);
           console.log(error.message);
@@ -318,7 +282,10 @@
 
       async authenticated(user) {
         if (user) {
-          console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+          if (process.client)
+            console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+          else
+            console.log('Login: Logged in!', user);
 
           if (user.displayName) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
 
@@ -326,7 +293,10 @@
 
           setTimeout( () => this.$router.push('/profile'), 1500 );
         } else {
-          console.log(`%cLogin.vue:%c Not Logged In!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+          if (process.client)
+            console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+          else
+            console.log('Login: Not logged in.');
         }
       },
 

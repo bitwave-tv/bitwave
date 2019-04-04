@@ -3,7 +3,9 @@
     <v-layout
       column
     >
-      <v-flex>
+      <v-flex
+        v-if="false"
+      >
         <v-tabs
           dark
           slider-color="#ff9800"
