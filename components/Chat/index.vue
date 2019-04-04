@@ -71,6 +71,7 @@
           >
             <v-text-field
               ref="chatmessageinput"
+              :value="message"
               :label="`Chatting as ${this.username}`"
               :color="dark ? 'yellow' : 'blue'"
               autocomplete="off"
@@ -210,7 +211,7 @@
           channel: this.page,
         };
         this.socket.emit('message', msg);
-        this.$refs.chatmessageinput.value = '';
+        // this.$refs.chatmessageinput.value = '';
         this.message = '';
         // this.scrollToBottom();
       },

@@ -1,11 +1,11 @@
 <template>
   <v-flex
     shrink
-    my-2
+    my-1
   >
     <v-layout
       row
-      px-2
+      px-3
     >
       <v-list-tile-avatar size="34">
         <slot name="avatar">
@@ -15,11 +15,11 @@
       <v-list-tile-content>
         <v-list-tile-sub-title>
           <v-layout>
-            <v-flex shrink class="mr-1 grey--text">[{{ time }}]</v-flex>
+            <v-flex shrink class="user-select-non mr-1 grey--text">[{{ time }}]</v-flex>
             <v-flex shrink class="font-weight-medium">{{ username }}</v-flex>
             <v-spacer/>
             <v-flex shrink>
-              <kbd class="mr-1" style="background-color: #607D8B;">{{ channel || 'global' }}</kbd>
+              <kbd class="user-select-non mr-1" style="background-color: #607D8B;">{{ channel || 'global' }}</kbd>
             </v-flex>
           </v-layout>
         </v-list-tile-sub-title>
@@ -70,6 +70,10 @@
 </script>
 
 <style lang='scss'>
+  user-select-none {
+    user-select: none;
+  }
+
   .v-list__tile__avatar {
     min-width: 42px;
   }
