@@ -9,10 +9,9 @@
       <v-sheet>
         <v-layout
           column
-          pt-1
-          pb-2
+          py-2
         >
-          <v-flex class="title text-xs-center py-2">
+          <v-flex class="subheading text-xs-center mb-1">
             Live Chat: {{ viewerCount }}
           </v-flex>
           <v-flex class="caption text-xs-center red--text">
@@ -28,6 +27,8 @@
 
     <!-- Chat Messages -->
     <v-layout
+      id="chat-scroll"
+      class="scrollbar"
       column
       fill-height
       style="overflow-y: scroll"
@@ -67,7 +68,7 @@
         <v-layout
           row
           justify-center
-          pt-3
+          pb-1
         >
           <v-flex
             xs11
@@ -75,15 +76,14 @@
             <v-text-field
               ref="chatmessageinput"
               :value="message"
-              :label="`Chatting as ${this.username}`"
+              :label="`Chat as ${this.username}...`"
               :color="dark ? 'yellow' : 'blue'"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
               spellcheck="true"
               single-line
-              outline
-              append-icon="message"
+              append-icon="send"
               counter="300"
               validate-on-blur
               @change="value => this.message = value"
@@ -255,5 +255,30 @@
   #sidechat {
     border-top: 3px yellow;
     background-color: #111;
+  }
+
+  #chat-scroll {
+    margin-right: 2px;
+    overscroll-behavior: contain;
+
+    &::-webkit-scrollbar-track
+    {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      border-radius: 3px;
+      background-color: #0a0a0a;
+    }
+
+    &::-webkit-scrollbar
+    {
+      width: 10px;
+      background-color: #0a0a0a;
+    }
+
+    &::-webkit-scrollbar-thumb
+    {
+      border-radius: 3px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+      background-color: #555;
+    }
   }
 </style>
