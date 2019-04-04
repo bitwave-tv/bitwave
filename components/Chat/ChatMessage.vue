@@ -15,11 +15,11 @@
       <v-list-tile-content>
         <v-list-tile-sub-title>
           <v-layout>
-            <v-flex shrink class="user-select-non mr-1 grey--text">[{{ time }}]</v-flex>
-            <v-flex shrink class="font-weight-medium">{{ username }}</v-flex>
+            <v-flex shrink class="user-select-non mr-1 grey--text text--darken-1">[{{ time }}]</v-flex>
+            <v-flex shrink class="font-weight-medium grey--text textlighten-1">{{ username }}</v-flex>
             <v-spacer/>
             <v-flex shrink>
-              <kbd class="user-select-non mr-1" style="background-color: #607D8B;">{{ channel || 'global' }}</kbd>
+              <kbd class="user-select-non mr-1" style="background-color: #607D8B99; font-size: 10px">{{ channel || 'global' }}</kbd>
             </v-flex>
           </v-layout>
         </v-list-tile-sub-title>

@@ -1,24 +1,30 @@
 <template>
   <v-layout
+    id="sidechat"
     column
     fill-height
   >
 
     <!-- Chat Header -->
-    <v-layout
-      column
-      py-1
-    >
-      <v-flex class="title text-xs-center py-2">
-        Live Chat: {{ viewerCount }}
-      </v-flex>
+    <v-flex>
+      <v-sheet>
+        <v-layout
+          column
+          pt-1
+          pb-2
+        >
+          <v-flex class="title text-xs-center py-2">
+            Live Chat: {{ viewerCount }}
+          </v-flex>
 
-      <v-flex class="caption text-xs-center red--text mb-3">
-        <v-icon small color="red" class="px-1">warning</v-icon>
-        WORK IN PROGRESS
-        <v-icon small color="red" class="px-1">warning</v-icon>
-      </v-flex>
-    </v-layout>
+          <v-flex class="caption text-xs-center red--text">
+            <v-icon small color="red" class="px-1">warning</v-icon>
+            WORK IN PROGRESS
+            <v-icon small color="red" class="px-1">warning</v-icon>
+          </v-flex>
+        </v-layout>
+      </v-sheet>
+    </v-flex>
 
     <v-divider/>
 
@@ -255,3 +261,10 @@
     },
   }
 </script>
+
+<style lang='scss'>
+  #sidechat {
+    border-top: 3px yellow;
+    background-color: #111;
+  }
+</style>
