@@ -82,11 +82,11 @@
               autocapitalize="off"
               spellcheck="true"
               single-line
-              append-icon="send"
+              append-outer-icon="send"
               counter="300"
               validate-on-blur
               @change="value => this.message = value"
-              @click:append.prevent="sendMessage"
+              @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
             ></v-text-field>
           </v-flex>
@@ -172,9 +172,7 @@
 
         const socket = socketio('api.bitwave.tv:443');
         this.socket = socket;
-        socket.on('connect', () => {
-          socket.emit('new user', user);
-        });
+        socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
         socket.on( 'hydrate', data => this.hydrate(data) );
         socket.on( 'message', data => this.rcvMessage(data) );
@@ -222,7 +220,6 @@
 
       username () {
         if (!this.user || !this.user.username) {
-          this.uid = this.createUID();
           return `troll:${this.uid}`;
         } else {
           return this.user.username;
@@ -241,6 +238,7 @@
     },
 
     mounted() {
+      this.uid = this.createUID();
       this.scrollToBottom();
     },
 

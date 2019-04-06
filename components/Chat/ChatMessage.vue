@@ -64,7 +64,7 @@
     },
 
     mounted() {
-      this.color = this.colorList[Math.floor(Math.random() * this.colorList.length)];
+      this.color = this.colorList[ Math.floor(Math.random() * this.colorList.length) ];
     },
   }
 </script>

@@ -52,7 +52,20 @@
         </v-card>
       </v-flex>
       <v-flex class="px-3">
-        <h2>{{ streamTitle }}</h2>
+        <v-layout>
+          <v-flex shrink>
+            <v-chip
+              v-if="nsfw"
+              color="red"
+              class="mr-2"
+              small
+              outline
+            >NSFW</v-chip>
+          </v-flex>
+          <v-flex shrink>
+            <h2>{{ streamTitle }}</h2>
+          </v-flex>
+        </v-layout>
       </v-flex>
     </v-layout>
   </div>
@@ -135,12 +148,14 @@
         const poster = data.poster || 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg';
         const streamTitle = data.title || '⚠ STREAM NOT FOUND ⚠';
         const live = data.live || false;
+        const nsfw = data.nsfw || false;
 
         return {
           name: name,
           poster: poster,
           streamTitle: streamTitle,
           live: live,
+          nsfw: nsfw,
         }
       } catch (error) {
         console.log(`ERROR: Failed to find user ${params.watch}`);
@@ -151,6 +166,7 @@
           poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg',
           streamTitle: '404 - Stream not found',
           live: false,
+          nsfw: false,
         }
       }
     },
