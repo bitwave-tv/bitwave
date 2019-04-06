@@ -59,7 +59,7 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
-    { src: '~/plugins/nuxt-client-init', ssr: false },
+    // { src: '~/plugins/nuxt-client-init', ssr: false },
   ],
 
   /*
