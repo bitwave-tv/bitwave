@@ -135,6 +135,7 @@
         uid: null,
         viewerCount: 0,
         chatLimit: 100,
+        chatContainer: null,
       }
     },
 
@@ -163,7 +164,7 @@
       },
 
       scrollToBottom() {
-        this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight;
+        this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
       },
 
       connectChat(user) {
@@ -190,8 +191,10 @@
       },
 
       rcvMessage(message) {
+        const pattern = `@${this.username}\\b`;
+        message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
         this.messages.push({ ...{ channel: 'null' }, ...message });
-        setTimeout(() => this.scrollToBottom(), 50);
+        setTimeout(() => this.scrollToBottom(), 500);
         if (this.messages.length > this.chatLimit) this.messages.shift();
       },
 
@@ -239,6 +242,7 @@
 
     mounted() {
       this.uid = this.createUID();
+      this.chatContainer = this.$refs.chat;
       this.scrollToBottom();
     },
 
@@ -255,6 +259,17 @@
 
     p {
       margin-bottom: 0;
+    }
+
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #2196f3;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: yellow;
     }
   }
 
