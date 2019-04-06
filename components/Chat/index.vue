@@ -20,6 +20,18 @@
             <v-icon small color="red" class="px-1">warning</v-icon>
           </v-flex>
         </v-layout>
+        <v-btn
+          small
+          absolute
+          right
+          bottom
+          fab
+          light
+          color="yellow"
+          @click="scrollToBottom(true)"
+        >
+          <v-icon>keyboard_arrow_down</v-icon>
+        </v-btn>
       </v-sheet>
     </v-flex>
 
@@ -27,12 +39,12 @@
 
     <!-- Chat Messages -->
     <v-layout
+      ref="chat"
       id="chat-scroll"
       class="scrollbar"
       column
       fill-height
       style="overflow-y: scroll"
-      ref="chat"
     >
       <v-flex>
         <v-layout
@@ -48,12 +60,7 @@
             :channel="message.channel"
             :timestamp="message.timestamp"
           >
-            <img
-              v-if="message.avatar"
-              slot="avatar"
-              :src="message.avatar"
-              :alt="message.username"
-            >
+            <img v-if="message.avatar" slot="avatar" :src="message.avatar" alt="">
             <div slot="message" v-html="message.message"></div>
           </chat-message>
         </v-layout>
@@ -163,8 +170,10 @@
         });
       },
 
-      scrollToBottom() {
-        this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+      scrollToBottom(force) {
+        const scrollTop = this.chatContainer.scrollTop;
+        const scrollHeight = this.chatContainer.scrollHeight;
+        if ( !!force || (scrollTop / scrollHeight * 100 > 95) ) this.chatContainer.scrollTop = scrollHeight;
       },
 
       connectChat(user) {
@@ -187,21 +196,19 @@
 
       hydrate(data) {
         this.messages = data;
-        setTimeout(() => this.scrollToBottom(), 50);
+        this.$nextTick( () => this.scrollToBottom(true) );
       },
 
       rcvMessage(message) {
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
         this.messages.push({ ...{ channel: 'null' }, ...message });
-        setTimeout(() => this.scrollToBottom(), 500);
         if (this.messages.length > this.chatLimit) this.messages.shift();
+        this.$nextTick( () => this.scrollToBottom() );
       },
 
       sendMessage() {
-        if (this.message.length > 300) {
-          return false;
-        }
+        if (this.message.length > 300) return false;
 
         const msg = {
           message: this.message,
@@ -231,8 +238,7 @@
 
       page () {
         const route = this.$route.params;
-        if (route) return route.watch;
-        else return 'global';
+        return route ? route.watch : 'global';
       },
     },
 
@@ -243,7 +249,6 @@
     mounted() {
       this.uid = this.createUID();
       this.chatContainer = this.$refs.chat;
-      this.scrollToBottom();
     },
 
     beforeDestroy() {
