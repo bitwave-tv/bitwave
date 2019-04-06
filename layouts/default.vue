@@ -42,7 +42,8 @@
       <user/>
 
       <v-btn
-        v-show="!$vuetify.breakpoint.mdAndUp"
+        v-show="mobile"
+        :class="{ 'mr-2': mobile }"
         icon
         @click.stop="rightDrawer = !rightDrawer"
       >
@@ -130,6 +131,10 @@
       ...mapState({
         currentUser: state => state.user.currentUser,
       }),
+
+      mobile () {
+        return process.client ? !this.$vuetify.breakpoint.mdAndUp : false;
+      },
     },
   }
 </script>

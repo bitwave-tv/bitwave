@@ -69,10 +69,9 @@
           row
           justify-center
           pb-1
+          px-3
         >
-          <v-flex
-            xs11
-          >
+          <v-flex>
             <v-text-field
               ref="chatmessageinput"
               :value="message"
@@ -207,8 +206,8 @@
           message: this.message,
           channel: this.page,
         };
-        this.socket.emit('message', msg);
         this.message = '';
+        this.socket.emit('message', msg);
       },
 
       createUID() {

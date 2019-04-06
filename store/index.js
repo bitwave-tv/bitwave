@@ -39,7 +39,7 @@ export const mutations = {
 
 export const actions = {
 
-  nuxtServerInit({ commit }, { req, params }) {
+  nuxtServerInit ({ commit }, { req, params }) {
     let authUser = null;
     let metaUser = null;
     let user     = null;
@@ -77,7 +77,14 @@ export const actions = {
     commit('setUser', user);
   },
 
-  async login({ commit }, user) {
+  async nuxtClientInit ({ dispatch }, { req, params }) {
+    console.log(`Client Init: ${params}`);
+    console.log(`${req}`);
+
+    await dispatch('nuxtServerInit', { req, params });
+  },
+
+  async login ({ commit }, user) {
     const token = await user.getIdToken();
     const refreshToken = user.refreshToken;
     const uid = user.uid;
@@ -104,7 +111,7 @@ export const actions = {
     });
   },
 
-  async logout({ commit }) {
+  async logout ({ commit }) {
     try {
       if (unsubscribeUser) unsubscribeUser();
       await auth.signOut();

@@ -158,8 +158,10 @@
     mounted() {
       this.playerInitialize();
       console.log('this is current player instance object:', this.player);
-      if (this.name !== '404')
+      if (this.live)
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
+      else if (this.name !== '404')
+        console.log(`${this.name} is offline.`);
     },
 
     beforeDestroy() {
