@@ -5,10 +5,8 @@
         <h1 class="ml-2">My Account</h1>
       </v-flex>
 
-      <v-flex shrink>
-        <v-card
-          class="mb-2 pa-3"
-        >
+      <v-flex shrink style="min-width: 35%;">
+        <v-card class="mb-4 pa-3">
           <v-layout column>
             <v-flex>
               <v-layout
@@ -25,7 +23,7 @@
                 </v-flex>
                 <v-flex shrink class="text-xs-center my-1">
                   <h3>THE REST OF THIS SHIT IS COMING SOON</h3>
-                  <p>send complaints for $2/issue via paypal.</p>
+                  <p>send complaints for $5/issue via paypal.</p>
                   <v-btn
                     color="red"
                     href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
@@ -34,7 +32,6 @@
                 </v-flex>
               </v-layout>
             </v-flex>
-
             <v-flex v-if="user" class="my-2">
               <v-layout column>
 
@@ -96,6 +93,84 @@
           </v-layout>
         </v-card>
       </v-flex>
+
+      <v-flex
+        v-if="showStreamInfo"
+        style="min-width: 35%;"
+      >
+        <v-card class="mb-2 pa-3">
+          <v-layout column>
+            <v-flex class="mb-2">
+              <h2>Stream Info</h2>
+            </v-flex>
+            <v-flex class="mb-2">
+              <v-text-field
+                v-model="streamData.title"
+                label="Stream Title"
+                color="yellow"
+                outline
+                hide-details
+                :loading="dataLoading || saveLoading"
+                @input="showSave = true"
+              ></v-text-field>
+            </v-flex>
+            <v-flex shrink>
+              <v-switch
+                v-model="streamData.nsfw"
+                label="NSFW"
+                color="yellow"
+                hide-details
+                @change="showSave = true"
+              ></v-switch>
+            </v-flex>
+            <v-layout class="mb-3">
+              <v-spacer/>
+              <v-btn
+                :disabled="!showSave"
+                :loading="saveLoading"
+                color="yellow"
+                outline
+                @click="updateStreamData"
+              >save</v-btn>
+            </v-layout>
+            <v-flex>
+              <v-text-field
+                value="rtmp://stream.bitwave.tv/live"
+                label="Stream URL"
+                color="yellow"
+                readonly
+                outline
+                :loading="dataLoading"
+              ></v-text-field>
+            </v-flex>
+            <v-flex>
+              <v-text-field
+                v-model="streamData.key"
+                label="Stream Key"
+                color="yellow"
+                readonly
+                outline
+                :messages="keyMessage"
+                :loading="dataLoading || keyLoading"
+                :type="showKey ? 'text' : 'password'"
+                :append-icon="showKey ? 'visibility' : 'visibility_off'"
+                @click:append="showKey = !showKey"
+                @click="copyToClipboard"
+                @focus="copyToClipboard"
+              ></v-text-field>
+            </v-flex>
+            <v-layout>
+              <v-spacer/>
+              <v-btn
+                color="yellow"
+                outline
+                :loading="keyLoading"
+                @click="resetStreamKey"
+              >Reset</v-btn>
+            </v-layout>
+          </v-layout>
+        </v-card>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -124,6 +199,23 @@
         success: {
           message: '',
         },
+
+        streamDocListener: null,
+
+        streamData: {
+          title: '',
+          nsfw: false,
+          url: '',
+          key: '',
+        },
+
+        dataLoading: true,
+        showStreamInfo: true,
+        showKey: false,
+        showSave: false,
+        saveLoading: false,
+        keyLoading: false,
+        keyMessage: [''],
       }
     },
 
@@ -139,6 +231,67 @@
           if ( !this.user ) await this.$store.dispatch('login', user);
         } else {
           this.$router.push('/login');
+        }
+      },
+
+      getStreamData () {
+        this.dataLoading = true;
+        // const userId = this.user.uid;
+        const stream = this.user.username.toLowerCase();
+        const streamRef = db.collection('streams').doc(stream);
+        return streamRef.onSnapshot( async doc => await this.streamDataChanged( doc.data() ), () => this.showStreamInfo = false );
+      },
+
+      async streamDataChanged (data) {
+        console.log(data);
+        this.streamData.title = data.title;
+        this.streamData.key = `${this.user.username}?key=${data.key}`;
+        this.streamData.nsfw = data.nsfw;
+        this.dataLoading = false;
+      },
+
+      async updateStreamData () {
+        this.saveLoading = true;
+        const title = this.streamData.title;
+        const nsfw = this.streamData.nsfw;
+        const stream = this.user.username.toLowerCase();
+        const streamRef = db.collection('streams').doc(stream);
+        await streamRef.update({
+          nsfw: nsfw,
+          title: title,
+        });
+        this.saveLoading = false;
+        this.showSave = false;
+      },
+
+      async resetStreamKey () {
+        this.keyLoading = true;
+        const key = Math.random().toString(16).substr(2, 9);
+        const stream = this.user.username.toLowerCase();
+        const streamRef = db.collection('streams').doc(stream);
+        await streamRef.update({
+          key: key,
+        });
+        await this.kickStream();
+      },
+
+      async kickStream() {
+        const mode = 'drop';
+        const app = 'live';
+        const user = this.user.username;
+        const server = 'stream.bitwave.tv';
+        const url = `https://${server}/control/${mode}/publisher?app=${app}&name=${user}`;
+        await this.$axios.$get(url);
+        this.keyLoading = false;
+      },
+
+      copyToClipboard () {
+        try {
+          document.execCommand('copy');
+          this.keyMessage = ['Copied to clipboard'];
+          setTimeout( () => this.keyMessage = [], 2000);
+        } catch (error) {
+          console.log(error);
         }
       },
     },
@@ -161,6 +314,11 @@
 
     mounted() {
       auth.onAuthStateChanged( user => this.authenticated(user) );
+      this.streamDocListener = this.getStreamData();
     },
+
+    beforeDestroy() {
+      if (this.streamDocListener) this.streamDocListener()
+    }
   }
 </script>

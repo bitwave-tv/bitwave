@@ -171,6 +171,12 @@
       }
     },
 
+    beforeRouteUpdate (to, from, next) {
+      const params = to.params;
+      if (params) console.log(`Watching: ${params.watch}`);
+      next();
+    },
+
     mounted() {
       this.playerInitialize();
       console.log('this is current player instance object:', this.player);

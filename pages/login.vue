@@ -45,6 +45,7 @@
                 :counter="true"
                 :rules="[ rules.name ]"
                 label="Username"
+                autocomplete="off"
                 required
                 validate-on-blur
                 :loading="loading"
@@ -57,6 +58,7 @@
                 v-model="user.email"
                 :rules="rules.email"
                 label="E-mail"
+                autocomplete="email"
                 required
                 validate-on-blur
                 :loading="loading"
@@ -68,11 +70,12 @@
                 key="password"
                 v-model="user.password"
                 :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                :rules="[ rules.required, v => v.length > 8 || 'Min 8 Characters' ]"
+                :rules="[ rules.required, rules.min ]"
                 :type="showPassword ? 'text' : 'password'"
                 name="input-10-1"
                 label="Password"
                 hint="At least 8 characters"
+                autocomplete="password"
                 counter
                 validate-on-blur
                 :loading="loading"
@@ -175,7 +178,7 @@
         shouldStayLoggedIn: true,
         rules: {
           required: value => !!value || 'Required.',
-          min: value => value.length >= 8 || 'Min 8 characters',
+          min: value => (value && value.length >= 8) || 'Min 8 characters',
           name: v => !!v || 'Name is required',
           email: [
             v => !!v || 'Email is required',
@@ -223,6 +226,7 @@
           console.log(userCredential);
           const userId = userCredential.user.uid;
           const docRef = await db.collection('users').doc(userId).set({
+            _username: username.toLowerCase(),
             uid: userId,
             username: username,
             email: email,
@@ -272,7 +276,7 @@
       },
 
       reset () {
-        this.$refs.form.reset()
+        this.$refs.loginForm.reset()
       },
 
       resetValidation () {
