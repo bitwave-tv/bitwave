@@ -54,7 +54,7 @@
               :src="message.avatar"
               :alt="message.username"
             >
-            <template slot="message">{{ message.message }}</template>
+            <div slot="message" v-html="message.message"></div>
           </chat-message>
         </v-layout>
       </v-flex>
@@ -252,6 +252,10 @@
   #sidechat {
     border-top: 3px yellow;
     background-color: #111;
+
+    p {
+      margin-bottom: 0;
+    }
   }
 
   #chat-scroll {
