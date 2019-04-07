@@ -12,7 +12,7 @@
           py-2
         >
           <v-flex class="subheading text-xs-center mb-1">
-            Live Chat: {{ viewerCount }}
+            Live Chat: <b>{{ viewerCount }}</b>
           </v-flex>
           <v-flex class="caption text-xs-center red--text">
             <v-icon small color="red" class="px-1">warning</v-icon>
@@ -28,7 +28,7 @@
           fab
           light
           color="yellow"
-          @click="scrollToBottom(true)"
+          @click="scrollToChatBottom"
         >
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
@@ -37,23 +37,63 @@
 
     <v-divider/>
 
+    <v-flex
+      fill-height
+      style="overflow: hidden;"
+    >
+      <dynamic-scroller
+        id="chat-scroll"
+        ref="scroller"
+        :items="messages"
+        key-field="timestamp"
+        :min-item-size="60"
+        :buffer="90"
+        :emitUpdate="false"
+      >
+        <dynamic-scroller-item
+          slot-scope="{ item, index, active }"
+          :item="item"
+          :active="active"
+          :size-dependencies="[]"
+          :data-index="index"
+        >
+          <template #before>
+            <v-spacer fill-height/>
+          </template>
+
+          <chat-message
+            :key="item.timestamp"
+            :username="item.username"
+            :channel="item.channel"
+            :timestamp="getTime(item.timestamp)"
+            :avatar="item.avatar"
+          ><div slot="message" v-html="item.message"></div>
+          </chat-message>
+        </dynamic-scroller-item>
+      </dynamic-scroller>
+    </v-flex>
+
+
+
     <!-- Chat Messages -->
-    <v-layout
+    <!--<v-layout
       ref="chat"
       id="chat-scroll"
       class="scrollbar"
       column
       fill-height
       style="overflow-y: scroll"
-    >
-      <v-flex>
-        <v-layout
+    >-->
+<!--      <v-flex>-->
+        <!--<v-layout
           column
           fill-height
           justify-end
-        >
-          <v-spacer fill-height/>
-          <chat-message
+        >-->
+<!--        <v-layout column>-->
+<!--          <v-spacer fill-height/>-->
+
+          <!--<chat-message
             v-for="message in messages"
             :key="message.timestamp"
             :username="message.username"
@@ -62,10 +102,39 @@
           >
             <img v-if="message.avatar" slot="avatar" :src="message.avatar" alt="">
             <div slot="message" v-html="message.message"></div>
-          </chat-message>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+          </chat-message>-->
+
+          <!--<dynamic-scroller
+            ref="scroller"
+            :items="messages"
+            key-field="timestamp"
+            :min-item-size="60"
+            style="height: 100%;"
+            :buffer="500"
+          >
+            <dynamic-scroller-item
+              slot-scope="{ item, index, active }"
+              :item="item"
+              :active="active"
+              :size-dependencies="[ item.message, ]"
+              :data-index="index"
+            >
+              <chat-message
+                :key="item.timestamp"
+                :username="item.username"
+                :channel="item.channel"
+                :timestamp="item.timestamp"
+                :avatar="item.avatar"
+                :message="item.message"
+              >
+                <div slot="message" v-html="item.message"></div>
+              </chat-message>
+            </dynamic-scroller-item>
+          </dynamic-scroller>-->
+
+<!--        </v-layout>-->
+<!--      </v-flex>-->
+<!--    </v-layout>-->
 
     <v-divider/>
 
@@ -106,10 +175,14 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
   import ChatMessage from './ChatMessage'
+  import moment from 'moment'
 
   import { mapState } from 'vuex'
 
   import socketio from 'socket.io-client'
+
+  import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+  import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
   export default {
     name: 'Chat',
@@ -122,6 +195,8 @@
 
     components: {
       ChatMessage,
+      DynamicScroller,
+      DynamicScrollerItem,
     },
 
     data() {
@@ -171,9 +246,19 @@
       },
 
       scrollToBottom(force) {
-        const scrollTop = this.chatContainer.scrollTop;
-        const scrollHeight = this.chatContainer.scrollHeight;
-        if ( !!force || (scrollTop / scrollHeight * 100 > 95) ) this.chatContainer.scrollTop = scrollHeight;
+        const scrollTop = this.chatContainer.$el.scrollTop;
+        const scrollHeight = this.chatContainer.$el.scrollHeight;
+        const scrollPercent = scrollTop / scrollHeight * 100;
+        console.log(scrollPercent);
+        if ( !!force || (scrollTop / scrollHeight * 100 > 70) ) {
+          console.log('Scroll Down');
+          this.chatContainer.$el.scrollTop = scrollHeight + 250;
+          // this.scrollToChatBottom();
+        }
+      },
+
+      scrollToChatBottom () {
+        this.$nextTick( () => this.$refs.scroller.scrollToBottom() );
       },
 
       connectChat(user) {
@@ -195,14 +280,17 @@
       },
 
       hydrate(data) {
-        this.messages = data;
+        const size = data.length;
+        this.messages = size > 100 ? data.splice(99, size) : data;
+        // this.scrollToChatBottom();
+        // this.$nextTick( () => this.scrollToChatBottom() );
         this.$nextTick( () => this.scrollToBottom(true) );
       },
 
       rcvMessage(message) {
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
-        this.messages.push({ ...{ channel: 'null' }, ...message });
+        this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         if (this.messages.length > this.chatLimit) this.messages.shift();
         this.$nextTick( () => this.scrollToBottom() );
       },
@@ -220,6 +308,10 @@
 
       createUID() {
         return [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
+      },
+
+      getTime(timestamp) {
+        return moment(timestamp).format('HH:mm');
       },
     },
 
@@ -248,7 +340,7 @@
 
     mounted() {
       this.uid = this.createUID();
-      this.chatContainer = this.$refs.chat;
+      this.chatContainer = this.$refs.scroller;
     },
 
     beforeDestroy() {
@@ -279,6 +371,7 @@
   }
 
   #chat-scroll {
+    height: 100%;
     margin-right: 2px;
     overscroll-behavior: contain;
 
