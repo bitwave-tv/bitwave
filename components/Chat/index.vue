@@ -28,7 +28,7 @@
           fab
           light
           color="yellow"
-          @click="scrollToChatBottom"
+          @click="scrollToBottom"
         >
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
@@ -72,69 +72,6 @@
         </dynamic-scroller-item>
       </dynamic-scroller>
     </v-flex>
-
-
-
-    <!-- Chat Messages -->
-    <!--<v-layout
-      ref="chat"
-      id="chat-scroll"
-      class="scrollbar"
-      column
-      fill-height
-      style="overflow-y: scroll"
-    >-->
-<!--      <v-flex>-->
-        <!--<v-layout
-          column
-          fill-height
-          justify-end
-        >-->
-<!--        <v-layout column>-->
-<!--          <v-spacer fill-height/>-->
-
-          <!--<chat-message
-            v-for="message in messages"
-            :key="message.timestamp"
-            :username="message.username"
-            :channel="message.channel"
-            :timestamp="message.timestamp"
-          >
-            <img v-if="message.avatar" slot="avatar" :src="message.avatar" alt="">
-            <div slot="message" v-html="message.message"></div>
-          </chat-message>-->
-
-          <!--<dynamic-scroller
-            ref="scroller"
-            :items="messages"
-            key-field="timestamp"
-            :min-item-size="60"
-            style="height: 100%;"
-            :buffer="500"
-          >
-            <dynamic-scroller-item
-              slot-scope="{ item, index, active }"
-              :item="item"
-              :active="active"
-              :size-dependencies="[ item.message, ]"
-              :data-index="index"
-            >
-              <chat-message
-                :key="item.timestamp"
-                :username="item.username"
-                :channel="item.channel"
-                :timestamp="item.timestamp"
-                :avatar="item.avatar"
-                :message="item.message"
-              >
-                <div slot="message" v-html="item.message"></div>
-              </chat-message>
-            </dynamic-scroller-item>
-          </dynamic-scroller>-->
-
-<!--        </v-layout>-->
-<!--      </v-flex>-->
-<!--    </v-layout>-->
 
     <v-divider/>
 
@@ -245,15 +182,15 @@
         });
       },
 
-      scrollToBottom(force) {
+      async scrollToBottom(force) {
         const scrollTop = this.chatContainer.$el.scrollTop;
         const scrollHeight = this.chatContainer.$el.scrollHeight;
         const scrollPercent = scrollTop / scrollHeight * 100;
         console.log(scrollPercent);
-        if ( !!force || (scrollTop / scrollHeight * 100 > 70) ) {
+        if ( !!force || (scrollPercent > 70) ) {
           console.log('Scroll Down');
-          this.chatContainer.$el.scrollTop = scrollHeight + 250;
-          // this.scrollToChatBottom();
+          // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
+          setTimeout(() => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250);
         }
       },
 
@@ -269,8 +206,8 @@
         this.socket = socket;
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
-        socket.on( 'hydrate', data => this.hydrate(data) );
-        socket.on( 'message', data => this.rcvMessage(data) );
+        socket.on( 'hydrate', async data => await this.hydrate(data) );
+        socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
       },
 
@@ -279,20 +216,19 @@
         console.log(data);
       },
 
-      hydrate(data) {
+      async hydrate(data) {
         const size = data.length;
         this.messages = size > 100 ? data.splice(99, size) : data;
-        // this.scrollToChatBottom();
         // this.$nextTick( () => this.scrollToChatBottom() );
-        this.$nextTick( () => this.scrollToBottom(true) );
+        await this.$nextTick( async () => await this.scrollToBottom(true) );
       },
 
-      rcvMessage(message) {
+      async rcvMessage(message) {
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         if (this.messages.length > this.chatLimit) this.messages.shift();
-        this.$nextTick( () => this.scrollToBottom() );
+        await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
       sendMessage() {
@@ -311,7 +247,7 @@
       },
 
       getTime(timestamp) {
-        return moment(timestamp).format('HH:mm');
+        return `[${moment(timestamp).format('HH:mm')}]`;
       },
     },
 

@@ -8,11 +8,11 @@
       <v-list-tile-content>
         <v-list-tile-sub-title>
           <v-layout>
-            <v-flex shrink class="time mr-1 grey--text text--darken-1">[{{ timestamp }}]</v-flex>
-            <v-flex shrink class="font-weight-medium grey--text textlighten-1">{{ username }}</v-flex>
+            <v-flex shrink class="time mr-1">{{ timestamp }}</v-flex>
+            <v-flex shrink class="username">{{ username }}</v-flex>
             <v-spacer/>
             <v-flex shrink>
-              <kbd class="mr-1">{{ channel || 'global' }}</kbd>
+              <kbd>{{ channel || 'global' }}</kbd>
             </v-flex>
           </v-layout>
         </v-list-tile-sub-title>
@@ -77,6 +77,14 @@
 
     .time {
       user-select: none;
+      color: #757575;
+      caret-color: #757575;
+    }
+
+    .username {
+      font-weight: 500;
+      color: #9e9e9e;
+      caret-color: #9e9e9e;
     }
   }
 
