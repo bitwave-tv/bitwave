@@ -86,6 +86,12 @@
       color: #9e9e9e;
       caret-color: #9e9e9e;
     }
+
+    blockquote p {
+      font-weight: 500;
+      color: #789922;
+      caret-color: #789922;
+    }
   }
 
 </style>
