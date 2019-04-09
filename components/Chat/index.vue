@@ -190,6 +190,7 @@
         if ( !!force || (scrollPercent > 70) ) {
           console.log('Scroll Down');
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
+          if (this.messages.length > this.chatLimit) this.messages.shift();
           setTimeout(() => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250);
         }
       },
@@ -227,7 +228,7 @@
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
-        if (this.messages.length > this.chatLimit) this.messages.shift();
+        // if (this.messages.length > this.chatLimit) this.messages.shift();
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
