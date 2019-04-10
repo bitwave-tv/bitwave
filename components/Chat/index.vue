@@ -153,7 +153,7 @@
         ],
         uid: null,
         viewerCount: 0,
-        chatLimit: 1000,
+        chatLimit: 250,
         chatContainer: null,
       }
     },
@@ -187,7 +187,7 @@
         const scrollHeight = this.chatContainer.$el.scrollHeight;
         const scrollDistance = scrollHeight - scrollTop;
         console.log(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance}`);
-        if ( !!force || scrollDistance > (2.5 * screen.height) ) {
+        if ( !!force || scrollDistance < (2.5 * screen.height) ) {
           console.log('Scroll Down');
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           if (this.messages.length > this.chatLimit) this.messages.shift();
@@ -315,7 +315,7 @@
     &::-webkit-scrollbar-track
     {
       -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-      border-radius: 3px;
+      border-radius: 0;
       background-color: #0a0a0a;
     }
 
@@ -327,7 +327,7 @@
 
     &::-webkit-scrollbar-thumb
     {
-      border-radius: 3px;
+      border-radius: 0;
       -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
       background-color: #555;
     }
