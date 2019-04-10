@@ -153,7 +153,7 @@
         ],
         uid: null,
         viewerCount: 0,
-        chatLimit: 100,
+        chatLimit: 1000,
         chatContainer: null,
       }
     },
@@ -185,9 +185,9 @@
       async scrollToBottom(force) {
         const scrollTop = this.chatContainer.$el.scrollTop;
         const scrollHeight = this.chatContainer.$el.scrollHeight;
-        const scrollPercent = scrollTop / scrollHeight * 100;
-        console.log(scrollPercent);
-        if ( !!force || (scrollPercent > 70) ) {
+        const scrollDistance = scrollHeight - scrollTop;
+        console.log(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance}`);
+        if ( !!force || scrollDistance > (2.5 * screen.height) ) {
           console.log('Scroll Down');
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           if (this.messages.length > this.chatLimit) this.messages.shift();

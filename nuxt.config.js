@@ -43,6 +43,21 @@ module.exports = {
     'video.js/dist/video-js.css',
   ],
 
+  workbox: {
+    runtimeCaching: [
+      {
+        urlPattern: 'https://stream.bitwave.tv/stream/.*',
+        strategyOptions: {
+          cacheName: 'HLS-cache',
+          cacheExpiration: {
+            maxEntries: 200,
+            maxAgeSeconds: 600
+          }
+        }
+      }
+    ]
+  },
+
   /*
   ** Plugins to load before mounting the App
   */

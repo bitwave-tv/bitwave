@@ -15,9 +15,9 @@
                 row
               >
                 <v-flex shrink class="ma-3">
-                  <v-avatar color="white" size="64">
+                  <v-avatar color="white" size="100">
                     <v-img
-                      src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/shield.png"
+                      :src="imageUrl || 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/shield.png'"
                       alt="avatar" />
                   </v-avatar>
                 </v-flex>
@@ -36,6 +36,51 @@
               <v-layout column>
 
                 <h2 class="mb-2">Profile</h2>
+
+                <v-flex>
+                  <v-text-field
+                    v-model="imageName"
+                    :loading="uploadingAvatar"
+                    label="Upload new profile photo"
+                    color=""
+                    solo
+                    light
+                    read-only
+                    spellcheck="off"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    prepend-inner-icon="attach_file"
+                    @click='pickFile'
+                  >
+                    <template v-slot:append>
+                      <v-btn
+                        :loading="uploadingAvatar"
+                        color="primary"
+                        :outline="!imageFile"
+                        @click="uploadFile"
+                      >{{ imageFile ? 'save' : 'open' }}</v-btn>
+                    </template>
+                  </v-text-field>
+                  <input
+                    type="file"
+                    style="display: none"
+                    ref="image"
+                    accept="image/*"
+                    @change="onFilePicked"
+                  >
+                </v-flex>
+
+                <!--<v-layout class="mb-3">
+                  <v-spacer/>
+                  <v-btn
+                    :disabled="!imageFile"
+                    :loading="uploadingAvatar"
+                    color="yellow"
+                    outline
+                    @click="uploadFile"
+                  >save</v-btn>
+                </v-layout>-->
 
                 <v-flex>
                   <v-text-field
@@ -110,7 +155,7 @@
                 color="yellow"
                 outline
                 hide-details
-                :loading="dataLoading || saveLoading"
+                :loading="streamDataLoading || saveLoading"
                 @input="showSave = true"
               ></v-text-field>
             </v-flex>
@@ -140,7 +185,7 @@
                 color="yellow"
                 readonly
                 outline
-                :loading="dataLoading"
+                :loading="streamDataLoading"
               ></v-text-field>
             </v-flex>
             <v-flex>
@@ -151,7 +196,7 @@
                 readonly
                 outline
                 :messages="keyMessage"
-                :loading="dataLoading || keyLoading"
+                :loading="streamDataLoading || keyLoading"
                 :type="showKey ? 'text' : 'password'"
                 :append-icon="showKey ? 'visibility' : 'visibility_off'"
                 @click:append="showKey = !showKey"
@@ -209,13 +254,19 @@
           key: '',
         },
 
-        dataLoading: true,
+        streamDataLoading: true,
+        profileDataLoading: true,
         showStreamInfo: true,
         showKey: false,
         showSave: false,
         saveLoading: false,
         keyLoading: false,
         keyMessage: [''],
+
+        imageName: '',
+        imageUrl: '',
+        imageFile: null,
+        uploadingAvatar: false,
       }
     },
 
@@ -235,11 +286,25 @@
       },
 
       getStreamData () {
-        this.dataLoading = true;
+        this.streamDataLoading = true;
         // const userId = this.user.uid;
         const stream = this.user.username.toLowerCase();
         const streamRef = db.collection('streams').doc(stream);
         return streamRef.onSnapshot( async doc => await this.streamDataChanged( doc.data() ), () => this.showStreamInfo = false );
+      },
+
+      getProfileData () {
+        this.profileDataLoading = true;
+        const userId = this.user.uid;
+        const profileRef = db.collection('users').doc(userId);
+        return profileRef.onSnapshot( async doc => await this.profileDataChanged(doc.data() ), err => console.log(err) );
+      },
+
+      async profileDataChanged (data) {
+        console.log(data);
+        if (data.avatar) this.imageUrl = data.avatar;
+        // rest of profile is managed by store
+        this.profileDataLoading = false;
       },
 
       async streamDataChanged (data) {
@@ -247,7 +312,7 @@
         this.streamData.title = data.title;
         this.streamData.key = `${this.user.username}?key=${data.key}`;
         this.streamData.nsfw = data.nsfw;
-        this.dataLoading = false;
+        this.streamDataLoading = false;
       },
 
       async updateStreamData () {
@@ -294,6 +359,65 @@
           console.log(error);
         }
       },
+
+      pickFile() {
+        this.$refs.image.click ();
+      },
+
+      onFilePicked(e) {
+        const files = e.target.files;
+        if(files[0] !== undefined) {
+          this.imageName = files[0].name;
+          if(this.imageName.lastIndexOf('.') <= 0) {
+            return;
+          }
+          const fr = new FileReader ();
+          fr.readAsDataURL(files[0]);
+          fr.addEventListener('load', () => {
+            this.imageUrl = fr.result;
+            this.imageFile = files[0]; // this is an image file that can be sent to server...
+          })
+        } else {
+          this.imageName = '';
+          this.imageFile = null;
+          this.imageUrl = '';
+        }
+      },
+
+      async uploadFile() {
+        if ( !this.imageFile ) {
+          this.$refs.image.click ();
+          return false;
+        }
+        this.uploadingAvatar = true;
+        const formData = new FormData();
+        formData.append('upload', this.imageFile);
+        try {
+          // const { data } = await this.$axios.post('http://localhost:4000/upload/image', formData, {
+          const { data } = await this.$axios.post('https://api.bitwave.tv/upload', formData, {
+            headers: {
+              'content-type': 'multipart/formdata',
+            },
+          });
+          console.log(`Upload successfull.`);
+          console.log(data);
+          this.imageUrl = data.transforms.find(image => image.id === 'thumbnail').location;
+          this.saveUserAvatar(this.imageUrl);
+        } catch (error) {
+          console.log(`Upload failed!`);
+          console.log(error.message);
+        }
+        this.uploadingAvatar = false;
+      },
+
+      async saveUserAvatar(url) {
+        const userId = this.user.uid;
+        const docRef = await db.collection('users').doc(userId).update({
+          avatar: url,
+        });
+        this.imageFile = null;
+        this.imageName = '';
+      },
     },
 
     computed: {
@@ -315,10 +439,12 @@
     mounted() {
       auth.onAuthStateChanged( user => this.authenticated(user) );
       this.streamDocListener = this.getStreamData();
+      this.profileDocListener = this.getProfileData();
     },
 
     beforeDestroy() {
-      if (this.streamDocListener) this.streamDocListener()
+      if (this.streamDocListener) this.streamDocListener();
+      if (this.profileDocListener) this.profileDocListener();
     }
   }
 </script>
