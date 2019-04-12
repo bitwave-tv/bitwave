@@ -93,8 +93,8 @@
       caret-color: #789922;
     }
 
-    img {
-      height: 18px;
+    p img {
+      height: 28px;
     }
   }
 
