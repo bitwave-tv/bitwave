@@ -92,6 +92,10 @@
       color: #789922;
       caret-color: #789922;
     }
+
+    img {
+      height: 18px;
+    }
   }
 
 </style>
