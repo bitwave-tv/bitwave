@@ -31,6 +31,10 @@ export const mutations = {
     state.user = user;
   },
 
+  setUserCookie(state, user) {
+    if (user) Cookie.set('user', user);
+  },
+
   setMetaUser(state, data) {
     state.metaUser = data;
   },

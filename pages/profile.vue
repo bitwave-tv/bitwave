@@ -304,6 +304,8 @@
         console.log(data);
         if (data.avatar) this.imageUrl = data.avatar;
         // rest of profile is managed by store
+        this.$store.commit('setUser', data);
+        this.$store.commit('setUserCookie', data);
         this.profileDataLoading = false;
       },
 
@@ -412,9 +414,19 @@
 
       async saveUserAvatar(url) {
         const userId = this.user.uid;
-        const docRef = await db.collection('users').doc(userId).update({
+        const docRef = db.collection('users').doc(userId);
+        await docRef.update({
           avatar: url,
         });
+
+        if (this.showStreamInfo) {
+          const stream = this.user.username.toLowerCase();
+          const streamRef = db.collection('streams').doc(stream);
+          await streamRef.update({
+            'user.avatar': url,
+          });
+        }
+
         this.imageFile = null;
         this.imageName = '';
       },
