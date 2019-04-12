@@ -47,7 +47,7 @@
         :items="messages"
         key-field="timestamp"
         :min-item-size="60"
-        :buffer="90"
+        :buffer="400"
         :emitUpdate="false"
       >
         <dynamic-scroller-item

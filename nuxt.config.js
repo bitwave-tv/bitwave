@@ -47,12 +47,13 @@ module.exports = {
     runtimeCaching: [
       {
         urlPattern: 'https://stream.bitwave.tv/stream/.*',
+        handler: 'networkOnly',
         strategyOptions: {
           cacheName: 'HLS-cache',
-          cacheExpiration: {
+          /*cacheExpiration: {
             maxEntries: 200,
             maxAgeSeconds: 600
-          }
+          }*/
         }
       }
     ]

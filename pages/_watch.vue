@@ -178,8 +178,6 @@
     },
 
     async mounted() {
-      await caches.delete("HLS-cache");
-      console.log('HLS cache cleared');
       this.playerInitialize();
       console.log('this is current player instance object:', this.player);
       if (this.live)
