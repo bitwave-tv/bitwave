@@ -52,7 +52,7 @@
         </v-card>
       </v-flex>
       <v-flex class="px-3">
-        <v-layout>
+        <v-layout class="mb-2">
           <v-flex shrink>
             <v-chip
               v-if="nsfw"
@@ -68,7 +68,10 @@
         </v-layout>
         <v-layout>
           <v-flex>
-            <vue-markdown>{{ desc }}</vue-markdown>
+            <vue-markdown
+              v-if="desc"
+              :source="desc"
+            ></vue-markdown>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -82,7 +85,8 @@
 
   import { db } from '@/plugins/firebase.js'
 
-  import VueMarkdown from 'vue-markdown'
+  import VueMarkdown from '~/components/VueMarkdown'
+
 
   export default {
     head() {
@@ -90,7 +94,7 @@
         title: `${this.name} - BitWave.tv`,
         meta: [
           { name: 'og:title', hid: 'og:title', content: `${this.name}'s Stream - BitWave.tv` },
-          { name: 'og:description', hid: 'og:description', content: `${this.desc.split(200)} - BitWave.tv` },
+          { name: 'og:description', hid: 'og:description', content: `${(this.desc || '').split(200)} - BitWave.tv` },
           { name: 'description', hid: 'description', content: `${this.name} - BitWave.tv` },
           { name: 'og:image', content: this.poster },
           { name: 'author', content: this.name },
@@ -112,6 +116,7 @@
         watchInterval: 30,
         lastWatch: null,
         watchTimer: null,
+        streamDataListener: null,
       }
     },
 
@@ -126,6 +131,7 @@
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
         });
         this.qualityLevels = this.player.qualityLevels();
+        this.getStreamData();
         this.initialized = true;
       },
 

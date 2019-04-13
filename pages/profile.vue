@@ -71,17 +71,6 @@
                   >
                 </v-flex>
 
-                <!--<v-layout class="mb-3">
-                  <v-spacer/>
-                  <v-btn
-                    :disabled="!imageFile"
-                    :loading="uploadingAvatar"
-                    color="yellow"
-                    outline
-                    @click="uploadFile"
-                  >save</v-btn>
-                </v-layout>-->
-
                 <v-flex>
                   <v-text-field
                     v-model="user.uid"
@@ -143,9 +132,9 @@
         v-if="showStreamInfo"
         style="min-width: 35%;"
       >
-        <v-card class="mb-2 pa-3">
+        <v-card class="mb-4 pa-3">
           <v-layout column>
-            <v-flex class="mb-2">
+            <v-flex class="mb-3">
               <h2>Stream Info</h2>
             </v-flex>
             <v-flex class="mb-2">
@@ -216,6 +205,43 @@
           </v-layout>
         </v-card>
       </v-flex>
+
+
+
+      <v-flex
+        v-if="showStreamInfo"
+        style="min-width: 35%;"
+      >
+        <v-card class="mb-4 pa-3">
+          <v-layout column>
+            <v-flex class="mb-3">
+              <h2>Stream Description</h2>
+            </v-flex>
+            <v-flex>
+              <v-textarea
+                v-model="description"
+                name="input-7-1"
+                outline
+                color="yellow"
+                label="Stream Description (markdown supported)"
+                auto-grow
+                @input="showSave = true"
+              ></v-textarea>
+            </v-flex>
+            <v-layout>
+              <v-spacer/>
+              <v-btn
+                :disabled="!showSave"
+                :loading="saveLoading"
+                color="yellow"
+                outline
+                @click="updateStreamData"
+              >save</v-btn>
+            </v-layout>
+          </v-layout>
+        </v-card>
+      </v-flex>
+
     </v-layout>
   </v-container>
 </template>
@@ -267,6 +293,8 @@
         imageUrl: '',
         imageFile: null,
         uploadingAvatar: false,
+
+        description: '',
       }
     },
 

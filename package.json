@@ -21,6 +21,7 @@
     "express": "^4.16.4",
     "firebase": "^5.9.3",
     "js-cookie": "^2.2.0",
+    "marked": "^0.6.2",
     "moment": "^2.24.0",
     "nuxt": "^2.4.0",
     "sass-loader": "^7.1.0",
@@ -28,7 +29,6 @@
     "video.js": "^7.4.1",
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
-    "vue-markdown": "^2.2.4",
     "vue-virtual-scroller": "^1.0.0-rc.2",
     "vuetify": "^1.5.9",
     "vuetify-loader": "^1.2.1"
