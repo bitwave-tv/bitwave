@@ -82,7 +82,7 @@
                   contain
                   max-height="2rem"
                   max-width="2rem"
-                  src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/emotes/cool_blobby.gif"
+                  src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif"
                   alt="Cool blobby with sunglasses"
                   @click="updatePlayerSrc"
                 ></v-img>
@@ -199,7 +199,7 @@
       return {
         player: null,
         initialized: false,
-        poster: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg',
+        poster: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg',
       }
     },
 
@@ -219,7 +219,7 @@
         this.player.dispose();
       },
       updatePlayerSrc() {
-        this.player.src({ type: 'video/mp4', src: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/bumps/Bump33-sm.mp4' });
+        this.player.src({ type: 'video/mp4', src: 'https://cdn.bitwave.tv/static/bumps/Bump33-sm.mp4' });
       },
     },
 

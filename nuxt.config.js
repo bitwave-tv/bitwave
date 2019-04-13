@@ -14,9 +14,9 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'og:site_name', content: '[bitwave.tv]' },
       { hid: 'description', name: 'description', content: pkg.description },
-      { name: 'og:site_name', content: 'BitWave.tv' },
-      { name: 'og:image', content: 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_cover_sm.jpg' },
+      { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg' },
     ],
     script: [
       // { src: 'https://tlk.io/embed.js' }
@@ -57,6 +57,20 @@ module.exports = {
         }
       }
     ]
+  },
+
+  /*
+  ** Manifest Module
+  */
+  manifest: {
+    name: 'BitWave.tv',
+    short_name: 'BitWave.tv',
+    lang: 'en',
+    display: 'fullscreen',
+    description: 'An open platform live streaming service for creators to freely express themselves.',
+    background_color: '#111',
+    orientation: 'any',
+    theme_color: '#ffff00',
   },
 
   /*

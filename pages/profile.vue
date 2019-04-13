@@ -303,6 +303,8 @@
       async profileDataChanged (data) {
         console.log(data);
         if (data.avatar) this.imageUrl = data.avatar;
+        this.streamkey = data.streamkey;
+
         // rest of profile is managed by store
         this.$store.commit('setUser', data);
         this.$store.commit('setUserCookie', data);
@@ -312,8 +314,9 @@
       async streamDataChanged (data) {
         console.log(data);
         this.streamData.title = data.title;
-        this.streamData.key = `${this.user.username}?key=${data.key}`;
+        this.streamData.key = `${this.user.username}?key=${this.streamkey}`;
         this.streamData.nsfw = data.nsfw;
+        this.description = data.description;
         this.streamDataLoading = false;
       },
 
@@ -321,11 +324,13 @@
         this.saveLoading = true;
         const title = this.streamData.title;
         const nsfw = this.streamData.nsfw;
+        const description = this.description;
         const stream = this.user.username.toLowerCase();
         const streamRef = db.collection('streams').doc(stream);
         await streamRef.update({
-          nsfw: nsfw,
-          title: title,
+          nsfw,
+          title,
+          description
         });
         this.saveLoading = false;
         this.showSave = false;
@@ -334,12 +339,13 @@
       async resetStreamKey () {
         this.keyLoading = true;
         const key = Math.random().toString(16).substr(2, 9);
-        const stream = this.user.username.toLowerCase();
-        const streamRef = db.collection('streams').doc(stream);
-        await streamRef.update({
-          key: key,
+        const userId = this.user.uid;
+        const docRef = db.collection('users').doc(userId);
+        await docRef.update({
+          streamkey: key,
         });
         await this.kickStream();
+        this.keyLoading = false;
       },
 
       async kickStream() {
@@ -349,14 +355,13 @@
         const server = 'stream.bitwave.tv';
         const url = `https://${server}/control/${mode}/publisher?app=${app}&name=${user}`;
         await this.$axios.$get(url);
-        this.keyLoading = false;
       },
 
       copyToClipboard () {
         try {
           document.execCommand('copy');
           this.keyMessage = ['Copied to clipboard'];
-          setTimeout( () => this.keyMessage = [], 2000);
+          setTimeout( () => this.keyMessage = [], 3000);
         } catch (error) {
           console.log(error);
         }
