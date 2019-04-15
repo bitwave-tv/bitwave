@@ -5,7 +5,7 @@
         <h1 class="ml-2">My Account</h1>
       </v-flex>
 
-      <v-flex shrink style="min-width: 35%;">
+      <v-flex style="min-width: 35%;">
         <v-card class="mb-4 pa-3">
           <v-layout column>
             <v-flex>
@@ -137,7 +137,7 @@
             <v-flex class="mb-3">
               <h2>Stream Info</h2>
             </v-flex>
-            <v-flex class="mb-2">
+            <v-flex class="mb-3">
               <v-text-field
                 v-model="streamData.title"
                 label="Stream Title"
@@ -148,6 +148,18 @@
                 @input="showSave = true"
               ></v-text-field>
             </v-flex>
+            <v-flex>
+              <v-textarea
+                v-model="description"
+                name="input-7-1"
+                outline
+                hide-details
+                color="yellow"
+                label="Stream Description (markdown supported)"
+                auto-grow
+                @input="showSave = true"
+              ></v-textarea>
+            </v-flex>
             <v-flex shrink>
               <v-switch
                 v-model="streamData.nsfw"
@@ -157,7 +169,7 @@
                 @change="showSave = true"
               ></v-switch>
             </v-flex>
-            <v-layout class="mb-3">
+            <v-layout>
               <v-spacer/>
               <v-btn
                 :disabled="!showSave"
@@ -167,19 +179,35 @@
                 @click="updateStreamData"
               >save</v-btn>
             </v-layout>
+          </v-layout>
+        </v-card>
+      </v-flex>
+
+      <v-flex
+        v-if="showStreamInfo"
+        style="min-width: 35%;"
+      >
+        <v-card class="mb-4 pa-3">
+          <v-layout column>
+            <v-flex class="mb-3">
+              <h2>Stream Server Configuration</h2>
+            </v-flex>
             <v-flex>
               <v-text-field
+                class="mb-3"
                 value="rtmp://stream.bitwave.tv/live"
                 label="Stream URL"
                 color="yellow"
                 readonly
                 outline
+                hide-details
                 :loading="streamDataLoading"
               ></v-text-field>
             </v-flex>
             <v-flex>
               <v-text-field
                 v-model="streamData.key"
+                ref="streamkeyinput"
                 label="Stream Key"
                 color="yellow"
                 readonly
@@ -189,8 +217,8 @@
                 :type="showKey ? 'text' : 'password'"
                 :append-icon="showKey ? 'visibility' : 'visibility_off'"
                 @click:append="showKey = !showKey"
-                @click="copyToClipboard"
-                @focus="copyToClipboard"
+                @click="showKey = !showKey"
+                @focus="showKey = !showKey"
               ></v-text-field>
             </v-flex>
             <v-layout>
@@ -201,42 +229,12 @@
                 :loading="keyLoading"
                 @click="resetStreamKey"
               >Reset</v-btn>
-            </v-layout>
-          </v-layout>
-        </v-card>
-      </v-flex>
-
-
-
-      <v-flex
-        v-if="showStreamInfo"
-        style="min-width: 35%;"
-      >
-        <v-card class="mb-4 pa-3">
-          <v-layout column>
-            <v-flex class="mb-3">
-              <h2>Stream Description</h2>
-            </v-flex>
-            <v-flex>
-              <v-textarea
-                v-model="description"
-                name="input-7-1"
-                outline
-                color="yellow"
-                label="Stream Description (markdown supported)"
-                auto-grow
-                @input="showSave = true"
-              ></v-textarea>
-            </v-flex>
-            <v-layout>
-              <v-spacer/>
               <v-btn
-                :disabled="!showSave"
-                :loading="saveLoading"
                 color="yellow"
-                outline
-                @click="updateStreamData"
-              >save</v-btn>
+                light
+                :loading="keyLoading"
+                @click="copyToClipboard"
+              >Copy</v-btn>
             </v-layout>
           </v-layout>
         </v-card>
@@ -289,7 +287,7 @@
         showSave: false,
         saveLoading: false,
         keyLoading: false,
-        keyMessage: [''],
+        keyMessage: 'Click to reveal key',
 
         imageName: '',
         imageUrl: '',
@@ -308,7 +306,7 @@
 
       async authenticated(user) {
         if (user) {
-          console.log(user);
+          console.log(`[profile] User:`, user);
           if ( !this.user ) await this.$store.dispatch('login', user);
         } else {
           this.$router.push('/login');
@@ -336,9 +334,10 @@
       },
 
       async profileDataChanged (data) {
-        console.log(data);
+        console.log(`[profile] Profile Data Changed:`, data);
         if (data.avatar) this.imageUrl = data.avatar;
         this.streamkey = data.streamkey;
+        this.streamData.key = `${this.user.username}?key=${this.streamkey}`;
 
         // rest of profile is managed by store
         this.$store.commit('setUser', data);
@@ -347,9 +346,8 @@
       },
 
       async streamDataChanged (data) {
-        console.log(data);
+        console.log(`[profile] Stream Data Changed`, data);
         this.streamData.title = data.title;
-        this.streamData.key = `${this.user.username}?key=${this.streamkey}`;
         this.streamData.nsfw = data.nsfw;
         this.description = data.description;
         this.streamDataLoading = false;
@@ -393,13 +391,20 @@
       },
 
       copyToClipboard () {
-        try {
-          document.execCommand('copy');
+        const initialState = this.showKey;
+        this.$copyText(this.streamData.key).then( () => {
           this.keyMessage = ['Copied to clipboard'];
-          setTimeout( () => this.keyMessage = [], 3000);
-        } catch (error) {
+          this.$refs['streamkeyinput'].focus();
+        }, (error) => {
           console.log(error);
-        }
+          this.keyMessage = 'Failed to copy to clipboard';
+        });
+
+        setTimeout( () => {
+          this.showKey = initialState;
+          this.keyMessage = 'Click to reveal key';
+          this.$refs['streamkeyinput'].blur();
+        }, 3000);
       },
 
       pickFile() {

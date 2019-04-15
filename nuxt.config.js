@@ -79,6 +79,7 @@ module.exports = {
   plugins: [
     '@/plugins/vuetify',
     '@/plugins/firebase',
+    '@/plugins/VueClipboard',
   ],
 
   /*

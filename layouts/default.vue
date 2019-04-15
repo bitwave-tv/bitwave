@@ -31,7 +31,7 @@
       <v-flex shrink>
         <v-switch
           v-model="dark"
-          :label="`${ !!dark ? 'Night' : 'Day' }`"
+          :label="`${ dark ? 'Night' : 'Day' }`"
           color="yellow"
           hide-details
         ></v-switch>
@@ -45,7 +45,7 @@
         v-show="mobile"
         :class="{ 'mr-2': mobile }"
         icon
-        @click.stop="rightDrawer = !rightDrawer"
+        @click.stop="showChat = !showChat"
       >
         <v-icon>menu</v-icon>
       </v-btn>
@@ -54,7 +54,7 @@
 
     <!-- R-Nav Chat Drawer -->
     <v-navigation-drawer
-      v-model="rightDrawer"
+      v-model="showChat"
       :width="width"
       :permanent="$vuetify.breakpoint.mdAndUp"
       right
@@ -63,7 +63,6 @@
       flat
       app
     >
-      <!--<tlk-chat />-->
       <chat :dark="dark" />
     </v-navigation-drawer>
 
@@ -75,25 +74,12 @@
       <nuxt />
     </v-content>
 
-    <!-- Footer -->
-    <v-footer
-      v-if="false"
-      :fixed="fixed"
-      class="px-2"
-      app
-    >
-      <span>BitWave TV &copy; 2019</span>
-    </v-footer>
-
   </v-app>
 </template>
 
 <script>
   import User from '~/components/User'
-
   import Chat from '~/components/Chat'
-  import TlkChat from '~/components/TlkChat'
-
   import UserList from '~/components/UserList'
 
   import { mapState } from 'vuex'
@@ -102,7 +88,6 @@
     components: {
       User,
       Chat,
-      TlkChat,
       UserList,
     },
 
@@ -118,8 +103,7 @@
         drawer: true,
 
         right: true,
-        rightDrawer: this.$vuetify.breakpoint.smAndUp,
-        width: this.$vuetify.breakpoint.smAndUp ? 450 : 300,
+        showChat: true,
       }
     },
 
@@ -133,15 +117,23 @@
       }),
 
       mobile () {
-        return process.client ? !this.$vuetify.breakpoint.mdAndUp : false;
+        return !this.$vuetify.breakpoint.mdAndUp;
+      },
+
+      width () {
+        return this.$vuetify.breakpoint.smAndUp ? 450 : 300;
       },
     },
+
+    created() {
+      this.showChat = this.$vuetify.breakpoint.smAndUp;
+    }
   }
 </script>
 
 <style>
-  .v-toolbar__content {
+  /*.v-toolbar__content {
     padding-left: 0;
     padding-right: 0;
-  }
+  }*/
 </style>

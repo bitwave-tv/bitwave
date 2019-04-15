@@ -1,9 +1,9 @@
 <template>
-  <v-flex class="msg" shrink>
-    <v-layout row py-1 px-3>
+  <v-flex class="msg">
+    <v-layout row py-1 pl-3>
       <v-list-tile-avatar size="34">
-        <img v-if="!!avatar" slot="avatar" :src="avatar" alt="">
-        <v-icon v-else :class="classList">person</v-icon>
+        <img v-if="!!avatar" :src="avatar" alt="">
+        <v-icon v-else :style="{ background: color }">person</v-icon>
       </v-list-tile-avatar>
       <v-list-tile-content>
         <v-list-tile-sub-title>
@@ -11,12 +11,10 @@
             <v-flex shrink class="time mr-1">{{ timestamp }}</v-flex>
             <v-flex shrink class="username">{{ username }}</v-flex>
             <v-spacer/>
-            <v-flex shrink>
-              <kbd>{{ channel || 'global' }}</kbd>
-            </v-flex>
+            <v-flex shrink><kbd>{{ channel }}</kbd></v-flex>
           </v-layout>
         </v-list-tile-sub-title>
-        <slot name="message"></slot>
+        <slot></slot>
       </v-list-tile-content>
     </v-layout>
   </v-flex>
@@ -45,15 +43,7 @@
     },
 
     data() {
-      return {
-
-      }
-    },
-
-    computed: {
-      classList() {
-        return [this.color, 'lighten-1', 'white--text'];
-      },
+      return {}
     },
   }
 </script>
@@ -74,24 +64,20 @@
     .time {
       user-select: none;
       color: #757575;
-      caret-color: #757575;
     }
 
     .username {
       font-weight: 500;
       color: #9e9e9e;
-      caret-color: #9e9e9e;
     }
 
     blockquote p {
       font-weight: 500;
       color: #789922;
-      caret-color: #789922;
     }
 
     p img {
       height: 28px;
-      display: inline;
     }
   }
 

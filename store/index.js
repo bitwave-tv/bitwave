@@ -131,7 +131,7 @@ export const actions = {
     });
 
     if (process.client)
-      console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+      console.log(`%STORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
   },
 
   async logout ({ commit }) {

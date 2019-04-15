@@ -223,7 +223,7 @@
           await userCredential.user.updateProfile({
             displayName: username,
           });
-          console.log(userCredential);
+          console.log(`[LOGIN] User Cred: ${userCredential}`);
           const userId = userCredential.user.uid;
           const docRef = await db.collection('users').doc(userId).set({
             _username: username.toLowerCase(),

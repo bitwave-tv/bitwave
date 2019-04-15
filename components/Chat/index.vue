@@ -7,31 +7,52 @@
     <!-- Chat Header -->
     <v-flex>
       <v-sheet>
-        <v-layout
-          column
-          py-2
-        >
-          <v-flex class="subheading text-xs-center mb-1">
-            Live Chat: <b>{{ viewerCount }}</b>
+        <v-layout align-center>
+          <v-flex shrink>
+            <v-layout
+              column
+              py-2
+            >
+              <v-flex class="subheading text-xs-left mt-2 mb-1 mx-3">
+                <v-chip
+                  color="yellow"
+                  text-color="black"
+                >
+                  <v-avatar color="yellow darken-2">{{ viewerCount }}</v-avatar>
+                   Viewers
+                </v-chip>
+              </v-flex>
+              <v-flex class="caption text-xs-center red--text" v-if="false">
+                <v-icon small color="red" class="px-1">warning</v-icon>
+                WORK IN PROGRESS
+                <v-icon small color="red" class="px-1">warning</v-icon>
+              </v-flex>
+            </v-layout>
           </v-flex>
-          <v-flex class="caption text-xs-center red--text">
-            <v-icon small color="red" class="px-1">warning</v-icon>
-            WORK IN PROGRESS
-            <v-icon small color="red" class="px-1">warning</v-icon>
+          <v-spacer/>
+          <v-flex shrink>
+            <v-btn
+              :style="{ 'min-width': '40px' }"
+              small
+              disabled
+              color="yellow"
+              @click="scrollToBottom"
+            >
+              TOOLS
+            </v-btn>
+          </v-flex>
+          <v-flex shrink>
+            <v-btn
+              :style="{ 'min-width': '40px' }"
+              small
+              light
+              color="yellow"
+              @click="scrollToBottom"
+            >
+              <v-icon>keyboard_arrow_down</v-icon>
+            </v-btn>
           </v-flex>
         </v-layout>
-        <v-btn
-          small
-          absolute
-          right
-          bottom
-          fab
-          light
-          color="yellow"
-          @click="scrollToBottom"
-        >
-          <v-icon>keyboard_arrow_down</v-icon>
-        </v-btn>
       </v-sheet>
     </v-flex>
 
@@ -57,10 +78,6 @@
           :size-dependencies="[]"
           :data-index="index"
         >
-          <template #before>
-            <v-spacer fill-height/>
-          </template>
-
           <chat-message
             :key="item.timestamp"
             :username="item.username"
@@ -68,7 +85,7 @@
             :timestamp="getTime(item.timestamp)"
             :avatar="item.avatar"
             :color="item.color"
-          ><div slot="message" v-html="item.message"></div>
+          ><div v-html="item.message"></div>
           </chat-message>
         </dynamic-scroller-item>
       </dynamic-scroller>
@@ -139,7 +156,6 @@
 
     data() {
       return {
-        colorList: ['orange', 'blue', 'purple', 'teal', 'green', 'yellow', 'blue-grey'],
         color: null,
         unsubscribeUser: null,
         loading: true,
@@ -149,7 +165,7 @@
           {
             timestamp: Date.now(),
             username: 'Dispatch',
-            avatar: 'https://www.gravatar.com/avatar/b88fd66ccef2d2ebbc343bfb08fb2efb?d=identicon',
+            avatar: 'https://cdn.bitwave.tv/uploads/avatar/19135417-ecc9-4957-8711-e7ac71ac0805-md',
             message: 'Loading messages...',
             channel: 'global',
           },
@@ -205,8 +221,6 @@
       },
 
       connectChat(user) {
-        console.log('User:', user);
-
         if (this.socket) {
           this.socket.disconnect();
         }
@@ -214,24 +228,27 @@
           console.warn(`Failed to connect to chat. No user defined.`);
           return;
         }
+        console.debug('Chat User:', user);
 
         const socket = socketio('api.bitwave.tv:443');
-        this.socket = socket;
+
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
         socket.on( 'hydrate', async data => await this.hydrate(data) );
         socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
+
+        this.socket = socket;
       },
 
       updateUsernames(data) {
         this.viewerCount = data.length;
-        console.log(data);
+        console.debug(data);
       },
 
       async hydrate(data) {
         const size = data.length;
-        this.messages = size > 100 ? data.splice(99, size) : data;
+        this.messages = size > 100 ? data.splice(100-1, size) : data;
         // this.$nextTick( () => this.scrollToChatBottom() );
         await this.$nextTick( async () => await this.scrollToBottom(true) );
       },
@@ -255,13 +272,22 @@
         this.socket.emit('message', msg);
       },
 
-      createUID() {
-        return [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
-      },
-
       getTime(timestamp) {
         return `[${moment(timestamp).format('HH:mm')}]`;
       },
+
+      setupTrollData () {
+        let uid   = localStorage.getItem('tuid');
+        let color = localStorage.getItem('tcolor');
+        if (!uid || !color) {
+          uid   = [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
+          color = `hsl( ${Math.round(256 * Math.random())},75%,50%,1)`;
+          localStorage.setItem('tuid'  , uid  );
+          localStorage.setItem('tcolor', color);
+        }
+        this.uid   = uid;
+        this.color = color
+      }
     },
 
     computed: {
@@ -285,8 +311,7 @@
     },
 
     mounted() {
-      this.uid = this.createUID();
-      this.color = this.colorList[ Math.floor(Math.random() * this.colorList.length) ];
+      this.setupTrollData();;
       this.chatContainer = this.$refs.scroller;
     },
 
