@@ -29,6 +29,7 @@
 
     props: {
       avatar: {},
+      color: {},
       message: {
         type: String,
       },
@@ -45,8 +46,7 @@
 
     data() {
       return {
-        color: '',
-        colorList: ['orange', 'blue', 'purple', 'teal', 'green', 'yellow', 'blue-grey'],
+
       }
     },
 
@@ -54,10 +54,6 @@
       classList() {
         return [this.color, 'lighten-1', 'white--text'];
       },
-    },
-
-    mounted() {
-      this.color = this.colorList[ Math.floor(Math.random() * this.colorList.length) ];
     },
   }
 </script>
@@ -95,6 +91,7 @@
 
     p img {
       height: 28px;
+      display: inline;
     }
   }
 

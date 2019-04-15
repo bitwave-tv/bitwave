@@ -26,7 +26,9 @@
 </template>
 
 <script>
-  import { auth, db } from '@/plugins/firebase.js'
+  import { auth } from '@/plugins/firebase.js'
+
+  import { mapGetters } from 'vuex'
 
   export default {
 
@@ -40,34 +42,26 @@
     },
 
     methods: {
-      authenticated(user) {
+      async authenticated(user) {
         if (user) {
-          this.subscribeToUser(user.uid);
+          // await this.$store.dispatch('login', user);
+          // if (process.client)
+          //   console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
         } else {
+          if (process.client)
+            console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
           if (this.unsubscribeUser) this.unsubscribeUser();
         }
         this.loading = false;
       },
-
-      subscribeToUser(uid) {
-        const userdocRef = db.collection('users').doc(uid);
-        this.unsubscribeUser = userdocRef.onSnapshot( doc => {
-          this.$store.commit('setUser', doc.data());
-        });
-      },
     },
 
     computed: {
-      username () {
-        if (this.user) return this.user.username;
-        else return 'PROFILE';
-      },
-      isAuth() {
-        return this.$store.getters.isAuth;
-      },
-      user() {
-        return this.$store.state.user;
-      },
+      ...mapGetters({
+        isAuth: 'isAuth',
+        username: 'username',
+        user: 'user'
+      }),
     },
 
     created() {

@@ -67,6 +67,7 @@
             :channel="item.channel"
             :timestamp="getTime(item.timestamp)"
             :avatar="item.avatar"
+            :color="item.color"
           ><div slot="message" v-html="item.message"></div>
           </chat-message>
         </dynamic-scroller-item>
@@ -88,7 +89,7 @@
             <v-text-field
               ref="chatmessageinput"
               :value="message"
-              :label="`Chat as ${this.username}...`"
+              :label="`Chat as ${username}...`"
               :color="dark ? 'yellow' : 'blue'"
               autocomplete="off"
               autocorrect="off"
@@ -114,7 +115,7 @@
   import ChatMessage from './ChatMessage'
   import moment from 'moment'
 
-  import { mapState } from 'vuex'
+  import { mapGetters } from 'vuex'
 
   import socketio from 'socket.io-client'
 
@@ -138,6 +139,8 @@
 
     data() {
       return {
+        colorList: ['orange', 'blue', 'purple', 'teal', 'green', 'yellow', 'blue-grey'],
+        color: null,
         unsubscribeUser: null,
         loading: true,
         socket: null,
@@ -162,12 +165,13 @@
       authenticated(user) {
         if (user) {
           this.subscribeToUser(user.uid);
-          this.connectChat(this.user);
         } else {
           if (this.unsubscribeUser) this.unsubscribeUser();
           const trollUser = {
+            type: 'troll',
+            color: this.color,
             email: null,
-            username: this.username,
+            username: `troll:${this.uid}`,
             uid: this.uid,
           };
           this.connectChat(trollUser);
@@ -178,7 +182,8 @@
       subscribeToUser(uid) {
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
-          this.$store.commit('setUser', doc.data());
+          const user = doc.data();
+          this.connectChat(user);
         });
       },
 
@@ -186,12 +191,12 @@
         const scrollTop = this.chatContainer.$el.scrollTop;
         const scrollHeight = this.chatContainer.$el.scrollHeight;
         const scrollDistance = scrollHeight - scrollTop;
-        console.log(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance}`);
-        if ( !!force || scrollDistance < (2.5 * screen.height) ) {
-          console.log('Scroll Down');
+        const scroll = !!force || scrollDistance < (2.0 * screen.height);
+        console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
+        if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           if (this.messages.length > this.chatLimit) this.messages.shift();
-          setTimeout(() => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250);
+          setTimeout( () => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250 );
         }
       },
 
@@ -200,8 +205,15 @@
       },
 
       connectChat(user) {
-        if (this.socket) this.socket.disconnect();
-        if (!user) return;
+        console.log('User:', user);
+
+        if (this.socket) {
+          this.socket.disconnect();
+        }
+        if (!user) {
+          console.warn(`Failed to connect to chat. No user defined.`);
+          return;
+        }
 
         const socket = socketio('api.bitwave.tv:443');
         this.socket = socket;
@@ -253,16 +265,13 @@
     },
 
     computed: {
-      ...mapState({
-        user: state => state.user,
+      ...mapGetters({
+        user: 'user',
+        _username: 'username',
       }),
 
       username () {
-        if (!this.user || !this.user.username) {
-          return `troll:${this.uid}`;
-        } else {
-          return this.user.username;
-        }
+        return this._username || `troll:${this.uid}`;
       },
 
       page () {
@@ -277,6 +286,7 @@
 
     mounted() {
       this.uid = this.createUID();
+      this.color = this.colorList[ Math.floor(Math.random() * this.colorList.length) ];
       this.chatContainer = this.$refs.scroller;
     },
 

@@ -17,7 +17,7 @@
                 <v-flex shrink class="ma-3">
                   <v-avatar color="white" size="100">
                     <v-img
-                      :src="imageUrl || 'https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/shield.png'"
+                      :src="imageUrl || 'https://cdn.bitwave.tv/static/img/shield.png'"
                       alt="avatar" />
                   </v-avatar>
                 </v-flex>
@@ -249,6 +249,8 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
 
+  import { mapGetters } from 'vuex'
+
   export default {
 
     name: 'profile',
@@ -318,14 +320,19 @@
         // const userId = this.user.uid;
         const stream = this.user.username.toLowerCase();
         const streamRef = db.collection('streams').doc(stream);
-        return streamRef.onSnapshot( async doc => await this.streamDataChanged( doc.data() ), () => this.showStreamInfo = false );
+        return streamRef.onSnapshot( async doc => {
+          this.showStreamInfo = doc.exists;
+          if (this.showStreamInfo) await this.streamDataChanged( doc.data() );
+        }, () => this.showStreamInfo = false );
       },
 
       getProfileData () {
         this.profileDataLoading = true;
         const userId = this.user.uid;
         const profileRef = db.collection('users').doc(userId);
-        return profileRef.onSnapshot( async doc => await this.profileDataChanged(doc.data() ), err => console.log(err) );
+        return profileRef.onSnapshot( async doc => {
+          await this.profileDataChanged( doc.data() );
+        }, err => console.log(err) );
       },
 
       async profileDataChanged (data) {
@@ -466,6 +473,9 @@
     },
 
     computed: {
+      ...mapGetters({
+        user: 'user'
+      }),
       username() {
         return this.user.username || 'null';
       },
@@ -475,9 +485,6 @@
         } else {
           return null;
         }
-      },
-      user() {
-        return this.$store.state.user;
       },
     },
 

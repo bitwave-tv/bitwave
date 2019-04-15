@@ -321,7 +321,9 @@
       },
     },
 
-    computed: {},
+    computed: {
+
+    },
 
     created() {
       auth.onAuthStateChanged( async user => await this.authenticated(user) );

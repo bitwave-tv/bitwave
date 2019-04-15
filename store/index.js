@@ -19,6 +19,15 @@ export const getters = {
     return !!state.auth;
   },
 
+  user : state => {
+    return state.user;
+  },
+
+  username : state => {
+    if (state.user) return state.user.username || null;
+    else return null;
+  },
+
 };
 
 export const mutations = {
@@ -33,11 +42,18 @@ export const mutations = {
 
   setUserCookie(state, user) {
     if (user) Cookie.set('user', user);
+    else console.log(`Tried to update cookie, but user is not set.`);
   },
 
   setMetaUser(state, data) {
     state.metaUser = data;
   },
+
+  setAvatar(state, url) {
+    state.user = {
+
+    }
+  }
 
 };
 
@@ -66,7 +82,7 @@ export const actions = {
             user     = JSON.parse(parsed.user);
             console.log(`${user.username} logged in via nuxtServerInit: `, params);
           } else {
-            console.log(`User is not logged in.`);
+            console.log(`User is not logged in.`, params);
           }
         } catch (error) {
           // No valid cookie found
@@ -102,10 +118,10 @@ export const actions = {
     commit('setAuth', _auth);
     Cookie.set('auth', _auth);
 
-    const _user = user.toJSON();
+    user =  JSON.parse(JSON.stringify(user));
 
-    commit('setMetaUser', _user);
-    Cookie.set('metaUser', _user);
+    commit('setMetaUser', user);
+    Cookie.set('metaUser', user);
 
     const userdocRef = db.collection('users').doc(uid);
     unsubscribeUser = userdocRef.onSnapshot( doc => {
@@ -113,6 +129,9 @@ export const actions = {
       commit('setUser', data);
       Cookie.set('user', data);
     });
+
+    if (process.client)
+      console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
   },
 
   async logout ({ commit }) {
@@ -130,6 +149,21 @@ export const actions = {
       Cookie.remove('metaUser');
     } catch (error) {
       console.log(`ERROR: ${error}`);
+    }
+  },
+
+  async updateAvatar ({ store, commit }, url) {
+    const userId = this.store.user.uid;
+    const docRef = db.collection('users').doc(userId);
+    await docRef.set({
+      avatar: url,
+    }, { merge: true });
+    if (this.store.user.streamkey) {
+      const stream = this.store.user.username.toLowerCase();
+      const streamRef = db.collection('streams').doc(stream);
+      await streamRef.update({
+        'user.avatar': url,
+      });
     }
   },
 
