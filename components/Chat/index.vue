@@ -5,7 +5,7 @@
     fill-height
   >
     <!-- Chat Header -->
-    <v-flex>
+    <v-flex id="chat-header">
       <v-sheet>
         <v-layout align-center>
           <v-flex shrink>
@@ -13,23 +13,55 @@
               column
               py-2
             >
-              <v-flex class="subheading text-xs-left mt-2 mb-1 mx-3">
-                <v-chip
-                  color="yellow"
-                  text-color="black"
+              <v-flex class="text-xs-left mt-2 mb-1 mx-3">
+                <v-menu
+                  :close-on-content-click="false"
+                  :nudge-width="250"
+                  offset-y
+                  bottom
                 >
-                  <v-avatar color="yellow darken-2">{{ viewerCount }}</v-avatar>
-                   Viewers
-                </v-chip>
-              </v-flex>
-              <v-flex class="caption text-xs-center red--text" v-if="false">
-                <v-icon small color="red" class="px-1">warning</v-icon>
-                WORK IN PROGRESS
-                <v-icon small color="red" class="px-1">warning</v-icon>
+                  <template #activator="{ on }">
+                    <v-chip
+                      v-on="on"
+                      color="yellow"
+                      text-color="black"
+                      @input="showViewers = !showViewers"
+                    >
+                      {{ viewerCount }}
+                      <v-icon right>account_circle</v-icon>
+                    </v-chip>
+                  </template>
+
+                  <v-card>
+                    <v-sheet color="yellow">
+                      <v-card-title class="title black--text">Live Viewers</v-card-title>
+                    </v-sheet>
+
+                    <v-layout style="max-height: 60vh; overflow: auto;">
+                      <v-list dense two-line>
+
+                        <v-list-tile avatar v-for="viewer in viewers" :key="`${viewer.username}-${viewer.uid}`">
+                          <v-list-tile-avatar>
+                            <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
+                            <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
+                          </v-list-tile-avatar>
+                          <v-list-tile-content>
+                            <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
+                            <v-list-tile-sub-title>watching channel</v-list-tile-sub-title>
+                          </v-list-tile-content>
+                        </v-list-tile>
+
+                      </v-list>
+                    </v-layout>
+                  </v-card>
+                </v-menu>
+
               </v-flex>
             </v-layout>
           </v-flex>
+
           <v-spacer/>
+
           <v-flex shrink>
             <v-btn
               :style="{ 'min-width': '40px' }"
@@ -37,21 +69,19 @@
               disabled
               color="yellow"
               @click="scrollToBottom"
-            >
-              TOOLS
-            </v-btn>
+            >TOOLS</v-btn>
           </v-flex>
+
           <v-flex shrink>
             <v-btn
               :style="{ 'min-width': '40px' }"
               small
               light
               color="yellow"
-              @click="scrollToBottom"
-            >
-              <v-icon>keyboard_arrow_down</v-icon>
+            ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
+
         </v-layout>
       </v-sheet>
     </v-flex>
@@ -59,6 +89,7 @@
     <v-divider/>
 
     <v-flex
+      id="inner-chat"
       fill-height
       style="overflow: hidden;"
     >
@@ -174,6 +205,9 @@
         viewerCount: 0,
         chatLimit: 250,
         chatContainer: null,
+
+        showViewers: false,
+        viewers: [],
       }
     },
 
@@ -189,6 +223,7 @@
             email: null,
             username: `troll:${this.uid}`,
             uid: this.uid,
+            page: this.$route.params,
           };
           this.connectChat(trollUser);
         }
@@ -199,6 +234,7 @@
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
+          user.page = this.$route.params;
           this.connectChat(user);
         });
       },
@@ -242,7 +278,15 @@
       },
 
       updateUsernames(data) {
-        this.viewerCount = data.length;
+        const key = 'username';
+        this.viewers = data.reduce( (accumulator, current) => {
+          if (!accumulator.find( obj => obj[key] === current[key] )) accumulator.push(current);
+          return accumulator;
+        }, []);
+
+        // this.viewers = data;
+
+        this.viewerCount = this.viewers.length;
         console.debug(data);
       },
 
@@ -287,7 +331,7 @@
         }
         this.uid   = uid;
         this.color = color
-      }
+      },
     },
 
     computed: {

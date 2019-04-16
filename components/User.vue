@@ -6,7 +6,10 @@
       v-model="profileMenu"
       :close-on-content-click="false"
       :nudge-width="200"
-      offset-x left
+      offset-x
+      left
+      origin="top right"
+      transition="slide-y-transition"
     >
       <template #activator="{ on }">
         <v-btn
@@ -22,8 +25,8 @@
             <img :src="user.avatar" :alt="username">
           </v-avatar>
         </v-btn>
-
       </template>
+
       <v-card>
         <v-list class="py-1" color="yellow">
           <v-list-tile avatar>
