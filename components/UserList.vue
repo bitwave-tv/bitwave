@@ -24,8 +24,12 @@
             exact
           >
             <v-list-tile-action>
-              <v-avatar color="#eee" size="40" class="blue--text" >
-                <v-icon  light :size="item.size" >{{ item.icon }}</v-icon>
+              <v-avatar
+                color="#eee"
+                size="40"
+                class="blue--text"
+              >
+                <v-icon light :size="item.size" >{{ item.icon }}</v-icon>
               </v-avatar>
             </v-list-tile-action>
             <v-list-tile-content>
@@ -49,18 +53,20 @@
             router
             exact
           >
-            <v-list-tile-avatar>
+            <v-list-tile-avatar
+              :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
+            >
 
               <v-badge
-                v-model="user.live"
+                v-model="user.live && user.nsfw"
                 :color="!!user.nsfw ? 'orange' : 'green'"
                 overlap
               >
-                <template v-slot:badge>
-                  <v-icon>{{ !!user.nsfw ? 'priority_high' : 'play_arrow' }}</v-icon>
+                <template #badge>
+                  <v-icon>{{ user.nsfw ? 'priority_high' : 'play_arrow' }}</v-icon>
                 </template>
                 <v-avatar
-                  size="40"
+                  :size="user.live ? 36 : 40"
                 >
                   <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
                 </v-avatar>
@@ -109,12 +115,12 @@
           {
             icon: 'whatshot', //blur_on // ondemand_video // live_tv
             size: 32,
-            title: 'Welcome',
+            title: 'Home',
             to: '/',
           },
         ],
         users: [],
-        userUpdateRate: 15,
+        userUpdateRate: 10,
         userListTimer: null,
       }
     },

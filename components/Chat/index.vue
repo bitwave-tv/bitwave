@@ -47,7 +47,9 @@
                           </v-list-tile-avatar>
                           <v-list-tile-content>
                             <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                            <v-list-tile-sub-title>watching channel</v-list-tile-sub-title>
+<!--                            <v-list-tile-sub-title>watching: {{ viewer.page ? viewer.page.watch : 'global' }}</v-list-tile-sub-title>-->
+                            <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{viewer.page.watch }}</v-list-tile-sub-title>
+                            <v-list-tile-sub-title v-else>Just Browsing</v-list-tile-sub-title>
                           </v-list-tile-content>
                         </v-list-tile>
 
@@ -60,6 +62,17 @@
             </v-layout>
           </v-flex>
 
+          <v-flex shrink>
+            <v-switch
+              v-model="global"
+              :label="`${ global ? 'Global' : 'Local' }`"
+              class="mt-0"
+              disabled
+              color="yellow"
+              hide-details
+            ></v-switch>
+          </v-flex>
+
           <v-spacer/>
 
           <v-flex shrink>
@@ -68,7 +81,7 @@
               small
               disabled
               color="yellow"
-              @click="scrollToBottom"
+              @click="scrollToBottom(true)"
             >TOOLS</v-btn>
           </v-flex>
 
@@ -203,11 +216,13 @@
         ],
         uid: null,
         viewerCount: 0,
-        chatLimit: 250,
+        chatLimit: 150,
         chatContainer: null,
 
         showViewers: false,
         viewers: [],
+
+        global: true,
       }
     },
 
@@ -243,7 +258,7 @@
         const scrollTop = this.chatContainer.$el.scrollTop;
         const scrollHeight = this.chatContainer.$el.scrollHeight;
         const scrollDistance = scrollHeight - scrollTop;
-        const scroll = !!force || scrollDistance < (2.0 * screen.height);
+        const scroll = !!force || scrollDistance < (1.25 * screen.height);
         console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
@@ -292,8 +307,7 @@
 
       async hydrate(data) {
         const size = data.length;
-        this.messages = size > 100 ? data.splice(100-1, size) : data;
-        // this.$nextTick( () => this.scrollToChatBottom() );
+        this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
       },
 
@@ -301,7 +315,6 @@
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
-        // if (this.messages.length > this.chatLimit) this.messages.shift();
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 

@@ -67,7 +67,7 @@
           </v-flex>
         </v-layout>
         <v-layout>
-          <v-flex>
+          <v-flex id="description">
             <vue-markdown
               v-if="desc"
               :source="desc"
@@ -141,7 +141,13 @@
           eventCategory: 'stream',
           eventAction: 'watch-time',
           eventLabel: this.name,
-          eventValue: this.watchDuration,
+          eventValue: this.watchDuration / 60,
+        });
+        this.$ga.event({
+          eventCategory: 'stream',
+          eventAction: 'watch-interval',
+          eventLabel: this.name,
+          eventValue: this.watchInterval / 60,
         });
         console.log(`Watch Time: ${this.watchDuration}s on ${this.name}`);
       },
@@ -213,7 +219,7 @@
     async mounted() {
       this.playerInitialize();
 
-      console.log('this is current player instance object:', this.player);
+      console.debug('video.js:', this.player);
 
       if (this.live)
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
@@ -228,3 +234,10 @@
     },
   }
 </script>
+
+<style lang='scss'>
+  a {
+    color: yellow;
+    text-decoration: none;
+  }
+</style>

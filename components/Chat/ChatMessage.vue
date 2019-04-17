@@ -51,6 +51,8 @@
 <style lang='scss'>
 
   .msg {
+    word-break: break-word;
+
     kbd {
       background-color: #607D8B99;
       font-size: 10px;
