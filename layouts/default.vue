@@ -28,7 +28,7 @@
         >{{ title }}</v-btn>
       </v-toolbar-title>
 
-      <v-flex shrink>
+      <v-flex shrink v-if="false">
         <v-switch
           v-model="dark"
           :label="`${ dark ? 'Night' : 'Day' }`"
