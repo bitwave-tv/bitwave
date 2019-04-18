@@ -351,6 +351,7 @@
       ...mapGetters({
         user: 'user',
         _username: 'username',
+        channel: 'channel',
       }),
 
       username () {
@@ -358,8 +359,8 @@
       },
 
       page () {
-        const route = this.$route.params;
-        return route ? route.watch : 'global';
+        const route = this.channel;
+        return route ? route.watch : 'error';
       },
     },
 

@@ -10,6 +10,7 @@ export const state = () => ({
   auth: null,
   user: null,
   metaUser: null,
+  channel: null,
 
 });
 
@@ -27,6 +28,11 @@ export const getters = {
     if (state.user) return state.user.username || null;
     else return null;
   },
+
+  channel : state => {
+    if (!state.channel) return 'global';
+    else return state.channel;
+  }
 
 };
 
@@ -53,7 +59,11 @@ export const mutations = {
     state.user = {
 
     }
-  }
+  },
+
+  setChannel (state, channel) {
+    state.channel = channel;
+  },
 
 };
 

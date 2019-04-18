@@ -210,6 +210,17 @@
       }
     },
 
+    async fetch ({ store, params }) {
+      const user = params.watch;
+      try {
+        const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
+        const channel = data.name;
+        store.commit('setChannel', { channel });
+      } catch (error) {
+        store.commit('setChannel', { channel: null });
+      }
+    },
+
     beforeRouteUpdate (to, from, next) {
       const params = to.params;
       if (params) console.log(`Watching: ${params.watch}`);
