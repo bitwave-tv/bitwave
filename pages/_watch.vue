@@ -177,6 +177,16 @@
 
         console.log(`Stream Metadata Update.`, data);
       },
+
+      async verifyChannel (user) {
+        try {
+          const {data} = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
+          return data.name;
+        } catch (error) {
+          console.log(`Channel ${user} does not exist`);
+          return null;
+        }
+      },
     },
 
     async asyncData ({ $axios, params }) {
@@ -210,15 +220,18 @@
       }
     },
 
-    async fetch ({ store, params }) {
+    async validate ({ params, query, store, $axios }) {
       const user = params.watch;
-      try {
-        const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
-        const channel = data.name;
-        store.commit('setChannel', { channel });
-      } catch (error) {
-        store.commit('setChannel', { channel: null });
+      if (!user.match(/^[a-zA-Z0-9._-]+$/)) {
+        return false;
       }
+      const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
+      return !!data.name;
+    },
+
+    async fetch ({ store, params }) {
+      // const channel = this.verifyChannel(params.watch);
+      // store.commit('setChannel', { channel: channel });
     },
 
     beforeRouteUpdate (to, from, next) {

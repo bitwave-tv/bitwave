@@ -7,66 +7,59 @@
     <!-- Chat Header -->
     <v-flex id="chat-header">
       <v-sheet>
-        <v-layout align-center>
+        <v-layout align-center class="pa-2">
           <v-flex shrink>
-            <v-layout
-              column
-              py-2
+<!--              <v-flex class="text-xs-left mt-0 mb-0 mx-3">-->
+            <v-menu
+              :close-on-content-click="false"
+              :nudge-width="250"
+              offset-y
+              bottom
             >
-              <v-flex class="text-xs-left mt-2 mb-1 mx-3">
-                <v-menu
-                  :close-on-content-click="false"
-                  :nudge-width="250"
-                  offset-y
-                  bottom
+              <template #activator="{ on }">
+                <v-chip
+                  v-on="on"
+                  color="yellow"
+                  text-color="black"
+                  @input="showViewers = !showViewers"
                 >
-                  <template #activator="{ on }">
-                    <v-chip
-                      v-on="on"
-                      color="yellow"
-                      text-color="black"
-                      @input="showViewers = !showViewers"
-                    >
-                      {{ viewerCount }}
-                      <v-icon right>account_circle</v-icon>
-                    </v-chip>
-                  </template>
+                  {{ viewerCount }}
+                  <v-icon right>account_circle</v-icon>
+                </v-chip>
+              </template>
 
-                  <v-card>
-                    <v-sheet color="yellow">
-                      <v-card-title class="title black--text">Live Viewers</v-card-title>
-                    </v-sheet>
+              <v-card>
+                <v-sheet color="yellow">
+                  <v-card-title class="title black--text">Live Viewers</v-card-title>
+                </v-sheet>
 
-                    <v-layout style="max-height: 60vh; overflow: auto;">
-                      <v-list dense two-line>
+                <v-layout style="max-height: 60vh; overflow: auto;">
+                  <v-list dense two-line>
 
-                        <v-list-tile avatar v-for="viewer in viewers" :key="`${viewer.username}-${viewer.uid}`">
-                          <v-list-tile-avatar>
-                            <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
-                            <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
-                          </v-list-tile-avatar>
-                          <v-list-tile-content>
-                            <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-<!--                            <v-list-tile-sub-title>watching: {{ viewer.page ? viewer.page.watch : 'global' }}</v-list-tile-sub-title>-->
-                            <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{viewer.page.watch }}</v-list-tile-sub-title>
-                            <v-list-tile-sub-title v-else>Just Browsing</v-list-tile-sub-title>
-                          </v-list-tile-content>
-                        </v-list-tile>
+                    <v-list-tile avatar v-for="viewer in viewers" :key="`${viewer.username}-${viewer.uid}`">
+                      <v-list-tile-avatar>
+                        <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
+                        <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
+                      </v-list-tile-avatar>
+                      <v-list-tile-content>
+                        <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
+                        <!--<v-list-tile-sub-title>watching: {{ viewer.page ? viewer.page.watch : 'global' }}</v-list-tile-sub-title>-->
+                        <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ] })` }}</v-list-tile-sub-title>
+                        <v-list-tile-sub-title v-else>Just Browsing</v-list-tile-sub-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
 
-                      </v-list>
-                    </v-layout>
-                  </v-card>
-                </v-menu>
-
-              </v-flex>
-            </v-layout>
+                  </v-list>
+                </v-layout>
+              </v-card>
+            </v-menu>
           </v-flex>
 
           <v-flex shrink>
             <v-switch
               v-model="global"
               :label="`${ global ? 'Global' : 'Local' }`"
-              class="mt-0"
+              class="ml-2 mt-0 pt-0"
               disabled
               color="yellow"
               hide-details
@@ -221,6 +214,7 @@
 
         showViewers: false,
         viewers: [],
+        channelViews: {},
 
         global: true,
       }
@@ -299,8 +293,26 @@
           return accumulator;
         }, []);
 
-        // this.viewers = data;
+        this.channelViews = data.reduce( (accumulator, current) => {
+          let channel = current.page && current.page.watch;
+          if ( !channel ) return accumulator;
 
+          channel  = channel.toLowerCase();
+
+          if ( channel in accumulator ) {
+            accumulator[channel]++;
+          } else {
+            accumulator[channel] = 1;
+          }
+
+          return accumulator;
+
+          // if (!accumulator.find( obj => obj[key2] === current[key2] )) accumulator.push(current);
+          // return accumulator;
+        }, {});
+        console.log(this.channelViews);
+
+        // this.viewers = data;
         this.viewerCount = this.viewers.length;
         console.debug(data);
       },
@@ -351,7 +363,6 @@
       ...mapGetters({
         user: 'user',
         _username: 'username',
-        channel: 'channel',
       }),
 
       username () {
@@ -359,8 +370,15 @@
       },
 
       page () {
-        const route = this.channel;
-        return route ? route.watch : 'error';
+        const params = this.$route.params;
+        if (params.hasOwnProperty('watch')) {
+          if (params.watch.match(/^[a-zA-Z0-9._-]+$/))
+            return params.watch;
+          else
+            return '404';
+        } else {
+          return 'Global';
+        }
       },
     },
 
