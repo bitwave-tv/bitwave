@@ -1,8 +1,8 @@
 <template>
   <v-flex class="msg">
     <v-layout row py-1 pl-3>
-      <v-list-tile-avatar size="34">
-        <img v-if="!!avatar" :src="avatar" alt="">
+      <v-list-tile-avatar size="34" @click="onClick" style="cursor:pointer;user-select:none">
+        <img v-if="!!avatar" :src="avatar" :alt="username">
         <v-icon v-else :style="{ background: color }">person</v-icon>
       </v-list-tile-avatar>
       <v-list-tile-content>
@@ -45,11 +45,16 @@
     data() {
       return {}
     },
+
+    methods: {
+      onClick () {
+        this.$emit('reply', this.username);
+      },
+    },
   }
 </script>
 
 <style lang='scss'>
-
   .msg {
     word-break: break-word;
 
@@ -82,5 +87,4 @@
       height: 28px;
     }
   }
-
 </style>

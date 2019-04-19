@@ -9,7 +9,6 @@
       <v-sheet>
         <v-layout align-center class="pa-2">
           <v-flex shrink>
-<!--              <v-flex class="text-xs-left mt-0 mb-0 mx-3">-->
             <v-menu
               :close-on-content-click="false"
               :nudge-width="250"
@@ -122,6 +121,7 @@
             :timestamp="getTime(item.timestamp)"
             :avatar="item.avatar"
             :color="item.color"
+            @reply="addUserTag"
           ><div v-html="item.message"></div>
           </chat-message>
         </dynamic-scroller-item>
@@ -221,6 +221,11 @@
     },
 
     methods: {
+      addUserTag (user) {
+        this.message += `@${user}: `
+        this.$refs['chatmessageinput'].focus();
+      },
+
       authenticated(user) {
         if (user) {
           this.subscribeToUser(user.uid);
