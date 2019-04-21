@@ -35,7 +35,7 @@
                 <v-layout style="max-height: 60vh; overflow: auto;">
                   <v-list dense two-line>
 
-                    <v-list-tile avatar v-for="viewer in viewers" :key="`${viewer.username}-${viewer.uid}`">
+                    <v-list-tile avatar v-for="viewer in viewers" :key="viewer.username">
                       <v-list-tile-avatar>
                         <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
                         <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
@@ -280,7 +280,7 @@
         }
         console.debug('Chat User:', user);
 
-        const socket = socketio('api.bitwave.tv:443');
+        const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
 
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
