@@ -54,27 +54,72 @@
             </v-menu>
           </v-flex>
 
-          <v-flex shrink>
-            <v-switch
-              v-model="global"
-              :label="`${ global ? 'Global' : 'Local' }`"
-              class="ml-2 mt-0 pt-0"
-              disabled
-              color="yellow"
-              hide-details
-            ></v-switch>
-          </v-flex>
-
           <v-spacer/>
 
           <v-flex shrink>
-            <v-btn
-              :style="{ 'min-width': '40px' }"
-              small
-              disabled
-              color="yellow"
-              @click="scrollToBottom(true)"
-            >TOOLS</v-btn>
+
+
+            <v-menu
+              v-model="showToolMenu"
+              :close-on-content-click="false"
+              transition="slide-x-reverse-transition"
+              bottom
+              offset-y
+            >
+              <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  color="yellow"
+                  @click="scrollToBottom(true)"
+                >TOOLS</v-btn>
+              </template>
+
+              <v-card>
+
+                <v-list>
+                  <v-list-tile>
+
+                    <v-switch
+                      v-model="global"
+                      :label="`${ global ? 'Global' : 'Local' } Chat`"
+                      class="ml-2 mt-0 pt-0"
+                      :disabled="true"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                  </v-list-tile>
+
+                  <v-divider/>
+
+                  <v-list-tile>
+                    <v-switch
+                      v-model="useTTS"
+                      label="Text to speech"
+                      class="ml-2 mt-0 pt-0"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                  </v-list-tile>
+
+                  <v-list-tile>
+                    <v-switch
+                      v-model="allowTrollTTS"
+                      :disabled="!useTTS"
+                      label="Troll TTS"
+                      class="ml-2 mt-0 pt-0"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                  </v-list-tile>
+
+                </v-list>
+
+              </v-card>
+            </v-menu>
+
           </v-flex>
 
           <v-flex shrink>
@@ -207,10 +252,15 @@
             channel: 'global',
           },
         ],
+        ignoreList: ['Nexus'],
         uid: null,
         viewerCount: 0,
         chatLimit: 150,
         chatContainer: null,
+
+        showToolMenu: false,
+        useTTS: false,
+        allowTrollTTS: true,
 
         showViewers: false,
         viewers: [],
@@ -331,6 +381,13 @@
       async rcvMessage(message) {
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
+
+        // For Text to Speech
+        const allowTTS = message.channel.toLowerCase() === this.username.toLowerCase() || message.channel.toLowerCase() === this.page.toLowerCase();
+        if ( allowTTS ) {
+          this.speak(message.message, message.username); // Say Message
+        }
+
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
@@ -338,12 +395,39 @@
       sendMessage() {
         if (this.message.length > 300) return false;
 
-        const msg = {
-          message: this.message,
-          channel: this.page,
-        };
+        const match = /^\/(\w+)\s?(\w+)?/g.exec(this.message);
+
+        if (match) {
+          const command  = match[1];
+          const argument = match[2];
+
+          switch (command) {
+            case 'ignore':
+              const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
+              if (!exists) {
+                this.ignoreList.push(argument);
+              }
+              break;
+            case 'unignore':
+              const location = this.ignoreList.findIndex( el => el === argument );
+              if (location) {
+                this.ignoreList.splice(location, 1);
+              }
+              break;
+            case 'skip':
+            case    's':
+              speechSynthesis.cancel();
+              break;
+          }
+        } else {
+          const msg = {
+            message: this.message,
+            channel: this.page,
+          };
+          this.socket.emit('message', msg);
+        }
+
         this.message = '';
-        this.socket.emit('message', msg);
       },
 
       getTime(timestamp) {
@@ -362,6 +446,46 @@
         this.uid   = uid;
         this.color = color
       },
+
+      speak (message, username) {
+        if (!this.useTTS) return;
+
+        if ( this.ignoreList.find(user => user === username) ) {
+          return;
+        }
+
+        if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) {
+          return; // disables troll TTS
+        }
+
+        function unescapeHtml(unsafe) {
+          return unsafe
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, "\"")
+            .replace(/&#39;/g, "'");
+        }
+
+
+        message = unescapeHtml(message);
+        message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
+
+        const voice = new SpeechSynthesisUtterance();
+        const voices = window.speechSynthesis.getVoices();
+        const rate = 17.5;
+        const pitch = .9;
+        voice.voice = voices[1];
+        voice.rate = rate / 10;
+        voice.pitch = pitch;
+        voice.text = message;
+
+        voice.onend = function(e) {
+          // console.log(`Finished in ${e.elapsedTime} seconds.`, e);
+        };
+
+        speechSynthesis.speak(voice);
+      }
     },
 
     computed: {
