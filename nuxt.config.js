@@ -16,6 +16,7 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { name: 'og:site_name', content: '[bitwave.tv]' },
       { hid: 'description', name: 'description', content: pkg.description },
+      { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg' },
       { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg' },
     ],
     script: [

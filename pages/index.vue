@@ -199,7 +199,7 @@
       return {
         player: null,
         initialized: false,
-        poster: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg',
+        poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
       }
     },
 
