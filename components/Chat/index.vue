@@ -187,6 +187,48 @@
 
     <v-divider/>
 
+    <v-flex id="chat-poll" v-if="false">
+      <v-sheet>
+        <v-layout column>
+
+          <v-layout align-center class="pa-2">
+            <v-flex shrink>
+              <v-btn
+                color="yellow"
+                light
+              >
+                Option A - Some BullShit
+              </v-btn>
+            </v-flex>
+          </v-layout>
+
+
+          <v-layout align-center class="pa-2">
+            <v-flex shrink>
+              <v-btn
+                color="yellow"
+                light
+              >
+                Option A - Some BullShit
+              </v-btn>
+            </v-flex>
+          </v-layout>
+
+          <v-layout align-center class="pa-2">
+            <v-flex shrink>
+              <v-btn
+                color="yellow"
+                light
+              >
+                Option A - Some BullShit
+              </v-btn>
+            </v-flex>
+          </v-layout>
+
+        </v-layout>
+      </v-sheet>
+    </v-flex>
+
     <v-flex
       id="inner-chat"
       fill-height
@@ -525,8 +567,13 @@
             .replace(/&#39;/g, "'");
         }
 
-        message = unescapeHtml(message);
+        message = unescapeHtml(message); // Fixes escaped characters
+
+        // Remove Links
         message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
+
+        // Remove html tags
+        message = message.replace(/<\/?[^>]*>/g, '');
 
         const voicesTTS = speechSynthesis.getVoices();
 
