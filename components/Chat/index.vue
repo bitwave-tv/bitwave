@@ -86,7 +86,7 @@
                       v-model="global"
                       :label="`${ global ? 'Global' : 'Local' } Chat`"
                       class="ml-2 mt-0 pt-0"
-                      :disabled="true"
+                      :disabled="false"
                       color="yellow"
                       hide-details
                     ></v-switch>
@@ -113,6 +113,44 @@
                       color="yellow"
                       hide-details
                     ></v-switch>
+                  </v-list-tile>
+                </v-list>
+
+                <v-divider/>
+
+                <v-list two-line subheader>
+                  <v-subheader>TTS Voice Options</v-subheader>
+
+                  <v-list-tile>
+                    <v-text-field
+                      v-model="selectionTTS"
+                      type="number"
+                      label="Voice ID"
+                      min="0"
+                      max="25"
+                      single-line
+                    ></v-text-field>
+                  </v-list-tile>
+
+                  <v-list-tile>
+                    <v-slider
+                      v-model="rateTTS"
+                      class="align-center"
+                      :max="20"
+                      :min="1"
+                      hide-details
+                    >
+                      <template #append>
+                        <v-text-field
+                          v-model="rateTTS"
+                          class="mt-0 pt-0"
+                          hide-details
+                          single-line
+                          type="number"
+                          style="width: 40px"
+                        ></v-text-field>
+                      </template>
+                    </v-slider>
                   </v-list-tile>
 
                 </v-list>
@@ -261,9 +299,11 @@
         showToolMenu: false,
         useTTS: false,
         allowTrollTTS: true,
+        selectionTTS: 1,
+        rateTTS: 10.00,
 
         showViewers: false,
-        viewers: [],
+        viewers: [{name: 'NONE'}],
         channelViews: {},
 
         global: true,
@@ -379,6 +419,12 @@
       },
 
       async rcvMessage(message) {
+        if ( !this.global ) {
+          if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
+            return;
+          }
+        }
+
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
 
@@ -467,16 +513,15 @@
             .replace(/&#39;/g, "'");
         }
 
-
         message = unescapeHtml(message);
         message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
 
+        const voicesTTS = speechSynthesis.getVoices();
+
         const voice = new SpeechSynthesisUtterance();
-        const voices = window.speechSynthesis.getVoices();
-        const rate = 17.5;
         const pitch = .9;
-        voice.voice = voices[1];
-        voice.rate = rate / 10;
+        voice.voice = voicesTTS[this.selectionTTS];
+        voice.rate = this.rateTTS / 10.0;
         voice.pitch = pitch;
         voice.text = message;
 
