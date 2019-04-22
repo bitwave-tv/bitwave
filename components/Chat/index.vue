@@ -63,6 +63,7 @@
               v-model="showToolMenu"
               :close-on-content-click="false"
               transition="slide-x-reverse-transition"
+              :max-width="350"
               bottom
               offset-y
             >
@@ -119,9 +120,9 @@
                 <v-divider/>
 
                 <v-list two-line subheader>
-                  <v-subheader>TTS Voice Options</v-subheader>
+                  <v-subheader>Text To Speech Options</v-subheader>
 
-                  <v-list-tile>
+                  <v-list-tile v-if="false">
                     <v-text-field
                       v-model="selectionTTS"
                       type="number"
@@ -133,11 +134,21 @@
                   </v-list-tile>
 
                   <v-list-tile>
+                    <v-select
+                      v-model="selectionTTS"
+                      :items="voices"
+                      label="TTS Voice"
+                    ></v-select>
+                  </v-list-tile>
+
+                  <v-list-tile>
                     <v-slider
+                      label="Speed"
                       v-model="rateTTS"
                       class="align-center"
                       :max="20"
                       :min="1"
+                      :step="0"
                       hide-details
                     >
                       <template #append>
@@ -301,6 +312,7 @@
         allowTrollTTS: true,
         selectionTTS: 1,
         rateTTS: 10.00,
+        voicesListTTS: process.client ? speechSynthesis.getVoices() : [],
 
         showViewers: false,
         viewers: [{name: 'NONE'}],
@@ -554,6 +566,10 @@
           return 'Global';
         }
       },
+
+      voices () {
+        return this.voicesListTTS.map( (voice, index) => { return { text: voice.name, value: index } } );
+      },
     },
 
     created() {
@@ -563,6 +579,8 @@
     mounted() {
       this.setupTrollData();;
       this.chatContainer = this.$refs.scroller;
+
+      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
     },
 
     beforeDestroy() {

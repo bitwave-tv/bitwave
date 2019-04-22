@@ -75,7 +75,7 @@
             <h6 class="headline" style="width:100%">Welcome to BitWave</h6>
             <v-layout wrap>
               <div class="subheading grey--text">
-                IP scratched. /comfychat/. Trolls welcome. Blobby.
+                An open platform live streaming service for creators to freely express themselves.
               </div>
               <v-flex class="ml-2">
                 <v-img
