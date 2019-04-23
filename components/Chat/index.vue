@@ -54,7 +54,105 @@
             </v-menu>
           </v-flex>
 
+
+
           <v-spacer/>
+
+          <v-menu
+
+              :close-on-content-click="false"
+              transition="slide-x-reverse-transition"
+              :max-width="350"
+              bottom
+              offset-y
+            >
+              <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  color="yellow"
+                  @click="scrollToBottom(true)"
+                >Results Y: {{emoteCount }} N: {{ emoteCount2 }} T: {{ emoteCount +  emoteCount2}}</v-btn>
+              </template>
+
+              <v-card>
+
+                <v-list>
+                  <v-menu
+
+              :close-on-content-click="false"
+              transition="slide-x-reverse-transition"
+              bottom
+              offset-y
+              >
+                <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  color="yellow"
+                  @click="clearVotes(true)"
+                >ResetPoll</v-btn>
+              </template>
+
+            </v-menu>
+
+            <v-menu
+
+              :close-on-content-click="false"
+              transition="slide-x-reverse-transition"
+              bottom
+              offset-y
+              >
+          <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  color="yellow"
+                  @click="sendCurrentVotes(true)"
+                >Send Results</v-btn>
+              </template>
+
+            </v-menu>
+
+            <v-menu
+
+              :close-on-content-click="false"
+              transition="slide-x-reverse-transition"
+              bottom
+              offset-y
+              >
+          <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  color="yellow"
+                  @click="sendStartVote(true)"
+                >Start Vote</v-btn>
+              </template>
+
+            </v-menu>
+
+
+                </v-list>
+
+              </v-card>
+              </v-menu>
+
+
+
+          <v-spacer/>
+
+
+
+
 
           <v-flex shrink>
 
@@ -349,6 +447,11 @@
         chatLimit: 150,
         chatContainer: null,
 
+
+        emoteCount: 0,
+        emoteCount2: 0,
+        mypagec: 'BLOBBY_YES__GAS_NO_VOTE_NAO',
+
         showToolMenu: false,
         useTTS: false,
         allowTrollTTS: true,
@@ -472,7 +575,126 @@
         await this.$nextTick( async () => await this.scrollToBottom(true) );
       },
 
+      clearVotes(force){
+          this.emoteCount = 0;
+          this.emoteCount2 = 0;
+          localStorage.setItem("voteBlobby", this.emoteCount);
+          localStorage.setItem("voteGas", this.emoteCount2);
+      },
+
+      restoreVoteCounts(){
+        if (typeof(Storage) !== "undefined") {
+          if(localStorage.voteBlobby){
+            if(localStorage.voteBlobby !== "undefined"){
+
+              this.emoteCount = Number(localStorage.voteBlobb);//localStorage.getItem("voteBlobby");
+              console.log("voteBlobby: " + localStorage.voteBlobby );
+            }else{
+              this.emoteCount = 0;
+              localStorage.voteBlobby = 0;
+            }
+          }else{
+              this.emoteCount = 0;
+              //localStorage.setItem("voteBlobby", 0);
+              localStorage.voteBlobby = 0;
+          }
+          // restore the gas
+          if(localStorage.voteGas){
+            if(localStorage.voteGas !== "undefined"){
+                this.emoteCount2 = Number(localStorage.voteGas);//localStorage.getItem("voteGas");
+                //localStorage.setItem("voteGas", 0);
+                console.log("votegas: " + localStorage.voteGas );
+              }else{
+                  this.emoteCount2 = 0;
+                  localStorage.voteGas = 0;
+              }
+          }else{
+            this.emoteCount2 = 0
+            localStorage.voteGas = 0;
+          }
+
+        }else{
+          console.log("NO Local storage support....");
+
+        }
+
+      },
+
+      updateVoteCountsStored(blobbycount,gascount){
+          localStorage.voteBlobby = blobbycount;
+          localStorage.voteGas = gascount;
+          /*console.log("updating storage amount:");
+          console.log(localStorage.voteBlobby);
+          console.log(localStorage.voteGas);*/
+      },
+
+      sendStartVote(force){
+        this.clearVotes(true); // reset the vote counts
+          // should wrap the message and send it as a poll start and toUpperCase it all
+          var startPoll = this.message;
+          startPoll = startPoll.toUpperCase();
+          var message_to_send = "POLL: `[" + startPoll + "]` :blobby: `[YES]` :gas: `[NO]`";
+          const msg = {
+            message: message_to_send,
+            channel: this.page
+          };
+          this.socket.emit('message', msg);
+
+            //channel: this.page,
+
+
+        this.message = '';
+      },
+
+      sendCurrentVotes(force){
+
+      // start of poll
+      // POLL: `[IS ANDY GAY]` :blobby: `[YES]` :gas: `[NO]`
+
+      var totalchatvotes = (this.emoteCount + this.emoteCount2);
+        var lmessage = "Poll results Blobby: " + this.emoteCount + " Gas: " + this.emoteCount2 + " Total: " + totalchatvotes +"";
+        // get this channel count of viewers
+        var thischannelcount = 0;
+        for ( name in this.channelViews)
+        {
+          //console.log(this.channelViews[name]);
+
+          if(name.toLowerCase() == this.page.toLowerCase()){
+            thischannelcount = this.channelViews[name];
+            console.log(name );
+            console.log("page name: " + this.page);
+          }
+        }
+
+        //thischannelcount = getUserViewerCount();
+        console.log("Got a count of: " + thischannelcount );
+        if(this.emoteCount > this.emoteCount2){
+          lmessage = ">" + lmessage;
+        }
+
+        if(this.emoteCount < this.emoteCount2){
+          lmessage = "<" + lmessage;
+        }
+
+        if( totalchatvotes < thischannelcount / 4){
+          lmessage += "`[ You are all a bunch of lazy faggots]` " + thischannelcount + " could have `[voted]`!";
+        }
+        const msg = {
+            message: lmessage,
+            //channel: this.mypagec,
+            channel: this.page,
+          };
+          this.socket.emit('message', msg);
+
+        console.log("sent message for voting stats");
+
+        //this.message = '';
+      },
+
       async rcvMessage(message) {
+        this.checkMessageForVotes(message);
+
+
         if ( !this.global ) {
           if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
             return;
@@ -490,6 +712,30 @@
 
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         await this.$nextTick( async () => await this.scrollToBottom() );
+      },
+
+      checkMessageForVotes(message){
+        // need to add support for global polling
+        var emote_to_count = "<img src=\"https://cdn.bitwave.tv/static/emotes/cool_blobby.gif\""; // clap pro
+        var emote_to_count2 = "<img src=\"https://cdn.bitwave.tv/static/emotes/OG/GAS_small.gif\""; // gas neg
+        //console.log("pre broken");
+        if(message.message.includes(emote_to_count)){
+
+          //console.log(message.message);
+          this.emoteCount += 1;
+          //console.log(this.emoteCount);
+        }
+        if(message.message.includes(emote_to_count2)){
+
+          //console.log(message.message);
+          this.emoteCount2 += 1;
+          //console.log(this.emoteCount2);
+        }
+        this.updateVoteCountsStored(this.emoteCount,this.emoteCount2);
+        //console.log("post broken");
+
+        //console.log("after update");
+
       },
 
       sendMessage() {
