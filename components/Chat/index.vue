@@ -93,6 +93,16 @@
                     ></v-switch>
                   </v-list-tile>
 
+                  <v-list-tile>
+                    <v-switch
+                      v-model="useIgnoreListForChat"
+                      label="Ignore chat messages"
+                      class="ml-2 mt-0 pt-0"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                  </v-list-tile>
+
                   <v-divider/>
 
                   <v-list-tile>
@@ -350,6 +360,7 @@
         chatContainer: null,
 
         showToolMenu: false,
+        useIgnoreListForChat: false,
         useTTS: false,
         allowTrollTTS: true,
         selectionTTS: 1,
@@ -473,6 +484,12 @@
       },
 
       async rcvMessage(message) {
+        if(this.useIgnoreListForChat){
+          if ( this.ignoreList.includes( message.username) ) {
+            return;
+          }
+        }
+
         if ( !this.global ) {
           if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
             return;
@@ -496,10 +513,11 @@
         if (this.message.length > 300) return false;
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec(this.message);
+        const parts = this.message.split(" ");
 
         if (match) {
           const command  = match[1];
-          const argument = match[2];
+          const argument = parts[1];//match[2];
 
           switch (command) {
             case 'ignore':
