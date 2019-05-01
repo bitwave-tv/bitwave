@@ -150,7 +150,7 @@
               Need to report content?
             </v-flex>
 
-            <div class="mb-0">Thank you for helping ALPHA test BitWave.tv and I look forward to bringing more exciting features in the future.</div>
+            <div class="mb-0">Thank you for helping ALPHA test [bitwave.tv] and I look forward to bringing more exciting features in the future.</div>
             <div class="mb-0">We have not been served any secret court orders and are not under any gag orders.</div>
 
             <div class="text-xs-right">
