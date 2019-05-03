@@ -436,7 +436,8 @@
         }
         console.debug('Chat User:', user);
 
-        const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
+        // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
+        const socket = socketio('api.bitwave.tv:443');
 
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
@@ -658,7 +659,7 @@
 <style lang='scss'>
   #sidechat {
     border-top: 3px yellow;
-    background-color: #111;
+    background-color: #000;
 
     p {
       margin-bottom: 0;
