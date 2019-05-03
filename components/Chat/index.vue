@@ -187,6 +187,7 @@
               small
               light
               color="yellow"
+              @click="scrollToBottom(true)"
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
