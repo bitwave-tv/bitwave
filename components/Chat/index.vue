@@ -460,9 +460,6 @@
           }
 
           return accumulator;
-
-          // if (!accumulator.find( obj => obj[key2] === current[key2] )) accumulator.push(current);
-          // return accumulator;
         }, {});
         console.log(this.channelViews);
 

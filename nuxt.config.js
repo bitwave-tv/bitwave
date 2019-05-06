@@ -13,11 +13,10 @@ module.exports = {
     title: pkg.name,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'viewport',     content: 'width=device-width, initial-scale=1' },
+      { name: 'description',  hid: 'description', content: pkg.description},
       { name: 'og:site_name', content: '[bitwave.tv]' },
-      { hid: 'description', name: 'description', content: pkg.description },
-      { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg' },
-      { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg' },
+      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
     ],
     script: [
       // { src: 'https://tlk.io/embed.js' }

@@ -1,7 +1,7 @@
 {
   "name": "BitWave.tv",
-  "version": "1.2.6",
-  "description": "A &#39;no bs&#39; streaming platform.",
+  "version": "1.2.7",
+  "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "private": true,
   "scripts": {
