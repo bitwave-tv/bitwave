@@ -1,6 +1,8 @@
 <template>
-  <div>
+  <v-layout row>
+    <!-- Video And Description -->
     <v-layout
+      style="padding-right: 450px;"
       column
     >
       <v-flex
@@ -76,7 +78,13 @@
         </v-layout>
       </v-flex>
     </v-layout>
-  </div>
+
+    <!-- Chat -->
+    <v-flex shrink style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;">
+      <chat :dark="true" />
+    </v-flex>
+
+  </v-layout>
 </template>
 
 <script>
@@ -86,6 +94,7 @@
   import { db } from '@/plugins/firebase.js'
 
   import VueMarkdown from '~/components/VueMarkdown'
+  import Chat from '~/components/Chat'
 
 
   export default {
@@ -105,6 +114,7 @@
 
     components: {
       VueMarkdown,
+      Chat,
     },
 
     data() {

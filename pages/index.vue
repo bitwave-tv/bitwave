@@ -51,23 +51,37 @@
           v-if="live"
           class="mb-3"
         >
-          <video
-            playsinline
-            id="solo-player"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            :poster="poster"
-          >
-            <source
-              :src="live[0].src"
-              :type="live[0].type"
-            >
-          </video>
+          <v-layout row>
+            <v-flex>
+              <video
+                playsinline
+                id="solo-player"
+                class="video-js vjs-default-skin"
+                width="100%"
+                controls
+                autoplay
+                muted
+                preload="auto"
+                data-setup='{ "aspectRatio":"16:9" }'
+                :poster="poster"
+              >
+                <source
+                  :src="live[0].src"
+                  :type="live[0].type"
+                >
+              </video>
+            </v-flex>
+
+            <v-flex shrink>
+              <v-layout>
+                <v-flex shrink style="width: 450px; max-height: 480px;">
+                  <chat :dark="true" />
+                </v-flex>
+              </v-layout>
+            </v-flex>
+
+          </v-layout>
+
         </v-card>
 
         <v-card class="mb-3">
@@ -191,9 +205,11 @@
   // videojs
   import videojs from 'video.js';
   import 'videojs-contrib-dash';
+  import Chat from '~/components/Chat'
 
   export default {
     components: {
+      Chat,
     },
 
     data() {
