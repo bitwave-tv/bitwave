@@ -378,7 +378,7 @@
 
     methods: {
       addUserTag (user) {
-        this.message += `@${user}: `
+        this.message = `${this.$refs['chatmessageinput'].value}@${user} `;
         this.$refs['chatmessageinput'].focus();
       },
 
