@@ -1,6 +1,6 @@
-# bitwave.tv
+# [bitwave.tv]
 
-> A &#39;no bs&#39; streaming platform.
+> An open platform live streaming service for creators to freely express themselves.
 
 ## Build Setup
 

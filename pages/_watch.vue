@@ -1,6 +1,8 @@
 <template>
-  <div>
+  <v-layout row>
+    <!-- Video And Description -->
     <v-layout
+      :style=" `padding-right: ${ $vuetify.breakpoint.mdAndUp ? 450 : 0 }px;` "
       column
     >
       <v-flex
@@ -51,6 +53,15 @@
           </v-responsive>
         </v-card>
       </v-flex>
+
+      <v-flex>
+        <v-layout>
+          <v-flex style="max-height: 60vh;" v-if="!$vuetify.breakpoint.mdAndUp">
+            <chat :dark="true" />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+
       <v-flex class="px-3">
         <v-layout class="mb-2">
           <v-flex shrink>
@@ -76,7 +87,13 @@
         </v-layout>
       </v-flex>
     </v-layout>
-  </div>
+
+    <!-- Chat -->
+    <v-flex shrink style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;" v-if="$vuetify.breakpoint.mdAndUp">
+      <chat :dark="true" />
+    </v-flex>
+
+  </v-layout>
 </template>
 
 <script>
@@ -86,6 +103,7 @@
   import { db } from '@/plugins/firebase.js'
 
   import VueMarkdown from '~/components/VueMarkdown'
+  import Chat from '~/components/Chat'
 
 
   export default {
@@ -93,18 +111,24 @@
       return {
         title: `${this.name} - BitWave.tv`,
         meta: [
-          { name: 'og:title', hid: 'og:title', content: `${this.name}'s Stream - BitWave.tv` },
-          { name: 'og:description', hid: 'og:description', content: `${(this.desc || '').split(200)} - BitWave.tv` },
-          { name: 'description', hid: 'description', content: `${this.name} - BitWave.tv` },
-          { name: 'og:image', content: this.poster },
-          { name: 'author', content: this.name },
-          { name: 'profile:username', content: this.name },
+          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - BitWave.tv` },
+          { name: 'og:description', hid: 'og:description', content: (this.desc || '').split(200) },
+          { name: 'og:image',       hid:'og:image',        content: this.poster},
+          { name: 'author',         content: this.name },
+          { name: 'description',    hid: 'description',    content: (this.name || '').split(200) },
+          { name: 'profile:username',    content: this.name },
+          { name: 'twitter:card',        content: 'summary_large_image' },
+          { name: 'twitter:site',        content: '@BitWaveTV' },
+          { name: 'twitter:title',       content: (this.title || '').split(70) },
+          { name: 'twitter:description', content: (this.desc || '').split(200) },
+          { name: 'twitter:image',       content: this.poster },
         ],
       }
     },
 
     components: {
       VueMarkdown,
+      Chat,
     },
 
     data() {
@@ -149,7 +173,7 @@
           eventLabel: this.name,
           eventValue: this.watchInterval / 60,
         });
-        console.log(`Watch Time: ${this.watchDuration}s on ${this.name}`);
+        console.debug(`Watch Time: ${this.watchDuration}s on ${this.name}`);
       },
 
       getRandomBump() {
@@ -197,7 +221,7 @@
         const name   = data.name   || 'No Username';
         const title  = data.title  || 'No Title';
         const desc   = data.description || 'No Description';
-        const poster = data.poster || 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg';
+        const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const url    = data.url    || `https://stream.bitwave.tv/stream/${name}/index.m3u8`;
@@ -209,10 +233,10 @@
         console.error(error.message);
 
         return {
-          name: '404',
-          title: '⚠ STREAM NOT FOUND ⚠',
+          name: '404 Error',
+          title: '⚠ 404 - STREAM NOT FOUND ⚠',
           desc: 'Invalid Stream',
-          poster: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg',
+          poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
           live: false,
           nsfw: false,
           url: '',

@@ -1,38 +1,4 @@
 <template>
-  <div>
-    <v-layout
-      v-if="false"
-      class="pa-2"
-      row
-      justify-space-around
-    >
-      <v-flex
-        v-for="(stream, index) in streams"
-        :key="stream.src"
-        class="ma-2"
-      >
-        <v-card>
-          <video
-            playsinline
-            :id="`player-${index}`"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            :poster="poster"
-          >
-            <source
-              :src="stream.src"
-              :type="stream.type"
-            >
-          </video>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
   <v-container
     class="pt-2"
     fluid
@@ -50,29 +16,51 @@
         <v-card
           v-if="live"
           class="mb-3"
+          color="black"
         >
-          <video
-            playsinline
-            id="solo-player"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            :poster="poster"
+          <v-layout
+            row
+            wrap
+            align-center
           >
-            <source
-              :src="live[0].src"
-              :type="live[0].type"
+            <v-flex
+              style="min-width: 50%;"
             >
-          </video>
+              <video
+                playsinline
+                id="solo-player"
+                class="video-js vjs-default-skin vjs-fluid"
+                controls
+                autoplay
+                muted
+                preload="auto"
+                data-setup='{ "aspectRatio":"16:9" }'
+                :poster="poster"
+              >
+                <source
+                  :src="live[0].src"
+                  :type="live[0].type"
+                >
+              </video>
+            </v-flex>
+
+            <v-flex
+              shrink
+              style="width: 450px;"
+            >
+              <v-layout style="max-height: 480px;">
+                <v-flex>
+                  <chat :dark="true" />
+                </v-flex>
+              </v-layout>
+            </v-flex>
+          </v-layout>
+
         </v-card>
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
-            <h6 class="headline" style="width:100%">Welcome to BitWave</h6>
+            <h6 class="headline" style="width:100%">Welcome to BitWave.tv</h6>
             <v-layout wrap>
               <div class="subheading grey--text">
                 An open platform live streaming service for creators to freely express themselves.
@@ -184,16 +172,17 @@
       </v-flex>
     </v-layout>
   </v-container>
-  </div>
 </template>
 
 <script>
   // videojs
   import videojs from 'video.js';
   import 'videojs-contrib-dash';
+  import Chat from '~/components/Chat'
 
   export default {
     components: {
+      Chat,
     },
 
     data() {

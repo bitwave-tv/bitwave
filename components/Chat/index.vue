@@ -7,9 +7,14 @@
     <!-- Chat Header -->
     <v-flex id="chat-header">
       <v-sheet>
-        <v-layout align-center class="pa-2">
+        <v-layout
+          align-center
+          class="pa-2"
+        >
           <v-flex shrink>
+            <!-- Viewer List -->
             <v-menu
+              v-model="showViewers"
               :close-on-content-click="false"
               :nudge-width="250"
               offset-y
@@ -20,7 +25,6 @@
                   v-on="on"
                   color="yellow"
                   text-color="black"
-                  @input="showViewers = !showViewers"
                 >
                   {{ viewerCount }}
                   <v-icon right>account_circle</v-icon>
@@ -32,10 +36,14 @@
                   <v-card-title class="title black--text">Live Viewers</v-card-title>
                 </v-sheet>
 
-                <v-layout style="max-height: 60vh; overflow: auto;">
+                <v-layout style="max-height: 60vh; overflow: auto; overscroll-behavior: contain;">
                   <v-list dense two-line>
-
-                    <v-list-tile avatar v-for="viewer in viewers" :key="viewer.username">
+                    <v-list-tile
+                      avatar
+                      v-if="showViewers"
+                      v-for="viewer in viewers"
+                      :key="viewer.username"
+                    >
                       <v-list-tile-avatar>
                         <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
                         <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
@@ -47,7 +55,6 @@
                         <v-list-tile-sub-title v-else>Just Browsing</v-list-tile-sub-title>
                       </v-list-tile-content>
                     </v-list-tile>
-
                   </v-list>
                 </v-layout>
               </v-card>
@@ -57,8 +64,7 @@
           <v-spacer/>
 
           <v-flex shrink>
-
-
+            <!-- Tools -->
             <v-menu
               v-model="showToolMenu"
               :close-on-content-click="false"
@@ -79,10 +85,8 @@
               </template>
 
               <v-card>
-
                 <v-list>
                   <v-list-tile>
-
                     <v-switch
                       v-model="global"
                       :label="`${ global ? 'Global' : 'Local' } Chat`"
@@ -92,7 +96,6 @@
                       hide-details
                     ></v-switch>
                   </v-list-tile>
-
                   <v-list-tile>
                     <v-switch
                       v-model="useIgnoreListForChat"
@@ -114,7 +117,6 @@
                       hide-details
                     ></v-switch>
                   </v-list-tile>
-
                   <v-list-tile>
                     <v-switch
                       v-model="allowTrollTTS"
@@ -131,7 +133,6 @@
 
                 <v-list two-line subheader>
                   <v-subheader>Text To Speech Options</v-subheader>
-
                   <v-list-tile v-if="false">
                     <v-text-field
                       v-model="selectionTTS"
@@ -142,7 +143,6 @@
                       single-line
                     ></v-text-field>
                   </v-list-tile>
-
                   <v-list-tile>
                     <v-select
                       v-model="selectionTTS"
@@ -150,7 +150,6 @@
                       label="TTS Voice"
                     ></v-select>
                   </v-list-tile>
-
                   <v-list-tile>
                     <v-slider
                       label="Speed"
@@ -173,24 +172,20 @@
                       </template>
                     </v-slider>
                   </v-list-tile>
-
                 </v-list>
-
               </v-card>
             </v-menu>
-
           </v-flex>
-
           <v-flex shrink>
             <v-btn
               :style="{ 'min-width': '40px' }"
               small
               light
               color="yellow"
+              @click="scrollToBottom(true)"
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
-
         </v-layout>
       </v-sheet>
     </v-flex>
@@ -200,7 +195,6 @@
     <v-flex id="chat-poll" v-if="false">
       <v-sheet>
         <v-layout column>
-
           <v-layout align-center class="pa-2">
             <v-flex shrink>
               <v-btn
@@ -234,7 +228,6 @@
               </v-btn>
             </v-flex>
           </v-layout>
-
         </v-layout>
       </v-sheet>
     </v-flex>
@@ -377,7 +370,7 @@
 
     methods: {
       addUserTag (user) {
-        this.message += `@${user}: `
+        this.message = `${this.$refs['chatmessageinput'].value}@${user} `;
         this.$refs['chatmessageinput'].focus();
       },
 
@@ -435,7 +428,8 @@
         }
         console.debug('Chat User:', user);
 
-        const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
+        // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
+        const socket = socketio('api.bitwave.tv:443');
 
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
@@ -466,9 +460,6 @@
           }
 
           return accumulator;
-
-          // if (!accumulator.find( obj => obj[key2] === current[key2] )) accumulator.push(current);
-          // return accumulator;
         }, {});
         console.log(this.channelViews);
 
@@ -578,11 +569,11 @@
 
         function unescapeHtml(unsafe) {
           return unsafe
-            .replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&quot;/g, "\"")
-            .replace(/&#39;/g, "'");
+            .replace(/&amp;/g,  `&`)
+            .replace(/&lt;/g,   `<`)
+            .replace(/&gt;/g,   `>`)
+            .replace(/&quot;/g, `"`)
+            .replace(/&#39;/g,  `'`)
         }
 
         message = unescapeHtml(message); // Fixes escaped characters
@@ -657,7 +648,7 @@
 <style lang='scss'>
   #sidechat {
     border-top: 3px yellow;
-    background-color: #111;
+    background-color: #000;
 
     p {
       margin-bottom: 0;
