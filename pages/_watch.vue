@@ -54,8 +54,12 @@
         </v-card>
       </v-flex>
 
-      <v-flex v-if="!$vuetify.breakpoint.mdAndUp">
-        <chat :dark="true" style="max-height: 60vh;"  />
+      <v-flex>
+        <v-layout>
+          <v-flex style="max-height: 60vh;" v-if="!$vuetify.breakpoint.mdAndUp">
+            <chat :dark="true" />
+          </v-flex>
+        </v-layout>
       </v-flex>
 
       <v-flex class="px-3">
