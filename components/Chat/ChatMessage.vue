@@ -62,6 +62,7 @@
       background-color: #607D8B99;
       font-size: 10px;
       user-select: none;
+      text-overflow: clip;
     }
 
     .v-list__tile__avatar {

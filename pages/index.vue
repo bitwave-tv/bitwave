@@ -60,7 +60,7 @@
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
-            <h6 class="headline" style="width:100%">Welcome to BitWave</h6>
+            <h6 class="headline" style="width:100%">Welcome to BitWave.tv</h6>
             <v-layout wrap>
               <div class="subheading grey--text">
                 An open platform live streaming service for creators to freely express themselves.
