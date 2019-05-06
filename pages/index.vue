@@ -1,38 +1,4 @@
 <template>
-  <div>
-    <v-layout
-      v-if="false"
-      class="pa-2"
-      row
-      justify-space-around
-    >
-      <v-flex
-        v-for="(stream, index) in streams"
-        :key="stream.src"
-        class="ma-2"
-      >
-        <v-card>
-          <video
-            playsinline
-            :id="`player-${index}`"
-            class="video-js vjs-default-skin"
-            width="100%"
-            controls
-            autoplay
-            muted
-            preload="auto"
-            data-setup='{ "aspectRatio":"16:9" }'
-            :poster="poster"
-          >
-            <source
-              :src="stream.src"
-              :type="stream.type"
-            >
-          </video>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
   <v-container
     class="pt-2"
     fluid
@@ -50,14 +16,20 @@
         <v-card
           v-if="live"
           class="mb-3"
+          color="black"
         >
-          <v-layout row>
-            <v-flex>
+          <v-layout
+            row
+            wrap
+            align-center
+          >
+            <v-flex
+              style="min-width: 50%;"
+            >
               <video
                 playsinline
                 id="solo-player"
-                class="video-js vjs-default-skin"
-                width="100%"
+                class="video-js vjs-default-skin vjs-fluid"
                 controls
                 autoplay
                 muted
@@ -72,14 +44,16 @@
               </video>
             </v-flex>
 
-            <v-flex shrink>
-              <v-layout>
-                <v-flex shrink style="width: 450px; max-height: 480px;">
+            <v-flex
+              shrink
+              style="width: 450px;"
+            >
+              <v-layout style="max-height: 480px;">
+                <v-flex>
                   <chat :dark="true" />
                 </v-flex>
               </v-layout>
             </v-flex>
-
           </v-layout>
 
         </v-card>
@@ -198,7 +172,6 @@
       </v-flex>
     </v-layout>
   </v-container>
-  </div>
 </template>
 
 <script>
