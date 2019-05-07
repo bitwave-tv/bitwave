@@ -322,6 +322,9 @@
       dark: {
         type: Boolean,
       },
+      chatChannel: {
+        type: String,
+      }
     },
 
     components: {
@@ -385,7 +388,8 @@
             email: null,
             username: `troll:${this.uid}`,
             uid: this.uid,
-            page: this.$route.params,
+            // page: this.$route.params,
+            page: this.page,
           };
           this.connectChat(trollUser);
         }
@@ -396,7 +400,8 @@
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
-          user.page = this.$route.params;
+          // user.page = this.$route.params;
+          user.page = this.page;
           this.connectChat(user);
         });
       },
@@ -508,7 +513,7 @@
 
         if (match) {
           const command  = match[1];
-          const argument = parts[1];//match[2];
+          const argument = parts[1]; //match[2];
 
           switch (command) {
             case 'ignore':
@@ -539,9 +544,7 @@
         this.message = '';
       },
 
-      getTime(timestamp) {
-        return `[${moment(timestamp).format('HH:mm')}]`;
-      },
+      getTime(timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
 
       setupTrollData () {
         let uid   = localStorage.getItem('tuid');
@@ -558,14 +561,8 @@
 
       speak (message, username) {
         if (!this.useTTS) return;
-
-        if ( this.ignoreList.find(user => user === username) ) {
-          return;
-        }
-
-        if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) {
-          return; // disables troll TTS
-        }
+        if ( this.ignoreList.find(user => user === username) ) return;
+        if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) return; // disables troll TTS
 
         function unescapeHtml(unsafe) {
           return unsafe
@@ -612,7 +609,8 @@
       },
 
       page () {
-        const params = this.$route.params;
+        return this.chatChannel || '';
+        /*const params = this.$route.params;
         if (params.hasOwnProperty('watch')) {
           if (params.watch.match(/^[a-zA-Z0-9._-]+$/))
             return params.watch;
@@ -620,7 +618,7 @@
             return '404';
         } else {
           return 'Global';
-        }
+        }*/
       },
 
       voices () {

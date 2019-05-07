@@ -90,7 +90,10 @@
 
     <!-- Chat -->
     <v-flex shrink style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;" v-if="$vuetify.breakpoint.mdAndUp">
-      <chat :dark="true" />
+      <chat
+        :chat-channel="global"
+        :dark="true"
+      />
     </v-flex>
 
   </v-layout>

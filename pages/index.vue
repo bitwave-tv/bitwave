@@ -50,7 +50,10 @@
             >
               <v-layout style="max-height: 480px;">
                 <v-flex>
-                  <chat :dark="true" />
+                  <chat
+                    :chat-channel="global"
+                    :dark="true"
+                  />
                 </v-flex>
               </v-layout>
             </v-flex>
