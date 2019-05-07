@@ -427,6 +427,7 @@
         if (this.socket) {
           this.socket.disconnect();
         }
+
         if (!user) {
           console.warn(`Failed to connect to chat. No user defined.`);
           return;
@@ -434,7 +435,9 @@
         console.debug('Chat User:', user);
 
         // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
-        const socket = socketio('api.bitwave.tv:443');
+        // const socket = socketio('api.bitwave.tv:443');
+        const socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
+        // const socket = socketio('chat.bitwave.tv');
 
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
@@ -631,7 +634,7 @@
     },
 
     mounted() {
-      this.setupTrollData();;
+      this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
@@ -639,6 +642,7 @@
 
     beforeDestroy() {
       if (this.unsubscribeUser) this.unsubscribeUser();
+      if (this.socket) this.socket.disconnect();
     },
   }
 </script>

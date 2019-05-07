@@ -157,9 +157,7 @@
       }
     },
 
-    computed: {
-
-    },
+    computed: {},
 
     methods: {
       playerInitialize(){
