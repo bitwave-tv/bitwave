@@ -51,7 +51,7 @@
               <v-layout style="max-height: 480px;">
                 <v-flex>
                   <chat
-                    :chat-channel="global"
+                    :chat-channel="live[0].name"
                     :dark="true"
                   />
                 </v-flex>

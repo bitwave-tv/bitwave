@@ -2,7 +2,7 @@
   <v-layout row>
     <!-- Video And Description -->
     <v-layout
-      :style=" `padding-right: ${ $vuetify.breakpoint.mdAndUp ? 450 : 0 }px;` "
+      :style="{ 'padding-right': $vuetify.breakpoint.mdAndUp ? '450px' : '0' }"
       column
     >
       <v-flex
@@ -56,8 +56,14 @@
 
       <v-flex>
         <v-layout>
-          <v-flex style="max-height: 60vh;" v-if="!$vuetify.breakpoint.mdAndUp">
-            <chat :dark="true" />
+          <v-flex
+            v-if="!$vuetify.breakpoint.mdAndUp"
+            style="max-height: 60vh;"
+          >
+            <chat
+              :chat-channel="this.name"
+              :dark="true"
+            />
           </v-flex>
         </v-layout>
       </v-flex>
@@ -89,9 +95,13 @@
     </v-layout>
 
     <!-- Chat -->
-    <v-flex shrink style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;" v-if="$vuetify.breakpoint.mdAndUp">
+    <v-flex
+      v-if="$vuetify.breakpoint.mdAndUp"
+      shrink
+      style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
+    >
       <chat
-        :chat-channel="global"
+        :chat-channel="this.name"
         :dark="true"
       />
     </v-flex>
