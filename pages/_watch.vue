@@ -1,112 +1,112 @@
 <template>
-  <v-layout row>
-    <!-- Video And Description -->
-    <v-layout
-      :style="{ 'padding-right': $vuetify.breakpoint.mdAndUp ? '450px' : '0' }"
-      column
-    >
-      <v-flex
-        v-if="false"
+  <v-container flex>
+    <v-layout column>
+
+      <!-- Video And Description -->
+      <v-layout
+        :style="{ 'padding-right': !!mobile ? '450px' : '0' }"
+        column
       >
-        <v-tabs
-          dark
-          slider-color="#ff9800"
-        >
-          <v-tab>
-            {{ name }}
-          </v-tab>
-          <v-tab>
-            ARCHIVES
-          </v-tab>
-        </v-tabs>
-      </v-flex>
-
-      <hr class="v-divider theme--light">
-
-      <v-flex class="px-0 pb-2 pt-0">
-        <v-card>
-          <v-responsive
-            :aspect-ratio="16/9"
+        <v-flex v-if="false">
+          <v-tabs
+            dark
+            slider-color="#ff9800"
           >
-            <video
-              playsinline
-              id="streamplayer"
-              class="video-js vjs-default-skin"
-              width="100%"
-              controls
-              :autoplay="live"
-              preload="auto"
-              data-setup='{ "aspectRatio":"16:9" }'
-              :poster="poster"
+            <v-tab>
+              {{ name }}
+            </v-tab>
+            <v-tab>
+              ARCHIVES
+            </v-tab>
+          </v-tabs>
+        </v-flex>
+
+        <hr class="v-divider theme--light" />
+
+        <v-flex class="px-0 pb-2 pt-0">
+          <v-card>
+            <v-responsive
+              :aspect-ratio="16/9"
             >
-              <source
-                v-if="live"
-                :src="url"
-                type="application/x-mpegURL"
+              <video
+                playsinline
+                id="streamplayer"
+                class="video-js vjs-default-skin"
+                width="100%"
+                controls
+                :autoplay="live"
+                preload="auto"
+                data-setup='{ "aspectRatio":"16:9" }'
+                :poster="poster"
               >
-              <source
-                v-else
-                :src="getRandomBump()"
-                type="video/mp4"
-              >
-            </video>
-          </v-responsive>
-        </v-card>
+                <source
+                  v-if="live"
+                  :src="url"
+                  type="application/x-mpegURL"
+                >
+                <source
+                  v-else
+                  :src="getRandomBump()"
+                  type="video/mp4"
+                >
+              </video>
+            </v-responsive>
+          </v-card>
+        </v-flex>
+
+        <template v-if="!mobile" >
+          <v-flex class="mb-3" >
+            <v-layout>
+              <v-flex style="max-height: 60vh;" >
+                <chat
+                  :chat-channel="name"
+                  :dark="true"
+                />
+              </v-flex>
+            </v-layout>
+          </v-flex>
+        </template>
+
+        <v-flex class="px-3">
+          <v-layout class="mb-2">
+            <v-flex shrink>
+              <v-chip
+                v-if="nsfw"
+                color="red"
+                class="mr-2"
+                small
+                outline
+              >NSFW</v-chip>
+            </v-flex>
+            <v-flex shrink>
+              <h2>{{ title }}</h2>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex id="description">
+              <vue-markdown
+                v-if="desc"
+                :source="desc"
+              ></vue-markdown>
+            </v-flex>
+          </v-layout>
+        </v-flex>
+      </v-layout>
+
+      <!-- Chat -->
+      <v-flex
+        v-if="mobile"
+        shrink
+        style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
+      >
+        <chat
+          :chat-channel="name"
+          :dark="true"
+        />
       </v-flex>
 
-      <v-flex>
-        <v-layout>
-          <v-flex
-            v-if="!$vuetify.breakpoint.mdAndUp"
-            style="max-height: 60vh;"
-          >
-            <chat
-              :chat-channel="this.name"
-              :dark="true"
-            />
-          </v-flex>
-        </v-layout>
-      </v-flex>
-
-      <v-flex class="px-3">
-        <v-layout class="mb-2">
-          <v-flex shrink>
-            <v-chip
-              v-if="nsfw"
-              color="red"
-              class="mr-2"
-              small
-              outline
-            >NSFW</v-chip>
-          </v-flex>
-          <v-flex shrink>
-            <h2>{{ title }}</h2>
-          </v-flex>
-        </v-layout>
-        <v-layout>
-          <v-flex id="description">
-            <vue-markdown
-              v-if="desc"
-              :source="desc"
-            ></vue-markdown>
-          </v-flex>
-        </v-layout>
-      </v-flex>
     </v-layout>
-
-    <!-- Chat -->
-    <v-flex
-      v-if="$vuetify.breakpoint.mdAndUp"
-      shrink
-      style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
-    >
-      <chat
-        :chat-channel="this.name"
-        :dark="true"
-      />
-    </v-flex>
-
-  </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -117,7 +117,6 @@
 
   import VueMarkdown from '~/components/VueMarkdown'
   import Chat from '~/components/Chat'
-
 
   export default {
     head() {
@@ -157,7 +156,12 @@
       }
     },
 
-    computed: {},
+    computed: {
+      mobile () {
+        const isHydrated = !!this.$vuetify;
+        return isHydrated ? !this.$vuetify.breakpoint.mdAndDown : true;
+      },
+    },
 
     methods: {
       playerInitialize(){
@@ -262,11 +266,6 @@
       }
       const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
       return !!data.name;
-    },
-
-    async fetch ({ store, params }) {
-      // const channel = this.verifyChannel(params.watch);
-      // store.commit('setChannel', { channel: channel });
     },
 
     beforeRouteUpdate (to, from, next) {

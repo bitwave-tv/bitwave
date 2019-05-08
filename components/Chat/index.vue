@@ -37,26 +37,30 @@
                 </v-sheet>
 
                 <v-layout style="max-height: 60vh; overflow: auto; overscroll-behavior: contain;">
-                  <v-list dense two-line>
+                  <v-list
+                    dense
+                    two-line
+                  >
                     <v-list-tile
                       avatar
-                      v-if="showViewers"
-                      v-for="viewer in viewers"
+                      v-for="viewer in viewerList"
                       :key="viewer.username"
                     >
-                      <v-list-tile-avatar>
-                        <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
-                        <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
-                      </v-list-tile-avatar>
-                      <v-list-tile-content>
-                        <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                        <!--<v-list-tile-sub-title>watching: {{ viewer.page ? viewer.page.watch : 'global' }}</v-list-tile-sub-title>-->
-                        <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ] })` }}</v-list-tile-sub-title>
-                        <v-list-tile-sub-title v-else>Just Browsing</v-list-tile-sub-title>
-                      </v-list-tile-content>
+                      <template v-if="viewerList.length > 0">
+                        <v-list-tile-avatar>
+                          <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
+                          <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                          <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
+                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ] })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else>Just Browsing {{ viewer.page }}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                      </template>
                     </v-list-tile>
                   </v-list>
                 </v-layout>
+
               </v-card>
             </v-menu>
           </v-flex>
@@ -361,7 +365,7 @@
         allowTrollTTS: true,
         selectionTTS: 1,
         rateTTS: 10.00,
-        voicesListTTS: process.client ? speechSynthesis.getVoices() : [],
+        voicesListTTS: [],
 
         showViewers: false,
         viewers: [{name: 'NONE'}],
@@ -449,31 +453,27 @@
       },
 
       updateUsernames(data) {
+        // Create unique list of users
         const key = 'username';
         this.viewers = data.reduce( (accumulator, current) => {
           if (!accumulator.find( obj => obj[key] === current[key] )) accumulator.push(current);
           return accumulator;
         }, []);
 
+        // Create list of unique viewers in channel
         this.channelViews = data.reduce( (accumulator, current) => {
           let channel = current.page && current.page.watch;
           if ( !channel ) return accumulator;
-
           channel  = channel.toLowerCase();
-
           if ( channel in accumulator ) {
             accumulator[channel]++;
           } else {
             accumulator[channel] = 1;
           }
-
           return accumulator;
         }, {});
-        console.log(this.channelViews);
 
-        // this.viewers = data;
         this.viewerCount = this.viewers.length;
-        console.debug(data);
       },
 
       async hydrate(data) {
@@ -584,17 +584,17 @@
         // Remove html tags
         message = message.replace(/<\/?[^>]*>/g, '');
 
-        const voicesTTS = speechSynthesis.getVoices();
+        // const voicesTTS = speechSynthesis.getVoices();
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = .9;
-        voice.voice = voicesTTS[this.selectionTTS];
-        voice.rate = this.rateTTS / 10.0;
+        voice.voice = this.voicesListTTS[this.selectionTTS];
+        voice.rate  = this.rateTTS / 10.0;
         voice.pitch = pitch;
-        voice.text = message;
+        voice.text  = message;
 
         voice.onend = function(e) {
-          // console.log(`Finished in ${e.elapsedTime} seconds.`, e);
+          console.log(`Finished in ${e.elapsedTime} seconds.`, e);
         };
 
         speechSynthesis.speak(voice);
@@ -627,6 +627,11 @@
       voices () {
         return this.voicesListTTS.map( (voice, index) => { return { text: voice.name, value: index } } );
       },
+
+      viewerList () {
+        if (this.showViewers) return this.viewers;
+        else  return [];
+      }
     },
 
     created() {
@@ -637,7 +642,8 @@
       this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
-      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      // speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      this.voicesListTTS = speechSynthesis.getVoices();
     },
 
     beforeDestroy() {
