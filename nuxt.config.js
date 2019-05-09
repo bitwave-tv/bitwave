@@ -13,11 +13,10 @@ module.exports = {
     title: pkg.name,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'viewport',     content: 'width=device-width, initial-scale=1' },
+      { name: 'description',  hid: 'description', content: pkg.description},
       { name: 'og:site_name', content: '[bitwave.tv]' },
-      { hid: 'description', name: 'description', content: pkg.description },
-      { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg' },
-      { name: 'og:image', content: 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg' },
+      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
     ],
     script: [
       // { src: 'https://tlk.io/embed.js' }
@@ -67,9 +66,9 @@ module.exports = {
     name: 'BitWave.tv',
     short_name: 'BitWave.tv',
     lang: 'en',
-    display: 'fullscreen',
+    display: 'standalone',
     description: 'An open platform live streaming service for creators to freely express themselves.',
-    background_color: '#111',
+    background_color: '#000',
     orientation: 'any',
     theme_color: '#ffff00',
   },

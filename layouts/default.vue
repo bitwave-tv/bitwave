@@ -32,19 +32,19 @@
 
       <user/>
 
-      <v-btn
+      <!--<v-btn
         v-show="mobile"
         :class="{ 'mr-2': mobile }"
         icon
         @click.stop="showChat = !showChat"
       >
         <v-icon>menu</v-icon>
-      </v-btn>
+      </v-btn>-->
 
     </v-toolbar>
 
     <!-- R-Nav Chat Drawer -->
-    <v-navigation-drawer
+    <!--<v-navigation-drawer
       v-model="showChat"
       :width="width"
       :permanent="$vuetify.breakpoint.mdAndUp"
@@ -55,7 +55,7 @@
       app
     >
       <chat :dark="dark" />
-    </v-navigation-drawer>
+    </v-navigation-drawer>-->
 
     <!-- L-Nav Drawer -->
     <user-list />
@@ -70,7 +70,6 @@
 
 <script>
   import User from '~/components/User'
-  import Chat from '~/components/Chat'
   import UserList from '~/components/UserList'
 
   import { mapState } from 'vuex'
@@ -78,7 +77,6 @@
   export default {
     components: {
       User,
-      Chat,
       UserList,
     },
 
