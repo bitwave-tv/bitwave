@@ -11,11 +11,12 @@
       fixed
       app
     >
-      <!--<v-toolbar-side-icon @click="drawer = !drawer">
-        <v-icon large>devices</v-icon>
-      </v-toolbar-side-icon>-->
-
-      <!--<v-toolbar-side-icon @click="drawer = !drawer" />-->
+      <v-btn
+        icon
+        @click.stop="drawer = !drawer"
+      >
+        <v-icon>menu</v-icon>
+      </v-btn>
 
       <v-toolbar-title class="ml-0 mr-1">
         <v-btn
@@ -26,45 +27,22 @@
           active-class
           class="text-none title px-2"
         >{{ title }}</v-btn>
+
       </v-toolbar-title>
 
       <v-spacer />
 
-      <user/>
-
-      <!--<v-btn
-        v-show="mobile"
-        :class="{ 'mr-2': mobile }"
-        icon
-        @click.stop="showChat = !showChat"
-      >
-        <v-icon>menu</v-icon>
-      </v-btn>-->
+      <user />
 
     </v-toolbar>
 
-    <!-- R-Nav Chat Drawer -->
-    <!--<v-navigation-drawer
-      v-model="showChat"
-      :width="width"
-      :permanent="$vuetify.breakpoint.mdAndUp"
-      right
-      clipped
-      fixed
-      flat
-      app
-    >
-      <chat :dark="dark" />
-    </v-navigation-drawer>-->
-
     <!-- L-Nav Drawer -->
-    <user-list />
+    <user-list v-model="drawer" />
 
     <!-- Content -->
     <v-content>
       <nuxt />
     </v-content>
-
   </v-app>
 </template>
 
@@ -106,7 +84,7 @@
       }),
 
       mobile () {
-        return !this.$vuetify.breakpoint.mdAndUp;
+        return !this.$vuetify.breakpoint.smAndUpmdAndUp;
       },
 
       width () {
@@ -119,10 +97,3 @@
     }
   }
 </script>
-
-<style>
-  /*.v-toolbar__content {
-    padding-left: 0;
-    padding-right: 0;
-  }*/
-</style>

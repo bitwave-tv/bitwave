@@ -210,7 +210,6 @@
             </v-flex>
           </v-layout>
 
-
           <v-layout align-center class="pa-2">
             <v-flex shrink>
               <v-btn
@@ -323,12 +322,8 @@
     name: 'Chat',
 
     props: {
-      dark: {
-        type: Boolean,
-      },
-      chatChannel: {
-        type: String,
-      }
+      dark: { type: Boolean },
+      chatChannel: { type: String }
     },
 
     components: {

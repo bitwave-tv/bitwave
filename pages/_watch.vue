@@ -4,7 +4,7 @@
 
       <!-- Video And Description -->
       <v-layout
-        :style="{ 'padding-right': !!mobile ? '450px' : '0' }"
+        :style="{ 'padding-right': !mobile ? '450px' : '0' }"
         column
       >
         <v-flex v-if="false">
@@ -54,7 +54,7 @@
           </v-card>
         </v-flex>
 
-        <template v-if="!mobile" >
+        <template v-if="mobile" >
           <v-flex class="mb-3" >
             <v-layout>
               <v-flex style="max-height: 60vh;" >
@@ -95,7 +95,7 @@
 
       <!-- Chat -->
       <v-flex
-        v-if="mobile"
+        v-if="!mobile"
         shrink
         style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
       >
@@ -158,8 +158,7 @@
 
     computed: {
       mobile () {
-        const isHydrated = !!this.$vuetify;
-        return isHydrated ? !this.$vuetify.breakpoint.mdAndDown : true;
+        return this.$vuetify.breakpoint.mdAndDown;
       },
     },
 
