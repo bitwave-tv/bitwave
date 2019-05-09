@@ -180,7 +180,9 @@
               </v-card>
             </v-menu>
           </v-flex>
+
           <v-flex shrink>
+            <!-- Scroll to bottom button -->
             <v-btn
               :style="{ 'min-width': '40px' }"
               small
@@ -190,6 +192,7 @@
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
+
         </v-layout>
       </v-sheet>
     </v-flex>

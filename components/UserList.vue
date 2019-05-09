@@ -1,6 +1,7 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
+
+    :value="value"
     :mini-variant="miniVariant"
     :clipped="clipped"
     stateless
@@ -104,6 +105,10 @@
 
   export default {
     name: 'UserList',
+
+    props: {
+      value: { type: Boolean },
+    },
 
     data() {
       return {

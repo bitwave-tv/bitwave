@@ -18,7 +18,7 @@
         <v-icon>menu</v-icon>
       </v-btn>
 
-      <v-toolbar-title class="ml-0 mr-1">
+      <v-toolbar-title class="ml-1 mr-1">
         <v-btn
           to="/"
           depressed

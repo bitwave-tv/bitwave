@@ -54,7 +54,7 @@
           </v-card>
         </v-flex>
 
-        <template v-if="mobile" >
+        <template v-show="mobile" >
           <v-flex class="mb-3" >
             <v-layout>
               <v-flex style="max-height: 60vh;" >
@@ -95,7 +95,7 @@
 
       <!-- Chat -->
       <v-flex
-        v-if="!mobile"
+        v-show="!mobile"
         shrink
         style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
       >
