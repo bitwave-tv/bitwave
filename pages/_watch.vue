@@ -59,6 +59,7 @@
             <v-layout>
               <v-flex style="max-height: 60vh;" >
                 <chat
+                  :enable="mobile"
                   :chat-channel="name"
                   :dark="true"
                 />
