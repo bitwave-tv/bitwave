@@ -4,11 +4,6 @@
     column
     fill-height
   >
-
-  <!-- Bing bing wahoo sounds that can be played, these use late binding when the feature is turned on they will then be loaded -->
-  <audio autoplay="false" id="audio" preload="none" src=""  muted ></audio>
-  <audio autoplay="false" id="audio2" preload="none" src=""  muted></audio>
-
     <!-- Chat Header -->
     <v-flex id="chat-header">
       <v-sheet>
@@ -115,16 +110,6 @@
                     ></v-switch>
                   </v-list-tile>
 
-                  <v-list-tile>
-                    <v-switch
-                      v-model="chatFeatureBingBingWahoo"
-                      label="Bing Bing WAHOO!"
-                      class="ml-2 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-list-tile>
-
                   <v-divider/>
 
                   <v-list-tile>
@@ -134,7 +119,6 @@
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
                       hide-details
-                      @change="force_fix_tts"
                     ></v-switch>
                   </v-list-tile>
                   <v-list-tile>
@@ -375,9 +359,6 @@
         chatLimit: 150,
         chatContainer: null,
 
-        chatFeatureBingBingWahoo: false,
-        globalTTSreaderAllMessages: false,
-
         showToolMenu: false,
         useIgnoreListForChat: false,
         useTTS: false,
@@ -508,59 +489,23 @@
           }
         }
 
-        if(!this.globalTTSreaderAllMessages){
-          if ( !this.global ) {
-            if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
-              return;
-            }
+        if ( !this.global ) {
+          if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
+            return;
           }
         }
 
-        this.featureBingBingWahoo(message);
-
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
-
-
 
         // For Text to Speech
         const allowTTS = message.channel.toLowerCase() === this.username.toLowerCase() || message.channel.toLowerCase() === this.page.toLowerCase();
         if ( allowTTS ) {
           this.speak(message.message, message.username); // Say Message
-        }else{
-          if(this.globalTTSreaderAllMessages){
-            this.speak(message.message, message.username); // Say Message
-          }
         }
-
 
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         await this.$nextTick( async () => await this.scrollToBottom() );
-      },
-
-      featureBingBingWahoo(message){
-        if(this.chatFeatureBingBingWahoo){
-          if(message.message.toLowerCase().includes(this.username.toLowerCase())){
-            this.bindSounds();
-            //console.log('bing bing wahoo');
-            this.playSound();
-          }
-        }
-
-      },
-
-      playSound() {
-          var sound = document.getElementById("audio2");
-          //var vid = document.getElementById("video1");
-          sound.muted = false;
-          sound.play();
-      },
-
-      async bindSounds(){
-        // used to bind the sound sources to prevent them from playing intially
-        document.getElementById("audio2").src="https://www.myinstants.com/media/sounds/kitty-blabla.mp3";
-        //document.getElementByid("audio2").src="http://www.soundjay.com/button/beep-07.wav";
-
       },
 
       sendMessage() {
@@ -586,62 +531,6 @@
                 this.ignoreList.splice(location, 1);
               }
               break;
-            case 'help':
-              //console.log('prints text info into the chat window');
-              const helpinfo = {message: 'this is a help message <br> /emotes lists emotes <br> /afk turns on notification sounds<br> /windmill prints 300 windmills<br>/20x reads space separated things and prints out 20x of them as a groupe<br>/ignore username adds the user to the ignore list<br>/unignore username removes them from the ignore list<br>/skip /s stopts tts from reading the current message<br>/readalltts will read all messages in every channel as they come in.',channel: 'help' };
-
-              this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...helpinfo });
-              this.$nextTick( async () => await this.scrollToBottom(true) );
-            break;
-            case 'emotes':
-              const emotesinfo = {message: 'this is a help message <br> emotes:<br> :blob:<br>:koby:<br>:blunty:<br>:blobby:<br>:coin:<br>:shekel:<br>:gas:<br>:gunt:<br>:rifle:<br>:popcorn:<br>:wut:<br>:thot:<br>:pd:<br>:dispatch:<br>:think:<br>:pew:<br>:kys:<br>:lick:<br>:train:<br>:snowtrain:<br>:jettrain:<br>:ghosttrain:<br>:clap:<br>:anvil:<br>:pingu:<br>:ss:<br>:pepo:<br>:riot:<br>:riot2:<br>:gitfugged:<br>:pepelaugh:<br>',channel: 'help' };
-
-              this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...emotesinfo });
-              this.$nextTick( async () => await this.scrollToBottom(true) );
-            break;
-            case 'afk':
-
-              if(this.chatFeatureBingBingWahoo != true){
-                this.chatFeatureBingBingWahoo = true; //!= this.chatFeatureBingBingWahoo;
-              }else{
-                if(this.chatFeatureBingBingWahoo == true){
-
-                  this.chatFeatureBingBingWahoo = false;
-                }
-              }
-            break;
-            case 'readalltts':
-              this.globalTTSreaderAllMessages = true;
-            break;
-            case 'windmill':
-              const msgWindmill = '卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐 卐';
-              const msgWM = {
-                  message: msgWindmill,
-                  channel: this.page,
-                };
-                this.socket.emit('message', msgWM);
-            break;
-            case '20x':
-              // needs to count the number of args in the command and replicate up to 20x
-              //console.log(parts.length);
-              const countedemotes = parts.length
-              var emote = ''; // need to collect the parts
-              for(var i = 1;i < countedemotes;i++){
-                emote += parts[i];
-              }
-              var msgArgs = '';
-              // emote steps required to hit 20
-              // build up the parts based on the peices put in
-
-              for(var i = 0;i*(countedemotes-1)<19;i++){
-                msgArgs += emote
-              }
-              const msg20x = {
-                  message: msgArgs,
-                  channel: this.page,
-                };
-                this.socket.emit('message', msg20x);
-            break;
             case 'skip':
             case    's':
               speechSynthesis.cancel();
@@ -671,11 +560,6 @@
         }
         this.uid   = uid;
         this.color = color
-      },
-
-      force_fix_tts(){
-        speechSynthesis.cancel();
-
       },
 
       speak (message, username) {
@@ -760,7 +644,6 @@
 
       // speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
       this.voicesListTTS = speechSynthesis.getVoices();
-
     },
 
     beforeDestroy() {
