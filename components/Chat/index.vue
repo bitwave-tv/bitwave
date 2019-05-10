@@ -120,6 +120,7 @@
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
                       hide-details
+                      @change="force_fix_tts"
                     ></v-switch>
                   </v-list-tile>
                   <v-list-tile>
@@ -561,6 +562,11 @@
         }
         this.uid   = uid;
         this.color = color
+      },
+
+      force_fix_tts(){
+        speechSynthesis.cancel();
+
       },
 
       speak (message, username) {
