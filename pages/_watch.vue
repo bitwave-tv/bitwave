@@ -1,5 +1,5 @@
 <template>
-  <v-container flex>
+  <v-container flex pa-0>
     <v-layout column>
 
       <!-- Video And Description -->
@@ -23,7 +23,7 @@
 
         <hr class="v-divider theme--light" />
 
-        <v-flex class="px-0 pb-2 pt-0">
+        <v-flex class="px-0 pb-0 pt-0">
           <v-card>
             <v-responsive
               :aspect-ratio="16/9"
@@ -31,7 +31,7 @@
               <video
                 playsinline
                 id="streamplayer"
-                class="video-js vjs-default-skin"
+                class="video-js vjs-default-skin vjs-big-play-centered"
                 width="100%"
                 controls
                 :autoplay="live"
@@ -165,12 +165,53 @@
 
     methods: {
       playerInitialize(){
+
+        // Get stream data
+        this.getStreamData();
+
+        // Create video.js player
         this.player = videojs('streamplayer', {
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
+          plugins: { qualityLevels: {} },
         });
+
+        this.player.ready( () => {
+          // Restore Volume
+          try {
+            let volume = localStorage.getItem('volume');
+            if (volume) {
+              this.player.volume(volume);
+            }
+          } catch (e) {
+            // No volume value in memory
+            console.warn('Failed to find prior volume level');
+          }
+          try {
+            let muted  = localStorage.getItem('muted');
+            if (muted !== null) {
+              this.player.muted(muted);
+            }
+          } catch (e) {
+            // No muted value in memory
+            console.warn('Failed to find prior muted state');
+          }
+        });
+
+        // Load all qualities
         this.qualityLevels = this.player.qualityLevels();
-        this.getStreamData();
+
+        // Listen to change events for when the player selects a new quality level
+        this.qualityLevels.on('change', () => {
+          console.log('Quality Level changed:', this.qualityLevels[this.qualityLevels.selectedIndex]);
+        });
+
+        // Save volume on change
+        this.player.on('volumechange', () => {
+          localStorage.setItem( 'volume', this.player.volume() );
+          localStorage.setItem( 'muted', this.player.muted() )
+        });
+
         this.initialized = true;
       },
 

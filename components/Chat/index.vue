@@ -394,7 +394,6 @@
             email: null,
             username: `troll:${this.uid}`,
             uid: this.uid,
-            // page: this.$route.params,
             page: this.page,
           };
           this.connectChat(trollUser);
@@ -406,7 +405,6 @@
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
-          // user.page = this.$route.params;
           user.page = this.page;
           this.connectChat(user);
         });
@@ -619,16 +617,16 @@
       },
 
       page () {
-        return this.chatChannel || '';
-        /*const params = this.$route.params;
-        if (params.hasOwnProperty('watch')) {
-          if (params.watch.match(/^[a-zA-Z0-9._-]+$/))
-            return params.watch;
+        // return this.chatChannel || '';
+        let channel = this.chatChannel;
+        if (channel) {
+          if (channel.match(/^[a-zA-Z0-9._-]+$/))
+            return channel;
           else
             return '404';
         } else {
-          return 'Global';
-        }*/
+          return '403';
+        }
       },
 
       voices () {
@@ -649,8 +647,9 @@
       this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
-      // speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
-      this.voicesListTTS = speechSynthesis.getVoices();
+      // Add listener for voice changes, then update voices.
+      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
     },
 
     beforeDestroy() {
