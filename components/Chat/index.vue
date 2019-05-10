@@ -75,6 +75,7 @@
               transition="slide-x-reverse-transition"
               :max-width="350"
               bottom
+              offset-x
               offset-y
             >
               <template #activator="{ on }">
@@ -180,7 +181,9 @@
               </v-card>
             </v-menu>
           </v-flex>
-          <v-flex shrink>
+
+          <v-flex shrink v-show="enable">
+            <!-- Scroll to bottom button -->
             <v-btn
               :style="{ 'min-width': '40px' }"
               small
@@ -190,13 +193,14 @@
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
+
         </v-layout>
       </v-sheet>
     </v-flex>
 
     <v-divider/>
 
-    <v-flex id="chat-poll" v-if="false">
+    <!--<v-flex id="chat-poll" v-if="false">
       <v-sheet>
         <v-layout column>
           <v-layout align-center class="pa-2">
@@ -210,7 +214,6 @@
             </v-flex>
           </v-layout>
 
-
           <v-layout align-center class="pa-2">
             <v-flex shrink>
               <v-btn
@@ -234,9 +237,10 @@
           </v-layout>
         </v-layout>
       </v-sheet>
-    </v-flex>
+    </v-flex>-->
 
     <v-flex
+      v-show="enable"
       id="inner-chat"
       fill-height
       style="overflow: hidden;"
@@ -274,7 +278,7 @@
     <v-divider/>
 
     <!-- Chat Input -->
-    <v-flex>
+    <v-flex v-show="enable">
       <v-sheet>
         <v-layout
           row
@@ -323,12 +327,9 @@
     name: 'Chat',
 
     props: {
-      dark: {
-        type: Boolean,
-      },
-      chatChannel: {
-        type: String,
-      }
+      enable: { type: Boolean, default: true },
+      dark: { type: Boolean },
+      chatChannel: { type: String }
     },
 
     components: {
