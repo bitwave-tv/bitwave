@@ -4,6 +4,8 @@
     column
     fill-height
   >
+    <audio autoplay="false" id="audio2" preload="none" src=""  muted></audio>
+
     <!-- Chat Header -->
     <v-flex id="chat-header">
       <v-sheet>
@@ -105,6 +107,16 @@
                     <v-switch
                       v-model="useIgnoreListForChat"
                       label="Ignore chat messages"
+                      class="ml-2 mt-0 pt-0"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                  </v-list-tile>
+
+                  <v-list-tile>
+                    <v-switch
+                      v-model="chatFeatureBingBingWahoo"
+                      label="Bing Bing WAHOO!"
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
                       hide-details
@@ -360,6 +372,8 @@
         chatLimit: 150,
         chatContainer: null,
 
+        chatFeatureBingBingWahoo: false,
+
         showToolMenu: false,
         useIgnoreListForChat: false,
         useTTS: false,
@@ -496,6 +510,8 @@
           }
         }
 
+        this.featureBingBingWahoo(message);
+
         const pattern = `@${this.username}\\b`;
         message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
 
@@ -507,6 +523,36 @@
 
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         await this.$nextTick( async () => await this.scrollToBottom() );
+      },
+
+      featureBingBingWahoo(message){
+        if(this.chatFeatureBingBingWahoo){
+          if(message.message.toLowerCase().includes(this.username.toLowerCase())){
+            this.bindSounds();
+            this.playSound();
+          }
+        }
+
+      },
+
+      playSound() {
+          var sound = document.getElementById("audio2");
+          sound.muted = false;
+          var promise = sound.play();
+
+          if (promise !== undefined) {
+              promise.then(_ => {
+                  // Autoplay started!
+
+              }).catch(error => {
+                  // DO NOTHING BECAUSE THE USER CANT SEE THIS ELEMENT ON THE PAGE
+              });
+          }
+      },
+
+      async bindSounds(){
+        // used to bind the sound sources to prevent them from playing intially
+        document.getElementById("audio2").src="https://www.myinstants.com/media/sounds/kitty-blabla.mp3";
       },
 
       sendMessage() {
@@ -532,6 +578,17 @@
                 this.ignoreList.splice(location, 1);
               }
               break;
+            case 'afk':
+
+              if(this.chatFeatureBingBingWahoo != true){
+                this.chatFeatureBingBingWahoo = true; //!= this.chatFeatureBingBingWahoo;
+              }else{
+                if(this.chatFeatureBingBingWahoo == true){
+
+                  this.chatFeatureBingBingWahoo = false;
+                }
+              }
+            break;
             case 'skip':
             case    's':
               speechSynthesis.cancel();
