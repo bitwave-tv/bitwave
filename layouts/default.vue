@@ -67,7 +67,7 @@
         fixed: false,
 
         miniVariant: true,
-        drawer: true,
+        drawer: null,
 
         right: true,
         showChat: true,

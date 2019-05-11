@@ -17,8 +17,7 @@
               <video
                 playsinline
                 id="streamplayer"
-                class="video-js vjs-default-skin vjs-big-play-centered"
-                width="100%"
+                class="video-js vjs-fill vjs-default-skin vjs-big-play-centered"
                 controls
                 :autoplay="live"
                 preload="auto"
@@ -43,7 +42,7 @@
         <template v-show="mobile" >
           <v-flex class="mb-3" >
             <v-layout>
-              <v-flex style="max-height: 60vh;" >
+              <v-flex style="max-height: 50vh;" >
                 <chat
                   :enable="mobile"
                   :chat-channel="name"
@@ -114,6 +113,7 @@
 <script>
   import videojs from 'video.js'
   import 'videojs-contrib-quality-levels'
+  import 'videojs-hls-quality-selector'
 
   import { db } from '@/plugins/firebase.js'
 
@@ -160,7 +160,7 @@
 
     computed: {
       mobile () {
-        return this.$vuetify.breakpoint.mdAndDown;
+        return !this.$vuetify.breakpoint.smAndUp;
       },
     },
 
@@ -201,6 +201,7 @@
 
         // Load all qualities
         this.qualityLevels = this.player.qualityLevels();
+        this.player.hlsQualitySelector();
 
         // Listen to change events for when the player selects a new quality level
         this.qualityLevels.on('change', () => {

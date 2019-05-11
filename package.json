@@ -29,6 +29,7 @@
     "video.js": "^7.4.1",
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
+    "videojs-hls-quality-selector": "^1.0.5",
     "vue-clipboard2": "^0.3.0",
     "vue-virtual-scroller": "^1.0.0-rc.2",
     "vuetify": "^1.5.9",
