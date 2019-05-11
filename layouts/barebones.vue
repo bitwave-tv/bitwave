@@ -88,10 +88,3 @@
     },
   }
 </script>
-
-<style lang='scss'>
-  .v-toolbar__content {
-    /*padding-left: 0;*/
-    /*padding-right: 0;*/
-  }
-</style>

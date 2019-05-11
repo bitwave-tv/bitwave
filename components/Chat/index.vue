@@ -54,7 +54,8 @@
                         <v-list-tile-content>
                           <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
                           <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ] })` }}</v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else>Just Browsing {{ viewer.page }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else-if="viewer.page">Just Browsing {{`${viewer.page} (${ channelViews[ (viewer.page || '').toLowerCase() ] })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else>AFK Browsing</v-list-tile-sub-title>
                         </v-list-tile-content>
                       </template>
                     </v-list-tile>
@@ -389,12 +390,12 @@
         } else {
           if (this.unsubscribeUser) this.unsubscribeUser();
           const trollUser = {
-            type: 'troll',
-            color: this.color,
-            email: null,
-            username: `troll:${this.uid}`,
-            uid: this.uid,
-            page: this.page,
+            type     : 'troll',
+            username : `troll:${this.uid}`,
+            color    : this.color,
+            email    : null,
+            uid      : this.uid,
+            page     : this.page,
           };
           this.connectChat(trollUser);
         }
@@ -405,7 +406,7 @@
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
-          user.page = this.page;
+          user.page  = this.page;
           this.connectChat(user);
         });
       },
@@ -418,7 +419,8 @@
         console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
-          if (this.messages.length > this.chatLimit) this.messages.shift();
+          // if (this.messages.length > this.chatLimit) this.messages.shift();
+          this.messages = this.messages.length > 100 ? this.messages.splice(-this.chatLimit) : data;
           setTimeout( () => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250 );
         }
       },
@@ -438,10 +440,10 @@
         }
         console.debug('Chat User:', user);
 
-        // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
-        // const socket = socketio('api.bitwave.tv:443');
         const socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
+        // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
+        // const socket = socketio('api.bitwave.tv:443');
 
         socket.on( 'connect', () => socket.emit('new user', user) );
         socket.on( 'update usernames', data => this.updateUsernames(data) );
@@ -463,6 +465,7 @@
         // Create list of unique viewers in channel
         this.channelViews = data.reduce( (accumulator, current) => {
           let channel = current.page && current.page.watch;
+          channel = channel || current.page;
           if ( !channel ) return accumulator;
           channel  = channel.toLowerCase();
           if ( channel in accumulator ) {
@@ -535,6 +538,13 @@
             case    's':
               speechSynthesis.cancel();
               break;
+            case 'w':
+            case 'whisper':
+              const msg = {
+                message: this.message,
+                channel: this.page,
+              };
+              this.socket.emit('whisper', msg);
           }
         } else {
           const msg = {
@@ -617,7 +627,6 @@
       },
 
       page () {
-        // return this.chatChannel || '';
         let channel = this.chatChannel;
         if (channel) {
           if (channel.match(/^[a-zA-Z0-9._-]+$/))
@@ -625,7 +634,7 @@
           else
             return '404';
         } else {
-          return '403';
+          return 'Global';
         }
       },
 
