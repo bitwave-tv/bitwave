@@ -4,23 +4,9 @@
 
       <!-- Video And Description -->
       <v-layout
-        :style="{ 'padding-right': !mobile ? '450px' : '0' }"
+        :style="{ 'margin-right': !mobile ? '450px' : '0' }"
         column
       >
-        <v-flex v-if="false">
-          <v-tabs
-            dark
-            slider-color="#ff9800"
-          >
-            <v-tab>
-              {{ name }}
-            </v-tab>
-            <v-tab>
-              ARCHIVES
-            </v-tab>
-          </v-tabs>
-        </v-flex>
-
         <hr class="v-divider theme--light" />
 
         <v-flex class="px-0 pb-0 pt-0">
@@ -104,6 +90,21 @@
           :chat-channel="name"
           :dark="true"
         />
+      </v-flex>
+
+      <!-- Tabs (not used) -->
+      <v-flex v-if="false">
+        <v-tabs
+          dark
+          slider-color="#ff9800"
+        >
+          <v-tab>
+            {{ name }}
+          </v-tab>
+          <v-tab>
+            ARCHIVES
+          </v-tab>
+        </v-tabs>
       </v-flex>
 
     </v-layout>
