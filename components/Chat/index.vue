@@ -66,7 +66,11 @@
             </v-menu>
           </v-flex>
 
-          <v-spacer/>
+          <v-flex grow ml-2>
+            <h4>{{ page }}</h4>
+          </v-flex>
+
+          <!--<v-spacer/>-->
 
           <v-flex shrink>
             <!-- Tools -->
