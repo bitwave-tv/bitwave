@@ -11,7 +11,13 @@
             <v-flex shrink class="time mr-1">{{ timestamp }}</v-flex>
             <v-flex shrink class="username">{{ username }}</v-flex>
             <v-spacer/>
-            <v-flex shrink><kbd>{{ channel }}</kbd></v-flex>
+            <v-flex shrink>
+              <nuxt-link
+                :to="channel"
+              >
+                <kbd>{{ channel }}</kbd>
+              </nuxt-link>
+            </v-flex>
           </v-layout>
         </v-list-tile-sub-title>
         <slot></slot>
