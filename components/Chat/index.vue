@@ -109,6 +109,7 @@
                   <v-list-tile>
                     <v-switch
                       v-model="useIgnoreListForChat"
+                      @change="toggleUseIgnore"
                       label="Ignore chat messages"
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
@@ -360,7 +361,7 @@
             channel: 'global',
           },
         ],
-        ignoreList: ['Nexus'],
+        ignoreList: [],
         uid: null,
         viewerCount: 0,
         chatLimit: 150,
@@ -530,12 +531,14 @@
               const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
               if (!exists) {
                 this.ignoreList.push(argument);
+                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
               }
               break;
             case 'unignore':
               const location = this.ignoreList.findIndex( el => el === argument );
               if (location) {
                 this.ignoreList.splice(location, 1);
+                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
               }
               break;
             case 'skip':
@@ -617,6 +620,10 @@
         };
 
         speechSynthesis.speak(voice);
+      },
+
+      toggleUseIgnore () {
+        localStorage.setItem('useignore', this.useIgnoreListForChat);
       }
     },
 
@@ -663,6 +670,19 @@
       // Add listener for voice changes, then update voices.
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
       this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
+
+      try {
+        let ignores = localStorage.getItem('ignorelist');
+        if (ignores) this.ignoreList = JSON.parse(ignores);
+      } catch (e) {
+        console.log('No ignore list found.');
+      }
+      try {
+        let useIgnore = localStorage.getItem('useignore');
+        if (useIgnore) this.useIgnoreListForChat = useIgnore;
+      } catch (e) {
+        console.log('No useIgnore option found.');
+      }
     },
 
     beforeDestroy() {

@@ -42,7 +42,7 @@
         <template v-show="mobile" >
           <v-flex class="mb-3" >
             <v-layout>
-              <v-flex style="max-height: 50vh;" >
+              <v-flex style="max-height: 50vh;">
                 <chat
                   :enable="mobile"
                   :chat-channel="name"
@@ -211,7 +211,7 @@
         // Save volume on change
         this.player.on('volumechange', () => {
           localStorage.setItem( 'volume', this.player.volume() );
-          localStorage.setItem( 'muted', this.player.muted() )
+          localStorage.setItem( 'muted',  this.player.muted() )
         });
 
         this.initialized = true;
@@ -282,7 +282,7 @@
         const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
-        const url    = data.url    || `https://stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
 
         return { name, title, desc, poster, live, nsfw, url, };
 
@@ -340,5 +340,13 @@
   a {
     color: yellow;
     text-decoration: none;
+  }
+
+  #description {
+    text-overflow: ellipsis;
+
+    image {
+      max-width: 100vw;
+    }
   }
 </style>
