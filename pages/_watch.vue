@@ -260,20 +260,30 @@
         // Grab Stream Data
         this.title = data.title;
         this.desc  = data.description;
-        this.live  = data.live;
         this.nsfw  = data.nsfw;
 
         console.log(`Stream Metadata Update.`, data);
 
+        const live = data.live;
         const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        /*this.player.on('loadeddata', () => {
-          this.player.play();
-        });*/
+        // Detect user going live
+        if (!this.live && live) {
+          this.live = live;
+          // Load and Play stream
+          this.player.src({ src: url, type: type });
+          this.player.load();
+        }
 
-        this.player.src({ src: url, type: type });
-        this.player.load();
+        // Detect source change
+        if (this.url !== url  || this.type !== type) {
+          this.url  = url;
+          this.type = type;
+          // Load and Play stream
+          this.player.src({ src: url, type: type });
+          this.player.load();
+        }
       },
 
       async verifyChannel (user) {
