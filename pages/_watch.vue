@@ -195,7 +195,7 @@
           try {
             let muted  = localStorage.getItem('muted');
             if ( muted !== null && muted ) {
-              this.player.muted(muted);
+              // this.player.muted(muted);
             }
           } catch (e) {
             // No muted value in memory
