@@ -26,7 +26,7 @@
                   color="yellow"
                   text-color="black"
                 >
-                  {{ channelViews[page].total }}
+                  {{ channelViews[page.toLowerCase()] ? channelViews[page.toLowerCase()].total : 0 }}
                   <v-icon right>account_circle</v-icon>
                 </v-chip>
               </template>
