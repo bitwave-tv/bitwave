@@ -32,14 +32,6 @@
 
       <user/>
 
-      <v-btn
-        v-show="!$vuetify.breakpoint.mdAndUp"
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>menu</v-icon>
-      </v-btn>
-
     </v-toolbar>
 
     <!-- Content -->
