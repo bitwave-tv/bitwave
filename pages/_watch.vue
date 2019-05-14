@@ -192,15 +192,6 @@
             // No volume value in memory
             console.warn('Failed to find prior volume level');
           }
-          try {
-            let muted  = localStorage.getItem('muted');
-            if ( muted !== null && muted ) {
-              // this.player.muted(muted);
-            }
-          } catch (e) {
-            // No muted value in memory
-            console.warn('Failed to find prior muted state');
-          }
         });
 
         // Load all qualities
@@ -219,9 +210,7 @@
         });
 
         // Begin playing when new media is loaded
-        this.player.on('loadeddata', () => {
-          this.player.play();
-        });
+        this.player.on( 'loadeddata', () => this.player.play() );
 
         this.initialized = true;
       },

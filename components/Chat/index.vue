@@ -26,14 +26,14 @@
                   color="yellow"
                   text-color="black"
                 >
-                  {{ viewerCount }}
+                  {{ channelViews[page].total }}
                   <v-icon right>account_circle</v-icon>
                 </v-chip>
               </template>
 
               <v-card>
                 <v-sheet color="yellow">
-                  <v-card-title class="title black--text">Live Viewers</v-card-title>
+                  <v-card-title class="title black--text">({{ viewerCount }}) Live Viewers</v-card-title>
                 </v-sheet>
 
                 <v-layout style="max-height: 60vh; overflow: auto; overscroll-behavior: contain;">
@@ -53,9 +53,9 @@
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                           <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ] })` }}</v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else-if="viewer.page">Just Browsing {{`${viewer.page} (${ channelViews[ (viewer.page || '').toLowerCase() ] })` }}</v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else>AFK Browsing</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else-if="viewer.page">Just Browsing {{`${viewer.page} (${ channelViews[ (viewer.page || '').toLowerCase() ].total })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
                         </v-list-tile-content>
                       </template>
                     </v-list-tile>
@@ -468,18 +468,36 @@
         }, []);
 
         // Create list of unique viewers in channel
-        this.channelViews = data.reduce( (accumulator, current) => {
-          let channel = current.page && current.page.watch;
-          channel = channel || current.page;
-          if ( !channel ) return accumulator;
-          channel  = channel.toLowerCase();
+        this.channelViews = data.reduce( (accumulator, user) => {
+          let username = user.username;
+          let channel  = user.page ? user.page.watch || user.page : 'global' ;
+
+          if ( !channel ) {
+            console.log(user);
+            return accumulator;
+          }
+          else channel = channel.toLowerCase();
+
+          if (username) username = username.toLowerCase();
+
+          // Log Shit
+          console.log(`[${channel}] - ${user.username}`);
+
           if ( channel in accumulator ) {
-            accumulator[channel]++;
+            if ( username in accumulator[channel] ) {
+              accumulator[channel][username].push(user);
+            } else {
+              accumulator[channel][username] = [ user ];
+              accumulator[channel].total++;
+            }
           } else {
-            accumulator[channel] = 1;
+            accumulator[channel] = {}; // = 1;
+            accumulator[channel][username] = [ user ];
+            accumulator[channel].total = 1;
           }
           return accumulator;
         }, {});
+        console.log('Channel Viewers:', this.channelViews);
 
         this.viewerCount = this.viewers.length;
       },
