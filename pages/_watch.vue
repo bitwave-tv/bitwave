@@ -27,7 +27,7 @@
                 <source
                   v-if="live"
                   :src="url"
-                  type="application/x-mpegURL"
+                  :type="type"
                 >
                 <source
                   v-else
@@ -177,11 +177,12 @@
           plugins: { qualityLevels: {} },
         });
 
+        // Video Player Ready
         this.player.ready( () => {
           // Restore Volume
           try {
             let volume = localStorage.getItem('volume');
-            if (volume) {
+            if (volume !== null) {
               this.player.volume(volume);
             }
           } catch (e) {
@@ -212,6 +213,11 @@
         this.player.on('volumechange', () => {
           localStorage.setItem( 'volume', this.player.volume() );
           localStorage.setItem( 'muted',  this.player.muted() )
+        });
+
+        // Begin playing when new media is loaded
+        this.player.on('loadeddata', () => {
+          this.player.play();
         });
 
         this.initialized = true;
@@ -258,6 +264,16 @@
         this.nsfw  = data.nsfw;
 
         console.log(`Stream Metadata Update.`, data);
+
+        const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+
+        /*this.player.on('loadeddata', () => {
+          this.player.play();
+        });*/
+
+        this.player.src({ src: url, type: type });
+        this.player.load();
       },
 
       async verifyChannel (user) {
@@ -283,8 +299,9 @@
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        return { name, title, desc, poster, live, nsfw, url, };
+        return { name, title, desc, poster, live, nsfw, url, type };
 
       } catch (error) {
         console.log(`ERROR: Failed to find user ${user}`);
@@ -298,6 +315,7 @@
           live: false,
           nsfw: false,
           url: '',
+          type: '',
         }
       }
     },
