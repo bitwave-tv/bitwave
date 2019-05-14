@@ -488,6 +488,11 @@
         const size = data.length;
         this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
+        // re-highlight username mentions on hydration
+        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        this.messages.forEach( msg => {
+          msg.message = msg.message.replace(pattern, `<span class="highlight">$&</span>`);
+        });
       },
 
       async rcvMessage(message) {
@@ -498,19 +503,19 @@
         }
 
         if ( !this.global ) {
-          if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
-            return;
-          }
+          const notCurrentChat = message.channel.toLowerCase() !== this.page.toLowerCase();
+          const notUserChat    = message.channel.toLowerCase() !== this.username.toLowerCase();
+          if ( notCurrentChat && notUserChat ) return;
         }
 
-        const pattern = `@${this.username}\\b`;
-        message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
+        // Highlight username tags in new messages
+        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        message.message = message.message.replace(pattern, `<span class="highlight">$&</span>`);
 
         // For Text to Speech
-        const allowTTS = message.channel.toLowerCase() === this.username.toLowerCase() || message.channel.toLowerCase() === this.page.toLowerCase();
-        if ( allowTTS ) {
-          this.speak(message.message, message.username); // Say Message
-        }
+        const currentChat = message.channel.toLowerCase() === this.username.toLowerCase();
+        const myChat      = message.channel.toLowerCase() === this.page.toLowerCase();
+        if ( currentChat || myChat ) this.speak(message.message, message.username); // Say Message
 
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
         await this.$nextTick( async () => await this.scrollToBottom() );
@@ -520,7 +525,7 @@
         if (this.message.length > 300) return false;
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec(this.message);
-        const parts = this.message.split(" ");
+        const parts = this.message.split(' ');
 
         if (match) {
           const command  = match[1];
@@ -581,12 +586,11 @@
 
       force_fix_tts(){
         speechSynthesis.cancel();
-
       },
 
       speak (message, username) {
-        if (!this.useTTS) return;
-        if ( this.ignoreList.find(user => user === username) ) return;
+        if ( !this.useTTS ) return;
+        if ( this.ignoreList.find( user => user === username ) ) return;
         if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) return; // disables troll TTS
 
         function unescapeHtml(unsafe) {

@@ -18,6 +18,7 @@
                 playsinline
                 id="streamplayer"
                 class="video-js vjs-fill vjs-default-skin vjs-big-play-centered"
+                width="100%"
                 controls
                 :autoplay="live"
                 preload="auto"
@@ -184,7 +185,7 @@
           // Restore Volume
           try {
             let volume = localStorage.getItem('volume');
-            if (volume !== null) {
+            if ( volume !== null ) {
               this.player.volume(volume);
             }
           } catch (e) {
@@ -193,7 +194,7 @@
           }
           try {
             let muted  = localStorage.getItem('muted');
-            if (muted !== null) {
+            if ( muted !== null && muted ) {
               this.player.muted(muted);
             }
           } catch (e) {

@@ -63,7 +63,7 @@
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
-            <h6 class="headline" style="width:100%">Welcome to BitWave.tv</h6>
+            <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
             <v-layout wrap>
               <div class="subheading grey--text">
                 An open platform live streaming service for creators to freely express themselves.
@@ -203,14 +203,16 @@
     methods: {
       playerInitialize(){
         this.player = videojs('solo-player', {
-          liveui: true,
-          playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
+          // liveui: true,
+          // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
         });
         this.initialized = true;
       },
+
       playerDispose(){
         this.player.dispose();
       },
+
       updatePlayerSrc() {
         this.player.src({ type: 'video/mp4', src: 'https://cdn.bitwave.tv/static/bumps/Bump33-sm.mp4' });
       },
@@ -233,3 +235,9 @@
     },
   }
 </script>
+
+<style>
+  .video-js .vjs-live-control {
+    margin-left: 1rem;
+  }
+</style>
