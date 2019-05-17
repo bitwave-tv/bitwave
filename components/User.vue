@@ -4,7 +4,7 @@
     <v-menu
       v-if="isAuth"
       v-model="profileMenu"
-      :close-on-content-click="false"
+      :close-on-content-click="true"
       :nudge-width="200"
       offset-x
       left

@@ -4,6 +4,7 @@
     column
     fill-height
   >
+
     <!-- Chat Header -->
     <v-flex id="chat-header">
       <v-sheet>
@@ -53,8 +54,8 @@
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                           <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}</v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else-if="viewer.page">Just Browsing {{`${viewer.page} (${ channelViews[ (viewer.page || '').toLowerCase() ].total })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else-if="viewer.page">Just Watching {{`${viewer.page} (${ channelViews[ (viewer.page || '').toLowerCase() ].total })` }}</v-list-tile-sub-title>
                           <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
                         </v-list-tile-content>
                       </template>
@@ -72,7 +73,39 @@
 
           <!--<v-spacer/>-->
 
+          <v-flex
+            v-if="page === username"
+            shrink
+          >
+            <v-menu
+              v-model="showPoll"
+              :close-on-content-click="false"
+              bottom
+              left
+            >
+              <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  color="yellow"
+                  @click="scrollToBottom(true)"
+                >POLL</v-btn>
+              </template>
+
+              <!-- Create Poll Dialog -->
+              <chat-poll
+                id="chat-poll"
+                @close="showPoll = false"
+                @create="createPoll"
+              />
+
+            </v-menu>
+          </v-flex>
+
           <v-flex shrink>
+
             <!-- Tools -->
             <v-menu
               v-model="showToolMenu"
@@ -91,7 +124,9 @@
                   light
                   color="yellow"
                   @click="scrollToBottom(true)"
-                >TOOLS</v-btn>
+                >
+                  <v-icon>settings</v-icon>
+                </v-btn>
               </template>
 
               <v-card>
@@ -126,7 +161,7 @@
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
                       hide-details
-                      @change="force_fix_tts"
+                      @change="toggleTTS"
                     ></v-switch>
                   </v-list-tile>
                   <v-list-tile>
@@ -206,45 +241,6 @@
     </v-flex>
 
     <v-divider/>
-
-    <!--<v-flex id="chat-poll" v-if="false">
-      <v-sheet>
-        <v-layout column>
-          <v-layout align-center class="pa-2">
-            <v-flex shrink>
-              <v-btn
-                color="yellow"
-                light
-              >
-                Option A - Some BullShit
-              </v-btn>
-            </v-flex>
-          </v-layout>
-
-          <v-layout align-center class="pa-2">
-            <v-flex shrink>
-              <v-btn
-                color="yellow"
-                light
-              >
-                Option A - Some BullShit
-              </v-btn>
-            </v-flex>
-          </v-layout>
-
-          <v-layout align-center class="pa-2">
-            <v-flex shrink>
-              <v-btn
-                color="yellow"
-                light
-              >
-                Option A - Some BullShit
-              </v-btn>
-            </v-flex>
-          </v-layout>
-        </v-layout>
-      </v-sheet>
-    </v-flex>-->
 
     <v-flex
       v-show="enable"
@@ -330,6 +326,8 @@
   import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
   import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
+  import ChatPoll from '@/components/Chat/ChatPoll';
+
   export default {
     name: 'Chat',
 
@@ -340,6 +338,7 @@
     },
 
     components: {
+      ChatPoll,
       ChatMessage,
       DynamicScroller,
       DynamicScrollerItem,
@@ -379,6 +378,8 @@
         viewers: [{name: 'NONE'}],
         channelViews: {},
 
+        showPoll: false,
+
         global: true,
       }
     },
@@ -389,7 +390,7 @@
         this.$refs['chatmessageinput'].focus();
       },
 
-      authenticated(user) {
+      authenticated (user) {
         if (user) {
           this.subscribeToUser(user.uid);
         } else {
@@ -407,7 +408,7 @@
         this.loading = false;
       },
 
-      subscribeToUser(uid) {
+      subscribeToUser (uid) {
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
@@ -416,11 +417,11 @@
         });
       },
 
-      async scrollToBottom(force) {
+      async scrollToBottom (force) {
         const scrollTop = this.chatContainer.$el.scrollTop;
         const scrollHeight = this.chatContainer.$el.scrollHeight;
         const scrollDistance = scrollHeight - scrollTop;
-        const scroll = !!force || scrollDistance < (1.25 * screen.height);
+        const scroll = !!force || scrollDistance < ( 1.25 * screen.height );
         console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
@@ -434,7 +435,7 @@
         this.$nextTick( () => this.$refs.scroller.scrollToBottom() );
       },
 
-      connectChat(user) {
+      connectChat (user) {
         if (this.socket) {
           this.socket.disconnect();
         }
@@ -459,7 +460,7 @@
         this.socket = socket;
       },
 
-      updateUsernames(data) {
+      updateUsernames (data) {
         // Create unique list of users
         const key = 'username';
         this.viewers = data.reduce( (accumulator, current) => {
@@ -471,17 +472,14 @@
         this.channelViews = data.reduce( (accumulator, user) => {
           let username = user.username;
           let channel  = user.page ? user.page.watch || user.page : 'global' ;
-
           if ( !channel ) {
-            console.log(user);
+            // console.warn(user);
             return accumulator;
           }
           else channel = channel.toLowerCase();
-
           if (username) username = username.toLowerCase();
 
-          // Log Shit
-          console.log(`[${channel}] - ${user.username}`);
+          // console.log(`[${channel}] - ${user.username}`); // Log Shit
 
           if ( channel in accumulator ) {
             if ( username in accumulator[channel] ) {
@@ -491,18 +489,17 @@
               accumulator[channel].total++;
             }
           } else {
-            accumulator[channel] = {}; // = 1;
+            accumulator[channel] = {};
             accumulator[channel][username] = [ user ];
             accumulator[channel].total = 1;
           }
           return accumulator;
         }, {});
-        console.log('Channel Viewers:', this.channelViews);
-
+        // console.log('Channel Viewers:', this.channelViews);
         this.viewerCount = this.viewers.length;
       },
 
-      async hydrate(data) {
+      async hydrate (data) {
         const size = data.length;
         this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
@@ -513,11 +510,9 @@
         });
       },
 
-      async rcvMessage(message) {
+      async rcvMessage (message) {
         if(this.useIgnoreListForChat){
-          if ( this.ignoreList.includes( message.username) ) {
-            return;
-          }
+          if ( this.ignoreList.includes( message.username) ) return;
         }
 
         if ( !this.global ) {
@@ -539,7 +534,7 @@
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
-      sendMessage() {
+      sendMessage () {
         if (this.message.length > 300) return false;
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec(this.message);
@@ -583,11 +578,8 @@
           };
           this.socket.emit('message', msg);
         }
-
         this.message = '';
       },
-
-      getTime(timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
 
       setupTrollData () {
         let uid   = localStorage.getItem('tuid');
@@ -602,11 +594,7 @@
         this.color = color
       },
 
-      force_fix_tts(){
-        speechSynthesis.cancel();
-      },
-
-      speak (message, username) {
+      speak ( message, username ) {
         if ( !this.useTTS ) return;
         if ( this.ignoreList.find( user => user === username ) ) return;
         if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) return; // disables troll TTS
@@ -620,7 +608,7 @@
             .replace(/&#39;/g,  `'`)
         }
 
-        message = unescapeHtml(message); // Fixes escaped characters
+        message = unescapeHtml( message ); // Fixes escaped characters
 
         // Remove Links
         message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
@@ -644,9 +632,19 @@
         speechSynthesis.speak(voice);
       },
 
-      toggleUseIgnore () {
-        localStorage.setItem('useignore', this.useIgnoreListForChat);
-      }
+      toggleTTS () {
+        speechSynthesis.cancel();
+        localStorage.setItem( 'tts', this.useTTS );
+      },
+
+      createPoll (poll) {
+        this.showPoll = false;
+        this.socket.emit('createpoll', poll);
+      },
+
+      getTime (timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
+
+      toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); }
     },
 
     computed: {
@@ -676,13 +674,13 @@
       },
 
       viewerList () {
-        if (this.showViewers) return this.viewers;
+        if ( this.showViewers ) return this.viewers;
         else  return [];
       }
     },
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     mounted() {
@@ -695,26 +693,38 @@
 
       try {
         let ignores = localStorage.getItem('ignorelist');
-        if (ignores) this.ignoreList = JSON.parse(ignores);
+        if ( ignores ) this.ignoreList = JSON.parse(ignores);
       } catch (e) {
         console.log('No ignore list found.');
       }
       try {
         let useIgnore = localStorage.getItem('useignore');
-        if (useIgnore) this.useIgnoreListForChat = useIgnore;
+        if ( useIgnore ) this.useIgnoreListForChat = useIgnore;
       } catch (e) {
         console.log('No useIgnore option found.');
+      }
+      try {
+        let tts = localStorage.getItem('tts');
+        if ( tts ) this.useTTS = tts;
+      } catch (e) {
+        console.log('No tts option found.');
       }
     },
 
     beforeDestroy() {
-      if (this.unsubscribeUser) this.unsubscribeUser();
-      if (this.socket) this.socket.disconnect();
+      if ( this.unsubscribeUser ) this.unsubscribeUser();
+      if ( this.socket ) this.socket.disconnect();
     },
   }
 </script>
 
 <style lang='scss'>
+  #chat-poll {
+    button {
+      /*min-width: 55px;*/
+    }
+  }
+
   #sidechat {
     border-top: 3px yellow;
     background-color: #000;
