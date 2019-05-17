@@ -247,7 +247,10 @@
 
     <!-- Show Poll to Users -->
     <v-flex>
-      <chat-poll-vote />
+      <chat-poll-vote
+        v-if="showPollClient"
+        :poll-data="pollData"
+      />
     </v-flex>
 
     <v-flex
@@ -390,6 +393,14 @@
 
         showPoll: false,
 
+        showPollClient: false,
+        pollData: {
+          id: '',
+          title: '',
+          options: [],
+          time: 0,
+        },
+
         global: true,
       }
     },
@@ -466,6 +477,9 @@
         socket.on( 'hydrate', async data => await this.hydrate(data) );
         socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
+
+        socket.on( 'createpoll',  data => this.displayPoll(data) );
+        socket.on( 'destroypoll', data => this.destroyPoll(data.id) );
 
         this.socket = socket;
       },
@@ -655,11 +669,19 @@
       },
 
       displayPoll (poll) {
-        const channel = poll.channel;
-        const title = poll.title;
-        const options = poll.options;
+        this.pollData = {
+          id      : poll.id,
+          channel : poll.channel,
+          title   : poll.title,
+          options : poll.options,
+          time    : poll.time,
+        };
 
+        this.showPollClient = true;
+      },
 
+      destroyPoll (pollId) {
+        if (this.pollData.id === pollId) this.showPollClient = false;
       },
 
       getTime (timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },

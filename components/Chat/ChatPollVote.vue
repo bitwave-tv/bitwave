@@ -9,7 +9,7 @@
         <v-flex grow>
           <v-sheet
             id="poll-vote-body"
-            class="pa-3 py-2"
+            :class="{ 'pa-3': true, 'py-2': showOptions }"
           >
             <v-layout column>
               <v-flex class="mb-1">
@@ -25,7 +25,7 @@
                     class="ml-2"
                     grow
                   >
-                    <h3>{{ poll.title }}</h3>
+                    <h3>{{ pollData.title }}</h3>
                   </v-flex>
                   <v-flex shrink>
                     <v-btn
@@ -44,7 +44,7 @@
 
               <v-flex
                 v-if="showOptions"
-                v-for="(option, index) in poll.options"
+                v-for="(option, index) in pollData.options"
                 :key="index"
                 column
               >
@@ -70,14 +70,15 @@
     export default {
         name: 'ChatPollVote',
 
+      props: {
+          pollData: {
+            type: Object,
+          },
+      },
+
         data() {
             return {
               showOptions: false,
-              poll: {
-                title: 'Temporary Placeholder',
-                time: '0200',
-                options: [ { str: 'Option A' }, { str: 'Option B' }, { str: 'Option C' }, { str: 'Option D' } ],
-              },
             }
         },
 
