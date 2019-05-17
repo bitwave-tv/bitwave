@@ -12,6 +12,7 @@
           align-center
           class="pa-2"
         >
+          <!-- Viewer List -->
           <v-flex shrink>
             <!-- Viewer List -->
             <v-menu
@@ -67,12 +68,14 @@
             </v-menu>
           </v-flex>
 
+          <!-- Chat Label -->
           <v-flex grow ml-2>
             <h4>{{ page }}</h4>
           </v-flex>
 
           <!--<v-spacer/>-->
 
+          <!-- Create Poll Button -->
           <v-flex
             v-if="page === username"
             shrink
@@ -104,9 +107,8 @@
             </v-menu>
           </v-flex>
 
-          <v-flex shrink>
-
             <!-- Tools -->
+          <v-flex shrink>
             <v-menu
               v-model="showToolMenu"
               :close-on-content-click="false"
@@ -224,6 +226,7 @@
             </v-menu>
           </v-flex>
 
+          <!-- Scroll to Chat Bottom -->
           <v-flex shrink v-show="enable">
             <!-- Scroll to bottom button -->
             <v-btn
@@ -241,6 +244,11 @@
     </v-flex>
 
     <v-divider/>
+
+    <!-- Show Poll to Users -->
+    <v-flex>
+      <chat-poll-vote />
+    </v-flex>
 
     <v-flex
       v-show="enable"
@@ -327,6 +335,7 @@
   import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
   import ChatPoll from '@/components/Chat/ChatPoll';
+  import ChatPollVote from '@/components/Chat/ChatPollVote';
 
   export default {
     name: 'Chat',
@@ -338,6 +347,7 @@
     },
 
     components: {
+      ChatPollVote,
       ChatPoll,
       ChatMessage,
       DynamicScroller,
@@ -476,7 +486,9 @@
             // console.warn(user);
             return accumulator;
           }
-          else channel = channel.toLowerCase();
+          if ( typeof(channel) === 'string' ) channel = channel.toLowerCase();
+          // else debugger;
+
           if (username) username = username.toLowerCase();
 
           // console.log(`[${channel}] - ${user.username}`); // Log Shit
@@ -640,6 +652,14 @@
       createPoll (poll) {
         this.showPoll = false;
         this.socket.emit('createpoll', poll);
+      },
+
+      displayPoll (poll) {
+        const channel = poll.channel;
+        const title = poll.title;
+        const options = poll.options;
+
+
       },
 
       getTime (timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },

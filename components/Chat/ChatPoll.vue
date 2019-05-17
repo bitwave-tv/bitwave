@@ -91,7 +91,6 @@
                 color="yellow"
                 class="body-2"
                 light
-                disabled
                 @click="createPoll"
               >Submit</v-btn>
             </v-flex>

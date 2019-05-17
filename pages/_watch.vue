@@ -287,6 +287,13 @@
           return null;
         }
       },
+
+      reloadPlayer () {
+        if (!this.initialized) return;
+        this.player.reset();
+        this.player.src({ src: this.url, type: this.type });
+        this.load();
+      },
     },
 
     async asyncData ({ $axios, params }) {
@@ -346,6 +353,10 @@
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
       else if (this.name !== '404')
         console.log(`${this.name} is offline.`);
+
+      if (process.client) {
+
+      }
     },
 
     beforeDestroy() {
