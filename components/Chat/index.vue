@@ -250,6 +250,9 @@
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
+        @vote="votePoll"
+        @end="endPoll"
+        @destroy="destroyPoll"
       />
     </v-flex>
 
@@ -478,8 +481,8 @@
         socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
 
-        socket.on( 'createpoll',  data => this.displayPoll(data) );
-        socket.on( 'destroypoll', data => this.destroyPoll(data.id) );
+        socket.on( 'showpoll',    data => this.displayPoll(data) );
+        socket.on( 'destroypoll', data => this.removePoll(data) );
 
         this.socket = socket;
       },
@@ -663,12 +666,42 @@
         localStorage.setItem( 'tts', this.useTTS );
       },
 
+
+
+      // POLL FUNCTIONS -> SOCKET
+      //-------------------------
       createPoll (poll) {
         this.showPoll = false;
+        poll.id = [...Array(8)].map(() => (~~(Math.random()*36)).toString(36)).join('');
         this.socket.emit('createpoll', poll);
       },
 
+      // Add user vote to poll with matching poll id
+      votePoll (vote, pollId) {
+        // should pass option number & poll id
+        this.socket.emit('votepoll', { id: pollId, vote: vote })
+      },
+
+      // Change end time to now to end poll instantly
+      endPoll (pollId) {
+        this.socket.emit('endpoll', pollId)
+      },
+
+      destroyPoll (pollId) {
+        // Only remove poll if the ID's match
+        // if (this.pollData.id === pollId) this.showPollClient = false;
+        this.socket.emit('destroypoll', pollId);
+      },
+
+
+      // FUNCTIONS THAT REACT TO POLL SOCKET UPDATES
+      //--------------------------------------------
       displayPoll (poll) {
+        console.log(poll);
+
+        // Only show poll if you are in the channel
+        if ( poll.channel !== this.page.toLowerCase() ) return;
+
         this.pollData = {
           id      : poll.id,
           channel : poll.channel,
@@ -680,9 +713,13 @@
         this.showPollClient = true;
       },
 
-      destroyPoll (pollId) {
-        if (this.pollData.id === pollId) this.showPollClient = false;
+      removePoll (id) {
+        if ( this.pollData.id === id ) {
+          this.showPollClient = false;
+        }
       },
+
+
 
       getTime (timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
 

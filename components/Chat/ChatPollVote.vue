@@ -12,7 +12,7 @@
             :class="{ 'pa-3': true, 'py-2': showOptions }"
           >
             <v-layout column>
-              <v-flex class="mb-1">
+              <v-flex class="">
                 <v-layout align-center>
                   <v-flex shrink>
                     <v-progress-circular
@@ -59,6 +59,34 @@
                 </v-btn>
               </v-flex>
 
+              <v-flex>
+                <v-layout row>
+                  <v-spacer></v-spacer>
+                  <v-flex shrink>
+                    <v-btn
+                      small
+                      flat
+                      color="yellow"
+                      light
+                      @click="$emit('destroy', pollData.id)"
+                    >
+                      Delete
+                    </v-btn>
+                  </v-flex>
+                  <v-flex shrink>
+                    <v-btn
+                      small
+                      outline
+                      color="yellow"
+                      light
+                      @click="$emit('end', pollData.id)"
+                    >
+                      End Poll
+                    </v-btn>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+
             </v-layout>
           </v-sheet>
         </v-flex>
@@ -78,7 +106,7 @@
 
         data() {
             return {
-              showOptions: false,
+              showOptions: true,
             }
         },
 
