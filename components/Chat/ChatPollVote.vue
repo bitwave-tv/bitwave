@@ -17,7 +17,8 @@
                   <v-flex shrink>
                     <v-progress-circular
                       size="22"
-                      indeterminate
+                      :value="timeLeft"
+                      :indeterminate="timeLeft < 0"
                       color="yellow"
                     ></v-progress-circular>
                   </v-flex>
@@ -65,7 +66,7 @@
                 v-for="(val, index) in options"
                 :key="index"
               >
-                {{ `${val.votes} - ${val.label} (${(val.votes / (pollData.voters || 1) * 100).toFixed(2)}%)` }}
+                {{ `${val.label} - ${val.votes} (${Math.round(val.votes / (pollData.voters || 1) * 100)}%)` }}
                 <v-progress-linear
                   :value="val.votes / (pollData.voters || 1) * 100"
                   :buffer-value="(pollData.voters || 1)"
@@ -144,6 +145,15 @@
           showResults () {
             return this.now > this.pollData.endsAt.toDate();
           },
+
+          timeLeft () {
+            let seconds = (pollData.endsAt.seconds - now) / 100;
+            if (seconds < 0) {
+              seconds = 0;
+            }
+            return 100 - seconds;
+          },
+
         },
 
         created() {

@@ -463,6 +463,7 @@
           this.pollData.id = doc.id;
 
           this.showPollClient = this.pollData.display;
+          this.socket.emit('hydratepoll', this.pollData.id);
         });
       },
 
