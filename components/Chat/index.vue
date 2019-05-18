@@ -251,7 +251,7 @@
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
-        :is-owner="pollData.owner === user.uid"
+        :is-owner="pollData.owner === user ? user.uid : null"
         @vote="votePoll"
         @end="endPoll"
         @destroy="destroyPoll"

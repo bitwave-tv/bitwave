@@ -54,7 +54,7 @@
                   light
                   color="yellow"
                   :disabled="voted"
-                  @click="vote(index)"
+                  @click="vote(name)"
                 >
                   {{ `${name}. ${val.label}` }}
                 </v-btn>
@@ -124,7 +124,6 @@
         data() {
             return {
               showOptions: true,
-              showResults: false,
               voted: false,
               currentTime: 0,
             }
@@ -132,17 +131,19 @@
 
         methods: {
           vote (option) {
-            this.$emit( 'vote', option.toString(36).toUpperCase() );
+            this.$emit( 'vote', option );
             this.voted = true;
           },
           updateTime () {
-            this.showResults = Date.now() > this.pollData.endsAt;
+            this.currentTime = Date.now();
             setTimeout( () => this.updateTime(), 2000 );
           },
         },
 
         computed: {
-
+          showResults () {
+            return this.currentTime > this.pollData.endsAt;
+          },
         },
 
         mounted() {
