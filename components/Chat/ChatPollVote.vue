@@ -147,7 +147,7 @@
           },
 
           timeLeft () {
-            let seconds = (pollData.endsAt.seconds - now) / 100;
+            let seconds = (this.pollData.endsAt.seconds - this.now) / 100;
             if (seconds < 0) {
               seconds = 0;
             }
