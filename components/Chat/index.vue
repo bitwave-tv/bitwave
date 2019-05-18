@@ -250,6 +250,7 @@
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
+        :is-owner="page === username"
         @vote="votePoll"
         @end="endPoll"
         @destroy="destroyPoll"
@@ -364,6 +365,7 @@
       return {
         color: null,
         unsubscribeUser: null,
+        unsubscribePoll: null,
         loading: true,
         socket: null,
         message: '',
@@ -398,10 +400,16 @@
 
         showPollClient: false,
         pollData: {
+          channel: '',
+          display: '',
+          endsAt: 0,
           id: '',
+          options: {
+            a: { label:'', votes: 0 },
+            b: { label:'', votes: 0 },
+          },
+          owner: '',
           title: '',
-          options: [],
-          time: 0,
         },
 
         global: true,
@@ -438,6 +446,21 @@
           const user = doc.data();
           user.page  = this.page;
           this.connectChat(user);
+        });
+      },
+
+      subscribeToPoll (channel) {
+        channel = channel.toLowerCase();
+        const pollDocRef = db.collection('polls').where('channel', '==', channel).limit(1);
+        this.unsubscribePoll = pollDocRef.onSnapshot( result => {
+          if (result.empty) return;
+
+          const doc = result.docs[0];
+
+          this.pollData = doc.data();
+          this.pollData.id = doc.id;
+
+          this.showPollClient = this.pollData.display;
         });
       },
 
@@ -677,9 +700,9 @@
       },
 
       // Add user vote to poll with matching poll id
-      votePoll (vote, pollId) {
+      votePoll (vote) {
         // should pass option number & poll id
-        this.socket.emit('votepoll', { id: pollId, vote: vote })
+        this.socket.emit('votepoll', { id: this.pollData.id, vote: vote })
       },
 
       // Change end time to now to end poll instantly
@@ -687,16 +710,20 @@
         this.socket.emit('endpoll', pollId)
       },
 
-      destroyPoll (pollId) {
+      async destroyPoll (pollId) {
         // Only remove poll if the ID's match
         // if (this.pollData.id === pollId) this.showPollClient = false;
-        this.socket.emit('destroypoll', pollId);
+
+        // this.socket.emit('destroypoll', pollId);
+
+        const pollRef = db.collection('polls').doc(pollId);
+        await pollRef.update( 'display', false );
       },
 
 
       // FUNCTIONS THAT REACT TO POLL SOCKET UPDATES
       //--------------------------------------------
-      displayPoll (poll) {
+      /*displayPoll (poll) {
         console.log(poll);
 
         // Only show poll if you are in the channel
@@ -717,7 +744,7 @@
         if ( this.pollData.id === id ) {
           this.showPollClient = false;
         }
-      },
+      },*/
 
 
 
@@ -766,6 +793,8 @@
       this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
+      this.subscribeToPoll(this.page);
+
       // Add listener for voice changes, then update voices.
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
       this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
@@ -792,6 +821,7 @@
 
     beforeDestroy() {
       if ( this.unsubscribeUser ) this.unsubscribeUser();
+      if ( this.unsubscribePoll ) this.unsubscribePoll();
       if ( this.socket ) this.socket.disconnect();
     },
   }

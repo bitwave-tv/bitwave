@@ -54,12 +54,13 @@
                   light
                   color="yellow"
                   class=""
+                  @click="$emit( 'vote', index.toString(36).toUpperCase() )"
                 >
-                  {{ `${(index+10).toString(36).toUpperCase()}. ${option.str}` }}
+                  {{ `${(index).toString(36).toUpperCase()}. ${option.label}` }}
                 </v-btn>
               </v-flex>
 
-              <v-flex>
+              <v-flex v-if="isOwner">
                 <v-layout row>
                   <v-spacer></v-spacer>
                   <v-flex shrink>
@@ -99,9 +100,12 @@
         name: 'ChatPollVote',
 
       props: {
-          pollData: {
-            type: Object,
-          },
+        pollData: {
+          type: Object,
+        },
+        isOwner: {
+          type: Boolean,
+        }
       },
 
         data() {
