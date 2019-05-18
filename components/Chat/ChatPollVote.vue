@@ -17,8 +17,9 @@
                   <v-flex shrink>
                     <v-progress-circular
                       size="22"
+                      :rotate="-90"
                       :value="timeLeft"
-                      :indeterminate="timeLeft < 0"
+                      :indeterminate="timeLeft > 100"
                       color="yellow"
                     ></v-progress-circular>
                   </v-flex>
@@ -147,17 +148,15 @@
           },
 
           timeLeft () {
-            let seconds = (this.pollData.endsAt.seconds - this.now) / 100;
-            if (seconds < 0) {
-              seconds = 0;
-            }
-            return 100 - seconds;
+            let seconds = (this.pollData.endsAt.toDate() - this.now.getTime()) / 1000;
+            // if (seconds < 0) { seconds = 0; }
+            return (seconds / 1.8);
           },
 
         },
 
         created() {
-          setInterval(() => this.now = new Date, 1000 * 2)
+          setInterval(() => this.now = new Date, 1000 * 1)
         }
     }
 </script>

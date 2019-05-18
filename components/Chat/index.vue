@@ -463,7 +463,6 @@
           this.pollData.id = doc.id;
 
           this.showPollClient = this.pollData.display;
-          this.socket.emit('hydratepoll', this.pollData.id);
         });
       },
 
@@ -558,6 +557,7 @@
         this.messages.forEach( msg => {
           msg.message = msg.message.replace(pattern, `<span class="highlight">$&</span>`);
         });
+        await this.socket.emit('hydratepoll', this.pollData.id);
       },
 
       async rcvMessage (message) {
