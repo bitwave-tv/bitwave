@@ -411,6 +411,7 @@
           },
           owner: '',
           title: '',
+          voters: 0,
         },
 
         global: true,

@@ -44,8 +44,8 @@
 
               <v-flex
                 v-if="!showResults && showOptions"
-                v-for="(option, index) in pollData.options"
-                :key="option.label"
+                v-for="(val, name, index) in pollData.options"
+                :key="val.label"
                 column
               >
                 <v-btn
@@ -56,7 +56,7 @@
                   :disabled="voted"
                   @click="vote(index)"
                 >
-                  {{ `${(index).toString(36).toUpperCase()}. ${option.label}` }}
+                  {{ `${name}. ${val.label}` }}
                 </v-btn>
               </v-flex>
 
@@ -124,6 +124,7 @@
         data() {
             return {
               showOptions: true,
+              showResults: false,
               voted: false,
               currentTime: 0,
             }
@@ -135,9 +136,8 @@
             this.voted = true;
           },
           updateTime () {
-            this.currentTime = Date.now();
-            this.showResults = this.currentTime > this.pollData.endsAt;
-            setTimeout( () => this.updateTime(), 2000 )
+            this.showResults = Date.now() > this.pollData.endsAt;
+            setTimeout( () => this.updateTime(), 2000 );
           },
         },
 
