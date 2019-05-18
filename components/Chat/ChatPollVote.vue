@@ -45,7 +45,7 @@
               <v-flex
                 v-if="!showResults && showOptions"
                 v-for="(option, index) in pollData.options"
-                :key="index"
+                :key="option.label"
                 column
               >
                 <v-btn

@@ -712,7 +712,7 @@
           const data = {
             channel: this.page.toLowerCase(),
             display: true,
-            endsAt: Date.now() + 1 * 600,
+            endsAt: new Date( Date.now() + 1.5 * 600000 ),
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
@@ -739,7 +739,7 @@
 
       async updatePoll (data) {
         this.pollData.options = data.options;
-        this.pollData.voters = voters;
+        this.pollData.voters = data.voters;
       },
 
       // FUNCTIONS THAT REACT TO POLL SOCKET UPDATES
