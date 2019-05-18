@@ -44,7 +44,7 @@
 
               <v-flex
                 v-if="!showResults && showOptions"
-                v-for="(val, name, index) in pollData.options"
+                v-for="(val, index) in options"
                 :key="val.label"
                 column
               >
@@ -54,20 +54,20 @@
                   light
                   color="yellow"
                   :disabled="voted"
-                  @click="vote(name)"
+                  @click="vote(index)"
                 >
-                  {{ `${name}. ${val.label}` }}
+                  {{ `${index}. ${val.label}` }}
                 </v-btn>
               </v-flex>
 
               <v-flex
-                v-if="( showResults && showOptions ) || isOwner"
-                v-for="(result, index) in pollData.options"
+                v-if="(( showResults && showOptions ) || isOwner )"
+                v-for="(val, index) in options"
                 :key="index"
               >
-                {{ `${result.label} (${result.votes})` }}
+                {{ `${val.label} (${val.votes})` }}
                 <v-progress-linear
-                  :value="result.votes / (pollData.voters || 1) * 100"
+                  :value="val.votes / (pollData.voters || 1) * 100"
                   :buffer-value="(pollData.voters || 1)"
                   color="yellow"
                 ></v-progress-linear>
@@ -141,6 +141,10 @@
         },
 
         computed: {
+          options () {
+            return this.pollData.options.filter( option => option !== null );
+          },
+
           showResults () {
             return this.currentTime > this.pollData.endsAt;
           },

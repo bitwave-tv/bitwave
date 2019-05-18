@@ -23,14 +23,14 @@
           </v-flex>
 
           <v-layout
-            v-for="(option, index) in options"
+            v-for="(option, index) in optionsFiltered"
             :key="index"
             row
           >
             <v-flex grow>
               <v-text-field
                 v-model="option.label"
-                :label="`Option ${(index+10).toString(36).toUpperCase()}...`"
+                :label="`Option ${index}...`"
                 color="yellow"
                 class="pt-0"
                 single-line
@@ -56,7 +56,7 @@
                     outline
                     tabindex="-1"
                     color="yellow"
-                    @click="options.push({str:''})"
+                    @click="options.push({label:'', votes: 0})"
                   >
                     <v-icon>add</v-icon>
                   </v-btn>
@@ -110,39 +110,39 @@
             return {
               title: '',
               time: '0200',
-              options: [ { label: '' }, { label: '' } ],
+              options: [
+                { label: '', votes: 0 },
+                { label: '', votes: 0 },
+              ],
             }
         },
 
         methods: {
           cancelPoll () {
             this.title = '';
-            this.options = [ { label: ''}, { label: '' } ];
+            this.options = [
+              { label: '', votes: 0 },
+              { label: '', votes: 0 },
+            ];
             this.$emit('close', true);
           },
 
           createPoll () {
             const pollOptions = {
               title: this.title,
-              options: this.createOptions(),
+              // options: this.createOptions(),
+              options: this.options,
               time: this.time,
             };
             this.$emit('create', pollOptions);
             this.$emit('close', true);
           },
-
-          createOptions () {
-            let data = {};
-            data['A'] = { label: this.options[0].label, votes: 0 };
-            data['B'] = { label: this.options[1].label, votes: 0 };
-            if (this.options.length === 3) data['C'] = { label: this.options[2].label, votes: 0 };
-            if (this.options.length === 4) data['D'] = { label: this.options[3].label, votes: 0 };
-            return data;
-          },
         },
 
         computed: {
-
+          optionsFiltered () {
+            return this.options.filter( option => option !== null );
+          },
         },
     }
 </script>

@@ -251,7 +251,7 @@
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
-        :is-owner="pollData.owner === user ? user.uid : null"
+        :is-owner="pollData.owner === (user ? user.uid : null)"
         @vote="votePoll"
         @end="endPoll"
         @destroy="destroyPoll"
@@ -405,10 +405,10 @@
           display: false,
           endsAt: 0,
           id: '',
-          options: {
-            a: { label:'', votes: 0 },
-            b: { label:'', votes: 0 },
-          },
+          options: [
+            { label:'', votes: 0 },
+            { label:'', votes: 0 },
+          ],
           owner: '',
           title: '',
           voters: 0,
@@ -506,8 +506,6 @@
         socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
 
-        // socket.on( 'showpoll',    data => this.displayPoll(data) );
-        // socket.on( 'destroypoll', data => this.removePoll(data) );
         socket.on( 'pollstate',   data => this.updatePoll(data) );
 
         this.socket = socket;
@@ -532,8 +530,6 @@
           if ( typeof(channel) === 'string' ) channel = channel.toLowerCase();
 
           if (username) username = username.toLowerCase();
-
-          // console.log(`[${channel}] - ${user.username}`); // Log Shit
 
           if ( channel in accumulator ) {
             if ( username in accumulator[channel] ) {
@@ -714,7 +710,7 @@
           const data = {
             channel: this.page.toLowerCase(),
             display: true,
-            endsAt: new Date( Date.now() + 1.5 * 600000 ),
+            endsAt: new Date( Date.now() + 1.5 * 60000 ),
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
