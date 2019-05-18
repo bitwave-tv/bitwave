@@ -704,6 +704,7 @@
           const pollDocRef = db.collection('polls').doc(this.pollData.id);
           const data = {
             display: true,
+            endsAt: new Date( Date.now() + 1.5 * 600000 ),
             options: poll.options,
             title: poll.title,
           };
