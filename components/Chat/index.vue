@@ -701,7 +701,7 @@
           const pollDocRef = db.collection('polls').doc(this.pollData.id);
           const data = {
             display: true,
-            endsAt: new Date( Date.now() + 1.5 * 600000 ),
+            endsAt: new Date( Date.now() + 1.5 * 60000 ),
             options: poll.options,
             title: poll.title,
           };
@@ -726,8 +726,11 @@
       },
 
       // Change end time to now to end poll instantly
-      endPoll (pollId) {
+      async endPoll (pollId) {
         // this.socket.emit('endpoll', pollId)
+
+        const pollDocRef = db.collection('polls').doc(this.pollData.id);
+        await pollDocRef.update( 'endsAt', new Date(Date.now()) );
       },
 
       async destroyPoll (pollId) {

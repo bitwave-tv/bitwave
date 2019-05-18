@@ -65,7 +65,7 @@
                 v-for="(val, index) in options"
                 :key="index"
               >
-                {{ `${val.label} (${val.votes})` }}
+                {{ `${val.votes} - ${val.label} (${(val.votes / (pollData.voters || 1) * 100).toFixed(2)}%)` }}
                 <v-progress-linear
                   :value="val.votes / (pollData.voters || 1) * 100"
                   :buffer-value="(pollData.voters || 1)"
@@ -125,7 +125,7 @@
             return {
               showOptions: true,
               voted: false,
-              currentTime: 0,
+              now: new Date,
             }
         },
 
@@ -133,10 +133,6 @@
           vote (option) {
             this.$emit( 'vote', option );
             this.voted = true;
-          },
-          updateTime () {
-            this.currentTime = Date.now();
-            setTimeout( () => this.updateTime(), 2000 );
           },
         },
 
@@ -146,12 +142,12 @@
           },
 
           showResults () {
-            return this.currentTime > this.pollData.endsAt;
+            return this.now > this.pollData.endsAt.toDate();
           },
         },
 
-        mounted() {
-          this.updateTime();
+        created() {
+          setInterval(() => this.now = new Date, 1000 * 2)
         }
     }
 </script>
