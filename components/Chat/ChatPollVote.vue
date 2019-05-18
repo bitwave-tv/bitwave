@@ -53,8 +53,8 @@
                   block
                   light
                   color="yellow"
-                  class=""
-                  @click="$emit( 'vote', index.toString(36).toUpperCase() )"
+                  :disabled="voted"
+                  @click="vote(index)"
                 >
                   {{ `${(index).toString(36).toUpperCase()}. ${option.label}` }}
                 </v-btn>
@@ -111,10 +111,16 @@
         data() {
             return {
               showOptions: true,
+              voted: false,
             }
         },
 
-        methods: {},
+        methods: {
+          vote (option) {
+            this.$emit( 'vote', option.toString(36).toUpperCase() );
+            this.voted = true;
+          },
+        },
 
         computed: {},
     }

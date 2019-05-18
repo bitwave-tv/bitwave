@@ -92,6 +92,7 @@
                   :style="{ 'min-width': '40px' }"
                   small
                   light
+                  :disabled="showPollClient"
                   color="yellow"
                   @click="scrollToBottom(true)"
                 >POLL</v-btn>
@@ -250,7 +251,7 @@
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
-        :is-owner="page === username"
+        :is-owner="pollData.owner === user.uid"
         @vote="votePoll"
         @end="endPoll"
         @destroy="destroyPoll"
@@ -401,7 +402,7 @@
         showPollClient: false,
         pollData: {
           channel: '',
-          display: '',
+          display: false,
           endsAt: 0,
           id: '',
           options: {
@@ -693,10 +694,31 @@
 
       // POLL FUNCTIONS -> SOCKET
       //-------------------------
-      createPoll (poll) {
-        this.showPoll = false;
-        poll.id = [...Array(8)].map(() => (~~(Math.random()*36)).toString(36)).join('');
-        this.socket.emit('createpoll', poll);
+      async createPoll (poll) {
+        // this.showPoll = false;
+        // poll.id = [...Array(8)].map(() => (~~(Math.random()*36)).toString(36)).join('');
+        // this.socket.emit('createpoll', poll);
+
+
+        if ( this.pollData.id ) {
+          const pollDocRef = db.collection('polls').doc(this.pollData.id);
+          const data = {
+            display: true,
+            options: poll.options,
+            title: poll.title,
+          };
+          await pollDocRef.update(data);
+        } else {
+          const data = {
+            channel: this.page.toLowerCase(),
+            display: true,
+            endsAt: Date.now() + 5 * 600,
+            options: poll.options,
+            owner: this.user.uid,
+            title: poll.title,
+          };
+          this.pollData.id = await db.collection('polls').add(data);
+        }
       },
 
       // Add user vote to poll with matching poll id
@@ -707,17 +729,12 @@
 
       // Change end time to now to end poll instantly
       endPoll (pollId) {
-        this.socket.emit('endpoll', pollId)
+        // this.socket.emit('endpoll', pollId)
       },
 
       async destroyPoll (pollId) {
-        // Only remove poll if the ID's match
-        // if (this.pollData.id === pollId) this.showPollClient = false;
-
-        // this.socket.emit('destroypoll', pollId);
-
         const pollRef = db.collection('polls').doc(pollId);
-        await pollRef.update( 'display', false );
+        await pollRef.update({ 'display': false, 'options': null });
       },
 
 

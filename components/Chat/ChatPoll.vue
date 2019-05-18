@@ -29,7 +29,7 @@
           >
             <v-flex grow>
               <v-text-field
-                v-model="option.str"
+                v-model="option.label"
                 :label="`Option ${(index+10).toString(36).toUpperCase()}...`"
                 color="yellow"
                 class="pt-0"
@@ -44,6 +44,7 @@
                     outline
                     tabindex="-1"
                     color="yellow"
+                    :disabled="!index"
                     @click="options.splice(index, 1)"
                   >
                     <v-icon>clear</v-icon>
@@ -109,28 +110,40 @@
             return {
               title: '',
               time: '0200',
-              options: [ { str: '' }, { str: '' } ],
+              options: [ { label: '' }, { label: '' } ],
             }
         },
 
         methods: {
           cancelPoll () {
             this.title = '';
-            this.options = [ { str: ''}, { str: '' } ];
+            this.options = [ { label: ''}, { label: '' } ];
             this.$emit('close', true);
           },
 
           createPoll () {
             const pollOptions = {
               title: this.title,
-              options: this.options,
+              options: this.createOptions(),
               time: this.time,
             };
             this.$emit('create', pollOptions);
+            this.$emit('close', true);
+          },
+
+          createOptions () {
+            let data = {};
+            data['A'] = { label: this.options[0].label, votes: 0 };
+            data['B'] = { label: this.options[1].label, votes: 0 };
+            if (this.options.length === 3) data['C'] = { label: this.options[2].label, votes: 0 };
+            if (this.options.length === 4) data['D'] = { label: this.options[3].label, votes: 0 };
+            return data;
           },
         },
 
-        computed: {},
+        computed: {
+
+        },
     }
 </script>
 
