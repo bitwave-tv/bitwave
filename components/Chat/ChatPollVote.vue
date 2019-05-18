@@ -65,9 +65,9 @@
                 v-for="(result, index) in pollData.options"
                 :key="index"
               >
-                {{ result.label }}
+                {{ `${result.label} (${result.votes})` }}
                 <v-progress-linear
-                  :value="result.votes"
+                  :value="result.votes / (pollData.voters || 1) * 100"
                   :buffer-value="(pollData.voters || 1)"
                   color="yellow"
                 ></v-progress-linear>
@@ -146,7 +146,7 @@
         },
 
         mounted() {
-
+          this.updateTime();
         }
     }
 </script>
