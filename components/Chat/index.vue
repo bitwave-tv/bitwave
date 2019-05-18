@@ -351,7 +351,7 @@
     props: {
       enable: { type: Boolean, default: true },
       dark: { type: Boolean },
-      chatChannel: { type: String }
+      chatChannel: { type: String },
     },
 
     components: {
@@ -505,8 +505,9 @@
         socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
 
-        socket.on( 'showpoll',    data => this.displayPoll(data) );
-        socket.on( 'destroypoll', data => this.removePoll(data) );
+        // socket.on( 'showpoll',    data => this.displayPoll(data) );
+        // socket.on( 'destroypoll', data => this.removePoll(data) );
+        socket.on( 'pollstate',   data => this.updatePoll(data) );
 
         this.socket = socket;
       },
@@ -528,7 +529,6 @@
             return accumulator;
           }
           if ( typeof(channel) === 'string' ) channel = channel.toLowerCase();
-          // else debugger;
 
           if (username) username = username.toLowerCase();
 
@@ -548,7 +548,6 @@
           }
           return accumulator;
         }, {});
-        // console.log('Channel Viewers:', this.channelViews);
         this.viewerCount = this.viewers.length;
       },
 
@@ -557,13 +556,15 @@
         this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
         // re-highlight username mentions on hydration
-        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         this.messages.forEach( msg => {
           msg.message = msg.message.replace(pattern, `<span class="highlight">$&</span>`);
         });
       },
 
       async rcvMessage (message) {
+        if ( !this.enable ) return;
+
         if(this.useIgnoreListForChat){
           if ( this.ignoreList.includes( message.username) ) return;
         }
@@ -699,7 +700,6 @@
         // poll.id = [...Array(8)].map(() => (~~(Math.random()*36)).toString(36)).join('');
         // this.socket.emit('createpoll', poll);
 
-
         if ( this.pollData.id ) {
           const pollDocRef = db.collection('polls').doc(this.pollData.id);
           const data = {
@@ -712,7 +712,7 @@
           const data = {
             channel: this.page.toLowerCase(),
             display: true,
-            endsAt: Date.now() + 5 * 600,
+            endsAt: Date.now() + 1 * 600,
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
@@ -737,6 +737,10 @@
         await pollRef.update({ 'display': false, 'options': null });
       },
 
+      async updatePoll (data) {
+        this.pollData.options = data.options;
+        this.pollData.voters = voters;
+      },
 
       // FUNCTIONS THAT REACT TO POLL SOCKET UPDATES
       //--------------------------------------------
@@ -803,14 +807,12 @@
     },
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      auth.onAuthStateChanged(async user => await this.authenticated(user));
     },
 
     mounted() {
       this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
-
-      this.subscribeToPoll(this.page);
 
       // Add listener for voice changes, then update voices.
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
@@ -833,6 +835,10 @@
         if ( tts ) this.useTTS = tts;
       } catch (e) {
         console.log('No tts option found.');
+      }
+      if ( this.enable ) {
+        this.useTTS = false;
+        this.subscribeToPoll(this.page);
       }
     },
 

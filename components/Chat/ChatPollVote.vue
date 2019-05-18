@@ -43,7 +43,7 @@
               </v-flex>
 
               <v-flex
-                v-if="showOptions"
+                v-if="!showResults && showOptions"
                 v-for="(option, index) in pollData.options"
                 :key="index"
                 column
@@ -58,6 +58,19 @@
                 >
                   {{ `${(index).toString(36).toUpperCase()}. ${option.label}` }}
                 </v-btn>
+              </v-flex>
+
+              <v-flex
+                v-if="( showResults && showOptions ) || isOwner"
+                v-for="(result, index) in pollData.options"
+                :key="index"
+              >
+                {{ result.label }}
+                <v-progress-linear
+                  :value="result.votes"
+                  :buffer-value="(pollData.voters || 1)"
+                  color="yellow"
+                ></v-progress-linear>
               </v-flex>
 
               <v-flex v-if="isOwner">
@@ -105,13 +118,14 @@
         },
         isOwner: {
           type: Boolean,
-        }
+        },
       },
 
         data() {
             return {
               showOptions: true,
               voted: false,
+              currentTime: 0,
             }
         },
 
@@ -120,12 +134,19 @@
             this.$emit( 'vote', option.toString(36).toUpperCase() );
             this.voted = true;
           },
+          updateTime () {
+            this.currentTime = Date.now();
+            this.showResults = this.currentTime > this.pollData.endsAt;
+            setTimeout( () => this.updateTime(), 2000 )
+          },
         },
 
-        computed: {},
+        computed: {
+
+        },
+
+        mounted() {
+
+        }
     }
 </script>
-
-<style lang='scss'>
-
-</style>

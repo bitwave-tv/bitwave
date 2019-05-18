@@ -107,7 +107,7 @@
               For more information on BitWave's source code.
             </v-flex>
 
-            <v-flex>
+            <v-flex v-if="false">
               <v-btn
                 small
                 outline
@@ -117,6 +117,18 @@
                 title="chat"
               >Riot</v-btn>
               If you have questions, join the riot chat.
+            </v-flex>
+
+            <v-flex>
+              <v-btn
+                small
+                outline
+                color="light-blue"
+                href="https://discord.gg/4WwJsKx"
+                target="_blank"
+                title="chat"
+              >Discord</v-btn>
+              If you have questions or feedback, join the discord chat.
             </v-flex>
 
             <v-flex>
@@ -184,6 +196,25 @@
   import Chat from '~/components/Chat'
 
   export default {
+    head() {
+      return {
+        title: `${this.name} - BitWave.tv`,
+        meta: [
+          { name: 'og:title',       hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
+          { name: 'og:description', hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
+          { name: 'og:image',       hid:'og:image',        content: this.poster},
+          // { name: 'author',         content: this.name },
+          { name: 'description',    hid: 'description',    content: 'An open platform live streaming service for creators to freely express themselves.' },
+          // { name: 'profile:username',    content: this.name },
+          { name: 'twitter:card',        content: 'summary_large_image' },
+          { name: 'twitter:site',        content: '@BitwaveTV' },
+          { name: 'twitter:title',       content: 'Livestream Homepage - [bitwave.tv]' },
+          { name: 'twitter:description', content: 'An open platform live streaming service for creators to freely express themselves.' },
+          { name: 'twitter:image',       content: this.poster },
+        ],
+      }
+    },
+
     components: {
       Chat,
     },

@@ -128,16 +128,16 @@
       return {
         title: `${this.name} - BitWave.tv`,
         meta: [
-          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - BitWave.tv` },
+          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
           { name: 'og:description', hid: 'og:description', content: (this.desc || '').substring(0, 200) },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
           { name: 'author',         content: this.name },
           { name: 'description',    hid: 'description',    content: (this.name || '').substring(0, 200) },
           { name: 'profile:username',    content: this.name },
           { name: 'twitter:card',        content: 'summary_large_image' },
-          { name: 'twitter:site',        content: '@BitWaveTV' },
-          { name: 'twitter:title',       content: (this.title || '').substring(0, 70) },
-          { name: 'twitter:description', content: (this.desc || '').substring(0, 200) },
+          { name: 'twitter:site',        content: '@BitwaveTV' },
+          { name: 'twitter:title',       content: ( this.title || '' ).substring(0,  70) },
+          { name: 'twitter:description', content: ( this.desc  || '' ).substring(0, 200) },
           { name: 'twitter:image',       content: this.poster },
         ],
       }
