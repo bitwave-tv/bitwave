@@ -11,9 +11,7 @@
 
         <v-flex class="px-0 pb-0 pt-0">
           <v-card>
-            <v-responsive
-              :aspect-ratio="16/9"
-            >
+            <!--<v-responsive :aspect-ratio="16/9">-->
               <video
                 playsinline
                 id="streamplayer"
@@ -36,7 +34,7 @@
                   type="video/mp4"
                 >
               </video>
-            </v-responsive>
+            <!--</v-responsive>-->
           </v-card>
         </v-flex>
 
@@ -376,8 +374,8 @@
   #description {
     text-overflow: ellipsis;
 
-    image {
-      max-width: 100vw;
+    img {
+      max-width: 100%;
     }
   }
 </style>
