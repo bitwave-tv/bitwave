@@ -54,7 +54,7 @@
 
     data() {
       return {
-        title: 'BitWave.tv',
+        title: '[bitwave.tv]',
 
         dark: true,
         clipped: false,
