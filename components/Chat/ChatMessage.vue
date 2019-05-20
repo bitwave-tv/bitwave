@@ -9,7 +9,7 @@
         <v-list-tile-sub-title>
           <v-layout>
             <v-flex shrink class="time mr-1">{{ timestamp }}</v-flex>
-            <v-flex shrink class="username">{{ username }}</v-flex>
+            <v-flex shrink class="username" :style="userStyling">{{ username }}</v-flex>
             <v-spacer/>
             <v-flex shrink>
               <nuxt-link
@@ -40,6 +40,7 @@
       username: {
         type: String,
       },
+      userStyling: {},
       channel: {
         type: String,
       },

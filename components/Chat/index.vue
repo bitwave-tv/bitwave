@@ -283,6 +283,7 @@
           <chat-message
             :key="item.timestamp"
             :username="item.username"
+            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
             :channel="item.channel"
             :timestamp="getTime(item.timestamp)"
             :avatar="item.avatar"
