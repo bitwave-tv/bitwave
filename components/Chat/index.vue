@@ -494,7 +494,7 @@
           console.warn(`Failed to connect to chat. No user defined.`);
           return;
         }
-        console.debug('Chat User:', user);
+        // console.debug('Chat User:', user);
 
         const socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
