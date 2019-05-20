@@ -124,7 +124,7 @@
   export default {
     head() {
       return {
-        title: `${this.name} - BitWave.tv`,
+        title: `${this.name} - [bitwave.tv]`,
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
           { name: 'og:description', hid: 'og:description', content: (this.desc || '').substring(0, 200) },

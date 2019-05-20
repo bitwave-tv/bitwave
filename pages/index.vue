@@ -198,14 +198,12 @@
   export default {
     head() {
       return {
-        title: `${this.name} - BitWave.tv`,
+        title: `${this.name} - [bitwave.tv]`,
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
           { name: 'og:description', hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
-          // { name: 'author',         content: this.name },
           { name: 'description',    hid: 'description',    content: 'An open platform live streaming service for creators to freely express themselves.' },
-          // { name: 'profile:username',    content: this.name },
           { name: 'twitter:card',        content: 'summary_large_image' },
           { name: 'twitter:site',        content: '@BitwaveTV' },
           { name: 'twitter:title',       content: 'Livestream Homepage - [bitwave.tv]' },
