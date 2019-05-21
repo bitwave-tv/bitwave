@@ -155,7 +155,7 @@
                     ></v-switch>
                   </v-list-tile>
 
-                  <v-divider/>
+                  <v-divider class="py-2"/>
 
                   <v-list-tile>
                     <v-switch
@@ -688,10 +688,6 @@
       // POLL FUNCTIONS -> SOCKET
       //-------------------------
       async createPoll (poll) {
-        // this.showPoll = false;
-        // poll.id = [...Array(8)].map(() => (~~(Math.random()*36)).toString(36)).join('');
-        // this.socket.emit('createpoll', poll);
-
         if ( this.pollData.id ) {
           const pollDocRef = db.collection('polls').doc(this.pollData.id);
           const data = {
@@ -737,33 +733,6 @@
         this.pollData.options = data.options;
         this.pollData.voters = data.voters;
       },
-
-      // FUNCTIONS THAT REACT TO POLL SOCKET UPDATES
-      //--------------------------------------------
-      /*displayPoll (poll) {
-        console.log(poll);
-
-        // Only show poll if you are in the channel
-        if ( poll.channel !== this.page.toLowerCase() ) return;
-
-        this.pollData = {
-          id      : poll.id,
-          channel : poll.channel,
-          title   : poll.title,
-          options : poll.options,
-          time    : poll.time,
-        };
-
-        this.showPollClient = true;
-      },
-
-      removePoll (id) {
-        if ( this.pollData.id === id ) {
-          this.showPollClient = false;
-        }
-      },*/
-
-
 
       getTime (timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
 
@@ -828,7 +797,7 @@
       }
       try {
         let tts = localStorage.getItem('tts');
-        if ( tts ) this.useTTS = tts;
+        // if ( tts ) this.useTTS = tts;
       } catch (e) {
         console.log('No tts option found.');
       }
