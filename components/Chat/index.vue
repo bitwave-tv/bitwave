@@ -181,18 +181,9 @@
 
                 <v-divider/>
 
-                <v-list two-line subheader>
-                  <v-subheader>Text To Speech Options</v-subheader>
-                  <v-list-tile v-if="false">
-                    <v-text-field
-                      v-model="selectionTTS"
-                      type="number"
-                      label="Voice ID"
-                      min="0"
-                      max="25"
-                      single-line
-                    ></v-text-field>
-                  </v-list-tile>
+                <v-list subheader>
+                  <v-subheader class="mb-2">Text To Speech Options</v-subheader>
+
                   <v-list-tile>
                     <v-select
                       v-model="selectionTTS"
@@ -200,6 +191,7 @@
                       label="TTS Voice"
                     ></v-select>
                   </v-list-tile>
+
                   <v-list-tile>
                     <v-slider
                       label="Speed"
@@ -672,7 +664,8 @@
         // const voicesTTS = speechSynthesis.getVoices();
 
         const voice = new SpeechSynthesisUtterance();
-        const pitch = .9;
+        const pitch = 1;
+        // voice.voice = speechSynthesis.getVoices()[this.selectionTTS];
         voice.voice = this.voicesListTTS[this.selectionTTS];
         voice.rate  = this.rateTTS / 10.0;
         voice.pitch = pitch;
@@ -840,7 +833,7 @@
         console.log('No tts option found.');
       }
       if ( this.enable ) {
-        this.useTTS = false;
+        // this.useTTS = false;
         this.subscribeToPoll(this.page);
       }
     },
