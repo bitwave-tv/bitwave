@@ -10,7 +10,7 @@
           <v-layout>
             <v-flex shrink>
               <span class="time">{{ timestamp }}</span>
-              <span class="username" :style="userStyling">{{ username }}</span>
+              <span class="username" :style="userStyling">{{ username }}:</span>
             </v-flex>
             <v-spacer/>
             <v-flex shrink>
