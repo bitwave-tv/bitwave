@@ -104,7 +104,7 @@
                 href="https://github.com/DispatchCommit/BitWave"
                 target="_blank"
               >Github</v-btn>
-              For more information on BitWave's source code.
+              For more information on Bitwave's source code.
             </v-flex>
 
             <v-flex v-if="false">

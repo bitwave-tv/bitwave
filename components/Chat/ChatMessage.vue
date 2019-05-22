@@ -8,8 +8,10 @@
       <v-list-tile-content>
         <v-list-tile-sub-title>
           <v-layout>
-            <v-flex shrink class="time mr-1">{{ timestamp }}</v-flex>
-            <v-flex shrink class="username" :style="userStyling">{{ username }}</v-flex>
+            <v-flex shrink>
+              <span class="time">{{ timestamp }}</span>
+              <span class="username" :style="userStyling">{{ username }}</span>
+            </v-flex>
             <v-spacer/>
             <v-flex shrink>
               <nuxt-link

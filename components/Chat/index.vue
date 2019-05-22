@@ -73,8 +73,6 @@
             <h4>{{ page }}</h4>
           </v-flex>
 
-          <!--<v-spacer/>-->
-
           <!-- Create Poll Button -->
           <v-flex
             v-if="page === username"
@@ -133,13 +131,41 @@
               </template>
 
               <v-card>
+                <v-sheet color="yellow">
+                  <v-layout class="pl-2" align-center>
+                    <v-flex>
+                      <h5 class="black--text body-1">Settings</h5>
+                    </v-flex>
+                    <v-flex shrink>
+                      <v-btn
+                        color="black"
+                        flat
+                        icon
+                        pa-0
+                        @click="showToolMenu = false"
+                      >
+                        <v-icon color="black">close</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-sheet>
+
                 <v-list>
                   <v-list-tile>
                     <v-switch
                       v-model="global"
+                      @change="toggleGlobal"
                       :label="`${ global ? 'Global' : 'Local' } Chat`"
-                      class="ml-2 mt-0 pt-0"
+                      class="ml-0 mt-0 pt-0"
                       :disabled="false"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                    <v-switch
+                      v-model="showTimestamps"
+                      @change="toggleShowTimestamps"
+                      label="Timestamps"
+                      class="ml-2 mt-0 pt-0"
                       color="yellow"
                       hide-details
                     ></v-switch>
@@ -149,30 +175,7 @@
                       v-model="useIgnoreListForChat"
                       @change="toggleUseIgnore"
                       label="Ignore chat messages"
-                      class="ml-2 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-list-tile>
-
-                  <v-divider class="py-2"/>
-
-                  <v-list-tile>
-                    <v-switch
-                      v-model="useTTS"
-                      label="Text to speech"
-                      class="ml-2 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                      @change="toggleTTS"
-                    ></v-switch>
-                  </v-list-tile>
-                  <v-list-tile>
-                    <v-switch
-                      v-model="allowTrollTTS"
-                      :disabled="!useTTS"
-                      label="Troll TTS"
-                      class="ml-2 mt-0 pt-0"
+                      class="ml-0 mt-0 pt-0"
                       color="yellow"
                       hide-details
                     ></v-switch>
@@ -181,16 +184,41 @@
 
                 <v-divider/>
 
-                <v-list subheader>
-                  <v-subheader class="mb-2">Text To Speech Options</v-subheader>
+                <v-list subheader pb-2>
+                  <v-subheader class="mb-0">Text To Speech Options</v-subheader>
 
-                  <v-list-tile>
+                  <v-layout mb-3>
+                    <v-flex>
+                      <v-switch
+                        v-model="useTTS"
+                        label="Use TTS"
+                        class="ml-3 mt-0 pt-0"
+                        color="yellow"
+                        hide-details
+                        @change="toggleTTS"
+                      ></v-switch>
+                    </v-flex>
+                    <v-flex>
+                      <v-switch
+                        v-model="allowTrollTTS"
+                        v-show="useTTS"
+                        label="Troll TTS"
+                        class="ml-0 mt-0 pt-0"
+                        color="yellow"
+                        hide-details
+                      ></v-switch>
+                    </v-flex>
+                  </v-layout>
+
+                  <v-flex mx-3>
                     <v-select
                       v-model="selectionTTS"
                       :items="voices"
                       label="TTS Voice"
+                      style="font-size: 12px;"
+                      hide-details
                     ></v-select>
-                  </v-list-tile>
+                  </v-flex>
 
                   <v-list-tile>
                     <v-slider
@@ -378,6 +406,7 @@
         chatLimit: 150,
         chatContainer: null,
 
+        showTimestamps: true,
         showToolMenu: false,
         useIgnoreListForChat: false,
         useTTS: false,
@@ -684,7 +713,6 @@
       },
 
 
-
       // POLL FUNCTIONS -> SOCKET
       //-------------------------
       async createPoll (poll) {
@@ -734,9 +762,13 @@
         this.pollData.voters = data.voters;
       },
 
-      getTime (timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
+      getTime (timestamp) { return this.showTimestamps ? `[${moment(timestamp).format('HH:mm')}]` : ''; },
 
-      toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); }
+      toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); },
+
+      toggleShowTimestamps () { localStorage.setItem( 'showtimestamps', this.showTimestamps ); },
+
+      toggleGlobal () { localStorage.setItem( 'global', this.global ); },
     },
 
     computed: {
@@ -794,6 +826,22 @@
         if ( useIgnore ) this.useIgnoreListForChat = useIgnore;
       } catch (e) {
         console.log('No useIgnore option found.');
+      }
+      try {
+        const showTimestamps = localStorage.getItem('showtimestamps');
+        if ( !!showTimestamps ) this.showTimestamps = showTimestamps;
+        else this.showTimestamps = true;
+      } catch (e) {
+        console.log('No showTimestamps option found.');
+        this.showTimestamps = true;
+      }
+      try {
+        const global = localStorage.getItem('global');
+        if ( !!global ) this.global = global;
+        else this.global = true;
+      } catch (e) {
+        console.log('No showTimestamps option found.');
+        this.global = true;
       }
       try {
         let tts = localStorage.getItem('tts');
