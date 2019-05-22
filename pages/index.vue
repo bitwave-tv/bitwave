@@ -198,7 +198,7 @@
   export default {
     head() {
       return {
-        title: `${this.name} - [bitwave.tv]`,
+        title: `Homepage - [bitwave.tv]`,
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
           { name: 'og:description', hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },

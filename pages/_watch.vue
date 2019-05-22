@@ -13,7 +13,7 @@
             <video
               playsinline
               id="streamplayer"
-              class="video-js vjs--fill vjs-default-skin vjs-big-play-centered"
+              class="video-js vjs-fluid vjs-16-9 vjs-default-skin vjs-big-play-centered"
               width="100%"
               controls
               :autoplay="live"
