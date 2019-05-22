@@ -101,7 +101,7 @@
                 small
                 outline
                 color="light-blue"
-                href="https://github.com/DispatchCommit/BitWave"
+                href="https://github.com/bitwave-tv/bitwave"
                 target="_blank"
               >Github</v-btn>
               For more information on Bitwave's source code.
@@ -136,7 +136,7 @@
                 small
                 outline
                 color="light-blue"
-                href="https://github.com/DispatchCommit/BitWave/issues"
+                href="https://github.com/bitwave-tv/bitwave/issues"
                 target="_blank"
                 title="contribute"
               >issue</v-btn>
@@ -153,7 +153,7 @@
               Need to report content?
             </v-flex>
 
-            <div class="mb-0">Thank you for helping ALPHA test BitWave.tv and I look forward to bringing more exciting features in the future.</div>
+            <div class="mb-0">Thank you for helping ALPHA test [bitwave.tv] and I look forward to bringing more exciting features in the future.</div>
             <div class="mb-0">We have not been served any secret court orders and are not under any gag orders.</div>
 
             <div class="text-xs-right">
@@ -165,7 +165,7 @@
 
           <v-card-actions class="pt-0">
             <v-flex>
-              <span>BitWave Media &copy; {{ new Date().getFullYear() }}</span>
+              <span>Bitwave Media &copy; {{ new Date().getFullYear() }}</span>
             </v-flex>
             <v-spacer/>
             <v-btn
