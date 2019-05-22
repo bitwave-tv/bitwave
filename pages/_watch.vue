@@ -50,7 +50,15 @@
         </template>
 
         <v-flex class="px-3">
-          <v-layout class="mb-2">
+          <v-layout class="mb-2" align-center>
+            <v-flex shrink>
+              <v-icon
+                v-show="live"
+                size="14"
+                color="red"
+                class="blink mr-2"
+              >lens</v-icon>
+            </v-flex>
             <v-flex shrink>
               <v-chip
                 v-if="nsfw"
@@ -257,6 +265,8 @@
           this.player.src({ src: url, type: type });
           this.player.load();
         }
+
+        this.live = live;
       },
 
       async verifyChannel (user) {
@@ -360,5 +370,18 @@
     img {
       max-width: 100%;
     }
+  }
+
+  .blink{
+    text-decoration: blink;
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 0.6s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:ease-in-out;
+    -webkit-animation-direction: alternate;
+  }
+  @-webkit-keyframes blinker {
+    from {opacity: 1.0;}
+    to {opacity: 0.0;}
   }
 </style>
