@@ -132,7 +132,6 @@
         try {
           const res = await this.$axios.get('https://ipinfo.io/json?token=28731f83a6e092');
           ipinfo = res.data;
-          console.log(ipinfo);
         } catch (e) {
           console.log(e);
         }
@@ -147,10 +146,31 @@
             date:  new Date( Date.now() ),
             ipinfo,
           });
-          console.log(this.reportId);
         } catch (e) {
           console.log(e);
           this.success = false;
+        }
+
+        try {
+          const webhook = `https://discordapp.com/api/webhooks/580779019524505602/9HDaiaF6ERhNdAb5pYSd3QAmEHCn7z-i1RIuoKB5A_M5ZePfWqKn3VFyImxDtokd4nOO`
+          const data = {
+            embeds: [
+              {
+                title: 'New Report',
+                author: {
+                  name: this.name,
+                },
+                description: this.report,
+                footer: {
+                  text: '[bitwave.tv]'
+                },
+              }
+            ],
+          };
+          const res = await this.$axios.post(webhook, JSON.stringify(data));
+          if (res.status !== 204) console.log(res);
+        } catch (e) {
+          console.log(e);
         }
 
         this.submitting = false;
