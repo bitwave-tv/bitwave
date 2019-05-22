@@ -71,7 +71,9 @@
       background-color: #607D8B99;
       font-size: 10px;
       user-select: none;
-      text-overflow: clip;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 75px;
     }
 
     .v-list__tile__avatar {
@@ -95,6 +97,7 @@
 
     p img {
       height: 28px;
+      vertical-align: middle;
     }
   }
 </style>
