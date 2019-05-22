@@ -1,6 +1,5 @@
 <template>
   <v-container flex pa-0>
-    <v-layout column>
 
       <!-- Video And Description -->
       <v-layout
@@ -11,30 +10,28 @@
 
         <v-flex class="px-0 pb-0 pt-0">
           <v-card>
-            <!--<v-responsive :aspect-ratio="16/9">-->
-              <video
-                playsinline
-                id="streamplayer"
-                class="video-js vjs-fill vjs-default-skin vjs-big-play-centered"
-                width="100%"
-                controls
-                :autoplay="live"
-                preload="auto"
-                data-setup='{ "aspectRatio":"16:9" }'
-                :poster="poster"
+            <video
+              playsinline
+              id="streamplayer"
+              class="video-js vjs--fill vjs-default-skin vjs-big-play-centered"
+              width="100%"
+              controls
+              :autoplay="live"
+              preload="auto"
+              data-setup='{ "aspectRatio":"16:9" }'
+              :poster="poster"
+            >
+              <source
+                v-if="live"
+                :src="url"
+                :type="type"
               >
-                <source
-                  v-if="live"
-                  :src="url"
-                  :type="type"
-                >
-                <source
-                  v-else
-                  :src="getRandomBump()"
-                  type="video/mp4"
-                >
-              </video>
-            <!--</v-responsive>-->
+              <source
+                v-else
+                :src="getRandomBump()"
+                type="video/mp4"
+              >
+            </video>
           </v-card>
         </v-flex>
 
@@ -79,6 +76,7 @@
       </v-layout>
 
       <!-- Chat -->
+    <v-layout>
       <v-flex
         v-show="!mobile"
         shrink
@@ -89,23 +87,8 @@
           :dark="true"
         />
       </v-flex>
-
-      <!-- Tabs (not used) -->
-      <v-flex v-if="false">
-        <v-tabs
-          dark
-          slider-color="#ff9800"
-        >
-          <v-tab>
-            {{ name }}
-          </v-tab>
-          <v-tab>
-            ARCHIVES
-          </v-tab>
-        </v-tabs>
-      </v-flex>
-
     </v-layout>
+
   </v-container>
 </template>
 
