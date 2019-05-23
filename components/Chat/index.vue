@@ -183,7 +183,6 @@
                     ></v-switch>
                     <v-switch
                       v-model="showTimestamps"
-                      @change="toggleShowTimestamps"
                       label="Timestamps"
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
