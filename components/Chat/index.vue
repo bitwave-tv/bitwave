@@ -35,10 +35,23 @@
 
               <v-card>
                 <v-sheet color="yellow">
-                  <v-card-title class="title black--text">({{ viewerCount }}) Live Viewers</v-card-title>
+                  <v-layout class="pl-2" align-center>
+                    <v-flex>
+                      <h5 class="black--text body-1">Live Viewers ({{ viewerCount }})</h5>
+                    </v-flex>
+                    <v-flex shrink>
+                      <v-btn
+                        color="black"
+                        flat
+                        icon
+                        pa-0
+                        @click="showViewers = false"
+                      ><v-icon color="black">close</v-icon></v-btn>
+                    </v-flex>
+                  </v-layout>
                 </v-sheet>
 
-                <v-layout style="max-height: 60vh; overflow: auto; overscroll-behavior: contain;">
+                <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain;">
                   <v-list
                     dense
                     two-line
@@ -55,8 +68,16 @@
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                           <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}</v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else-if="viewer.page">Just Watching {{`${viewer.page} (${ channelViews[ (viewer.page || '').toLowerCase() ].total })` }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title
+                            v-if="viewer.page && viewer.page.watch && channelViews[ viewer.page.watch.toLowerCase() ]"
+                          >
+                            Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}
+                          </v-list-tile-sub-title>
+                          <v-list-tile-sub-title
+                            v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
+                          >
+                            Just Watching {{`${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
+                          </v-list-tile-sub-title>
                           <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
                         </v-list-tile-content>
                       </template>
@@ -154,7 +175,6 @@
                   <v-list-tile>
                     <v-switch
                       v-model="global"
-                      @change="toggleGlobal"
                       :label="`${ global ? 'Global' : 'Local' } Chat`"
                       class="ml-0 mt-0 pt-0"
                       :disabled="false"
@@ -366,13 +386,15 @@
   import ChatPoll from '@/components/Chat/ChatPoll';
   import ChatPollVote from '@/components/Chat/ChatPollVote';
 
+  import { mapState, mapMutations, mapActions } from 'vuex'
+
   export default {
     name: 'Chat',
 
     props: {
-      enable: { type: Boolean, default: true },
-      dark: { type: Boolean },
-      chatChannel: { type: String },
+      enable      : { type: Boolean, default: true },
+      dark        : { type: Boolean },
+      chatChannel : { type: String },
     },
 
     components: {
@@ -386,9 +408,12 @@
     data() {
       return {
         color: null,
+
         unsubscribeUser: null,
         unsubscribePoll: null,
+
         loading: true,
+
         socket: null,
         message: '',
         messages: [
@@ -400,13 +425,12 @@
             channel: 'global',
           },
         ],
+
         ignoreList: [],
         uid: null,
-        viewerCount: 0,
         chatLimit: 150,
         chatContainer: null,
 
-        showTimestamps: true,
         showToolMenu: false,
         useIgnoreListForChat: false,
         useTTS: false,
@@ -416,8 +440,6 @@
         voicesListTTS: [],
 
         showViewers: false,
-        viewers: [{name: 'NONE'}],
-        channelViews: {},
 
         showPoll: false,
 
@@ -436,7 +458,6 @@
           voters: 0,
         },
 
-        global: true,
       }
     },
 
@@ -515,7 +536,6 @@
           console.warn(`Failed to connect to chat. No user defined.`);
           return;
         }
-        // console.debug('Chat User:', user);
 
         const socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
@@ -523,7 +543,7 @@
         // const socket = socketio('api.bitwave.tv:443');
 
         socket.on( 'connect', () => socket.emit('new user', user) );
-        socket.on( 'update usernames', data => this.updateUsernames(data) );
+        socket.on( 'update usernames', async data => await this.updateUsernames(data) );
         socket.on( 'hydrate', async data => await this.hydrate(data) );
         socket.on( 'message', async data => await this.rcvMessage(data) );
         socket.on( 'blocked', data => this.message = data.message );
@@ -531,43 +551,6 @@
         socket.on( 'pollstate',   data => this.updatePoll(data) );
 
         this.socket = socket;
-      },
-
-      updateUsernames (data) {
-        // Create unique list of users
-        const key = 'username';
-        this.viewers = data.reduce( (accumulator, current) => {
-          if (!accumulator.find( obj => obj[key] === current[key] )) accumulator.push(current);
-          return accumulator;
-        }, []);
-
-        // Create list of unique viewers in channel
-        this.channelViews = data.reduce( (accumulator, user) => {
-          let username = user.username;
-          let channel  = user.page ? user.page.watch || user.page : 'global' ;
-          if ( !channel ) {
-            // console.warn(user);
-            return accumulator;
-          }
-          if ( typeof(channel) === 'string' ) channel = channel.toLowerCase();
-
-          if (username) username = username.toLowerCase();
-
-          if ( channel in accumulator ) {
-            if ( username in accumulator[channel] ) {
-              accumulator[channel][username].push(user);
-            } else {
-              accumulator[channel][username] = [ user ];
-              accumulator[channel].total++;
-            }
-          } else {
-            accumulator[channel] = {};
-            accumulator[channel][username] = [ user ];
-            accumulator[channel].total = 1;
-          }
-          return accumulator;
-        }, {});
-        this.viewerCount = this.viewers.length;
       },
 
       async hydrate (data) {
@@ -720,7 +703,7 @@
           const pollDocRef = db.collection('polls').doc(this.pollData.id);
           const data = {
             display: true,
-            endsAt: new Date( Date.now() + 1.5 * 60000 ),
+            endsAt: new Date( Date.now() + 1.5 * 60 * 1000 ),
             options: poll.options,
             title: poll.title,
           };
@@ -729,7 +712,7 @@
           const data = {
             channel: this.page.toLowerCase(),
             display: true,
-            endsAt: new Date( Date.now() + 1.5 * 60000 ),
+            endsAt: new Date( Date.now() + 1.5 * 60 * 1000 ),
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
@@ -766,9 +749,14 @@
 
       toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); },
 
-      toggleShowTimestamps () { localStorage.setItem( 'showtimestamps', this.showTimestamps ); },
+      ...mapMutations ('chat', {
+        setModeGlobal: 'SET_MODE_GLOBAL',
+        setModeTimestamps: 'SET_TIMESTAMPS',
+      }),
 
-      toggleGlobal () { localStorage.setItem( 'global', this.global ); },
+      ...mapActions ('chat', {
+        updateUsernames: 'UPDATE_VIEWERLIST',
+      }),
     },
 
     computed: {
@@ -777,9 +765,29 @@
         _username: 'username',
       }),
 
-      username () {
-        return this._username || `troll:${this.uid}`;
+
+      ...mapGetters('chat', {
+        viewerCount: 'viewerCount',
+      }),
+
+      ...mapState ('chat', {
+        getModeGlobal: 'global',
+        getModeTimestamps: 'timestamps',
+        viewers: 'viewerList',
+        channelViews: 'roomViewerList'
+      }),
+
+      global: {
+        set (val) { this.setModeGlobal(val) },
+        get () { return this.getModeGlobal }
       },
+
+      showTimestamps: {
+        set (val) { this.setModeTimestamps(val) },
+        get () { return this.getModeTimestamps }
+      },
+
+      username () { return this._username || `troll:${this.uid}`; },
 
       page () {
         let channel = this.chatChannel;
@@ -798,9 +806,8 @@
       },
 
       viewerList () {
-        if ( this.showViewers ) return this.viewers;
-        else  return [];
-      }
+        return this.showViewers ? this.viewers : [];
+      },
     },
 
     created() {
@@ -821,12 +828,14 @@
       } catch (e) {
         console.log('No ignore list found.');
       }
+
       try {
         let useIgnore = localStorage.getItem('useignore');
         if ( useIgnore ) this.useIgnoreListForChat = useIgnore;
       } catch (e) {
         console.log('No useIgnore option found.');
       }
+
       try {
         const showTimestamps = localStorage.getItem('showtimestamps');
         if ( !!showTimestamps ) this.showTimestamps = showTimestamps;
@@ -835,20 +844,25 @@
         console.log('No showTimestamps option found.');
         this.showTimestamps = true;
       }
+
       try {
         const global = localStorage.getItem('global');
-        if ( !!global ) this.global = global;
-        else this.global = true;
+
+        if ( !!global ) this.setModeGlobal( global );
+        else this.setModeGlobal( true );
+
       } catch (e) {
         console.log('No showTimestamps option found.');
-        this.global = true;
+        this.setModeGlobal( true );
       }
+
       try {
         let tts = localStorage.getItem('tts');
         // if ( tts ) this.useTTS = tts;
       } catch (e) {
         console.log('No tts option found.');
       }
+
       if ( this.enable ) {
         // this.useTTS = false;
         this.subscribeToPoll(this.page);
