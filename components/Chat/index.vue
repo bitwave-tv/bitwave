@@ -419,7 +419,7 @@
           {
             timestamp: Date.now(),
             username: 'Dispatch',
-            avatar: 'https://cdn.bitwave.tv/uploads/avatar/19135417-ecc9-4957-8711-e7ac71ac0805-md',
+            avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
             message: 'Loading messages...',
             channel: 'global',
           },
@@ -536,24 +536,34 @@
           return;
         }
 
-        const socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
+        this.socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
         // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
         // const socket = socketio('api.bitwave.tv:443');
 
-        socket.on( 'connect', () => socket.emit('new user', user) );
-        socket.on( 'update usernames', async data => await this.updateUsernames(data) );
-        socket.on( 'hydrate', async data => await this.hydrate(data) );
-        socket.on( 'message', async data => await this.rcvMessage(data) );
-        socket.on( 'blocked', data => this.message = data.message );
+        this.socket.on( 'connect', () => this.socket.emit('new user', user) );
+        this.socket.on( 'update usernames', async data => await this.updateViewerlist(data) );
 
-        socket.on( 'pollstate',   data => this.updatePoll(data) );
+        this.socket.on( 'hydrate', async data => await this.hydrate(data) );
+        // this.socket.on( 'message', async data => await this.rcvMessage(data) );
+        this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk(data) );
 
-        this.socket = socket;
+        this.socket.on( 'blocked',   data => this.message = data.message );
+        this.socket.on( 'pollstate', data => this.updatePoll(data) );
+
       },
 
       async hydrate (data) {
+        await this.socket.emit('hydratepoll', this.pollData.id);
+        if ( !data ) {
+          console.log('Failed to receive hydration data');
+          return;
+        }
         const size = data.length;
+        if ( !size ) {
+          console.log('Hydration data was empty');
+          return;
+        }
         this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
         // re-highlight username mentions on hydration
@@ -561,10 +571,9 @@
         this.messages.forEach( msg => {
           msg.message = msg.message.replace(pattern, `<span class="highlight">$&</span>`);
         });
-        await this.socket.emit('hydratepoll', this.pollData.id);
       },
 
-      async rcvMessage (message) {
+      /*async rcvMessage (message) {
         if ( !this.enable ) return;
 
         if(this.useIgnoreListForChat){
@@ -587,6 +596,36 @@
         if ( currentChat || myChat ) this.speak(message.message, message.username); // Say Message
 
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
+        await this.$nextTick( async () => await this.scrollToBottom() );
+      },//*/
+
+      async rcvMessageBulk (messages) {
+        if ( !this.enable ) return;
+
+        // Remove ignored user messages
+        if(this.useIgnoreListForChat){
+          messages = messages.filter( el => !this.ignoreList.includes( el.username ) );
+        }
+
+        // Filter by channel
+        if ( !this.global ) {
+          messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
+        }
+
+        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        messages.forEach( el => {
+          // Highlight username tags in new messages
+          el.message = el.message.replace(pattern, `<span class="highlight">$&</span>`);
+
+          // For Text to Speech
+          const currentChat = el.channel.toLowerCase() === this.username.toLowerCase();
+          const myChat      = el.channel.toLowerCase() === this.page.toLowerCase();
+          if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
+
+          // Add message to list
+          this.messages.push({ ...{ id: Date.now() }, ...el });
+        });
+
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
@@ -672,11 +711,8 @@
         // Remove html tags
         message = message.replace(/<\/?[^>]*>/g, '');
 
-        // const voicesTTS = speechSynthesis.getVoices();
-
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
-        // voice.voice = speechSynthesis.getVoices()[this.selectionTTS];
         voice.voice = this.voicesListTTS[this.selectionTTS];
         voice.rate  = this.rateTTS / 10.0;
         voice.pitch = pitch;
@@ -702,7 +738,7 @@
           const pollDocRef = db.collection('polls').doc(this.pollData.id);
           const data = {
             display: true,
-            endsAt: new Date( Date.now() + 1.5 * 60 * 1000 ),
+            endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
             options: poll.options,
             title: poll.title,
           };
@@ -711,7 +747,7 @@
           const data = {
             channel: this.page.toLowerCase(),
             display: true,
-            endsAt: new Date( Date.now() + 1.5 * 60 * 1000 ),
+            endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
@@ -754,7 +790,7 @@
       }),
 
       ...mapActions ('chat', {
-        updateUsernames: 'UPDATE_VIEWERLIST',
+        updateViewerlist: 'UPDATE_VIEWERLIST',
       }),
     },
 
@@ -866,6 +902,10 @@
         // this.useTTS = false;
         this.subscribeToPoll(this.page);
       }
+
+      /*if (this.query.tts === true) {
+        this.useTTS = true;
+      }*/
     },
 
     beforeDestroy() {

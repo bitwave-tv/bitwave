@@ -9,7 +9,7 @@
         <v-flex grow>
           <v-sheet
             id="poll-vote-body"
-            :class="{ 'pa-3': true, 'py-2': showOptions }"
+            :class="{ 'pa-2': true, 'py-1': showOptions }"
           >
             <v-layout column>
               <v-flex class="">
@@ -63,11 +63,11 @@
               </v-flex>
 
               <v-flex
-                v-if="(( showResults && showOptions ) || isOwner )"
+                v-if="( ( showResults || isOwner ) && showOptions )"
                 v-for="(val, index) in options"
                 :key="index"
               >
-                {{ `${val.label} - ${val.votes} (${Math.round(val.votes / (pollData.voters || 1) * 100)}%)` }}
+                {{ `${val.label} - ${val.votes} (${Math.round( val.votes / ( pollData.voters || 1 ) * 100 )}%)` }}
                 <v-progress-linear
                   :value="val.votes / (pollData.voters || 1) * 100"
                   :buffer-value="(pollData.voters || 1)"
@@ -148,7 +148,7 @@
           },
 
           timeLeft () {
-            let seconds = (this.pollData.endsAt.toDate() - this.now.getTime()) / 1000;
+            let seconds = ( this.pollData.endsAt.toDate() - this.now.getTime() ) / 1000;
             // if (seconds < 0) { seconds = 0; }
             return (seconds / 1.8);
           },
@@ -156,7 +156,7 @@
         },
 
         created() {
-          setInterval(() => this.now = new Date, 1000 * 1)
+          setInterval( () => this.now = new Date, 1000 * 0.5 )
         }
     }
 </script>

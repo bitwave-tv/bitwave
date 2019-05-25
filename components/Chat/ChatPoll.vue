@@ -72,9 +72,10 @@
             <v-flex shrink>
               <v-text-field
                 v-model="time"
-                label="Time"
-                mask="##:##"
+                label="Time (minutes)"
                 color="yellow"
+                type="number"
+                step="0.1"
               ></v-text-field>
             </v-flex>
             <v-spacer grow/>
@@ -109,7 +110,7 @@
         data() {
             return {
               title: '',
-              time: '0200',
+              time: 1.50,
               options: [
                 { label: '', votes: 0 },
                 { label: '', votes: 0 },
