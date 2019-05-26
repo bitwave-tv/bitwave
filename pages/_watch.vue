@@ -1,44 +1,46 @@
 <template>
   <v-container flex pa-0>
+    <v-layout row>
 
       <!-- Video And Description -->
-      <v-layout
-        :style="{ 'margin-right': !mobile ? '450px' : '0' }"
-        column
-      >
-        <hr class="v-divider theme--light" />
+      <v-flex>
 
-        <v-flex class="px-0 pb-0 pt-0">
-          <v-card>
-            <video
-              playsinline
-              id="streamplayer"
-              class="video-js vjs-fluid vjs-16-9 vjs-default-skin vjs-big-play-centered"
-              width="100%"
-              controls
-              :autoplay="live"
-              preload="auto"
-              data-setup='{ "aspectRatio":"16:9" }'
-              :poster="poster"
-            >
-              <source
-                v-if="live"
-                :src="url"
-                :type="type"
+        <!-- Video JS -->
+        <v-layout>
+          <v-flex>
+            <v-card>
+              <video
+                playsinline
+                id="streamplayer"
+                class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
+                height="100%"
+                style="min-width: 200px;"
+                controls
+                :autoplay="live"
+                preload="auto"
+                data-setup='{ "aspectRatio":"16:9" }'
+                :poster="poster"
               >
-              <source
-                v-else
-                :src="getRandomBump()"
-                type="video/mp4"
-              >
-            </video>
-          </v-card>
-        </v-flex>
+                <source
+                  v-if="live"
+                  :src="url"
+                  :type="type"
+                >
+                <source
+                  v-else
+                  :src="getRandomBump()"
+                  type="video/mp4"
+                >
+              </video>
+            </v-card>
+          </v-flex>
+        </v-layout>
 
-        <template v-show="mobile" >
+        <!-- Mobile Chat -->
+        <v-layout v-if="mobile">
           <v-flex class="mb-3" >
             <v-layout>
-              <v-flex style="max-height: 50vh;">
+              <v-flex style="max-height: 65vh;">
                 <chat
                   :enable="mobile"
                   :chat-channel="name"
@@ -47,56 +49,63 @@
               </v-flex>
             </v-layout>
           </v-flex>
-        </template>
+        </v-layout>
 
-        <v-flex class="px-3">
-          <v-layout class="mb-2" align-center>
-            <v-flex shrink>
-              <v-icon
-                v-show="live"
-                size="14"
-                color="red"
-                class="blink mr-2"
-              >lens</v-icon>
-            </v-flex>
-            <v-flex shrink>
-              <v-chip
-                v-if="nsfw"
-                color="red"
-                class="mr-2"
-                small
-                outline
-              >NSFW</v-chip>
-            </v-flex>
-            <v-flex shrink>
-              <h2>{{ title }}</h2>
-            </v-flex>
-          </v-layout>
-          <v-layout>
-            <v-flex id="description">
-              <vue-markdown
-                v-if="desc"
-                :source="desc"
-              ></vue-markdown>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-      </v-layout>
+        <!-- Stream Title, Status, Description -->
+        <v-layout mt-2>
+          <v-flex class="px-3">
+            <v-layout class="mb-2" align-center>
+              <v-flex shrink>
+                <v-icon
+                  v-show="live"
+                  size="14"
+                  color="red"
+                  class="blink mr-2"
+                >lens</v-icon>
+              </v-flex>
+              <v-flex shrink>
+                <v-chip
+                  v-if="nsfw"
+                  color="red"
+                  class="mr-2"
+                  small
+                  outline
+                >NSFW</v-chip>
+              </v-flex>
+              <v-flex shrink>
+                <h2>{{ title }}</h2>
+              </v-flex>
+            </v-layout>
+            <v-layout>
+              <v-flex id="description">
+                <vue-markdown
+                  v-if="desc"
+                  :source="desc"
+                ></vue-markdown>
+              </v-flex>
+            </v-layout>
+          </v-flex>
+        </v-layout>
+
+      </v-flex>
+
 
       <!-- Chat -->
-    <v-layout>
-      <v-flex
-        v-show="!mobile"
-        shrink
-        style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
-      >
-        <chat
-          :chat-channel="name"
-          :dark="true"
-        />
+      <v-flex shrink v-if="!mobile">
+        <v-layout style="width: 450px;">
+          <v-flex
+            shrink
+            style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
+          >
+            <chat
+              :chat-channel="name"
+              :dark="true"
+            />
+          </v-flex>
+        </v-layout>
       </v-flex>
-    </v-layout>
 
+    </v-layout>
   </v-container>
 </template>
 
@@ -228,7 +237,7 @@
       },
 
       playerDispose(){
-        if (this.initialized) this.player.dispose();
+        if (this.player) this.player.dispose();
       },
 
       getStreamData () {
@@ -248,6 +257,9 @@
         const live = data.live;
         const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+
+        const thumbnail = data.thumbnail;
+        this.poster = ( live && thumbnial ) ? thumbnail : this.poster;
 
         // Detect user going live
         if (!this.live && live) {
@@ -296,12 +308,15 @@
         const title  = data.title  || 'No Title';
         const desc   = data.description || 'No Description';
         const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
+        const thumb  = data.thumbnail;
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        return { name, title, desc, poster, live, nsfw, url, type };
+        const banner = ( live && thumb ) ? thumb : poster;
+
+        return { name, title, desc, poster: banner, live, nsfw, url, type };
 
       } catch (error) {
         console.log(`ERROR: Failed to find user ${user}`);
@@ -359,6 +374,11 @@
 </script>
 
 <style lang='scss'>
+  .video-js .vjs-tech {
+    height: auto !important;
+    position: absolute !important;
+  }
+
   a {
     color: yellow;
     text-decoration: none;
