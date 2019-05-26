@@ -37,7 +37,7 @@
         </v-layout>
 
         <!-- Mobile Chat -->
-        <v-layout v-if="mobile">
+        <!--<v-layout v-show="true">
           <v-flex class="mb-3" >
             <v-layout>
               <v-flex style="max-height: 65vh;">
@@ -51,7 +51,7 @@
               </v-flex>
             </v-layout>
           </v-flex>
-        </v-layout>
+        </v-layout>-->
 
         <!-- Stream Title, Status, Description -->
         <v-layout mt-2>
@@ -93,11 +93,11 @@
 
 
       <!-- Chat -->
-      <v-flex shrink v-if="!mobile">
-        <v-layout style="width: 450px;">
+      <v-flex shrink>
+        <v-layout :style="{ width: '450px' }">
           <v-flex
             shrink
-            style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
+            :style="{ position: 'fixed', top: '48px', right: '0', height: 'calc(100vh - 48px)', width: '450px' }"
           >
             <no-ssr placeholder="Loading...">
               <chat
@@ -166,7 +166,7 @@
     computed: {
       mobile () {
         if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
-        return true;
+        return false;
       },
     },
 
@@ -263,8 +263,8 @@
         const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        const thumbnail = data.thumbnail;
-        this.poster = ( live && thumbnial ) ? thumbnail : this.poster;
+        const thumbnail = data['thumbnail'] || null;
+        // this.poster = ( live && thumbnail ) ? thumbnail : this.poster;
 
         // Detect user going live
         if (!this.live && live) {
@@ -313,7 +313,7 @@
         const title  = data.title  || 'No Title';
         const desc   = data.description || 'No Description';
         const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
-        const thumb  = data.thumbnail;
+        const thumb  = data['thumbnail'] || false;
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
