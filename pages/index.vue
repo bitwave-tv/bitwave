@@ -63,7 +63,7 @@
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
-            <h6 class="headline" style="width:100%">Welcome to BitWave.tv</h6>
+            <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
             <v-layout wrap>
               <div class="subheading grey--text">
                 An open platform live streaming service for creators to freely express themselves.
@@ -101,13 +101,13 @@
                 small
                 outline
                 color="light-blue"
-                href="https://github.com/DispatchCommit/BitWave"
+                href="https://github.com/bitwave-tv/bitwave"
                 target="_blank"
               >Github</v-btn>
-              For more information on BitWave's source code.
+              For more information on Bitwave's source code.
             </v-flex>
 
-            <v-flex>
+            <v-flex v-if="false">
               <v-btn
                 small
                 outline
@@ -124,7 +124,19 @@
                 small
                 outline
                 color="light-blue"
-                href="https://github.com/DispatchCommit/BitWave/issues"
+                href="https://discord.gg/4WwJsKx"
+                target="_blank"
+                title="chat"
+              >Discord</v-btn>
+              If you have questions or feedback, join the discord chat.
+            </v-flex>
+
+            <v-flex>
+              <v-btn
+                small
+                outline
+                color="light-blue"
+                href="https://github.com/bitwave-tv/bitwave/issues"
                 target="_blank"
                 title="contribute"
               >issue</v-btn>
@@ -141,7 +153,7 @@
               Need to report content?
             </v-flex>
 
-            <div class="mb-0">Thank you for helping ALPHA test BitWave.tv and I look forward to bringing more exciting features in the future.</div>
+            <div class="mb-0">Thank you for helping ALPHA test [bitwave.tv] and I look forward to bringing more exciting features in the future.</div>
             <div class="mb-0">We have not been served any secret court orders and are not under any gag orders.</div>
 
             <div class="text-xs-right">
@@ -153,7 +165,7 @@
 
           <v-card-actions class="pt-0">
             <v-flex>
-              <span>BitWave Media &copy; {{ new Date().getFullYear() }}</span>
+              <span>Bitwave Media &copy; {{ new Date().getFullYear() }}</span>
             </v-flex>
             <v-spacer/>
             <v-btn
@@ -184,6 +196,23 @@
   import Chat from '~/components/Chat'
 
   export default {
+    head() {
+      return {
+        title: `Homepage - [bitwave.tv]`,
+        meta: [
+          { name: 'og:title',       hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
+          { name: 'og:description', hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
+          { name: 'og:image',       hid:'og:image',        content: this.poster},
+          { name: 'description',    hid: 'description',    content: 'An open platform live streaming service for creators to freely express themselves.' },
+          { name: 'twitter:card',        content: 'summary_large_image' },
+          { name: 'twitter:site',        content: '@BitwaveTV' },
+          { name: 'twitter:title',       content: 'Livestream Homepage - [bitwave.tv]' },
+          { name: 'twitter:description', content: 'An open platform live streaming service for creators to freely express themselves.' },
+          { name: 'twitter:image',       content: this.poster },
+        ],
+      }
+    },
+
     components: {
       Chat,
     },
@@ -203,14 +232,16 @@
     methods: {
       playerInitialize(){
         this.player = videojs('solo-player', {
-          liveui: true,
-          playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
+          // liveui: true,
+          // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
         });
         this.initialized = true;
       },
+
       playerDispose(){
         this.player.dispose();
       },
+
       updatePlayerSrc() {
         this.player.src({ type: 'video/mp4', src: 'https://cdn.bitwave.tv/static/bumps/Bump33-sm.mp4' });
       },
@@ -233,3 +264,9 @@
     },
   }
 </script>
+
+<style>
+  .video-js .vjs-live-control {
+    margin-left: 1rem;
+  }
+</style>

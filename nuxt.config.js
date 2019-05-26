@@ -63,8 +63,8 @@ module.exports = {
   ** Manifest Module
   */
   manifest: {
-    name: 'BitWave.tv',
-    short_name: 'BitWave.tv',
+    name: '[bitwave.tv]',
+    short_name: '[bitwave.tv]',
     lang: 'en',
     display: 'standalone',
     description: 'An open platform live streaming service for creators to freely express themselves.',

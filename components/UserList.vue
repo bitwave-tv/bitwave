@@ -4,7 +4,7 @@
     :value="value"
     :mini-variant="miniVariant"
     :clipped="clipped"
-    stateless
+
     fixed
     flat
     dark

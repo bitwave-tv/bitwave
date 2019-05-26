@@ -8,10 +8,18 @@
       <v-list-tile-content>
         <v-list-tile-sub-title>
           <v-layout>
-            <v-flex shrink class="time mr-1">{{ timestamp }}</v-flex>
-            <v-flex shrink class="username">{{ username }}</v-flex>
+            <v-flex shrink>
+              <span class="time">{{ timestamp }}</span>
+              <span class="username" :style="userStyling">{{ username }}:</span>
+            </v-flex>
             <v-spacer/>
-            <v-flex shrink><kbd>{{ channel }}</kbd></v-flex>
+            <v-flex shrink>
+              <nuxt-link
+                :to="channel"
+              >
+                <kbd>{{ channel }}</kbd>
+              </nuxt-link>
+            </v-flex>
           </v-layout>
         </v-list-tile-sub-title>
         <slot></slot>
@@ -34,6 +42,7 @@
       username: {
         type: String,
       },
+      userStyling: {},
       channel: {
         type: String,
       },
@@ -62,7 +71,9 @@
       background-color: #607D8B99;
       font-size: 10px;
       user-select: none;
-      text-overflow: clip;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 75px;
     }
 
     .v-list__tile__avatar {
@@ -86,6 +97,7 @@
 
     p img {
       height: 28px;
+      vertical-align: middle;
     }
   }
 </style>
