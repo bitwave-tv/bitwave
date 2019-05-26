@@ -589,6 +589,36 @@
                 }
               }
             break;
+            case 'comp':
+
+              const msgComp = {
+                message: "!w dispatch " + this.message.substr(6),
+                channel: this.page,
+              };
+              this.socket.emit('message', msgComp);
+              this.message = '';
+            break;
+            case '20x':
+              // needs to count the number of args in the command and replicate up to 20x
+              console.log(parts.length);
+              const countedemotes = parts.length
+              var emote = ''; // need to collect the parts
+              for(var i = 1;i < countedemotes;i++){
+                emote += parts[i];
+              }
+              var msgArgs = '';
+              // emote steps required to hit 20
+              // build up the parts based on the peices put in
+
+              for(var i = 0;i*(countedemotes-1)<20;i++){
+                msgArgs += emote
+              }
+              const msg20x = {
+                  message: msgArgs,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+            break;
             case 'skip':
             case    's':
               speechSynthesis.cancel();
