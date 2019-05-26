@@ -8,36 +8,34 @@
         <!-- Video JS -->
         <v-layout>
           <v-flex>
-            <v-card>
-              <video
-                playsinline
-                id="streamplayer"
-                class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
-                height="100%"
-                style="min-width: 200px;"
-                controls
-                :autoplay="live"
-                preload="auto"
-                data-setup='{ "aspectRatio":"16:9" }'
-                :poster="poster"
+            <video
+              playsinline
+              id="streamplayer"
+              class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
+              height="100%"
+              width="100%"
+              style="min-width: 200px;"
+              controls
+              :autoplay="live"
+              preload="auto"
+              data-setup='{ "aspectRatio":"16:9" }'
+            >
+              <source
+                v-if="live"
+                :src="url"
+                :type="type"
               >
-                <source
-                  v-if="live"
-                  :src="url"
-                  :type="type"
-                >
-                <source
-                  v-else
-                  :src="getRandomBump()"
-                  type="video/mp4"
-                >
-              </video>
-            </v-card>
+              <source
+                v-else
+                :src="getRandomBump()"
+                type="video/mp4"
+              >
+            </video>
           </v-flex>
         </v-layout>
 
         <!-- Mobile Chat -->
-        <!--<v-layout v-show="true">
+        <v-layout v-show="mobile">
           <v-flex class="mb-3" >
             <v-layout>
               <v-flex style="max-height: 65vh;">
@@ -51,7 +49,7 @@
               </v-flex>
             </v-layout>
           </v-flex>
-        </v-layout>-->
+        </v-layout>
 
         <!-- Stream Title, Status, Description -->
         <v-layout mt-2>
@@ -93,7 +91,7 @@
 
 
       <!-- Chat -->
-      <v-flex shrink>
+      <v-flex shrink v-show="!mobile">
         <v-layout :style="{ width: '450px' }">
           <v-flex
             shrink
@@ -181,6 +179,7 @@
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
           plugins: { qualityLevels: {} },
+          poster: this.poster,
         });
 
         // Video Player Ready
@@ -271,16 +270,20 @@
           this.live = live;
           // Load and Play stream
           this.player.src({ src: url, type: type });
-          this.player.load();
+          // this.player.load();
+          this.reloadPlayer();
         }
 
         // Detect source change
         if (this.url !== url  || this.type !== type) {
           this.url  = url;
           this.type = type;
+
           // Load and Play stream
-          this.player.src({ src: url, type: type });
-          this.player.load();
+          // this.player.src({ src: url, type: type });
+          // this.player.load();
+
+          this.reloadPlayer();
         }
 
         this.live = live;
@@ -297,10 +300,12 @@
       },
 
       reloadPlayer () {
-        if (!this.initialized) return;
+        if ( !this.initialized ) return;
         this.player.reset();
         this.player.src({ src: this.url, type: this.type });
-        this.load();
+        if (this.poster) this.player.poster = this.poster;
+        this.player.load();
+        console.log('Player reloaded');
       },
     },
 
@@ -312,16 +317,18 @@
         const name   = data.name   || 'No Username';
         const title  = data.title  || 'No Title';
         const desc   = data.description || 'No Description';
-        const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
-        const thumb  = data['thumbnail'] || false;
+        let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        const banner = ( live && thumb ) ? thumb : poster;
+        const thumb  = data['thumbnail'] || false;
+        if ( data.thumbnail ) {
+          poster = live ? thumb : poster;
+        }
 
-        return { name, title, desc, poster: banner, live, nsfw, url, type };
+        return { name, title, desc, poster, live, nsfw, url, type };
 
       } catch (error) {
         console.log(`ERROR: Failed to find user ${user}`);
