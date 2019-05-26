@@ -41,11 +41,13 @@
           <v-flex class="mb-3" >
             <v-layout>
               <v-flex style="max-height: 65vh;">
-                <chat
-                  :enable="mobile"
-                  :chat-channel="name"
-                  :dark="true"
-                />
+                <no-ssr placeholder="Loading...">
+                  <chat
+                    :enable="mobile"
+                    :chat-channel="name"
+                    :dark="true"
+                  ></chat>
+                </no-ssr>
               </v-flex>
             </v-layout>
           </v-flex>
@@ -97,10 +99,12 @@
             shrink
             style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
           >
-            <chat
-              :chat-channel="name"
-              :dark="true"
-            />
+            <no-ssr placeholder="Loading...">
+              <chat
+                :chat-channel="name"
+                :dark="true"
+              ></chat>
+            </no-ssr>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -161,7 +165,8 @@
 
     computed: {
       mobile () {
-        return !this.$vuetify.breakpoint.smAndUp;
+        if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
+        return true;
       },
     },
 
