@@ -66,7 +66,7 @@
 <style lang='scss'>
   .msg {
     word-break: break-word;
-    max-height: .5vh;
+    max-height: 50vh;
 
     kbd {
       background-color: #607D8B99;
