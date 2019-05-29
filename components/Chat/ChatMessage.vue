@@ -67,6 +67,7 @@
   .msg {
     word-break: break-word;
     max-height: 50vh;
+    overflow: hidden;
 
     kbd {
       background-color: #607D8B99;
