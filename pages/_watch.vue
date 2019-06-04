@@ -163,8 +163,9 @@
 
     computed: {
       mobile () {
-        if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
-        return false;
+        return !this.$vuetify.breakpoint.smAndUp;
+        // if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
+        // return false;
       },
     },
 
@@ -179,7 +180,7 @@
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
           plugins: { qualityLevels: {} },
-          poster: this.poster,
+          // poster: this.poster,
         });
 
         // Video Player Ready
@@ -363,9 +364,6 @@
     },
 
     async mounted() {
-      this.playerInitialize();
-
-      console.debug('video.js:', this.player);
 
       if (this.live)
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
@@ -373,7 +371,10 @@
         console.log(`${this.name} is offline.`);
 
       if (process.client) {
-
+        this.$nextTick( () => {
+          this.playerInitialize();
+          console.debug('video.js:', this.player);
+        });
       }
     },
 
