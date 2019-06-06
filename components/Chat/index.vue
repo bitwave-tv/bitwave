@@ -303,7 +303,22 @@
       fill-height
       style="overflow: hidden;"
     >
-      <dynamic-scroller
+      <div id="chat-scroll" ref="scroller" style="overflow-y: scroll;">
+        <chat-message
+          v-for="item in messages"
+          :key="item.timestamp"
+          :username="item.username"
+          :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
+          :channel="item.channel"
+          :timestamp="getTime(item.timestamp)"
+          :avatar="item.avatar"
+          :color="item.color"
+          @reply="addUserTag"
+        ><div v-html="item.message"></div>
+        </chat-message>
+      </div>
+
+<!--      <dynamic-scroller
         id="chat-scroll"
         ref="scroller"
         :items="messages"
@@ -331,7 +346,8 @@
           ><div v-html="item.message"></div>
           </chat-message>
         </dynamic-scroller-item>
-      </dynamic-scroller>
+      </dynamic-scroller>-->
+
     </v-flex>
 
     <v-divider/>
@@ -350,17 +366,17 @@
               ref="chatmessageinput"
               :value="message"
               :label="`Chat as ${username}...`"
-              :color="dark ? 'yellow' : 'blue'"
+              color="yellow"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
               spellcheck="true"
               single-line
-              append-outer-icon="send"
+              append-icon="send"
               counter="300"
               validate-on-blur
               @change="value => this.message = value"
-              @click:append-outer.prevent="sendMessage"
+              @click:append.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
             ></v-text-field>
           </v-flex>
@@ -379,8 +395,8 @@
 
   import socketio from 'socket.io-client'
 
-  import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-  import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+  // import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+  // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
   import ChatPoll from '@/components/Chat/ChatPoll';
   import ChatPollVote from '@/components/Chat/ChatPollVote';
@@ -400,8 +416,8 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
-      DynamicScroller,
-      DynamicScrollerItem,
+      // DynamicScroller,
+      // DynamicScrollerItem,
     },
 
     data() {
@@ -509,16 +525,24 @@
       },
 
       async scrollToBottom (force) {
-        const scrollTop = this.chatContainer.$el.scrollTop;
-        const scrollHeight = this.chatContainer.$el.scrollHeight;
-        const scrollDistance = scrollHeight - scrollTop;
-        const scroll = !!force || scrollDistance < ( 1.25 * screen.height );
+        const scrollTop = this.chatContainer.scrollTop;
+        const scrollHeight = this.chatContainer.scrollHeight;
+
+        // const scrollTop = this.chatContainer.$el.scrollTop;
+        // const scrollHeight = this.chatContainer.$el.scrollHeight;
+
+        const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
+        const scroll = !!force || scrollDistance < ( 0.75 * screen.height );
+
         console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
+
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
-          this.messages = this.messages.length > 100 ? this.messages.splice(-this.chatLimit) : data;
-          setTimeout( () => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250 );
+
+          if (this.messages.length > 100) this.messages = this.messages.splice( -this.chatLimit );
+
+          setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 100 );
         }
       },
 

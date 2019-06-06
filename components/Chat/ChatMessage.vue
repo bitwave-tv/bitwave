@@ -1,7 +1,10 @@
 <template>
   <v-flex class="msg">
     <v-layout row py-1 pl-3>
-      <v-list-tile-avatar size="34" @click="onClick" style="cursor:pointer;user-select:none">
+      <v-list-tile-avatar
+        size="34"
+        @click="$emit('reply', username)"
+      >
         <img v-if="!!avatar" :src="avatar" :alt="username">
         <v-icon v-else :style="{ background: color }">person</v-icon>
       </v-list-tile-avatar>
@@ -10,7 +13,7 @@
           <v-layout>
             <v-flex shrink>
               <span class="time">{{ timestamp }}</span>
-              <span class="username" :style="userStyling">{{ username }}:</span>
+              <span class="username" :style="userStyling" v-html="username"></span>
             </v-flex>
             <v-spacer/>
             <v-flex shrink>
@@ -54,12 +57,6 @@
     data() {
       return {}
     },
-
-    methods: {
-      onClick () {
-        this.$emit('reply', this.username);
-      },
-    },
   }
 </script>
 
@@ -76,6 +73,11 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 75px;
+    }
+
+    .v-avatar {
+      cursor: pointer;
+      user-select: none;
     }
 
     .v-list__tile__avatar {
