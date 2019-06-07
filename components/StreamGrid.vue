@@ -11,10 +11,12 @@
         :key="stream.owner"
         xs3
       >
-        <v-card>
-          <v-img :src="stream.thumbnail" aspect-ratio="1.777"/>
-          <v-card-title>{{ stream.title }}</v-card-title>
-        </v-card>
+        <n-link :to="stream.user">
+          <v-card>
+            <v-img :src="stream.thumbnail" aspect-ratio="1.777"/>
+            <v-card-title>{{ stream.title }}</v-card-title>
+          </v-card>
+        </n-link>
       </v-flex>
     </v-layout>
   </v-container>
@@ -49,6 +51,7 @@
             nsfw: stream.nsfw,
             owner: stream.owner,
             thumbnail: thumbnail,
+            user: stream.user.name,
           }
         });
       },
