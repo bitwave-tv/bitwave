@@ -2,19 +2,23 @@
   <v-container
     fluid
     grid-list-lg
-    text-xs-center
     px-0
   >
     <v-layout row wrap>
       <v-flex
         v-for="stream in streams"
         :key="stream.owner"
-        xs3
+        xs12
+        md4
+        xl3
       >
         <n-link :to="stream.user">
           <v-card>
             <v-img :src="stream.thumbnail" :aspect-ratio="16/9"/>
-            <v-card-title>{{ stream.title }}</v-card-title>
+            <v-flex>
+              <div class="body-2 font-weight-bold mb-0" style="color: #ffeb3b;">{{ stream.title }}</div>
+              <div class="body-1">{{ stream.user }}</div>
+            </v-flex>
           </v-card>
         </n-link>
       </v-flex>
