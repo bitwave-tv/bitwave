@@ -672,7 +672,7 @@
               }
               break;
             case 'unignore':
-              const location = this.ignoreList.findIndex( el => el === argument );
+              const location = this.ignoreList.findIndex( el => el.toLowerCase() === argument.toLowerCase() );
               if (location) {
                 this.ignoreList.splice(location, 1);
                 localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));

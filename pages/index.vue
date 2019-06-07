@@ -15,7 +15,6 @@
       >
         <v-card
           v-if="live"
-          class="mb-3"
           color="black"
         >
           <v-layout
@@ -60,6 +59,8 @@
           </v-layout>
 
         </v-card>
+
+        <stream-grid/>
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
@@ -194,6 +195,7 @@
   import videojs from 'video.js';
   import 'videojs-contrib-dash';
   import Chat from '~/components/Chat'
+  import StreamGrid from '@/components/StreamGrid';
 
   export default {
     head() {
@@ -214,6 +216,7 @@
     },
 
     components: {
+      StreamGrid,
       Chat,
     },
 
