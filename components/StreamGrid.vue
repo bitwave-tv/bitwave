@@ -13,7 +13,7 @@
       >
         <n-link :to="stream.user">
           <v-card>
-            <v-img :src="stream.thumbnail" aspect-ratio="1.777"/>
+            <v-img :src="stream.thumbnail" :aspect-ratio="16/9"/>
             <v-card-title>{{ stream.title }}</v-card-title>
           </v-card>
         </n-link>
@@ -61,6 +61,10 @@
 
     mounted () {
       this.getData();
+    },
+
+    beforeDestroy() {
+      if (this.streamDataListener) this.streamDataListener();
     },
   }
 </script>
