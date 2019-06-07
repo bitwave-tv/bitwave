@@ -372,11 +372,11 @@
               autocapitalize="off"
               spellcheck="true"
               single-line
-              append-icon="send"
+              append-outer-icon="send"
               counter="300"
               validate-on-blur
               @change="value => this.message = value"
-              @click:append.prevent="sendMessage"
+              @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
             ></v-text-field>
           </v-flex>
