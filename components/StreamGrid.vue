@@ -76,7 +76,7 @@
 </script>
 
 <style lang="scss">
-  .blur {
+  .blur > div {
     filter: blur(8px);
     -webkit-filter: blur(8px);
   }
