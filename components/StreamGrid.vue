@@ -12,15 +12,17 @@
         md4
         xl3
       >
-        <n-link :to="stream.user">
           <v-card>
-            <v-img :src="stream.thumbnail" :aspect-ratio="16/9"/>
+            <n-link :to="stream.user">
+              <v-img :src="stream.thumbnail" :aspect-ratio="16/9" :class="{ 'blur': stream.nsfw }"/>
+            </n-link>
             <v-flex>
-              <div class="body-2 font-weight-bold mb-0" style="color: #ffeb3b;">{{ stream.title }}</div>
+              <n-link :to="stream.user">
+                <div class="body-2 font-weight-bold text-truncate text-no-wrap mb-0" style="color: #ffeb3b;">{{ stream.title }}</div>
+              </n-link>
               <div class="body-1">{{ stream.user }}</div>
             </v-flex>
           </v-card>
-        </n-link>
       </v-flex>
     </v-layout>
   </v-container>
@@ -72,3 +74,10 @@
     },
   }
 </script>
+
+<style lang="scss">
+  .blur {
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+  }
+</style>

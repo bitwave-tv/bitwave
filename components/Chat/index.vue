@@ -133,7 +133,7 @@
               v-model="showToolMenu"
               :close-on-content-click="false"
               transition="slide-x-reverse-transition"
-              :max-width="350"
+              :max-width="320"
               bottom
               offset-x
               offset-y
@@ -318,36 +318,6 @@
         </chat-message>
       </div>
 
-<!--      <dynamic-scroller
-        id="chat-scroll"
-        ref="scroller"
-        :items="messages"
-        key-field="timestamp"
-        :min-item-size="60"
-        :buffer="400"
-        :emitUpdate="false"
-      >
-        <dynamic-scroller-item
-          slot-scope="{ item, index, active }"
-          :item="item"
-          :active="active"
-          :size-dependencies="[]"
-          :data-index="index"
-        >
-          <chat-message
-            :key="item.timestamp"
-            :username="item.username"
-            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-            :channel="item.channel"
-            :timestamp="getTime(item.timestamp)"
-            :avatar="item.avatar"
-            :color="item.color"
-            @reply="addUserTag"
-          ><div v-html="item.message"></div>
-          </chat-message>
-        </dynamic-scroller-item>
-      </dynamic-scroller>-->
-
     </v-flex>
 
     <v-divider/>
@@ -394,9 +364,6 @@
   import { mapGetters } from 'vuex'
 
   import socketio from 'socket.io-client'
-
-  // import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-  // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
   import ChatPoll from '@/components/Chat/ChatPoll';
   import ChatPollVote from '@/components/Chat/ChatPollVote';
@@ -528,9 +495,6 @@
         const scrollTop = this.chatContainer.scrollTop;
         const scrollHeight = this.chatContainer.scrollHeight;
 
-        // const scrollTop = this.chatContainer.$el.scrollTop;
-        // const scrollHeight = this.chatContainer.$el.scrollHeight;
-
         const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
         const scroll = !!force || scrollDistance < ( 0.75 * screen.height );
 
@@ -544,10 +508,6 @@
 
           setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 100 );
         }
-      },
-
-      scrollToChatBottom () {
-        this.$nextTick( () => this.$refs.scroller.scrollToBottom() );
       },
 
       connectChat (user) {

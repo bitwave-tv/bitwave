@@ -47,7 +47,7 @@
               shrink
               style="width: 450px;"
             >
-              <v-layout style="max-height: 480px;">
+              <v-layout style="max-height: 500px;">
                 <v-flex>
                   <chat
                     :chat-channel="live[0].name"
