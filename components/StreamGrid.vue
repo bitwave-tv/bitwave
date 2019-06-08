@@ -77,7 +77,7 @@
 
 <style lang="scss">
   .blur > div {
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
+    filter: blur(15px);
+    -webkit-filter: blur(15px);
   }
 </style>
