@@ -1,13 +1,6 @@
 <template>
-  <v-container
-    class="pt-2"
-    fluid
-  >
-    <v-layout
-      column
-      justify-center
-      align-center
-    >
+  <v-container fluid>
+    <v-layout justify-center>
       <v-flex
         xs12
         sm10
