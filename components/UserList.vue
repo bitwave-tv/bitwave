@@ -64,7 +64,7 @@
                 overlap
               >
                 <template #badge>
-                  <v-icon>{{ user.nsfw ? 'priority_high' : 'play_arrow' }}</v-icon>
+                  <v-icon>{{ user.nsfw ? 'flag' : '' }}</v-icon>
                 </template>
                 <v-avatar
                   :size="user.live ? 36 : 40"

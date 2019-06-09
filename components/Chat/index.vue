@@ -135,7 +135,7 @@
               v-model="showToolMenu"
               :close-on-content-click="false"
               transition="slide-x-reverse-transition"
-              :max-width="350"
+              :max-width="320"
               bottom
               offset-x
               offset-y
@@ -327,35 +327,21 @@
       fill-height
       style="overflow: hidden;"
     >
-      <dynamic-scroller
-        id="chat-scroll"
-        ref="scroller"
-        :items="messages"
-        key-field="timestamp"
-        :min-item-size="60"
-        :buffer="400"
-        :emitUpdate="false"
-      >
-        <dynamic-scroller-item
-          slot-scope="{ item, index, active }"
-          :item="item"
-          :active="active"
-          :size-dependencies="[]"
-          :data-index="index"
-        >
-          <chat-message
-            :key="item.timestamp"
-            :username="item.username"
-            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-            :channel="item.channel"
-            :timestamp="getTime(item.timestamp)"
-            :avatar="item.avatar"
-            :color="item.color"
-            @reply="addUserTag"
-          ><div v-html="item.message"></div>
-          </chat-message>
-        </dynamic-scroller-item>
-      </dynamic-scroller>
+      <div id="chat-scroll" ref="scroller" style="overflow-y: scroll;">
+        <chat-message
+          v-for="item in messages"
+          :key="item.timestamp"
+          :username="item.username"
+          :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
+          :channel="item.channel"
+          :timestamp="getTime(item.timestamp)"
+          :avatar="item.avatar"
+          :color="item.color"
+          @reply="addUserTag"
+        ><div v-html="item.message"></div>
+        </chat-message>
+      </div>
+
     </v-flex>
 
     <v-divider/>
@@ -374,7 +360,7 @@
               ref="chatmessageinput"
               :value="message"
               :label="`Chat as ${username}...`"
-              :color="dark ? 'yellow' : 'blue'"
+              color="yellow"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
@@ -403,9 +389,6 @@
 
   import socketio from 'socket.io-client'
 
-  import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-  import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
   import ChatPoll from '@/components/Chat/ChatPoll';
   import ChatPollVote from '@/components/Chat/ChatPollVote';
 
@@ -424,8 +407,8 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
-      DynamicScroller,
-      DynamicScrollerItem,
+      // DynamicScroller,
+      // DynamicScrollerItem,
     },
 
     data() {
@@ -537,21 +520,22 @@
       },
 
       async scrollToBottom (force) {
-        const scrollTop = this.chatContainer.$el.scrollTop;
-        const scrollHeight = this.chatContainer.$el.scrollHeight;
-        const scrollDistance = scrollHeight - scrollTop;
-        const scroll = !!force || scrollDistance < ( 1.25 * screen.height );
+        const scrollTop = this.chatContainer.scrollTop;
+        const scrollHeight = this.chatContainer.scrollHeight;
+
+        const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
+        const scroll = !!force || scrollDistance < ( 0.75 * screen.height );
+
         console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
+
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
-          this.messages = this.messages.length > 100 ? this.messages.splice(-this.chatLimit) : data;
-          setTimeout( () => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250 );
-        }
-      },
 
-      scrollToChatBottom () {
-        this.$nextTick( () => this.$refs.scroller.scrollToBottom() );
+          if (this.messages.length > 100) this.messages = this.messages.splice( -this.chatLimit );
+
+          setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 100 );
+        }
       },
 
       connectChat (user) {
@@ -919,7 +903,7 @@
               }
               break;
             case 'unignore':
-              const location = this.ignoreList.findIndex( el => el === argument );
+              const location = this.ignoreList.findIndex( el => el.toLowerCase() === argument.toLowerCase() );
               if (location) {
                 this.ignoreList.splice(location, 1);
                 localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));

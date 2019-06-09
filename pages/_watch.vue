@@ -1,25 +1,24 @@
 <template>
   <v-container flex pa-0>
+    <v-layout row>
 
       <!-- Video And Description -->
-      <v-layout
-        :style="{ 'margin-right': !mobile ? '450px' : '0' }"
-        column
-      >
-        <hr class="v-divider theme--light" />
+      <v-flex>
 
-        <v-flex class="px-0 pb-0 pt-0">
-          <v-card>
+        <!-- Video JS -->
+        <v-layout>
+          <v-flex>
             <video
               playsinline
               id="streamplayer"
-              class="video-js vjs-fluid vjs-16-9 vjs-default-skin vjs-big-play-centered"
+              class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
+              height="100%"
               width="100%"
+              style="min-width: 200px;"
               controls
               :autoplay="live"
               preload="auto"
               data-setup='{ "aspectRatio":"16:9" }'
-              :poster="poster"
             >
               <source
                 v-if="live"
@@ -32,71 +31,83 @@
                 type="video/mp4"
               >
             </video>
-          </v-card>
-        </v-flex>
+          </v-flex>
+        </v-layout>
 
-        <template v-show="mobile" >
+        <!-- Mobile Chat -->
+        <v-layout v-show="mobile">
           <v-flex class="mb-3" >
             <v-layout>
-              <v-flex style="max-height: 50vh;">
-                <chat
-                  :enable="mobile"
-                  :chat-channel="name"
-                  :dark="true"
-                />
+              <v-flex style="max-height: 500px;">
+                <no-ssr placeholder="Loading...">
+                  <chat
+                    :enable="mobile"
+                    :chat-channel="name"
+                    :dark="true"
+                  ></chat>
+                </no-ssr>
               </v-flex>
             </v-layout>
           </v-flex>
-        </template>
+        </v-layout>
 
-        <v-flex class="px-3">
-          <v-layout class="mb-2" align-center>
-            <v-flex shrink>
-              <v-icon
-                v-show="live"
-                size="14"
-                color="red"
-                class="blink mr-2"
-              >lens</v-icon>
-            </v-flex>
-            <v-flex shrink>
-              <v-chip
-                v-if="nsfw"
-                color="red"
-                class="mr-2"
-                small
-                outline
-              >NSFW</v-chip>
-            </v-flex>
-            <v-flex shrink>
-              <h2>{{ title }}</h2>
-            </v-flex>
-          </v-layout>
-          <v-layout>
-            <v-flex id="description">
-              <vue-markdown
-                v-if="desc"
-                :source="desc"
-              ></vue-markdown>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-      </v-layout>
+        <!-- Stream Title, Status, Description -->
+        <v-layout mt-2>
+          <v-flex class="px-3">
+            <v-layout class="mb-2" align-center>
+              <v-flex shrink>
+                <v-icon
+                  v-show="live"
+                  size="14"
+                  color="red"
+                  class="blink mr-2"
+                >lens</v-icon>
+              </v-flex>
+              <v-flex shrink>
+                <v-chip
+                  v-if="nsfw"
+                  color="red"
+                  class="mr-2"
+                  small
+                  outline
+                >NSFW</v-chip>
+              </v-flex>
+              <v-flex shrink>
+                <h2>{{ title }}</h2>
+              </v-flex>
+            </v-layout>
+            <v-layout>
+              <v-flex id="description">
+                <vue-markdown
+                  v-if="desc"
+                  :source="desc"
+                ></vue-markdown>
+              </v-flex>
+            </v-layout>
+          </v-flex>
+        </v-layout>
+
+      </v-flex>
+
 
       <!-- Chat -->
-    <v-layout>
-      <v-flex
-        v-show="!mobile"
-        shrink
-        style="position: fixed; top: 48px; right: 0; height: calc(100vh - 48px); width: 450px;"
-      >
-        <chat
-          :chat-channel="name"
-          :dark="true"
-        />
+      <v-flex shrink v-show="!mobile">
+        <v-layout :style="{ width: '450px' }">
+          <v-flex
+            shrink
+            :style="{ position: 'fixed', top: '48px', right: '0', height: 'calc(100vh - 48px)', width: '450px' }"
+          >
+            <no-ssr placeholder="Loading...">
+              <chat
+                :chat-channel="name"
+                :dark="true"
+              ></chat>
+            </no-ssr>
+          </v-flex>
+        </v-layout>
       </v-flex>
-    </v-layout>
 
+    </v-layout>
   </v-container>
 </template>
 
@@ -153,6 +164,8 @@
     computed: {
       mobile () {
         return !this.$vuetify.breakpoint.smAndUp;
+        // if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
+        // return false;
       },
     },
 
@@ -167,6 +180,7 @@
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
           plugins: { qualityLevels: {} },
+          // poster: this.poster,
         });
 
         // Video Player Ready
@@ -228,7 +242,7 @@
       },
 
       playerDispose(){
-        if (this.initialized) this.player.dispose();
+        if (this.player) this.player.dispose();
       },
 
       getStreamData () {
@@ -249,21 +263,28 @@
         const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
 
+        const thumbnail = data['thumbnail'] || null;
+        // this.poster = ( live && thumbnail ) ? thumbnail : this.poster;
+
         // Detect user going live
         if (!this.live && live) {
           this.live = live;
           // Load and Play stream
           this.player.src({ src: url, type: type });
-          this.player.load();
+          // this.player.load();
+          this.reloadPlayer();
         }
 
         // Detect source change
         if (this.url !== url  || this.type !== type) {
           this.url  = url;
           this.type = type;
+
           // Load and Play stream
-          this.player.src({ src: url, type: type });
-          this.player.load();
+          // this.player.src({ src: url, type: type });
+          // this.player.load();
+
+          this.reloadPlayer();
         }
 
         this.live = live;
@@ -280,10 +301,12 @@
       },
 
       reloadPlayer () {
-        if (!this.initialized) return;
+        if ( !this.initialized ) return;
         this.player.reset();
         this.player.src({ src: this.url, type: this.type });
-        this.load();
+        if (this.poster) this.player.poster = this.poster;
+        this.player.load();
+        console.log('Player reloaded');
       },
     },
 
@@ -295,11 +318,16 @@
         const name   = data.name   || 'No Username';
         const title  = data.title  || 'No Title';
         const desc   = data.description || 'No Description';
-        const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
+        let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
+
+        const thumb  = data['thumbnail'] || false;
+        if ( data.thumbnail ) {
+          poster = live ? thumb : poster;
+        }
 
         return { name, title, desc, poster, live, nsfw, url, type };
 
@@ -336,9 +364,6 @@
     },
 
     async mounted() {
-      this.playerInitialize();
-
-      console.debug('video.js:', this.player);
 
       if (this.live)
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
@@ -346,7 +371,10 @@
         console.log(`${this.name} is offline.`);
 
       if (process.client) {
-
+        this.$nextTick( () => {
+          this.playerInitialize();
+          console.debug('video.js:', this.player);
+        });
       }
     },
 
@@ -359,6 +387,11 @@
 </script>
 
 <style lang='scss'>
+  .video-js .vjs-tech {
+    height: auto !important;
+    position: absolute !important;
+  }
+
   a {
     color: yellow;
     text-decoration: none;

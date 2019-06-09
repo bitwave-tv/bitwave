@@ -1,13 +1,6 @@
 <template>
-  <v-container
-    class="pt-2"
-    fluid
-  >
-    <v-layout
-      column
-      justify-center
-      align-center
-    >
+  <v-container fluid>
+    <v-layout justify-center>
       <v-flex
         xs12
         sm10
@@ -15,7 +8,6 @@
       >
         <v-card
           v-if="live"
-          class="mb-3"
           color="black"
         >
           <v-layout
@@ -48,7 +40,7 @@
               shrink
               style="width: 450px;"
             >
-              <v-layout style="max-height: 480px;">
+              <v-layout style="max-height: 500px;">
                 <v-flex>
                   <chat
                     :chat-channel="live[0].name"
@@ -60,6 +52,8 @@
           </v-layout>
 
         </v-card>
+
+        <stream-grid/>
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
@@ -194,6 +188,7 @@
   import videojs from 'video.js';
   import 'videojs-contrib-dash';
   import Chat from '~/components/Chat'
+  import StreamGrid from '@/components/StreamGrid';
 
   export default {
     head() {
@@ -214,6 +209,7 @@
     },
 
     components: {
+      StreamGrid,
       Chat,
     },
 
