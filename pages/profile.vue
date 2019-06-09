@@ -1,13 +1,24 @@
 <template>
   <v-container>
-    <v-layout column align-center>
-      <v-flex class="my-3">
+    <v-layout justify-center class="text-xs-center">
+      <v-flex
+        class="my-3"
+        xs12
+        sm10
+        md8
+        lg6
+      >
         <h1 class="ml-2">My Account</h1>
       </v-flex>
     </v-layout>
 
-    <v-layout align-center>
-      <v-flex>
+    <v-layout justify-center>
+      <v-flex
+        xs12
+        sm10
+        md8
+        lg6
+      >
         <v-card class="mb-4 pa-3">
           <v-layout column>
             <v-flex>
@@ -131,9 +142,13 @@
       </v-flex>
     </v-layout>
 
-    <v-layout align-center>
+    <v-layout justify-center>
       <v-flex
         v-if="showStreamInfo"
+        xs12
+        sm10
+        md8
+        lg6
       >
         <v-card class="mb-4 pa-3">
           <v-layout column>
@@ -187,9 +202,13 @@
       </v-flex>
     </v-layout>
 
-    <v-layout align-center>
+    <v-layout justify-center>
       <v-flex
         v-if="showStreamInfo"
+        xs12
+        sm10
+        md8
+        lg6
       >
         <v-card class="mb-4 pa-3">
           <v-layout column>
