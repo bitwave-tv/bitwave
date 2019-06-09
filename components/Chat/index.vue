@@ -4,6 +4,7 @@
     column
     fill-height
   >
+
     <audio autoplay="false" id="audio2" preload="none" src=""  muted></audio>
 
     <!-- Chat Header -->
@@ -13,6 +14,7 @@
           align-center
           class="pa-2"
         >
+          <!-- Viewer List -->
           <v-flex shrink>
             <!-- Viewer List -->
             <v-menu
@@ -28,17 +30,30 @@
                   color="yellow"
                   text-color="black"
                 >
-                  {{ viewerCount }}
+                  {{ channelViews[page.toLowerCase()] ? channelViews[page.toLowerCase()].total : 0 }}
                   <v-icon right>account_circle</v-icon>
                 </v-chip>
               </template>
 
               <v-card>
                 <v-sheet color="yellow">
-                  <v-card-title class="title black--text">Live Viewers</v-card-title>
+                  <v-layout class="pl-2" align-center>
+                    <v-flex>
+                      <h5 class="black--text body-1">Live Viewers ({{ viewerCount }})</h5>
+                    </v-flex>
+                    <v-flex shrink>
+                      <v-btn
+                        color="black"
+                        flat
+                        icon
+                        pa-0
+                        @click="showViewers = false"
+                      ><v-icon color="black">close</v-icon></v-btn>
+                    </v-flex>
+                  </v-layout>
                 </v-sheet>
 
-                <v-layout style="max-height: 60vh; overflow: auto; overscroll-behavior: contain;">
+                <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain;">
                   <v-list
                     dense
                     two-line
@@ -55,8 +70,17 @@
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                           <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                          <v-list-tile-sub-title v-if="viewer.page && viewer.page.watch">watching: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ] })` }}</v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else>Just Browsing {{ viewer.page }}</v-list-tile-sub-title>
+                          <v-list-tile-sub-title
+                            v-if="viewer.page && viewer.page.watch && channelViews[ viewer.page.watch.toLowerCase() ]"
+                          >
+                            Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}
+                          </v-list-tile-sub-title>
+                          <v-list-tile-sub-title
+                            v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
+                          >
+                            Just Watching {{`${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
+                          </v-list-tile-sub-title>
+                          <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
                         </v-list-tile-content>
                       </template>
                     </v-list-tile>
@@ -67,10 +91,46 @@
             </v-menu>
           </v-flex>
 
-          <v-spacer/>
+          <!-- Chat Label -->
+          <v-flex grow ml-2>
+            <h4>{{ page }}</h4>
+          </v-flex>
 
-          <v-flex shrink>
+          <!-- Create Poll Button -->
+          <v-flex
+            v-if="page === username"
+            shrink
+          >
+            <v-menu
+              v-model="showPoll"
+              :close-on-content-click="false"
+              bottom
+              left
+            >
+              <template #activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :style="{ 'min-width': '40px' }"
+                  small
+                  light
+                  :disabled="showPollClient"
+                  color="yellow"
+                  @click="scrollToBottom(true)"
+                >POLL</v-btn>
+              </template>
+
+              <!-- Create Poll Dialog -->
+              <chat-poll
+                id="chat-poll"
+                @close="showPoll = false"
+                @create="createPoll"
+              />
+
+            </v-menu>
+          </v-flex>
+
             <!-- Tools -->
+          <v-flex shrink>
             <v-menu
               v-model="showToolMenu"
               :close-on-content-click="false"
@@ -88,25 +148,44 @@
                   light
                   color="yellow"
                   @click="scrollToBottom(true)"
-                >TOOLS</v-btn>
+                >
+                  <v-icon>settings</v-icon>
+                </v-btn>
               </template>
 
               <v-card>
+                <v-sheet color="yellow">
+                  <v-layout class="pl-2" align-center>
+                    <v-flex>
+                      <h5 class="black--text body-1">Settings</h5>
+                    </v-flex>
+                    <v-flex shrink>
+                      <v-btn
+                        color="black"
+                        flat
+                        icon
+                        pa-0
+                        @click="showToolMenu = false"
+                      >
+                        <v-icon color="black">close</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-sheet>
+
                 <v-list>
                   <v-list-tile>
                     <v-switch
                       v-model="global"
                       :label="`${ global ? 'Global' : 'Local' } Chat`"
-                      class="ml-2 mt-0 pt-0"
+                      class="ml-0 mt-0 pt-0"
                       :disabled="false"
                       color="yellow"
                       hide-details
                     ></v-switch>
-                  </v-list-tile>
-                  <v-list-tile>
                     <v-switch
-                      v-model="useIgnoreListForChat"
-                      label="Ignore chat messages"
+                      v-model="showTimestamps"
+                      label="Timestamps"
                       class="ml-2 mt-0 pt-0"
                       color="yellow"
                       hide-details
@@ -127,19 +206,10 @@
 
                   <v-list-tile>
                     <v-switch
-                      v-model="useTTS"
-                      label="Text to speech"
-                      class="ml-2 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-list-tile>
-                  <v-list-tile>
-                    <v-switch
-                      v-model="allowTrollTTS"
-                      :disabled="!useTTS"
-                      label="Troll TTS"
-                      class="ml-2 mt-0 pt-0"
+                      v-model="useIgnoreListForChat"
+                      @change="toggleUseIgnore"
+                      label="Ignore chat messages"
+                      class="ml-0 mt-0 pt-0"
                       color="yellow"
                       hide-details
                     ></v-switch>
@@ -148,25 +218,51 @@
 
                 <v-divider/>
 
-                <v-list two-line subheader>
-                  <v-subheader>Text To Speech Options</v-subheader>
-                  <v-list-tile v-if="false">
-                    <v-text-field
-                      v-model="selectionTTS"
-                      type="number"
-                      label="Voice ID"
-                      min="0"
-                      max="25"
-                      single-line
-                    ></v-text-field>
-                  </v-list-tile>
-                  <v-list-tile>
+                <v-list subheader pb-2>
+                  <v-subheader class="mb-0">Text To Speech Options</v-subheader>
+
+                  <v-layout mb-3>
+                  <v-flex>
+                      <v-switch
+                        v-model="allowTrollsToToggleTTS"
+                        label="Trolls Can Toggle TTS"
+                        class="ml-3 mt-0 pt-0"
+                        color="yellow"
+                        hide-details
+                      ></v-switch>
+                    </v-flex>
+                    <v-flex>
+                      <v-switch
+                        v-model="useTTS"
+                        label="Use TTS"
+                        class="ml-3 mt-0 pt-0"
+                        color="yellow"
+                        hide-details
+                        @change="toggleTTS"
+                      ></v-switch>
+                    </v-flex>
+                    <v-flex>
+                      <v-switch
+                        v-model="allowTrollTTS"
+                        v-show="useTTS"
+                        label="Troll TTS"
+                        class="ml-0 mt-0 pt-0"
+                        color="yellow"
+                        hide-details
+                      ></v-switch>
+                    </v-flex>
+                  </v-layout>
+
+                  <v-flex mx-3>
                     <v-select
                       v-model="selectionTTS"
                       :items="voices"
                       label="TTS Voice"
+                      style="font-size: 12px;"
+                      hide-details
                     ></v-select>
-                  </v-list-tile>
+                  </v-flex>
+
                   <v-list-tile>
                     <v-slider
                       label="Speed"
@@ -194,6 +290,7 @@
             </v-menu>
           </v-flex>
 
+          <!-- Scroll to Chat Bottom -->
           <v-flex shrink v-show="enable">
             <!-- Scroll to bottom button -->
             <v-btn
@@ -212,44 +309,17 @@
 
     <v-divider/>
 
-    <!--<v-flex id="chat-poll" v-if="false">
-      <v-sheet>
-        <v-layout column>
-          <v-layout align-center class="pa-2">
-            <v-flex shrink>
-              <v-btn
-                color="yellow"
-                light
-              >
-                Option A - Some BullShit
-              </v-btn>
-            </v-flex>
-          </v-layout>
-
-          <v-layout align-center class="pa-2">
-            <v-flex shrink>
-              <v-btn
-                color="yellow"
-                light
-              >
-                Option A - Some BullShit
-              </v-btn>
-            </v-flex>
-          </v-layout>
-
-          <v-layout align-center class="pa-2">
-            <v-flex shrink>
-              <v-btn
-                color="yellow"
-                light
-              >
-                Option A - Some BullShit
-              </v-btn>
-            </v-flex>
-          </v-layout>
-        </v-layout>
-      </v-sheet>
-    </v-flex>-->
+    <!-- Show Poll to Users -->
+    <v-flex>
+      <chat-poll-vote
+        v-if="showPollClient"
+        :poll-data="pollData"
+        :is-owner="pollData.owner === (user ? user.uid : null)"
+        @vote="votePoll"
+        @end="endPoll"
+        @destroy="destroyPoll"
+      />
+    </v-flex>
 
     <v-flex
       v-show="enable"
@@ -276,6 +346,7 @@
           <chat-message
             :key="item.timestamp"
             :username="item.username"
+            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
             :channel="item.channel"
             :timestamp="getTime(item.timestamp)"
             :avatar="item.avatar"
@@ -335,16 +406,23 @@
   import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
   import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
+  import ChatPoll from '@/components/Chat/ChatPoll';
+  import ChatPollVote from '@/components/Chat/ChatPollVote';
+
+  import { mapState, mapMutations, mapActions } from 'vuex'
+
   export default {
     name: 'Chat',
 
     props: {
-      enable: { type: Boolean, default: true },
-      dark: { type: Boolean },
-      chatChannel: { type: String }
+      enable      : { type: Boolean, default: true },
+      dark        : { type: Boolean },
+      chatChannel : { type: String },
     },
 
     components: {
+      ChatPollVote,
+      ChatPoll,
       ChatMessage,
       DynamicScroller,
       DynamicScrollerItem,
@@ -353,26 +431,32 @@
     data() {
       return {
         color: null,
+
         unsubscribeUser: null,
+        unsubscribePoll: null,
+
         loading: true,
+
         socket: null,
         message: '',
         messages: [
           {
             timestamp: Date.now(),
             username: 'Dispatch',
-            avatar: 'https://cdn.bitwave.tv/uploads/avatar/19135417-ecc9-4957-8711-e7ac71ac0805-md',
+            avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
             message: 'Loading messages...',
             channel: 'global',
           },
         ],
-        ignoreList: ['Nexus'],
+
+        ignoreList: [],
         uid: null,
-        viewerCount: 0,
         chatLimit: 150,
         chatContainer: null,
 
         chatFeatureBingBingWahoo: false,
+
+        allowTrollsToToggleTTS: false,
 
         showToolMenu: false,
         useIgnoreListForChat: false,
@@ -383,10 +467,24 @@
         voicesListTTS: [],
 
         showViewers: false,
-        viewers: [{name: 'NONE'}],
-        channelViews: {},
 
-        global: true,
+        showPoll: false,
+
+        showPollClient: false,
+        pollData: {
+          channel: '',
+          display: false,
+          endsAt: 0,
+          id: '',
+          options: [
+            { label:'', votes: 0 },
+            { label:'', votes: 0 },
+          ],
+          owner: '',
+          title: '',
+          voters: 0,
+        },
+
       }
     },
 
@@ -396,44 +494,58 @@
         this.$refs['chatmessageinput'].focus();
       },
 
-      authenticated(user) {
+      authenticated (user) {
         if (user) {
           this.subscribeToUser(user.uid);
         } else {
           if (this.unsubscribeUser) this.unsubscribeUser();
           const trollUser = {
-            type: 'troll',
-            color: this.color,
-            email: null,
-            username: `troll:${this.uid}`,
-            uid: this.uid,
-            // page: this.$route.params,
-            page: this.page,
+            type     : 'troll',
+            username : `troll:${this.uid}`,
+            color    : this.color,
+            email    : null,
+            uid      : this.uid,
+            page     : this.page,
           };
           this.connectChat(trollUser);
         }
         this.loading = false;
       },
 
-      subscribeToUser(uid) {
+      subscribeToUser (uid) {
         const userdocRef = db.collection('users').doc(uid);
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
-          // user.page = this.$route.params;
-          user.page = this.page;
+          user.page  = this.page;
           this.connectChat(user);
         });
       },
 
-      async scrollToBottom(force) {
+      subscribeToPoll (channel) {
+        channel = channel.toLowerCase();
+        const pollDocRef = db.collection('polls').where('channel', '==', channel).limit(1);
+        this.unsubscribePoll = pollDocRef.onSnapshot( result => {
+          if (result.empty) return;
+
+          const doc = result.docs[0];
+
+          this.pollData = doc.data();
+          this.pollData.id = doc.id;
+
+          this.showPollClient = this.pollData.display;
+        });
+      },
+
+      async scrollToBottom (force) {
         const scrollTop = this.chatContainer.$el.scrollTop;
         const scrollHeight = this.chatContainer.$el.scrollHeight;
         const scrollDistance = scrollHeight - scrollTop;
-        const scroll = !!force || scrollDistance < (1.25 * screen.height);
+        const scroll = !!force || scrollDistance < ( 1.25 * screen.height );
         console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
-          if (this.messages.length > this.chatLimit) this.messages.shift();
+          // if (this.messages.length > this.chatLimit) this.messages.shift();
+          this.messages = this.messages.length > 100 ? this.messages.splice(-this.chatLimit) : data;
           setTimeout( () => this.chatContainer.$el.scrollTop = scrollHeight + 500, 250 );
         }
       },
@@ -442,7 +554,7 @@
         this.$nextTick( () => this.$refs.scroller.scrollToBottom() );
       },
 
-      connectChat(user) {
+      connectChat (user) {
         if (this.socket) {
           this.socket.disconnect();
         }
@@ -451,77 +563,103 @@
           console.warn(`Failed to connect to chat. No user defined.`);
           return;
         }
-        console.debug('Chat User:', user);
 
+        this.socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
+        // const socket = socketio('chat.bitwave.tv');
         // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
         // const socket = socketio('api.bitwave.tv:443');
-        const socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
-        // const socket = socketio('chat.bitwave.tv');
 
-        socket.on( 'connect', () => socket.emit('new user', user) );
-        socket.on( 'update usernames', data => this.updateUsernames(data) );
-        socket.on( 'hydrate', async data => await this.hydrate(data) );
-        socket.on( 'message', async data => await this.rcvMessage(data) );
-        socket.on( 'blocked', data => this.message = data.message );
+        this.socket.on( 'connect', () => this.socket.emit('new user', user) );
+        this.socket.on( 'update usernames', async data => await this.updateViewerlist(data) );
 
-        this.socket = socket;
+        this.socket.on( 'hydrate', async data => await this.hydrate(data) );
+        // this.socket.on( 'message', async data => await this.rcvMessage(data) );
+        this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk(data) );
+
+        this.socket.on( 'blocked',   data => this.message = data.message );
+        this.socket.on( 'pollstate', data => this.updatePoll(data) );
+
       },
 
-      updateUsernames(data) {
-        // Create unique list of users
-        const key = 'username';
-        this.viewers = data.reduce( (accumulator, current) => {
-          if (!accumulator.find( obj => obj[key] === current[key] )) accumulator.push(current);
-          return accumulator;
-        }, []);
-
-        // Create list of unique viewers in channel
-        this.channelViews = data.reduce( (accumulator, current) => {
-          let channel = current.page && current.page.watch;
-          if ( !channel ) return accumulator;
-          channel  = channel.toLowerCase();
-          if ( channel in accumulator ) {
-            accumulator[channel]++;
-          } else {
-            accumulator[channel] = 1;
-          }
-          return accumulator;
-        }, {});
-
-        this.viewerCount = this.viewers.length;
-      },
-
-      async hydrate(data) {
+      async hydrate (data) {
+        await this.socket.emit('hydratepoll', this.pollData.id);
+        if ( !data ) {
+          console.log('Failed to receive hydration data');
+          return;
+        }
         const size = data.length;
+        if ( !size ) {
+          console.log('Hydration data was empty');
+          return;
+        }
         this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
+        // re-highlight username mentions on hydration
+        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+        this.messages.forEach( msg => {
+          msg.message = msg.message.replace(pattern, `<span class="highlight">$&</span>`);
+        });
       },
 
-      async rcvMessage(message) {
+      /*async rcvMessage (message) {
+        if ( !this.enable ) return;
+
         if(this.useIgnoreListForChat){
-          if ( this.ignoreList.includes( message.username) ) {
-            return;
-          }
+          if ( this.ignoreList.includes( message.username) ) return;
         }
 
         if ( !this.global ) {
-          if ( message.channel.toLowerCase() !== this.page.toLowerCase() && message.channel.toLowerCase() !== this.username.toLowerCase() ) {
-            return;
-          }
+          const notCurrentChat = message.channel.toLowerCase() !== this.page.toLowerCase();
+          const notUserChat    = message.channel.toLowerCase() !== this.username.toLowerCase();
+          if ( notCurrentChat && notUserChat ) return;
         }
+
 
         this.featureBingBingWahoo(message);
-
-        const pattern = `@${this.username}\\b`;
-        message.message = message.message.replace(new RegExp(pattern, 'gi'), `<span class="highlight">$&</span>`);
+        // Highlight username tags in new messages
+        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        message.message = message.message.replace(pattern, `<span class="highlight">$&</span>`);
 
         // For Text to Speech
-        const allowTTS = message.channel.toLowerCase() === this.username.toLowerCase() || message.channel.toLowerCase() === this.page.toLowerCase();
-        if ( allowTTS ) {
-          this.speak(message.message, message.username); // Say Message
-        }
+        const currentChat = message.channel.toLowerCase() === this.username.toLowerCase();
+        const myChat      = message.channel.toLowerCase() === this.page.toLowerCase();
+        if ( currentChat || myChat ) this.speak(message.message, message.username); // Say Message
 
         this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
+        await this.$nextTick( async () => await this.scrollToBottom() );
+      },//*/
+
+      async rcvMessageBulk (messages) {
+        if ( !this.enable ) return;
+
+        // Remove ignored user messages
+        if(this.useIgnoreListForChat){
+          messages = messages.filter( el => !this.ignoreList.includes( el.username ) );
+        }
+
+        // Filter by channel
+        if ( !this.global ) {
+          messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
+        }
+
+        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        messages.forEach( el => {
+          // Highlight username tags in new messages
+          el.message = el.message.replace(pattern, `<span class="highlight">$&</span>`);
+
+          // For Text to Speech
+          const currentChat = el.channel.toLowerCase() === this.username.toLowerCase();
+          const myChat      = el.channel.toLowerCase() === this.page.toLowerCase();
+          if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
+          this.featureBingBingWahoo(el);
+          this.featureToggleTtsViaChat(el);
+          if(this.username.toLowerCase() != "markpugner"){
+            this.featureRollAll(el);
+          }
+          // Add message to list
+          this.messages.push({ ...{ id: Date.now() }, ...el });
+        });
+
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
@@ -530,6 +668,213 @@
           if(message.message.toLowerCase().includes(this.username.toLowerCase())){
             this.bindSounds();
             this.playSound();
+          }
+        }
+
+      },
+
+      roll(n){
+         return Math.floor(Math.random() * n) + 1
+      },
+
+      featureRoll20(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll20")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 20) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 20';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll2(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll2")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 2) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 2';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll3(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll3")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 3) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 3';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll4(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll4")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 4) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 4';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll6(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll6")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 6) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 6';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll8(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll8")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 8) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 8';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll10(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll10")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 10) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 10';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll100(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll100")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 100) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 100';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRoll12(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botroll12")){
+          // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
+            const rng20 = Math.floor(Math.random() * 12) + 1;
+            var messageroll = '@' + message.username + ' You rolled a ' + rng20 + ' on a 12';
+            const msg20x = {
+                  message: messageroll ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRollAll(message){
+
+        // spookys official list https://cdn.discordapp.com/attachments/582410542182826004/582417420078153729/unknown.png
+        //this.featureRoll100(message);
+        this.featureRoll20(message);
+        this.featureRoll12(message);
+        this.featureRoll10(message);
+        this.featureRoll8(message);
+        this.featureRoll6(message);
+        this.featureRoll4(message);
+        //this.featureRoll3(message);
+        //this.featureRoll2(message);
+
+      },
+
+      featureToggleTtsViaChat(message){
+        if(true){
+          // need to check if we want to toggle tts via chat or via the owner
+          const currentChat = message.channel.toLowerCase() === this.username.toLowerCase();
+          const myChat      = message.channel.toLowerCase() === this.page.toLowerCase();
+          if(this.allowTrollsToToggleTTS){
+            if(message.message.toLowerCase().includes("ttstoggleon")){
+              // do tts change status
+              this.useTTS = true;
+              this.toggleTTS();
+              console.log("test turn on tts");
+
+            }
+            if(message.message.toLowerCase().includes("ttstoggleoff")){
+              // do tts change status
+              this.useTTS = false;
+              this.toggleTTS();
+              console.log("test turn off tts");
+
+            }
+          }
+
+          // have a flag allow chat to turn it on and off
+          // have a switch for
+          if(currentChat){
+            if(message.message.toLowerCase().includes("ttstoggleon")){
+              // do tts change status
+              this.useTTS = true;
+              this.toggleTTS();
+              console.log("test turn on tts");
+
+            }
+            if(message.message.toLowerCase().includes("ttstoggleoff")){
+              // do tts change status
+              this.useTTS = false;
+              this.toggleTTS();
+              console.log("test turn off tts");
+
+            }
           }
         }
 
@@ -559,7 +904,7 @@
         if (this.message.length > 300) return false;
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec(this.message);
-        const parts = this.message.split(" ");
+        const parts = this.message.split(' ');
 
         if (match) {
           const command  = match[1];
@@ -570,12 +915,14 @@
               const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
               if (!exists) {
                 this.ignoreList.push(argument);
+                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
               }
               break;
             case 'unignore':
               const location = this.ignoreList.findIndex( el => el === argument );
               if (location) {
                 this.ignoreList.splice(location, 1);
+                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
               }
               break;
             case 'afk':
@@ -623,6 +970,13 @@
             case    's':
               speechSynthesis.cancel();
               break;
+            case 'w':
+            case 'whisper':
+              const msg = {
+                message: this.message,
+                channel: this.page,
+              };
+              this.socket.emit('whisper', msg);
           }
         } else {
           const msg = {
@@ -631,11 +985,8 @@
           };
           this.socket.emit('message', msg);
         }
-
         this.message = '';
       },
-
-      getTime(timestamp) { return `[${moment(timestamp).format('HH:mm')}]`; },
 
       setupTrollData () {
         let uid   = localStorage.getItem('tuid');
@@ -650,9 +1001,9 @@
         this.color = color
       },
 
-      speak (message, username) {
-        if (!this.useTTS) return;
-        if ( this.ignoreList.find(user => user === username) ) return;
+      speak ( message, username ) {
+        if ( !this.useTTS ) return;
+        if ( this.ignoreList.find( user => user === username ) ) return;
         if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) return; // disables troll TTS
 
         function unescapeHtml(unsafe) {
@@ -664,7 +1015,7 @@
             .replace(/&#39;/g,  `'`)
         }
 
-        message = unescapeHtml(message); // Fixes escaped characters
+        message = unescapeHtml( message ); // Fixes escaped characters
 
         // Remove Links
         message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
@@ -672,10 +1023,8 @@
         // Remove html tags
         message = message.replace(/<\/?[^>]*>/g, '');
 
-        // const voicesTTS = speechSynthesis.getVoices();
-
         const voice = new SpeechSynthesisUtterance();
-        const pitch = .9;
+        const pitch = 1;
         voice.voice = this.voicesListTTS[this.selectionTTS];
         voice.rate  = this.rateTTS / 10.0;
         voice.pitch = pitch;
@@ -686,7 +1035,75 @@
         };
 
         speechSynthesis.speak(voice);
-      }
+      },
+
+      toggleTTS () {
+        speechSynthesis.cancel();
+        localStorage.setItem( 'tts', this.useTTS );
+      },
+
+
+      // POLL FUNCTIONS -> SOCKET
+      //-------------------------
+      async createPoll (poll) {
+        if ( this.pollData.id ) {
+          const pollDocRef = db.collection('polls').doc(this.pollData.id);
+          const data = {
+            display: true,
+            endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
+            options: poll.options,
+            title: poll.title,
+          };
+          await pollDocRef.update(data);
+        } else {
+          const data = {
+            channel: this.page.toLowerCase(),
+            display: true,
+            endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
+            options: poll.options,
+            owner: this.user.uid,
+            title: poll.title,
+          };
+          this.pollData.id = await db.collection('polls').add(data);
+        }
+      },
+
+      // Add user vote to poll with matching poll id
+      votePoll (vote) {
+        // should pass option number & poll id
+        this.socket.emit('votepoll', { id: this.pollData.id, vote: vote })
+      },
+
+      // Change end time to now to end poll instantly
+      async endPoll (pollId) {
+        // this.socket.emit('endpoll', pollId)
+
+        const pollDocRef = db.collection('polls').doc(this.pollData.id);
+        await pollDocRef.update( 'endsAt', new Date(Date.now()) );
+      },
+
+      async destroyPoll (pollId) {
+        const pollRef = db.collection('polls').doc(pollId);
+        await pollRef.update({ 'display': false, 'options': null });
+      },
+
+      async updatePoll (data) {
+        this.pollData.options = data.options;
+        this.pollData.voters = data.voters;
+      },
+
+      getTime (timestamp) { return this.showTimestamps ? `[${moment(timestamp).format('HH:mm')}]` : ''; },
+
+      toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); },
+
+      ...mapMutations ('chat', {
+        setModeGlobal: 'SET_MODE_GLOBAL',
+        setModeTimestamps: 'SET_TIMESTAMPS',
+      }),
+
+      ...mapActions ('chat', {
+        updateViewerlist: 'UPDATE_VIEWERLIST',
+      }),
     },
 
     computed: {
@@ -695,21 +1112,40 @@
         _username: 'username',
       }),
 
-      username () {
-        return this._username || `troll:${this.uid}`;
+
+      ...mapGetters('chat', {
+        viewerCount: 'viewerCount',
+      }),
+
+      ...mapState ('chat', {
+        getModeGlobal: 'global',
+        getModeTimestamps: 'timestamps',
+        viewers: 'viewerList',
+        channelViews: 'roomViewerList'
+      }),
+
+      global: {
+        set (val) { this.setModeGlobal(val) },
+        get () { return this.getModeGlobal }
       },
 
+      showTimestamps: {
+        set (val) { this.setModeTimestamps(val) },
+        get () { return this.getModeTimestamps }
+      },
+
+      username () { return this._username || `troll:${this.uid}`; },
+
       page () {
-        return this.chatChannel || '';
-        /*const params = this.$route.params;
-        if (params.hasOwnProperty('watch')) {
-          if (params.watch.match(/^[a-zA-Z0-9._-]+$/))
-            return params.watch;
+        let channel = this.chatChannel;
+        if (channel) {
+          if (channel.match(/^[a-zA-Z0-9._-]+$/))
+            return channel;
           else
             return '404';
         } else {
           return 'Global';
-        }*/
+        }
       },
 
       voices () {
@@ -717,31 +1153,88 @@
       },
 
       viewerList () {
-        if (this.showViewers) return this.viewers;
-        else  return [];
-      }
+        return this.showViewers ? this.viewers : [];
+      },
     },
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      auth.onAuthStateChanged(async user => await this.authenticated(user));
     },
 
     mounted() {
       this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
-      // speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
-      this.voicesListTTS = speechSynthesis.getVoices();
+      // Add listener for voice changes, then update voices.
+      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
+
+      try {
+        let ignores = localStorage.getItem('ignorelist');
+        if ( ignores ) this.ignoreList = JSON.parse(ignores);
+      } catch (e) {
+        console.log('No ignore list found.');
+      }
+
+      try {
+        let useIgnore = localStorage.getItem('useignore');
+        if ( useIgnore ) this.useIgnoreListForChat = useIgnore;
+      } catch (e) {
+        console.log('No useIgnore option found.');
+      }
+
+      try {
+        const showTimestamps = localStorage.getItem('showtimestamps');
+        if ( !!showTimestamps ) this.showTimestamps = showTimestamps;
+        else this.showTimestamps = true;
+      } catch (e) {
+        console.log('No showTimestamps option found.');
+        this.showTimestamps = true;
+      }
+
+      try {
+        const global = localStorage.getItem('global');
+
+        if ( !!global ) this.setModeGlobal( global );
+        else this.setModeGlobal( true );
+
+      } catch (e) {
+        console.log('No showTimestamps option found.');
+        this.setModeGlobal( true );
+      }
+
+      try {
+        let tts = localStorage.getItem('tts');
+        // if ( tts ) this.useTTS = tts;
+      } catch (e) {
+        console.log('No tts option found.');
+      }
+
+      if ( this.enable ) {
+        // this.useTTS = false;
+        this.subscribeToPoll(this.page);
+      }
+
+      /*if (this.query.tts === true) {
+        this.useTTS = true;
+      }*/
     },
 
     beforeDestroy() {
-      if (this.unsubscribeUser) this.unsubscribeUser();
-      if (this.socket) this.socket.disconnect();
+      if ( this.unsubscribeUser ) this.unsubscribeUser();
+      if ( this.unsubscribePoll ) this.unsubscribePoll();
+      if ( this.socket ) this.socket.disconnect();
     },
   }
 </script>
 
 <style lang='scss'>
+  #chat-poll {
+    button {
+      /*min-width: 55px;*/
+    }
+  }
+
   #sidechat {
     border-top: 3px yellow;
     background-color: #000;

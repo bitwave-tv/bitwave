@@ -1,63 +1,44 @@
 <template>
-  <v-container flex>
-    <v-layout column>
+  <v-container flex pa-0>
 
       <!-- Video And Description -->
       <v-layout
-        :style="{ 'padding-right': !mobile ? '450px' : '0' }"
+        :style="{ 'margin-right': !mobile ? '450px' : '0' }"
         column
       >
-        <v-flex v-if="false">
-          <v-tabs
-            dark
-            slider-color="#ff9800"
-          >
-            <v-tab>
-              {{ name }}
-            </v-tab>
-            <v-tab>
-              ARCHIVES
-            </v-tab>
-          </v-tabs>
-        </v-flex>
-
         <hr class="v-divider theme--light" />
 
-        <v-flex class="px-0 pb-2 pt-0">
+        <v-flex class="px-0 pb-0 pt-0">
           <v-card>
-            <v-responsive
-              :aspect-ratio="16/9"
+            <video
+              playsinline
+              id="streamplayer"
+              class="video-js vjs-fluid vjs-16-9 vjs-default-skin vjs-big-play-centered"
+              width="100%"
+              controls
+              :autoplay="live"
+              preload="auto"
+              data-setup='{ "aspectRatio":"16:9" }'
+              :poster="poster"
             >
-              <video
-                playsinline
-                id="streamplayer"
-                class="video-js vjs-default-skin"
-                width="100%"
-                controls
-                :autoplay="live"
-                preload="auto"
-                data-setup='{ "aspectRatio":"16:9" }'
-                :poster="poster"
+              <source
+                v-if="live"
+                :src="url"
+                :type="type"
               >
-                <source
-                  v-if="live"
-                  :src="url"
-                  type="application/x-mpegURL"
-                >
-                <source
-                  v-else
-                  :src="getRandomBump()"
-                  type="video/mp4"
-                >
-              </video>
-            </v-responsive>
+              <source
+                v-else
+                :src="getRandomBump()"
+                type="video/mp4"
+              >
+            </video>
           </v-card>
         </v-flex>
 
         <template v-show="mobile" >
           <v-flex class="mb-3" >
             <v-layout>
-              <v-flex style="max-height: 60vh;" >
+              <v-flex style="max-height: 50vh;">
                 <chat
                   :enable="mobile"
                   :chat-channel="name"
@@ -69,7 +50,15 @@
         </template>
 
         <v-flex class="px-3">
-          <v-layout class="mb-2">
+          <v-layout class="mb-2" align-center>
+            <v-flex shrink>
+              <v-icon
+                v-show="live"
+                size="14"
+                color="red"
+                class="blink mr-2"
+              >lens</v-icon>
+            </v-flex>
             <v-flex shrink>
               <v-chip
                 v-if="nsfw"
@@ -95,6 +84,7 @@
       </v-layout>
 
       <!-- Chat -->
+    <v-layout>
       <v-flex
         v-show="!mobile"
         shrink
@@ -105,14 +95,17 @@
           :dark="true"
         />
       </v-flex>
-
     </v-layout>
+
   </v-container>
 </template>
 
 <script>
   import videojs from 'video.js'
+  import 'dashjs'
+  import 'videojs-contrib-dash'
   import 'videojs-contrib-quality-levels'
+  import 'videojs-hls-quality-selector'
 
   import { db } from '@/plugins/firebase.js'
 
@@ -122,18 +115,18 @@
   export default {
     head() {
       return {
-        title: `${this.name} - BitWave.tv`,
+        title: `${this.name} - [bitwave.tv]`,
         meta: [
-          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - BitWave.tv` },
-          { name: 'og:description', hid: 'og:description', content: (this.desc || '').split(200) },
+          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
+          { name: 'og:description', hid: 'og:description', content: (this.desc || '').substring(0, 200) },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
           { name: 'author',         content: this.name },
-          { name: 'description',    hid: 'description',    content: (this.name || '').split(200) },
+          { name: 'description',    hid: 'description',    content: (this.name || '').substring(0, 200) },
           { name: 'profile:username',    content: this.name },
           { name: 'twitter:card',        content: 'summary_large_image' },
-          { name: 'twitter:site',        content: '@BitWaveTV' },
-          { name: 'twitter:title',       content: (this.title || '').split(70) },
-          { name: 'twitter:description', content: (this.desc || '').split(200) },
+          { name: 'twitter:site',        content: '@BitwaveTV' },
+          { name: 'twitter:title',       content: ( this.title || '' ).substring(0,  70) },
+          { name: 'twitter:description', content: ( this.desc  || '' ).substring(0, 200) },
           { name: 'twitter:image',       content: this.poster },
         ],
       }
@@ -159,18 +152,55 @@
 
     computed: {
       mobile () {
-        return this.$vuetify.breakpoint.mdAndDown;
+        return !this.$vuetify.breakpoint.smAndUp;
       },
     },
 
     methods: {
       playerInitialize(){
+
+        // Get stream data
+        this.getStreamData();
+
+        // Create video.js player
         this.player = videojs('streamplayer', {
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
+          plugins: { qualityLevels: {} },
         });
+
+        // Video Player Ready
+        this.player.ready( () => {
+          // Restore Volume
+          try {
+            let volume = localStorage.getItem('volume');
+            if ( volume !== null ) {
+              this.player.volume(volume);
+            }
+          } catch (e) {
+            // No volume value in memory
+            console.warn('Failed to find prior volume level');
+          }
+        });
+
+        // Load all qualities
         this.qualityLevels = this.player.qualityLevels();
-        this.getStreamData();
+        this.player.hlsQualitySelector();
+
+        // Listen to change events for when the player selects a new quality level
+        this.qualityLevels.on('change', () => {
+          console.log('Quality Level changed:', this.qualityLevels[this.qualityLevels.selectedIndex]);
+        });
+
+        // Save volume on change
+        this.player.on('volumechange', () => {
+          localStorage.setItem( 'volume', this.player.volume() );
+          localStorage.setItem( 'muted',  this.player.muted() )
+        });
+
+        // Begin playing when new media is loaded
+        this.player.on( 'loadeddata', () => this.player.play() );
+
         this.initialized = true;
       },
 
@@ -211,10 +241,32 @@
         // Grab Stream Data
         this.title = data.title;
         this.desc  = data.description;
-        this.live  = data.live;
         this.nsfw  = data.nsfw;
 
         console.log(`Stream Metadata Update.`, data);
+
+        const live = data.live;
+        const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+
+        // Detect user going live
+        if (!this.live && live) {
+          this.live = live;
+          // Load and Play stream
+          this.player.src({ src: url, type: type });
+          this.player.load();
+        }
+
+        // Detect source change
+        if (this.url !== url  || this.type !== type) {
+          this.url  = url;
+          this.type = type;
+          // Load and Play stream
+          this.player.src({ src: url, type: type });
+          this.player.load();
+        }
+
+        this.live = live;
       },
 
       async verifyChannel (user) {
@@ -225,6 +277,13 @@
           console.log(`Channel ${user} does not exist`);
           return null;
         }
+      },
+
+      reloadPlayer () {
+        if (!this.initialized) return;
+        this.player.reset();
+        this.player.src({ src: this.url, type: this.type });
+        this.load();
       },
     },
 
@@ -239,9 +298,10 @@
         const poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
-        const url    = data.url    || `https://stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        return { name, title, desc, poster, live, nsfw, url, };
+        return { name, title, desc, poster, live, nsfw, url, type };
 
       } catch (error) {
         console.log(`ERROR: Failed to find user ${user}`);
@@ -255,6 +315,7 @@
           live: false,
           nsfw: false,
           url: '',
+          type: '',
         }
       }
     },
@@ -283,6 +344,10 @@
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
       else if (this.name !== '404')
         console.log(`${this.name} is offline.`);
+
+      if (process.client) {
+
+      }
     },
 
     beforeDestroy() {
@@ -297,5 +362,26 @@
   a {
     color: yellow;
     text-decoration: none;
+  }
+
+  #description {
+    text-overflow: ellipsis;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+  .blink{
+    text-decoration: blink;
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 0.6s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:ease-in-out;
+    -webkit-animation-direction: alternate;
+  }
+  @-webkit-keyframes blinker {
+    from {opacity: 1.0;}
+    to {opacity: 0.0;}
   }
 </style>

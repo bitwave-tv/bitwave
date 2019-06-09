@@ -60,14 +60,14 @@
 
     data() {
       return {
-        title: 'BitWave.tv',
+        title: '[bitwave.tv]',
 
         dark: true,
         clipped: false,
         fixed: false,
 
         miniVariant: true,
-        drawer: true,
+        drawer: null,
 
         right: true,
         showChat: true,

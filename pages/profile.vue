@@ -4,8 +4,10 @@
       <v-flex class="my-3">
         <h1 class="ml-2">My Account</h1>
       </v-flex>
+    </v-layout>
 
-      <v-flex style="min-width: 35%;">
+    <v-layout align-center>
+      <v-flex>
         <v-card class="mb-4 pa-3">
           <v-layout column>
             <v-flex>
@@ -53,7 +55,7 @@
                     prepend-inner-icon="attach_file"
                     @click='pickFile'
                   >
-                    <template v-slot:append>
+                    <template #append>
                       <v-btn
                         :loading="uploadingAvatar"
                         color="primary"
@@ -127,10 +129,11 @@
           </v-layout>
         </v-card>
       </v-flex>
+    </v-layout>
 
+    <v-layout align-center>
       <v-flex
         v-if="showStreamInfo"
-        style="min-width: 35%;"
       >
         <v-card class="mb-4 pa-3">
           <v-layout column>
@@ -182,10 +185,11 @@
           </v-layout>
         </v-card>
       </v-flex>
+    </v-layout>
 
+    <v-layout align-center>
       <v-flex
         v-if="showStreamInfo"
-        style="min-width: 35%;"
       >
         <v-card class="mb-4 pa-3">
           <v-layout column>
@@ -239,8 +243,8 @@
           </v-layout>
         </v-card>
       </v-flex>
-
     </v-layout>
+
   </v-container>
 </template>
 

@@ -32,14 +32,6 @@
 
       <user/>
 
-      <v-btn
-        v-show="!$vuetify.breakpoint.mdAndUp"
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>menu</v-icon>
-      </v-btn>
-
     </v-toolbar>
 
     <!-- Content -->
@@ -62,7 +54,7 @@
 
     data() {
       return {
-        title: 'BitWave.tv',
+        title: '[bitwave.tv]',
 
         dark: true,
         clipped: false,
@@ -88,10 +80,3 @@
     },
   }
 </script>
-
-<style lang='scss'>
-  .v-toolbar__content {
-    /*padding-left: 0;*/
-    /*padding-right: 0;*/
-  }
-</style>
