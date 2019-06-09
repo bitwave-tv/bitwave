@@ -438,8 +438,12 @@
         chatContainer: null,
 
         chatFeatureBingBingWahoo: false,
+        chatFeatureAFK: false,
+        chatFeatureAFKmessage: '',
 
         allowTrollsToToggleTTS: false,
+
+        botrollEnabled: false,
 
         showToolMenu: false,
         useIgnoreListForChat: false,
@@ -640,6 +644,7 @@
           if(this.username.toLowerCase() != "markpugner"){
             this.featureRollAll(el);
           }
+          this.featureAFK(el);
           // Add message to list
           this.messages.push({ ...{ id: Date.now() }, ...el });
         });
@@ -662,7 +667,7 @@
       },
 
       featureRoll20(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll20")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 20) + 1;
@@ -678,7 +683,7 @@
       },
 
       featureRoll2(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll2")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 2) + 1;
@@ -694,7 +699,7 @@
       },
 
       featureRoll3(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll3")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 3) + 1;
@@ -710,7 +715,7 @@
       },
 
       featureRoll4(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll4")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 4) + 1;
@@ -726,7 +731,7 @@
       },
 
       featureRoll6(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll6")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 6) + 1;
@@ -742,7 +747,7 @@
       },
 
       featureRoll8(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll8")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 8) + 1;
@@ -758,7 +763,7 @@
       },
 
       featureRoll10(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll10")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 10) + 1;
@@ -774,7 +779,7 @@
       },
 
       featureRoll100(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll100")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 100) + 1;
@@ -790,7 +795,7 @@
       },
 
       featureRoll12(message){
-        if(true){
+        if(this.botrollEnabled){
           if(message.message.toLowerCase().includes("botroll12")){
           // spooky says  2, 3, 4, 6, 10, 20 and 100 i and 8
             const rng20 = Math.floor(Math.random() * 12) + 1;
@@ -800,6 +805,48 @@
                   channel: this.page,
                 };
                 this.socket.emit('message', msg20x);
+          }
+        }
+
+      },
+
+      featureRollHelp(message){
+        if(true){
+          if(message.message.toLowerCase().includes("botrollon")){
+           this.botrollEnabled = true;
+          }
+
+          if(message.message.toLowerCase().includes("botrolloff")){
+            this.botrollEnabled = false;
+          }
+
+          if(message.message.toLowerCase().includes("botrollhelp")){
+
+
+            var messagerollhelp = '@' + message.username + ' You can roll a 4,6,8,10,20 sided dice';
+            const msgHelp = {
+                  message: messagerollhelp ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msgHelp);
+          }
+        }
+
+      },
+
+      featureAFK(message){
+        if(this.chatFeatureAFK){
+
+
+          if(message.message.toLowerCase().includes(this.username.toLowerCase())){
+
+
+            var messagerollhelp = '@' + message.username + ' I am currenly away from keyboard';
+            const msgHelp = {
+                  message: messagerollhelp ,
+                  channel: this.page,
+                };
+                this.socket.emit('message', msgHelp);
           }
         }
 
@@ -817,6 +864,7 @@
         this.featureRoll4(message);
         //this.featureRoll3(message);
         //this.featureRoll2(message);
+        this.featureRollHelp(message);
 
       },
 
@@ -910,6 +958,17 @@
               }
               break;
             case 'afk':
+
+              if(this.chatFeatureAFK != true){
+                this.chatFeatureAFK = true; //!= this.chatFeatureBingBingWahoo;
+              }else{
+                if(this.chatFeatureAFK == true){
+
+                  this.chatFeatureAFK = false;
+                }
+              }
+            break;
+            case 'notify':
 
               if(this.chatFeatureBingBingWahoo != true){
                 this.chatFeatureBingBingWahoo = true; //!= this.chatFeatureBingBingWahoo;
