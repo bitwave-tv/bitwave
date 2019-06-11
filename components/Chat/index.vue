@@ -506,7 +506,7 @@
 
           if (this.messages.length > 100) this.messages = this.messages.splice( -this.chatLimit );
 
-          setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 100 );
+          setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
         }
       },
 
