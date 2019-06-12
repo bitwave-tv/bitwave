@@ -318,6 +318,36 @@
         </chat-message>
       </div>
 
+      <!--<dynamic-scroller
+        id="chat-scroll"
+        ref="scroller"
+        :items="messages"
+        key-field="timestamp"
+        :min-item-size="60"
+        :buffer="400"
+        :emitUpdate="false"
+      >
+        <dynamic-scroller-item
+          slot-scope="{ item, index, active }"
+          :item="item"
+          :active="active"
+          :size-dependencies="[]"
+          :data-index="index"
+        >
+          <chat-message
+            :key="item.timestamp"
+            :username="item.username"
+            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
+            :channel="item.channel"
+            :timestamp="getTime(item.timestamp)"
+            :avatar="item.avatar"
+            :color="item.color"
+            @reply="addUserTag"
+          ><div v-html="item.message"></div>
+          </chat-message>
+        </dynamic-scroller-item>
+      </dynamic-scroller>-->
+
     </v-flex>
 
     <v-divider/>
@@ -369,6 +399,9 @@
   import ChatPollVote from '@/components/Chat/ChatPollVote';
 
   import { mapState, mapMutations, mapActions } from 'vuex'
+
+  // import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+  // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
   export default {
     name: 'Chat',
@@ -504,7 +537,7 @@
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
 
-          if (this.messages.length > this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
+          if (this.messages.length > 5 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
           // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
           this.chatContainer.scrollTop = scrollHeight + 750

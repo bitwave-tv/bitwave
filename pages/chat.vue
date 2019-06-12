@@ -1,17 +1,19 @@
 <template>
-    <nuxt-child/>
+  <nuxt-child/>
 </template>
 
 <script>
-    export default {
-        name: 'chat.vue',
+  export default {
+    name: 'chat.vue',
 
-        data() {
-            return {}
-        },
+    layout: 'barebones',
 
-        methods: {},
+    data() {
+      return {}
+    },
 
-        computed: {},
-    }
+    methods: {},
+
+    computed: {},
+  }
 </script>
