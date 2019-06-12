@@ -492,21 +492,22 @@
       },
 
       async scrollToBottom (force) {
-        const scrollTop = this.chatContainer.scrollTop;
+        const scrollTop    = this.chatContainer.scrollTop;
         const scrollHeight = this.chatContainer.scrollHeight;
 
         const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
-        const scroll = !!force || scrollDistance < ( 0.75 * screen.height );
+        const scroll = !!force || scrollDistance < ( 0.55 * screen.height );
 
-        console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
+        // console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
 
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
 
-          if (this.messages.length > 100) this.messages = this.messages.splice( -this.chatLimit );
+          if (this.messages.length > this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
-          setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
+          // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
+          this.chatContainer.scrollTop = scrollHeight + 750
         }
       },
 
@@ -620,7 +621,7 @@
         const parts = this.message.split(' ');
 
         if (match) {
-          const command  = match[1];
+          const command  = match[1].toLowerCase();
           const argument = parts[1]; //match[2];
 
           switch (command) {
@@ -628,14 +629,16 @@
               const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
               if (!exists) {
                 this.ignoreList.push(argument);
-                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
+                localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
               }
               break;
             case 'unignore':
               const location = this.ignoreList.findIndex( el => el.toLowerCase() === argument.toLowerCase() );
-              if (location) {
-                this.ignoreList.splice(location, 1);
-                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
+              if (location !== -1) {
+                this.ignoreList.splice( location, 1 );
+                localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
+              } else {
+                console.log( `User not found: '${argument}'` );
               }
               break;
             case 'skip':
@@ -648,7 +651,7 @@
                 message: this.message,
                 channel: this.page,
               };
-              this.socket.emit('whisper', msg);
+              this.socket.emit( 'whisper', msg );
           }
         } else {
           const msg = {
@@ -830,7 +833,7 @@
     },
 
     created() {
-      auth.onAuthStateChanged(async user => await this.authenticated(user));
+      auth.onAuthStateChanged( async user => await this.authenticated(user) );
     },
 
     mounted() {
