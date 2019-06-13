@@ -38,7 +38,7 @@
         <v-layout v-show="mobile">
           <v-flex class="mb-3" >
             <v-layout>
-              <v-flex style="max-height: 500px;">
+              <v-flex style="max-height: 390px;">
                 <no-ssr placeholder="Loading...">
                   <chat
                     :enable="mobile"
