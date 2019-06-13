@@ -537,7 +537,7 @@
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
 
-          if (this.messages.length > 5 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
+          if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
           // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
           this.chatContainer.scrollTop = scrollHeight + 750
