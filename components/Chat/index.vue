@@ -378,7 +378,7 @@
               @change="value => this.message = value"
               @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
-              @keyup.alt.38.prevent="setLastMessage"
+              @keyup.38.prevent="setLastMessage"
             ></v-text-field>
           </v-flex>
         </v-layout>
