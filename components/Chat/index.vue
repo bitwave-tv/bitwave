@@ -378,6 +378,7 @@
               @change="value => this.message = value"
               @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
+              @keyup.alt.38.prevent="setLastMessage"
             ></v-text-field>
           </v-flex>
         </v-layout>
@@ -431,6 +432,7 @@
 
         socket: null,
         message: '',
+        lastMessage: '',
         messages: [
           {
             timestamp: Date.now(),
@@ -693,7 +695,15 @@
           };
           this.socket.emit('message', msg);
         }
+        this.lastMessage = this.message;
         this.message = '';
+      },
+
+      setLastMessage () {
+        if (this.lastMessage === '') return;
+
+        this.message = this.lastMessage;
+        this.lastMessage = '';
       },
 
       setupTrollData () {
