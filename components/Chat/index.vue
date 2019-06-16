@@ -378,7 +378,8 @@
               @change="value => this.message = value"
               @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
-              @keyup.38.prevent="setLastMessage"
+              @keyup.prevent="event => lastMessageHandler(event)"
+              @cut="event => lastMessageHandler(event)"
             ></v-text-field>
           </v-flex>
         </v-layout>
@@ -699,11 +700,22 @@
         this.message = '';
       },
 
-      setLastMessage () {
-        if (this.lastMessage === '') return;
+      lastMessageHandler (event) {
+        if (!event.srcElement.value) {
+          if (event.keyCode == 38) {
+            this.message = this.lastMessage;
+          } else {
+            this.message = '';
+          }
+        }
 
-        this.message = this.lastMessage;
-        this.lastMessage = '';
+        if(event.type === "cut") {
+          setTimeout(() => {
+            if (!event.srcElement.value) {
+              this.message = '';
+            }
+          }, 20);
+        }
       },
 
       setupTrollData () {
