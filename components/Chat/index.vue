@@ -378,6 +378,8 @@
               @change="value => this.message = value"
               @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
+              @keyup.prevent="event => lastMessageHandler(event)"
+              @cut="event => lastMessageHandler(event)"
             ></v-text-field>
           </v-flex>
         </v-layout>
@@ -431,6 +433,7 @@
 
         socket: null,
         message: '',
+        lastMessage: '',
         messages: [
           {
             timestamp: Date.now(),
@@ -693,7 +696,26 @@
           };
           this.socket.emit('message', msg);
         }
+        this.lastMessage = this.message;
         this.message = '';
+      },
+
+      lastMessageHandler (event) {
+        if (!event.srcElement.value) {
+          if (event.keyCode == 38) {
+            this.message = this.lastMessage;
+          } else {
+            this.message = '';
+          }
+        }
+
+        if(event.type === "cut") {
+          setTimeout(() => {
+            if (!event.srcElement.value) {
+              this.message = '';
+            }
+          }, 20);
+        }
       },
 
       setupTrollData () {
