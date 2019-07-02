@@ -2,7 +2,7 @@
 
 export const state = () => ({
   room: '',
-  global: true,
+  global: false,
   timestamps: true,
 
   viewerList: [{name: 'NONE'}],
