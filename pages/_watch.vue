@@ -35,13 +35,12 @@
         </v-layout>
 
         <!-- Mobile Chat -->
-        <v-layout v-show="mobile">
+        <v-layout>
           <v-flex class="mb-3" >
-            <v-layout>
-              <v-flex style="max-height: 390px;">
+            <v-layout :style="chatStyling">
+              <v-flex :style="{ 'max-height': mobile ? '390px' : '100%' }">
                 <no-ssr placeholder="Loading...">
                   <chat
-                    :enable="mobile"
                     :chat-channel="name"
                     :dark="true"
                   ></chat>
@@ -90,10 +89,10 @@
       </v-flex>
 
 
-      <!-- Chat -->
+      <!-- Desktop Chat -->
       <v-flex shrink v-show="!mobile">
         <v-layout :style="{ width: '450px' }">
-          <v-flex
+          <!--<v-flex
             shrink
             :style="{ position: 'fixed', top: '48px', right: '0', height: 'calc(100vh - 48px)', width: '450px' }"
           >
@@ -103,7 +102,7 @@
                 :dark="true"
               ></chat>
             </no-ssr>
-          </v-flex>
+          </v-flex>-->
         </v-layout>
       </v-flex>
 
@@ -167,6 +166,24 @@
         // if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
         // return false;
       },
+
+      chatStyling () {
+        // mobile
+        if ( !this.$vuetify.breakpoint.smAndUp ) {
+          return {
+            //'max-height': '390px',
+          }
+        }
+
+        // desktop
+        return {
+          position: 'fixed',
+          top: '48px',
+          right: '0',
+          height: 'calc(100vh - 48px)',
+          width: '450px'
+        }
+      }
     },
 
     methods: {
@@ -399,6 +416,8 @@
 
   #description {
     text-overflow: ellipsis;
+    word-break: break-word;
+    max-width: 100%;
 
     img {
       max-width: 100%;
