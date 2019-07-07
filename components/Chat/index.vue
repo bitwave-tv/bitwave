@@ -308,6 +308,7 @@
           v-for="item in messages"
           :key="item.timestamp"
           :username="item.username"
+          :display-name="item.username"
           :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
           :channel="item.channel"
           :timestamp="getTime(item.timestamp)"
