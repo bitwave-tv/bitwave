@@ -749,11 +749,11 @@
 
         message = unescapeHtml( message ); // Fixes escaped characters
 
-        // Remove Links
-        message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
-
         // Remove html tags
         message = message.replace(/<\/?[^>]*>/g, '');
+
+        // Remove Links
+        message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
