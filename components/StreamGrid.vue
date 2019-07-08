@@ -38,6 +38,7 @@
       return {
         streamDataListener: null,
         streams: [],
+        thumbnailInterval: null,
       }
     },
 
@@ -61,12 +62,19 @@
           }
         });
       },
+
+      updateThumbnails () {
+        this.streams.forEach( stream => {
+          stream.thumbnail = `${stream.thumbnail}?${Date.now()}`
+        });
+      },
     },
 
     computed: {},
 
     mounted () {
       this.getData();
+      this.thumbnailInterval = setInterval( () => this.updateThumbnails(), 60 * 1000 );
     },
 
     beforeDestroy() {

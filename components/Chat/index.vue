@@ -308,6 +308,7 @@
           v-for="item in messages"
           :key="item.timestamp"
           :username="item.username"
+          :display-name="item.username"
           :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
           :channel="item.channel"
           :timestamp="getTime(item.timestamp)"
@@ -317,6 +318,36 @@
         ><div v-html="item.message"></div>
         </chat-message>
       </div>
+
+      <!--<dynamic-scroller
+        id="chat-scroll"
+        ref="scroller"
+        :items="messages"
+        key-field="timestamp"
+        :min-item-size="60"
+        :buffer="400"
+        :emitUpdate="false"
+      >
+        <dynamic-scroller-item
+          slot-scope="{ item, index, active }"
+          :item="item"
+          :active="active"
+          :size-dependencies="[]"
+          :data-index="index"
+        >
+          <chat-message
+            :key="item.timestamp"
+            :username="item.username"
+            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
+            :channel="item.channel"
+            :timestamp="getTime(item.timestamp)"
+            :avatar="item.avatar"
+            :color="item.color"
+            @reply="addUserTag"
+          ><div v-html="item.message"></div>
+          </chat-message>
+        </dynamic-scroller-item>
+      </dynamic-scroller>-->
 
     </v-flex>
 
@@ -348,6 +379,8 @@
               @change="value => this.message = value"
               @click:append-outer.prevent="sendMessage"
               @keyup.enter.prevent="sendMessage"
+              @keyup.prevent="event => lastMessageHandler(event)"
+              @cut="event => lastMessageHandler(event)"
             ></v-text-field>
           </v-flex>
         </v-layout>
@@ -369,6 +402,9 @@
   import ChatPollVote from '@/components/Chat/ChatPollVote';
 
   import { mapState, mapMutations, mapActions } from 'vuex'
+
+  // import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+  // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
   export default {
     name: 'Chat',
@@ -398,6 +434,7 @@
 
         socket: null,
         message: '',
+        lastMessage: '',
         messages: [
           {
             timestamp: Date.now(),
@@ -410,7 +447,7 @@
 
         ignoreList: [],
         uid: null,
-        chatLimit: 150,
+        chatLimit: 50,
         chatContainer: null,
 
         showToolMenu: false,
@@ -492,21 +529,22 @@
       },
 
       async scrollToBottom (force) {
-        const scrollTop = this.chatContainer.scrollTop;
+        const scrollTop    = this.chatContainer.scrollTop;
         const scrollHeight = this.chatContainer.scrollHeight;
 
         const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
-        const scroll = !!force || scrollDistance < ( 0.75 * screen.height );
+        const scroll = !!force || scrollDistance < ( 0.55 * screen.height );
 
-        console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
+        // console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
 
         if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
 
-          if (this.messages.length > 100) this.messages = this.messages.splice( -this.chatLimit );
+          if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
-          setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 100 );
+          // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
+          this.chatContainer.scrollTop = scrollHeight + 750
         }
       },
 
@@ -557,7 +595,8 @@
         });
       },
 
-      /*async rcvMessage (message) {
+      /*
+      async rcvMessage (message) {
         if ( !this.enable ) return;
 
         if(this.useIgnoreListForChat){
@@ -620,7 +659,7 @@
         const parts = this.message.split(' ');
 
         if (match) {
-          const command  = match[1];
+          const command  = match[1].toLowerCase();
           const argument = parts[1]; //match[2];
 
           switch (command) {
@@ -628,14 +667,16 @@
               const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
               if (!exists) {
                 this.ignoreList.push(argument);
-                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
+                localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
               }
               break;
             case 'unignore':
               const location = this.ignoreList.findIndex( el => el.toLowerCase() === argument.toLowerCase() );
-              if (location) {
-                this.ignoreList.splice(location, 1);
-                localStorage.setItem('ignorelist', JSON.stringify(this.ignoreList));
+              if (location !== -1) {
+                this.ignoreList.splice( location, 1 );
+                localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
+              } else {
+                console.log( `User not found: '${argument}'` );
               }
               break;
             case 'skip':
@@ -648,7 +689,7 @@
                 message: this.message,
                 channel: this.page,
               };
-              this.socket.emit('whisper', msg);
+              this.socket.emit( 'whisper', msg );
           }
         } else {
           const msg = {
@@ -657,7 +698,26 @@
           };
           this.socket.emit('message', msg);
         }
+        this.lastMessage = this.message;
         this.message = '';
+      },
+
+      lastMessageHandler (event) {
+        if (!event.srcElement.value) {
+          if (event.keyCode == 38) {
+            this.message = this.lastMessage;
+          } else {
+            this.message = '';
+          }
+        }
+
+        if(event.type === "cut") {
+          setTimeout(() => {
+            if (!event.srcElement.value) {
+              this.message = '';
+            }
+          }, 20);
+        }
       },
 
       setupTrollData () {
@@ -830,7 +890,7 @@
     },
 
     created() {
-      auth.onAuthStateChanged(async user => await this.authenticated(user));
+      auth.onAuthStateChanged( async user => await this.authenticated(user) );
     },
 
     mounted() {

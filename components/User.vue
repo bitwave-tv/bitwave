@@ -22,7 +22,7 @@
           :loading="loading"
         >
           <v-avatar size="40">
-            <img :src="user.avatar" :alt="username">
+            <img :src="avatar" :alt="username">
           </v-avatar>
         </v-btn>
       </template>
@@ -32,7 +32,7 @@
           <v-list-tile avatar>
 
             <v-list-tile-avatar>
-              <img :src="user.avatar" :alt="username">
+              <img :src="avatar" :alt="username">
             </v-list-tile-avatar>
 
             <v-list-tile-content>
@@ -81,7 +81,7 @@
                 <v-list-tile-title>Report</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile to="/signout">
+            <v-list-tile @click="logout">
               <v-list-tile-action>
                 <v-icon>exit_to_app</v-icon>
               </v-list-tile-action>
@@ -94,7 +94,9 @@
       </v-card>
     </v-menu>
 
-    <v-btn
+    <login-dialog v-else />
+
+    <!--<v-btn
       v-else
       to="/login"
       color="yellow"
@@ -104,19 +106,25 @@
     >
       Log In
       <v-icon class="ml-1">input</v-icon>
-    </v-btn>
+    </v-btn>-->
 
   </v-flex>
 </template>
 
 <script>
   import { auth } from '@/plugins/firebase.js'
+  import LoginDialog from '~/components/LoginDialog'
+
 
   import { mapGetters } from 'vuex'
 
   export default {
 
     name: 'User',
+
+    components: {
+      LoginDialog,
+    },
 
     data() {
       return {
@@ -131,6 +139,10 @@
         if (user) { /* user logged in */ }
         this.loading = false;
       },
+
+      async logout () {
+        await this.$store.dispatch('logout');
+      },
     },
 
     computed: {
@@ -139,6 +151,10 @@
         username: 'username',
         user: 'user'
       }),
+
+      avatar () {
+        if (this.user) return this.user.avatar;
+      }
     },
 
     created() {
