@@ -447,7 +447,7 @@
 
         ignoreList: [],
         uid: null,
-        chatLimit: 150,
+        chatLimit: 50,
         chatContainer: null,
 
         showToolMenu: false,
@@ -595,7 +595,8 @@
         });
       },
 
-      /*async rcvMessage (message) {
+      /*
+      async rcvMessage (message) {
         if ( !this.enable ) return;
 
         if(this.useIgnoreListForChat){
