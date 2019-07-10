@@ -62,7 +62,11 @@
       <p>
         We may allow you to upload, live stream, submit, or publish (collectively, to "submit") content such as videos, recordings, images, and text (collectively, "content").
         You must ensure that your content, and your conduct, complies with the Acceptable Use Policy set forth in this Section 4.
-        Bitwave may (but is not obligated to) monitor your account, content, and conduct, regardless of your privacy settings. Bitwave may take all appropriate actions to enforce its rights including removing specific videos or suspending or removing your account.
+        Bitwave may (but is not obligated to) monitor your account, content, and conduct, regardless of your privacy settings.
+        Bitwave may take all appropriate actions to enforce its rights including removing specific videos or suspending or removing your account.
+      </p>
+      <p>
+        We do not allow material to be posted that is deemed pornographic, unlawful, obscene, fraudulent, or that is violating third party rights.
       </p>
 
       <h3>5. Licenses Granted by You</h3>
