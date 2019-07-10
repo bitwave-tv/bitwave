@@ -3,7 +3,7 @@
     <div>
       <h1>[bitwave.tv] Terms of Service</h1>
       <p>
-        This Livestream Terms of Service Agreement (the "Agreement" or "Terms of Service") is made between Bitwave ("bitwave", "bitwave.tv", "bitwave media", "we", "us", or "our") and you, our customer ("you" or "your").
+        This Bitwave Terms of Service Agreement (the "Agreement" or "Terms of Service") is made between Bitwave ("bitwave", "bitwave.tv", "bitwave media", "we", "us", or "our") and you, our customer ("you" or "your").
         Bitwave provides live streaming services through our owned-and-operated websites, applications, and embeddable video players (collectively, the "Services").
         This Agreement governs your use of our Services.
       </p>
@@ -34,7 +34,7 @@
         <b>Donations:</b>
         We may allow you to send donations to or accept donations from other users.
         To enable this feature, you may be required to use our integrated payment vendor.
-        Transactions are processed through the payment vendor and are governed by its terms of service and privacy policy; funds are not passed through Livestream.
+        Transactions are processed through the payment vendor and are governed by its terms of service and privacy policy; funds are not passed through Bitwave.
       </p>
 
       <h3>3. Accounts</h3>
@@ -62,18 +62,18 @@
       <p>
         We may allow you to upload, live stream, submit, or publish (collectively, to "submit") content such as videos, recordings, images, and text (collectively, "content").
         You must ensure that your content, and your conduct, complies with the Acceptable Use Policy set forth in this Section 4.
-        Livestream may (but is not obligated to) monitor your account, content, and conduct, regardless of your privacy settings. Livestream may take all appropriate actions to enforce its rights including removing specific videos or suspending or removing your account.
+        Bitwave may (but is not obligated to) monitor your account, content, and conduct, regardless of your privacy settings. Bitwave may take all appropriate actions to enforce its rights including removing specific videos or suspending or removing your account.
       </p>
 
       <h3>5. Licenses Granted by You</h3>
       <p>
         As between you and Bitwave, you own and will retain ownership of all intellectual property rights in and to the content you submit.
-        In order to allow Livestream to host and stream your content, you grant Livestream the permissions set forth below.
+        In order to allow Bitwave to host and stream your content, you grant Bitwave the permissions set forth below.
       </p>
 
       <h4>5.1 Video Content</h4>
       <p>
-        By submitting a video, you grant Livestream permission to:
+        By submitting a video, you grant Bitwave permission to:
       </p>
       <ul>
         <li>Stream the video to end users;</li>
@@ -89,11 +89,11 @@
         For the purposes of this Section 6.1, your video includes its title, description, tags, and other metadata.
       </p>
       <p>
-        The license period begins when you submit the video to Livestream and ends when you or Livestream delete it;
-        provided that Livestream may retain archival copies:
+        The license period begins when you submit the video to Bitwave and ends when you or Bitwave delete it;
+        provided that Bitwave may retain archival copies:
         (a) for a limited period of time in case you wish to restore it;
         (b) when the video is the subject of a takedown notice or other legal claim; or
-        (c) when Livestream in good faith believes that it is legally obligated to do so.
+        (c) when Bitwave in good faith believes that it is legally obligated to do so.
       </p>
 
       <h3>5.2 Profile</h3>
@@ -104,7 +104,7 @@
       <h3>5.3 Other Content</h3>
       <p>
         Content that is not covered by the licenses set forth in Sections 5.1 or 5.2 shall be governed by this Section 5.3 (e.g., text you submit in chat).
-        You grant Livestream a perpetual and irrevocable right and license to copy, transmit, distribute, publicly perform, and display such content through online means in connection with our Services.
+        You grant Bitwave a perpetual and irrevocable right and license to copy, transmit, distribute, publicly perform, and display such content through online means in connection with our Services.
         If you make suggestions to bitwave on improving or products or services, bitwave may use your suggestions without any compensation to you.
       </p>
 
@@ -121,7 +121,7 @@
       <h3>7. Your Obligations</h3>
       <h3>7.1 Representations and Warranties</h3>
       <p>
-        For each piece of content that you submit to or through Livestream, you represent and warrant that:
+        For each piece of content that you submit to or through Bitwave, you represent and warrant that:
       </p>
       <ul>
         <li>You have the right to submit the content to Bitwave and grant the licenses herein;</li>
