@@ -23,13 +23,13 @@ export const mutations = {
   },
 
   SET_TIMESTAMPS ( state, data ) {
-    state.timestamps = !!data;
-    localStorage.setItem( 'showtimestamps', !!data );
+    state.timestamps = JSON.parse(data);
+    localStorage.setItem( 'showtimestamps', data );
   },
 
   SET_MODE_GLOBAL ( state, data ) {
-    state.global = !!data;
-    localStorage.setItem( 'global', !!data );
+    state.global = JSON.parse(data);
+    localStorage.setItem( 'global', data );
   },
 
   SET_VIEWERLIST ( state, data ) {
