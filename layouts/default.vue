@@ -32,6 +32,8 @@
 
       <v-spacer />
 
+      <notifications />
+
       <user />
 
     </v-toolbar>
@@ -50,6 +52,7 @@
   import User from '~/components/User'
   import UserList from '~/components/UserList'
   import LoginDialog from '~/components/LoginDialog'
+  import Notifications from '~/components/Notifications'
 
   import { mapState } from 'vuex'
 
@@ -58,6 +61,7 @@
       User,
       UserList,
       LoginDialog,
+      Notifications,
     },
 
     data() {
