@@ -29,7 +29,7 @@ export const mutations = {
 
   SET_MODE_GLOBAL ( state, data ) {
     state.global = JSON.parse(data);
-    localStorage.setItem( 'global', data );
+    localStorage.setItem( 'globalchat', data );
   },
 
   SET_VIEWERLIST ( state, data ) {

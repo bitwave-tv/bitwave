@@ -586,6 +586,12 @@
           console.log('Hydration data was empty');
           return;
         }
+
+        // Filter by channel
+        if ( !this.global ) {
+          data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
+        }
+
         this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
         await this.$nextTick( async () => await this.scrollToBottom(true) );
         // re-highlight username mentions on hydration
@@ -925,10 +931,10 @@
       }
 
       try {
-        const global = localStorage.getItem('global');
+        const global = localStorage.getItem('globalchat');
 
         if ( !!global ) this.setModeGlobal( global );
-        else this.setModeGlobal( true );
+        else this.setModeGlobal( false );
 
       } catch (e) {
         console.log('No showTimestamps option found.');
