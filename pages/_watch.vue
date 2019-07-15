@@ -162,14 +162,14 @@
 
     computed: {
       mobile () {
-        return !this.$vuetify.breakpoint.smAndUp;
+        return this.$vuetify.breakpoint.mdAndDown;
         // if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
         // return false;
       },
 
       chatStyling () {
         // mobile
-        if ( !this.$vuetify.breakpoint.smAndUp ) {
+        if ( this.$vuetify.breakpoint.mdAndDown ) {
           return {
             //'max-height': '390px',
           }

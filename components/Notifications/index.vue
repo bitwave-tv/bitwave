@@ -78,7 +78,7 @@
                   id: 0,
                   icon: 'mail',
                   title: 'Admin',
-                  message: 'Coming Soon ™ ...',
+                  message: 'Coming Soon ™',
                 },
               ]
             }
