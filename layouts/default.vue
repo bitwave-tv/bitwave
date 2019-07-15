@@ -32,7 +32,7 @@
 
       <v-spacer />
 
-      <notifications />
+      <!--<notifications />-->
 
       <user />
 
