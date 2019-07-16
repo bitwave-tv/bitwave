@@ -96,18 +96,6 @@
 
     <login-dialog v-else />
 
-    <!--<v-btn
-      v-else
-      to="/login"
-      color="yellow"
-      light
-      small
-      :loading="loading"
-    >
-      Log In
-      <v-icon class="ml-1">input</v-icon>
-    </v-btn>-->
-
   </v-flex>
 </template>
 
