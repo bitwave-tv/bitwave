@@ -32,7 +32,7 @@
 
       <v-spacer />
 
-      <!--<notifications />-->
+      <notifications />
 
       <user />
 
@@ -51,7 +51,6 @@
 <script>
   import User from '~/components/User'
   import UserList from '~/components/UserList'
-  import LoginDialog from '~/components/LoginDialog'
   import Notifications from '~/components/Notifications'
 
   import { mapState } from 'vuex'
@@ -60,7 +59,6 @@
     components: {
       User,
       UserList,
-      LoginDialog,
       Notifications,
     },
 

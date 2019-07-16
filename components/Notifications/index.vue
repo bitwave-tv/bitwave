@@ -17,11 +17,15 @@
           icon
           flat
         >
-          <v-badge right color="red">
+          <v-badge
+            :value="notificationCount > 0"
+            color="red"
+            right
+          >
             <template #badge>
               <span>{{ notifications.length }}</span>
             </template>
-              <v-icon class="ml-1">notifications</v-icon>
+            <v-icon class="ml-1">notifications</v-icon>
           </v-badge>
         </v-btn>
       </template>
@@ -47,6 +51,7 @@
           color="#222"
         >
           <v-list single-line :style="{ background: 'transparent' }">
+
             <v-list-tile v-for="notification in notifications" :key="notification.id">
               <v-list-tile-action>
                 <v-icon>{{ notification.icon }}</v-icon>
@@ -56,6 +61,16 @@
                 <v-list-tile-sub-title>{{ notification.message }}</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
+
+            <v-list-tile v-if="notificationCount === 0">
+              <v-list-tile-action>
+                <v-icon>done</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>No Notifications</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
           </v-list>
         </v-sheet>
       </v-card>
@@ -65,27 +80,54 @@
 </template>
 
 <script>
-    export default {
-        name: 'Notifications',
+  import { auth, db } from '@/plugins/firebase.js'
 
-        data() {
-            return {
-              username: 'Notifications',
-              notificationMenu: false,
+  export default {
+    name: 'Notifications',
 
-              notifications: [
-                {
-                  id: 0,
-                  icon: 'mail',
-                  title: 'Admin',
-                  message: 'Coming Soon ™',
-                },
-              ]
-            }
-        },
+    data() {
+      return {
+        username: 'Notifications',
+        notificationMenu: false,
 
-        methods: {},
+        notifications: [],
 
-        computed: {},
-    }
+        unsubscribeNotifications: null,
+      }
+    },
+
+    methods: {
+      getNotifications () {
+        const notificationsRef = db.collection('notifications');
+        const query = notificationsRef.where('read', '==', false).limit(5);
+        // const query = notificationsRef.where('read', '==', false).orderBy('timestamp', 'desc').limit(5);
+        this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications(snapshot) );
+      },
+
+      updateNotifications (snapshot) {
+        let notifications = [];
+        snapshot.forEach(doc => {
+          let data = doc.data();
+          let id   = doc.id;
+          notifications.push( { id, ...data} );
+          console.log( { id, ...data} );
+        });
+        this.notifications = notifications;
+      },
+    },
+
+    computed: {
+      notificationCount () {
+        return this.notifications.length;
+      },
+    },
+
+    created () {
+      this.getNotifications();
+    },
+
+    beforeDestroy () {
+      this.unsubscribeNotifications();
+    },
+  }
 </script>
