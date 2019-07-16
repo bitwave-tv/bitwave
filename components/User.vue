@@ -65,7 +65,7 @@
                 <v-list-tile-title>Profile</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile to="/chat">
+            <v-list-tile :to="`/chat/${username}`">
               <v-list-tile-action>
                 <v-icon>forum</v-icon>
               </v-list-tile-action>
