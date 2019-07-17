@@ -82,6 +82,8 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
 
+  import { mapGetters } from 'vuex'
+
   export default {
     name: 'Notifications',
 
@@ -97,8 +99,13 @@
     },
 
     methods: {
-      getNotifications () {
-        const notificationsRef = db.collection('notifications');
+      authenticated (user) {
+        this.getNotifications( user.uid );
+      },
+
+      getNotifications (uid) {
+        console.log(uid);
+        const notificationsRef = db.collection('notifications').doc(uid).collection('alerts');
         const query = notificationsRef.where('read', '==', false).limit(5);
         // const query = notificationsRef.where('read', '==', false).orderBy('timestamp', 'desc').limit(5);
         this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications(snapshot) );
@@ -117,17 +124,22 @@
     },
 
     computed: {
+      ...mapGetters({
+        isAuth: 'isAuth',
+        user: 'user',
+      }),
+
       notificationCount () {
         return this.notifications.length;
       },
     },
 
     created () {
-      this.getNotifications();
+      auth.onAuthStateChanged( async user => await this.authenticated(user) );
     },
 
     beforeDestroy () {
-      this.unsubscribeNotifications();
+      if ( this.unsubscribeNotifications ) this.unsubscribeNotifications();
     },
   }
 </script>
