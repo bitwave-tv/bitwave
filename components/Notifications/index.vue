@@ -101,6 +101,7 @@
     methods: {
       authenticated (user) {
         if ( user ) this.getNotifications( user.uid );
+        else this.notifications = [];
       },
 
       getNotifications (uid) {
