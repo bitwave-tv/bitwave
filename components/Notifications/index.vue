@@ -100,7 +100,7 @@
 
     methods: {
       authenticated (user) {
-        this.getNotifications( user.uid );
+        if ( user ) this.getNotifications( user.uid );
       },
 
       getNotifications (uid) {
