@@ -413,6 +413,7 @@
       enable      : { type: Boolean, default: true },
       dark        : { type: Boolean },
       chatChannel : { type: String },
+      forceGlobal : { type: Boolean },
     },
 
     components: {
@@ -588,7 +589,7 @@
         }
 
         // Filter by channel
-        if ( !this.global ) {
+        if ( !this.global && !this.forceGlobal ) {
           data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
         }
 
@@ -637,7 +638,7 @@
         }
 
         // Filter by channel
-        if ( !this.global ) {
+        if ( !this.global && !this.forceGlobal ) {
           messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
         }
 

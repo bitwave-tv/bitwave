@@ -1,6 +1,10 @@
 <template>
   <v-layout style="position: fixed; top:0; bottom: 0; width: 100%; margin-top: 48px;">
-    <embed-chat dark :chat-channel="channel"></embed-chat>
+    <embed-chat
+      dark
+      :chat-channel="channel"
+      :force-global="global"
+    ></embed-chat>
   </v-layout>
 </template>
 
@@ -23,7 +27,11 @@
     computed: {
       channel () {
         return this.$route.params.room;
-      }
+      },
+
+      global () {
+        return !!this.$route.query.global;
+      },
     },
 
     mounted() {
