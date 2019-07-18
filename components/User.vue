@@ -6,7 +6,7 @@
       v-model="profileMenu"
       :close-on-content-click="true"
       :nudge-width="200"
-      offset-x
+      offset-y
       left
       origin="top right"
       transition="slide-y-transition"
