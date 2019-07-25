@@ -5,7 +5,24 @@
     px-0
   >
     <v-layout row wrap>
+      <v-flex v-if="loading">
+        <v-card>
+          <v-card-text>
+            <v-layout row align-center>
+              <v-flex shrink>
+                <v-progress-circular
+                  indeterminate
+                  color="yellow"
+                />
+              </v-flex>
+              <v-flex>Loading...</v-flex>
+            </v-layout>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+
       <v-flex
+        v-else
         v-for="stream in streams"
         :key="stream.owner"
         xs12
@@ -39,6 +56,7 @@
         streamDataListener: null,
         streams: [],
         thumbnailInterval: null,
+        loading: true,
       }
     },
 
@@ -61,6 +79,7 @@
             user: stream.user.name,
           }
         });
+        this.loading = false;
       },
 
       updateThumbnails () {
