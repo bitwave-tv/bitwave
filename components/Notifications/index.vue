@@ -16,6 +16,7 @@
           v-on="on"
           icon
           flat
+          @click="markAsRead"
         >
           <v-badge
             :value="notificationCount > 0"
@@ -52,6 +53,15 @@
         >
           <v-list single-line :style="{ background: 'transparent' }">
 
+            <v-list-tile v-if="notifications.length === 0">
+              <v-list-tile-action>
+                <v-icon>done</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>No New Notifications</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
             <v-list-tile v-for="notification in notifications" :key="notification.id">
               <v-list-tile-action>
                 <v-icon>{{ notification.icon }}</v-icon>
@@ -59,15 +69,6 @@
               <v-list-tile-content>
                 <v-list-tile-title>{{ notification.title }}</v-list-tile-title>
                 <v-list-tile-sub-title>{{ notification.message }}</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
-            <v-list-tile v-if="notificationCount === 0">
-              <v-list-tile-action>
-                <v-icon>done</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>No Notifications</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
 
@@ -100,16 +101,17 @@
 
     methods: {
       authenticated (user) {
-        if ( user ) this.getNotifications( user.uid );
-        else this.notifications = [];
+        if ( user ) {
+          this.getNotifications( user.uid );
+        } else {
+          this.notifications = [];
+        }
       },
 
       getNotifications (uid) {
         console.log(uid);
         const notificationsRef = db.collection('notifications').doc(uid).collection('alerts');
         const query = notificationsRef.orderBy('timestamp', 'desc').limit(5);
-        // const query = notificationsRef.where('read', '==', false).limit(5);
-        // const query = notificationsRef.where('read', '==', false).orderBy('timestamp', 'desc').limit(5);
         this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications(snapshot) );
       },
 
@@ -124,14 +126,17 @@
         this.notifications = notifications;
       },
 
-      async markAsRead( uid ) {
-        let docIds = this.notifications.map( notification => notification.id );
-        const batch = db.batch();
-        docIds.forEach( docId => {
-          let ref = db.collection( 'notifications' ).doc( uid ).collection( 'alerts' ).doc( docId );
-          batch.update( ref, { 'read': true } );
-        });
-        await batch.commit();
+      async markAsRead () {
+        if ( this.user ) {
+          const uid = this.user.uid;
+          let docIds = this.notifications.map( notification => notification.id );
+          const batch = db.batch();
+          docIds.forEach( docId => {
+            let ref = db.collection( 'notifications' ).doc( uid ).collection( 'alerts' ).doc( docId );
+            batch.update( ref, { 'read': true } );
+          });
+          setTimeout( async () => await batch.commit(), 500 );
+        }
       },
     },
 
