@@ -23,7 +23,7 @@
             right
           >
             <template #badge>
-              <span>{{ notifications.length }}</span>
+              <span>{{ notificationCount }}</span>
             </template>
             <v-icon class="ml-1">notifications</v-icon>
           </v-badge>
@@ -107,7 +107,8 @@
       getNotifications (uid) {
         console.log(uid);
         const notificationsRef = db.collection('notifications').doc(uid).collection('alerts');
-        const query = notificationsRef.where('read', '==', false).limit(5);
+        const query = notificationsRef.orderBy('timestamp', 'desc').limit(5);
+        // const query = notificationsRef.where('read', '==', false).limit(5);
         // const query = notificationsRef.where('read', '==', false).orderBy('timestamp', 'desc').limit(5);
         this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications(snapshot) );
       },
@@ -122,6 +123,16 @@
         });
         this.notifications = notifications;
       },
+
+      async markAsRead( uid ) {
+        let docIds = this.notifications.map( notification => notification.id );
+        const batch = db.batch();
+        docIds.forEach( docId => {
+          let ref = db.collection( 'notifications' ).doc( uid ).collection( 'alerts' ).doc( docId );
+          batch.update( ref, { 'read': true } );
+        });
+        await batch.commit();
+      },
     },
 
     computed: {
@@ -131,7 +142,7 @@
       }),
 
       notificationCount () {
-        return this.notifications.length;
+        return this.notifications.filter( notification => !notification.read ).length;
       },
     },
 
