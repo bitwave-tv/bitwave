@@ -318,37 +318,6 @@
         ><div v-html="item.message"></div>
         </chat-message>
       </div>
-
-      <!--<dynamic-scroller
-        id="chat-scroll"
-        ref="scroller"
-        :items="messages"
-        key-field="timestamp"
-        :min-item-size="60"
-        :buffer="400"
-        :emitUpdate="false"
-      >
-        <dynamic-scroller-item
-          slot-scope="{ item, index, active }"
-          :item="item"
-          :active="active"
-          :size-dependencies="[]"
-          :data-index="index"
-        >
-          <chat-message
-            :key="item.timestamp"
-            :username="item.username"
-            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-            :channel="item.channel"
-            :timestamp="getTime(item.timestamp)"
-            :avatar="item.avatar"
-            :color="item.color"
-            @reply="addUserTag"
-          ><div v-html="item.message"></div>
-          </chat-message>
-        </dynamic-scroller-item>
-      </dynamic-scroller>-->
-
     </v-flex>
 
     <v-divider/>
@@ -403,9 +372,6 @@
 
   import { mapState, mapMutations, mapActions } from 'vuex'
 
-  // import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-  // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
   export default {
     name: 'Chat',
 
@@ -420,8 +386,6 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
-      // DynamicScroller,
-      // DynamicScrollerItem,
     },
 
     data() {
@@ -561,14 +525,11 @@
 
         this.socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
-        // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
-        // const socket = socketio('api.bitwave.tv:443');
 
         this.socket.on( 'connect', () => this.socket.emit( 'new user', user ) );
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
         this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
-        // this.socket.on( 'message', async data => await this.rcvMessage(data) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
         this.socket.on( 'blocked',   data => this.message = data.message );
@@ -601,33 +562,6 @@
           msg.message = msg.message.replace( pattern, `<span class="highlight">$&</span>` );
         });
       },
-
-      /*
-      async rcvMessage (message) {
-        if ( !this.enable ) return;
-
-        if(this.useIgnoreListForChat){
-          if ( this.ignoreList.includes( message.username) ) return;
-        }
-
-        if ( !this.global ) {
-          const notCurrentChat = message.channel.toLowerCase() !== this.page.toLowerCase();
-          const notUserChat    = message.channel.toLowerCase() !== this.username.toLowerCase();
-          if ( notCurrentChat && notUserChat ) return;
-        }
-
-        // Highlight username tags in new messages
-        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
-        message.message = message.message.replace(pattern, `<span class="highlight">$&</span>`);
-
-        // For Text to Speech
-        const currentChat = message.channel.toLowerCase() === this.username.toLowerCase();
-        const myChat      = message.channel.toLowerCase() === this.page.toLowerCase();
-        if ( currentChat || myChat ) this.speak(message.message, message.username); // Say Message
-
-        this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
-        await this.$nextTick( async () => await this.scrollToBottom() );
-      },//*/
 
       async rcvMessageBulk ( messages ) {
         if ( !this.enable ) return;
