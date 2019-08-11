@@ -634,7 +634,7 @@
 
         // Remove ignored user messages
         if ( this.useIgnoreListForChat ){
-          messages = messages.filter( el => !this.ignoreList.includes( el.username ) );
+          messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
         }
 
         // Filter by channel
