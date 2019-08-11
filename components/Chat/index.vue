@@ -674,7 +674,7 @@
               const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
               if ( !exists ) {
                 this.ignoreList.push( argument );
-                localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
+                localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
               }
               break;
             case 'unignore':
@@ -833,7 +833,9 @@
 
       getTime ( timestamp ) { return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : ''; },
 
-      toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); },
+      toggleUseIgnore () {
+        localStorage.setItem( 'useignore', this.useIgnoreListForChat );
+      },
 
       ...mapMutations ('chat', {
         setModeGlobal: 'SET_MODE_GLOBAL',
@@ -916,7 +918,7 @@
 
       try {
         let useIgnore = localStorage.getItem( 'useignore' );
-        if ( useIgnore ) this.useIgnoreListForChat = useIgnore;
+        if ( !!useIgnore ) this.useIgnoreListForChat = JSON.parse( useIgnore );
       } catch ( error ) {
         console.log( 'No useIgnore option found.' );
       }
