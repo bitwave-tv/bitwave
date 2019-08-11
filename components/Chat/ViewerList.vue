@@ -43,10 +43,10 @@
         >
           <v-list-tile
             avatar
-            v-for="viewer in viewers"
+            v-for="viewer in viewerList"
             :key="viewer.username"
           >
-            <template v-if="viewers.length > 0">
+            <template v-if="viewerList.length > 0">
               <v-list-tile-avatar>
                 <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
                 <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
@@ -104,7 +104,11 @@
 
       channelViewCount () {
         return this.channelViews[ this.page.toLowerCase() ] ? this.channelViews[ this.page.toLowerCase() ].total : 0;
-      }
+      },
+
+      viewerList () {
+        return this.showViewers ? this.viewers : [];
+      },
     },
   }
 </script>
