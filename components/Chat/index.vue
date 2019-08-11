@@ -14,79 +14,7 @@
         >
           <!-- Viewer List -->
           <v-flex shrink>
-            <!-- Viewer List -->
-            <v-menu
-              v-model="showViewers"
-              :close-on-content-click="false"
-              :nudge-width="250"
-              offset-y
-              bottom
-            >
-              <template #activator="{ on }">
-                <v-chip
-                  v-on="on"
-                  color="yellow"
-                  text-color="black"
-                >
-                  {{ channelViews[page.toLowerCase()] ? channelViews[page.toLowerCase()].total : 0 }}
-                  <v-icon right>account_circle</v-icon>
-                </v-chip>
-              </template>
-
-              <v-card>
-                <v-sheet color="yellow">
-                  <v-layout class="pl-2" align-center>
-                    <v-flex>
-                      <h5 class="black--text body-1">Live Viewers ({{ viewerCount }})</h5>
-                    </v-flex>
-                    <v-flex shrink>
-                      <v-btn
-                        color="black"
-                        flat
-                        icon
-                        pa-0
-                        @click="showViewers = false"
-                      ><v-icon color="black">close</v-icon></v-btn>
-                    </v-flex>
-                  </v-layout>
-                </v-sheet>
-
-                <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain;">
-                  <v-list
-                    dense
-                    two-line
-                  >
-                    <v-list-tile
-                      avatar
-                      v-for="viewer in viewerList"
-                      :key="viewer.username"
-                    >
-                      <template v-if="viewerList.length > 0">
-                        <v-list-tile-avatar>
-                          <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
-                          <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
-                        </v-list-tile-avatar>
-                        <v-list-tile-content>
-                          <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                          <v-list-tile-sub-title
-                            v-if="viewer.page && viewer.page.watch && channelViews[ viewer.page.watch.toLowerCase() ]"
-                          >
-                            Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}
-                          </v-list-tile-sub-title>
-                          <v-list-tile-sub-title
-                            v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
-                          >
-                            Just Watching {{`${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
-                          </v-list-tile-sub-title>
-                          <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                      </template>
-                    </v-list-tile>
-                  </v-list>
-                </v-layout>
-
-              </v-card>
-            </v-menu>
+            <ViewerList :page="page" />
           </v-flex>
 
           <!-- Chat Label -->
@@ -318,37 +246,6 @@
         ><div v-html="item.message"></div>
         </chat-message>
       </div>
-
-      <!--<dynamic-scroller
-        id="chat-scroll"
-        ref="scroller"
-        :items="messages"
-        key-field="timestamp"
-        :min-item-size="60"
-        :buffer="400"
-        :emitUpdate="false"
-      >
-        <dynamic-scroller-item
-          slot-scope="{ item, index, active }"
-          :item="item"
-          :active="active"
-          :size-dependencies="[]"
-          :data-index="index"
-        >
-          <chat-message
-            :key="item.timestamp"
-            :username="item.username"
-            :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-            :channel="item.channel"
-            :timestamp="getTime(item.timestamp)"
-            :avatar="item.avatar"
-            :color="item.color"
-            @reply="addUserTag"
-          ><div v-html="item.message"></div>
-          </chat-message>
-        </dynamic-scroller-item>
-      </dynamic-scroller>-->
-
     </v-flex>
 
     <v-divider/>
@@ -402,9 +299,7 @@
   import ChatPollVote from '@/components/Chat/ChatPollVote'
 
   import { mapState, mapMutations, mapActions } from 'vuex'
-
-  // import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-  // import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+  import ViewerList from '@/components/Chat/ViewerList'
 
   export default {
     name: 'Chat',
@@ -417,11 +312,10 @@
     },
 
     components: {
+      ViewerList,
       ChatPollVote,
       ChatPoll,
       ChatMessage,
-      // DynamicScroller,
-      // DynamicScrollerItem,
     },
 
     data() {
@@ -458,8 +352,6 @@
         selectionTTS: 1,
         rateTTS: 10.00,
         voicesListTTS: [],
-
-        showViewers: false,
 
         showPoll: false,
 
@@ -561,14 +453,11 @@
 
         this.socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
-        // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
-        // const socket = socketio('api.bitwave.tv:443');
 
         this.socket.on( 'connect', () => this.socket.emit( 'new user', user ) );
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
         this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
-        // this.socket.on( 'message', async data => await this.rcvMessage(data) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
         this.socket.on( 'blocked',   data => this.message = data.message );
@@ -601,33 +490,6 @@
           msg.message = msg.message.replace( pattern, `<span class="highlight">$&</span>` );
         });
       },
-
-      /*
-      async rcvMessage (message) {
-        if ( !this.enable ) return;
-
-        if(this.useIgnoreListForChat){
-          if ( this.ignoreList.includes( message.username) ) return;
-        }
-
-        if ( !this.global ) {
-          const notCurrentChat = message.channel.toLowerCase() !== this.page.toLowerCase();
-          const notUserChat    = message.channel.toLowerCase() !== this.username.toLowerCase();
-          if ( notCurrentChat && notUserChat ) return;
-        }
-
-        // Highlight username tags in new messages
-        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
-        message.message = message.message.replace(pattern, `<span class="highlight">$&</span>`);
-
-        // For Text to Speech
-        const currentChat = message.channel.toLowerCase() === this.username.toLowerCase();
-        const myChat      = message.channel.toLowerCase() === this.page.toLowerCase();
-        if ( currentChat || myChat ) this.speak(message.message, message.username); // Say Message
-
-        this.messages.push({ ...{ channel: 'null', id: Date.now() }, ...message });
-        await this.$nextTick( async () => await this.scrollToBottom() );
-      },//*/
 
       async rcvMessageBulk ( messages ) {
         if ( !this.enable ) return;
@@ -675,6 +537,14 @@
               if ( !exists ) {
                 this.ignoreList.push( argument );
                 localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+                this.messages.push({
+                  timestamp: Date.now(),
+                  username: '[bitwave.tv]',
+                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                  message: `Ignored User: ${argument}`,
+                  channel: this.page,
+                });
+                this.$nextTick( () => this.scrollToBottom() );
               }
               break;
             case 'unignore':
@@ -682,9 +552,27 @@
               if ( location !== -1 ) {
                 this.ignoreList.splice( location, 1 );
                 localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+                this.messages.push({
+                  timestamp: Date.now(),
+                  username: '[bitwave.tv]',
+                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                  message: `Unignored User: ${argument}`,
+                  channel: this.page,
+                });
+                this.$nextTick( () => this.scrollToBottom() );
               } else {
                 console.log( `User not found: '${argument}'` );
               }
+              break;
+            case 'ignorelist':
+              this.messages.push({
+                timestamp: Date.now(),
+                username: '[bitwave.tv]',
+                avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                message: `Ignored Users: ${this.ignoreList.join(', ')}`,
+                channel: this.page,
+              });
+              this.$nextTick( () => this.scrollToBottom() );
               break;
             case 'skip':
             case    's':
@@ -853,15 +741,9 @@
         _username: 'username',
       }),
 
-      ...mapGetters('chat', {
-        viewerCount: 'viewerCount',
-      }),
-
       ...mapState ('chat', {
         getModeGlobal: 'global',
         getModeTimestamps: 'timestamps',
-        viewers: 'viewerList',
-        channelViews: 'roomViewerList',
       }),
 
       global: {
@@ -892,9 +774,6 @@
         return this.voicesListTTS.map( ( voice, index ) => { return { text: voice.name, value: index } } );
       },
 
-      viewerList () {
-        return this.showViewers ? this.viewers : [];
-      },
     },
 
     created() {
