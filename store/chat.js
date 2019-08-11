@@ -23,12 +23,12 @@ export const mutations = {
   },
 
   SET_TIMESTAMPS ( state, data ) {
-    state.timestamps = JSON.parse(data);
+    state.timestamps = JSON.parse( data );
     localStorage.setItem( 'showtimestamps', data );
   },
 
   SET_MODE_GLOBAL ( state, data ) {
-    state.global = JSON.parse(data);
+    state.global = JSON.parse( data );
     localStorage.setItem( 'globalchat', data );
   },
 
@@ -43,25 +43,25 @@ export const mutations = {
 
 
 export const actions = {
-  CONNECT ({ dispatch, commit, state }, data) {
-    commit('SET_ROOM', data);
+  CONNECT ( { dispatch, commit, state }, data ) {
+    commit( 'SET_ROOM', data );
   },
 
-  UPDATE_VIEWERLIST ({ dispatch, commit, state }, data) {
+  UPDATE_VIEWERLIST ( { dispatch, commit, state }, data ) {
 
     // Create list of unique viewers in each channel
-    const roomViewerList = data.reduce( (accumulator, user) => {
+    const roomViewerList = data.reduce( ( accumulator, user ) => {
       let username = user.username;
       let channel  = user.page ? user.page.watch || user.page : 'global' ;
 
       if ( !channel ) return accumulator;
       if ( typeof(channel) === 'string' ) channel = channel.toLowerCase();
 
-      if (username) username = username.toLowerCase();
+      if ( username ) username = username.toLowerCase();
 
       if ( channel in accumulator ) {
         if ( username in accumulator[channel] ) {
-          accumulator[channel][username].push(user);
+          accumulator[channel][username].push( user );
         } else {
           accumulator[channel][username] = [ user ];
           accumulator[channel].total++;
@@ -73,16 +73,16 @@ export const actions = {
       }
       return accumulator;
     }, {});
-    commit('SET_ROOM_VIEWERLIST', roomViewerList);
+    commit( 'SET_ROOM_VIEWERLIST', roomViewerList );
 
 
     // Create unique list of users globally
     const key = 'username';
-    const viewerList = data.reduce( (accumulator, current) => {
-      if (!accumulator.find( obj => obj[key] === current[key] )) accumulator.push(current);
+    const viewerList = data.reduce( ( accumulator, current ) => {
+      if ( !accumulator.find( obj => obj[key] === current[key] ) ) accumulator.push( current );
       return accumulator;
     }, []);
-    commit('SET_VIEWERLIST', viewerList);
+    commit( 'SET_VIEWERLIST', viewerList );
 
   },
 };

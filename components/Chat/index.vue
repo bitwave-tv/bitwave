@@ -398,8 +398,8 @@
 
   import socketio from 'socket.io-client'
 
-  import ChatPoll from '@/components/Chat/ChatPoll';
-  import ChatPollVote from '@/components/Chat/ChatPollVote';
+  import ChatPoll from '@/components/Chat/ChatPoll'
+  import ChatPollVote from '@/components/Chat/ChatPollVote'
 
   import { mapState, mapMutations, mapActions } from 'vuex'
 
@@ -482,16 +482,16 @@
     },
 
     methods: {
-      addUserTag (user) {
+      addUserTag ( user ) {
         this.message = `${this.$refs['chatmessageinput'].value}@${user} `;
         this.$refs['chatmessageinput'].focus();
       },
 
-      authenticated (user) {
-        if (user) {
-          this.subscribeToUser(user.uid);
+      authenticated ( user ) {
+        if ( user ) {
+          this.subscribeToUser( user.uid );
         } else {
-          if (this.unsubscribeUser) this.unsubscribeUser();
+          if ( this.unsubscribeUser ) this.unsubscribeUser();
           const trollUser = {
             type     : 'troll',
             username : `troll:${this.uid}`,
@@ -500,25 +500,25 @@
             uid      : this.uid,
             page     : this.page,
           };
-          this.connectChat(trollUser);
+          this.connectChat( trollUser );
         }
         this.loading = false;
       },
 
-      subscribeToUser (uid) {
-        const userdocRef = db.collection('users').doc(uid);
+      subscribeToUser ( uid ) {
+        const userdocRef = db.collection( 'users' ).doc( uid );
         this.unsubscribeUser = userdocRef.onSnapshot( doc => {
           const user = doc.data();
           user.page  = this.page;
-          this.connectChat(user);
+          this.connectChat( user );
         });
       },
 
-      subscribeToPoll (channel) {
+      subscribeToPoll ( channel ) {
         channel = channel.toLowerCase();
-        const pollDocRef = db.collection('polls').where('channel', '==', channel).limit(1);
+        const pollDocRef = db.collection( 'polls' ).where( 'channel', '==', channel ).limit( 1 );
         this.unsubscribePoll = pollDocRef.onSnapshot( result => {
-          if (result.empty) return;
+          if ( result.empty ) return;
 
           const doc = result.docs[0];
 
@@ -529,7 +529,7 @@
         });
       },
 
-      async scrollToBottom (force) {
+      async scrollToBottom ( force ) {
         const scrollTop    = this.chatContainer.scrollTop;
         const scrollHeight = this.chatContainer.scrollHeight;
 
@@ -549,13 +549,13 @@
         }
       },
 
-      connectChat (user) {
-        if (this.socket) {
+      connectChat ( user ) {
+        if ( this.socket) {
           this.socket.disconnect();
         }
 
-        if (!user) {
-          console.warn(`Failed to connect to chat. No user defined.`);
+        if ( !user ) {
+          console.warn( `Failed to connect to chat. No user defined.` );
           return;
         }
 
@@ -564,41 +564,41 @@
         // const socket = socketio('api.bitwave.tv:443', { transports: ['websocket'] });
         // const socket = socketio('api.bitwave.tv:443');
 
-        this.socket.on( 'connect', () => this.socket.emit('new user', user) );
-        this.socket.on( 'update usernames', async data => await this.updateViewerlist(data) );
+        this.socket.on( 'connect', () => this.socket.emit( 'new user', user ) );
+        this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
-        this.socket.on( 'hydrate', async data => await this.hydrate(data) );
+        this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
         // this.socket.on( 'message', async data => await this.rcvMessage(data) );
-        this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk(data) );
+        this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
         this.socket.on( 'blocked',   data => this.message = data.message );
-        this.socket.on( 'pollstate', data => this.updatePoll(data) );
+        this.socket.on( 'pollstate', data => this.updatePoll( data ) );
 
       },
 
-      async hydrate (data) {
-        await this.socket.emit('hydratepoll', this.pollData.id);
+      async hydrate ( data ) {
+        await this.socket.emit( 'hydratepoll', this.pollData.id );
         if ( !data ) {
-          console.log('Failed to receive hydration data');
+          console.log( 'Failed to receive hydration data' );
           return;
         }
         const size = data.length;
         if ( !size ) {
-          console.log('Hydration data was empty');
+          console.log( 'Hydration data was empty' );
           return;
         }
 
         // Filter by channel
         if ( !this.global && !this.forceGlobal ) {
-          data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
+          data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
         }
 
-        this.messages = size > 100 ? data.splice(-this.chatLimit) : data;
-        await this.$nextTick( async () => await this.scrollToBottom(true) );
+        this.messages = size > 100 ? data.splice( -this.chatLimit ) : data;
+        await this.$nextTick( async () => await this.scrollToBottom( true ) );
         // re-highlight username mentions on hydration
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         this.messages.forEach( msg => {
-          msg.message = msg.message.replace(pattern, `<span class="highlight">$&</span>`);
+          msg.message = msg.message.replace( pattern, `<span class="highlight">$&</span>` );
         });
       },
 
@@ -629,23 +629,23 @@
         await this.$nextTick( async () => await this.scrollToBottom() );
       },//*/
 
-      async rcvMessageBulk (messages) {
+      async rcvMessageBulk ( messages ) {
         if ( !this.enable ) return;
 
         // Remove ignored user messages
-        if(this.useIgnoreListForChat){
+        if ( this.useIgnoreListForChat ){
           messages = messages.filter( el => !this.ignoreList.includes( el.username ) );
         }
 
         // Filter by channel
         if ( !this.global && !this.forceGlobal ) {
-          messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase())  );
+          messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
         }
 
-        const pattern = new RegExp(`@${this.username}\\b`, 'gi' );
+        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         messages.forEach( el => {
           // Highlight username tags in new messages
-          el.message = el.message.replace(pattern, `<span class="highlight">$&</span>`);
+          el.message = el.message.replace( pattern, `<span class="highlight">$&</span>` );
 
           // For Text to Speech
           const currentChat = el.channel.toLowerCase() === this.username.toLowerCase();
@@ -653,35 +653,35 @@
           if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
 
           // Add message to list
-          this.messages.push({ ...{ id: Date.now() }, ...el });
+          this.messages.push( { ...{ id: Date.now() }, ...el } );
         });
 
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
       sendMessage () {
-        if (this.message.length > 300) return false;
+        if ( this.message.length > 300 ) return false;
 
-        const match = /^\/(\w+)\s?(\w+)?/g.exec(this.message);
-        const parts = this.message.split(' ');
+        const match = /^\/(\w+)\s?(\w+)?/g.exec( this.message );
+        const parts = this.message.split( ' ' );
 
-        if (match) {
+        if ( match ) {
           const command  = match[1].toLowerCase();
           const argument = parts[1]; //match[2];
 
-          switch (command) {
+          switch ( command ) {
             case 'ignore':
               const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
-              if (!exists) {
-                this.ignoreList.push(argument);
+              if ( !exists ) {
+                this.ignoreList.push( argument );
                 localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
               }
               break;
             case 'unignore':
               const location = this.ignoreList.findIndex( el => el.toLowerCase() === argument.toLowerCase() );
-              if (location !== -1) {
+              if ( location !== -1 ) {
                 this.ignoreList.splice( location, 1 );
-                localStorage.setItem( 'ignorelist', JSON.stringify(this.ignoreList) );
+                localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
               } else {
                 console.log( `User not found: '${argument}'` );
               }
@@ -703,38 +703,38 @@
             message: this.message,
             channel: this.page,
           };
-          this.socket.emit('message', msg);
+          this.socket.emit( 'message', msg );
         }
         this.lastMessage = this.message;
         this.message = '';
       },
 
-      lastMessageHandler (event) {
-        if (!event.srcElement.value) {
-          if (event.keyCode == 38) {
+      lastMessageHandler ( event ) {
+        if ( !event.srcElement.value ) {
+          if ( event.keyCode == 38 ) {
             this.message = this.lastMessage;
           } else {
             this.message = '';
           }
         }
 
-        if(event.type === "cut") {
-          setTimeout(() => {
-            if (!event.srcElement.value) {
+        if ( event.type === "cut" ) {
+          setTimeout( () => {
+            if ( !event.srcElement.value ) {
               this.message = '';
             }
-          }, 20);
+          }, 20 );
         }
       },
 
       setupTrollData () {
-        let uid   = localStorage.getItem('tuid');
-        let color = localStorage.getItem('tcolor');
-        if (!uid || !color) {
+        let uid   = localStorage.getItem( 'tuid' );
+        let color = localStorage.getItem( 'tcolor' );
+        if ( !uid || !color ) {
           uid   = [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
-          color = `hsl( ${Math.round(256 * Math.random())},75%,50%,1)`;
-          localStorage.setItem('tuid'  , uid  );
-          localStorage.setItem('tcolor', color);
+          color = `hsl( ${Math.round( 256 * Math.random() )},75%,50%,1)`;
+          localStorage.setItem( 'tuid'  , uid   );
+          localStorage.setItem( 'tcolor', color );
         }
         this.uid   = uid;
         this.color = color
@@ -747,20 +747,20 @@
 
         function unescapeHtml(unsafe) {
           return unsafe
-            .replace(/&amp;/g,  `&`)
-            .replace(/&lt;/g,   `<`)
-            .replace(/&gt;/g,   `>`)
-            .replace(/&quot;/g, `"`)
-            .replace(/&#39;/g,  `'`)
+            .replace( /&amp;/g,  `&` )
+            .replace( /&lt;/g,   `<` )
+            .replace( /&gt;/g,   `>` )
+            .replace( /&quot;/g, `"` )
+            .replace( /&#39;/g,  `'` )
         }
 
         message = unescapeHtml( message ); // Fixes escaped characters
 
         // Remove html tags
-        message = message.replace(/<\/?[^>]*>/g, '');
+        message = message.replace( /<\/?[^>]*>/g, '' );
 
         // Remove Links
-        message = message.replace(/((https?:\/\/)|(www\.))[^\s]+/gi, '');
+        message = message.replace( /((https?:\/\/)|(www\.))[^\s]+/gi, '' );
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
@@ -770,7 +770,7 @@
         voice.text  = message;
 
         voice.onend = function(e) {
-          console.log(`Finished in ${e.elapsedTime} seconds.`, e);
+          console.log( `Finished in ${e.elapsedTime} seconds.`, e );
         };
 
         speechSynthesis.speak(voice);
@@ -784,9 +784,9 @@
 
       // POLL FUNCTIONS -> SOCKET
       //-------------------------
-      async createPoll (poll) {
+      async createPoll ( poll ) {
         if ( this.pollData.id ) {
-          const pollDocRef = db.collection('polls').doc(this.pollData.id);
+          const pollDocRef = db.collection( 'polls' ).doc( this.pollData.id );
           const data = {
             display: true,
             endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
@@ -803,35 +803,35 @@
             owner: this.user.uid,
             title: poll.title,
           };
-          this.pollData.id = await db.collection('polls').add(data);
+          this.pollData.id = await db.collection( 'polls' ).add( data );
         }
       },
 
       // Add user vote to poll with matching poll id
-      votePoll (vote) {
+      votePoll ( vote ) {
         // should pass option number & poll id
-        this.socket.emit('votepoll', { id: this.pollData.id, vote: vote })
+        this.socket.emit( 'votepoll', { id: this.pollData.id, vote: vote } )
       },
 
       // Change end time to now to end poll instantly
-      async endPoll (pollId) {
+      async endPoll ( pollId ) {
         // this.socket.emit('endpoll', pollId)
 
-        const pollDocRef = db.collection('polls').doc(this.pollData.id);
-        await pollDocRef.update( 'endsAt', new Date(Date.now()) );
+        const pollDocRef = db.collection( 'polls' ).doc( this.pollData.id );
+        await pollDocRef.update( 'endsAt', new Date( Date.now() ) );
       },
 
-      async destroyPoll (pollId) {
-        const pollRef = db.collection('polls').doc(pollId);
-        await pollRef.update({ 'display': false, 'options': null });
+      async destroyPoll ( pollId ) {
+        const pollRef = db.collection( 'polls' ).doc( pollId );
+        await pollRef.update( { 'display': false, 'options': null } );
       },
 
-      async updatePoll (data) {
+      async updatePoll ( data ) {
         this.pollData.options = data.options;
-        this.pollData.voters = data.voters;
+        this.pollData.voters  = data.voters;
       },
 
-      getTime (timestamp) { return this.showTimestamps ? `[${moment(timestamp).format('HH:mm')}]` : ''; },
+      getTime ( timestamp ) { return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : ''; },
 
       toggleUseIgnore () { localStorage.setItem( 'useignore', this.useIgnoreListForChat ); },
 
@@ -851,7 +851,6 @@
         _username: 'username',
       }),
 
-
       ...mapGetters('chat', {
         viewerCount: 'viewerCount',
       }),
@@ -860,16 +859,16 @@
         getModeGlobal: 'global',
         getModeTimestamps: 'timestamps',
         viewers: 'viewerList',
-        channelViews: 'roomViewerList'
+        channelViews: 'roomViewerList',
       }),
 
       global: {
-        set (val) { this.setModeGlobal(val) },
+        set ( val ) { this.setModeGlobal( val ) },
         get () { return this.getModeGlobal }
       },
 
       showTimestamps: {
-        set (val) { this.setModeTimestamps(val) },
+        set ( val ) { this.setModeTimestamps( val ) },
         get () { return this.getModeTimestamps }
       },
 
@@ -878,7 +877,7 @@
       page () {
         let channel = this.chatChannel;
         if (channel) {
-          if (channel.match(/^[a-zA-Z0-9._-]+$/))
+          if ( channel.match( /^[a-zA-Z0-9._-]+$/ ) )
             return channel;
           else
             return '404';
@@ -888,7 +887,7 @@
       },
 
       voices () {
-        return this.voicesListTTS.map( (voice, index) => { return { text: voice.name, value: index } } );
+        return this.voicesListTTS.map( ( voice, index ) => { return { text: voice.name, value: index } } );
       },
 
       viewerList () {
@@ -897,7 +896,7 @@
     },
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     mounted() {
@@ -909,49 +908,49 @@
       this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
 
       try {
-        let ignores = localStorage.getItem('ignorelist');
-        if ( ignores ) this.ignoreList = JSON.parse(ignores);
-      } catch (e) {
-        console.log('No ignore list found.');
+        let ignores = localStorage.getItem( 'ignorelist' );
+        if ( ignores ) this.ignoreList = JSON.parse( ignores );
+      } catch ( error ) {
+        console.log( 'No ignore list found.' );
       }
 
       try {
-        let useIgnore = localStorage.getItem('useignore');
+        let useIgnore = localStorage.getItem( 'useignore' );
         if ( useIgnore ) this.useIgnoreListForChat = useIgnore;
-      } catch (e) {
-        console.log('No useIgnore option found.');
+      } catch ( error ) {
+        console.log( 'No useIgnore option found.' );
       }
 
       try {
-        const showTimestamps = localStorage.getItem('showtimestamps');
+        const showTimestamps = localStorage.getItem( 'showtimestamps' );
         if ( !!showTimestamps ) this.showTimestamps = showTimestamps;
         else this.showTimestamps = true;
-      } catch (e) {
-        console.log('No showTimestamps option found.');
+      } catch ( error ) {
+        console.log( 'No showTimestamps option found.' );
         this.showTimestamps = true;
       }
 
       try {
-        const global = localStorage.getItem('globalchat');
+        const global = localStorage.getItem( 'globalchat' );
 
         if ( !!global ) this.setModeGlobal( global );
         else this.setModeGlobal( false );
 
-      } catch (e) {
-        console.log('No showTimestamps option found.');
+      } catch ( error ) {
+        console.log( 'No showTimestamps option found.' );
         this.setModeGlobal( true );
       }
 
       try {
-        let tts = localStorage.getItem('tts');
+        let tts = localStorage.getItem( 'tts' );
         // if ( tts ) this.useTTS = tts;
-      } catch (e) {
-        console.log('No tts option found.');
+      } catch ( error ) {
+        console.log( 'No tts option found.' );
       }
 
       if ( this.enable ) {
         // this.useTTS = false;
-        this.subscribeToPoll(this.page);
+        this.subscribeToPoll( this.page );
       }
 
       /*if (this.query.tts === true) {

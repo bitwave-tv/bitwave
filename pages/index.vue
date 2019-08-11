@@ -185,10 +185,10 @@
 
 <script>
   // videojs
-  import videojs from 'video.js';
-  import 'videojs-contrib-dash';
+  import videojs from 'video.js'
+  import 'videojs-contrib-dash'
   import Chat from '~/components/Chat'
-  import StreamGrid from '@/components/StreamGrid';
+  import StreamGrid from '@/components/StreamGrid'
 
   export default {
     head() {
@@ -245,7 +245,7 @@
 
     async asyncData({ $axios }) {
       const host =  'https://api.bitwave.tv';
-      const { data } = await $axios.get(`${host}/api/sources/list`);
+      const { data } = await $axios.get( `${host}/api/sources/list` );
       return {
         live: data.live,
       };

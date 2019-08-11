@@ -180,13 +180,13 @@
 
         rules: {
           required: value => !!value || 'Required.',
-          min: value => (value && value.length >= 8) || 'Min 8 characters',
+          min: value => ( value && value.length >= 8 ) || 'Min 8 characters',
           name: v => !!v || 'Name is required',
           email: [
             v => !!v || 'Email is required',
             v => /.+@.+/.test(v) || 'E-mail must be valid',
           ],
-          emailMatch: () => (`The email and password you entered don't match`),
+          emailMatch: () => ( `The email and password you entered don't match` ),
         },
 
       }
@@ -202,80 +202,80 @@
       },
 
       // Create User
-      async createUser(username, email, password) {
+      async createUser( username, email, password ) {
         if ( !this.$refs.loginForm.validate() ) return;
 
         this.loading = true;
 
         // Verify Username is valid and not taken
         try {
-          const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: username });
-          if (!checkUsername.valid) {
-            this.showError(checkUsername.error);
+          const checkUsername = await this.$axios.$post( 'https://api.bitwave.tv/api/check-username', { username: username } );
+          if ( !checkUsername.valid ) {
+            this.showError( checkUsername.error );
             this.loading = false;
             return;
           }
-        } catch (error) {
-          console.log(error);
-          this.showError(error);
+        } catch ( error ) {
+          console.log( error );
+          this.showError( error );
           this.loading = false;
           return;
         }
 
         try {
-          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          const userCredential = await auth.createUserWithEmailAndPassword( email, password );
           await userCredential.user.updateProfile({
             displayName: username,
           });
-          console.log(`[LOGIN] User Cred: ${userCredential}`);
+          console.log( `[LOGIN] User Cred: ${userCredential}` );
           const userId = userCredential.user.uid;
-          const docRef = await db.collection('users').doc(userId).set({
+          const docRef = await db.collection( 'users' ).doc( userId ).set({
             _username: username.toLowerCase(),
             uid: userId,
             username: username,
             email: email,
           });
-          console.log(docRef);
-          this.showSuccess('User Created!');
-        } catch (error) {
-          this.showError(error.message);
-          console.log(error.message);
+          console.log( docRef );
+          this.showSuccess( 'User Created!' );
+        } catch ( error ) {
+          this.showError( error.message );
+          console.log( error.message );
           this.loading = false;
         }
       },
 
       // Sign In
-      async signIn(email, password) {
-        if (!this.$refs.loginForm.validate()) return;
+      async signIn( email, password ) {
+        if ( !this.$refs.loginForm.validate() ) return;
 
         this.loading = true;
         try {
-          await auth.setPersistence(this.shouldStayLoggedIn ? 'local' : 'session'); // firebase.auth.Auth.Persistence.SESSION
-          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+          await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
+          const userCredential = await auth.signInWithEmailAndPassword( email, password );
 
-          if (process.client)
-            console.log(`%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user);
+          if ( process.client )
+            console.log( `%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user );
           else
-            console.log('Login.vue: Signing in...', userCredential.user);
-        } catch (error) {
-          this.showError(error.message);
-          console.log(error.message);
+            console.log( 'Login.vue: Signing in...', userCredential.user );
+        } catch ( error ) {
+          this.showError( error.message );
+          console.log( error.message );
           this.loading = false;
         }
       },
 
-      async resetPassword(email) {
+      async resetPassword( email ) {
         try {
-          await auth.sendPasswordResetEmail(email);
-          this.showSuccess('Check email for reset link.');
-        } catch (error) {
-          this.showError(error.message);
+          await auth.sendPasswordResetEmail( email );
+          this.showSuccess( 'Check email for reset link.' );
+        } catch ( error ) {
+          this.showError( error.message );
         }
       },
 
       validate () {
-        if (this.$refs.form.validate()) {
-          this.showError('Please fix errors highlighted in red.');
+        if ( this.$refs.form.validate() ) {
+          this.showError( 'Please fix errors highlighted in red.' );
         }
       },
 
@@ -288,34 +288,34 @@
         this.hideAlert();
       },
 
-      async authenticated(user) {
-        if (user) {
-          if (process.client)
-            console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+      async authenticated( user ) {
+        if ( user ) {
+          if ( process.client )
+            console.log( `%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
           else
-            console.log('Login: Logged in!', user);
+            console.log( 'Login: Logged in!', user );
 
-          if (user.displayName) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
+          if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
 
-          await this.$store.dispatch('login', user);
+          await this.$store.dispatch( 'login', user );
 
           // setTimeout( () => this.$router.push('/profile'), 1500 );
           setTimeout( () => this.show = false, 1500 );
         } else {
-          if (process.client)
+          if ( process.client )
             console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
           else
             console.log('Login: Not logged in.');
         }
       },
 
-      showError(message) {
+      showError( message ) {
         this.alertType = 'error';
         this.alert = true;
         this.alertMessage = message;
       },
 
-      showSuccess(message) {
+      showSuccess( message ) {
         this.alertType = 'success';
         this.alert = true;
         this.alertMessage = message;
@@ -328,7 +328,7 @@
     computed: {},
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
   }
 </script>

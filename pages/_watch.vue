@@ -128,15 +128,15 @@
         title: `${this.name} - [bitwave.tv]`,
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: (this.desc || '').substring(0, 200) },
+          { name: 'og:description', hid: 'og:description', content: (this.desc || '').substring( 0, 200 ) },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
           { name: 'author',         content: this.name },
-          { name: 'description',    hid: 'description',    content: (this.name || '').substring(0, 200) },
+          { name: 'description',    hid: 'description',    content: (this.name || '').substring( 0, 200 ) },
           { name: 'profile:username',    content: this.name },
           { name: 'twitter:card',        content: 'summary_large_image' },
           { name: 'twitter:site',        content: '@BitwaveTV' },
-          { name: 'twitter:title',       content: ( this.title || '' ).substring(0,  70) },
-          { name: 'twitter:description', content: ( this.desc  || '' ).substring(0, 200) },
+          { name: 'twitter:title',       content: ( this.title || '' ).substring( 0,  70 ) },
+          { name: 'twitter:description', content: ( this.desc  || '' ).substring( 0, 200 ) },
           { name: 'twitter:image',       content: this.poster },
         ],
       }
@@ -177,11 +177,11 @@
 
         // desktop
         return {
-          position: 'fixed',
-          top: '48px',
-          right: '0',
-          height: 'calc(100vh - 48px)',
-          width: '450px'
+          position : 'fixed',
+          top      : '48px',
+          right    : '0',
+          height   : 'calc(100vh - 48px)',
+          width    : '450px',
         }
       }
     },
@@ -193,7 +193,7 @@
         this.getStreamData();
 
         // Create video.js player
-        this.player = videojs('streamplayer', {
+        this.player = videojs( 'streamplayer', {
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
           plugins: { qualityLevels: {} },
@@ -204,13 +204,13 @@
         this.player.ready( () => {
           // Restore Volume
           try {
-            let volume = localStorage.getItem('volume');
+            let volume = localStorage.getItem( 'volume' );
             if ( volume !== null ) {
-              this.player.volume(volume);
+              this.player.volume( volume );
             }
-          } catch (e) {
+          } catch ( error ) {
             // No volume value in memory
-            console.warn('Failed to find prior volume level');
+            console.warn( 'Failed to find prior volume level' );
           }
         });
 
@@ -219,14 +219,14 @@
         this.player.hlsQualitySelector();
 
         // Listen to change events for when the player selects a new quality level
-        this.qualityLevels.on('change', () => {
-          console.log('Quality Level changed:', this.qualityLevels[this.qualityLevels.selectedIndex]);
+        this.qualityLevels.on( 'change', () => {
+          console.log( 'Quality Level changed:', this.qualityLevels[this.qualityLevels.selectedIndex] );
         });
 
         // Save volume on change
-        this.player.on('volumechange', () => {
+        this.player.on( 'volumechange', () => {
           localStorage.setItem( 'volume', this.player.volume() );
-          localStorage.setItem( 'muted',  this.player.muted() )
+          localStorage.setItem( 'muted',  this.player.muted() );
         });
 
         // Begin playing when new media is loaded
@@ -238,43 +238,43 @@
       trackWatchTime() {
         this.watchDuration += this.watchInterval;
         this.$ga.event({
-          eventCategory: 'stream',
-          eventAction: 'watch-time',
-          eventLabel: this.name,
-          eventValue: this.watchDuration / 60,
+          eventCategory : 'stream',
+          eventAction   : 'watch-time',
+          eventLabel    : this.name,
+          eventValue    : this.watchDuration / 60,
         });
         this.$ga.event({
-          eventCategory: 'stream',
-          eventAction: 'watch-interval',
-          eventLabel: this.name,
-          eventValue: this.watchInterval / 60,
+          eventCategory : 'stream',
+          eventAction   : 'watch-interval',
+          eventLabel    : this.name,
+          eventValue    : this.watchInterval / 60,
         });
-        console.debug(`Watch Time: ${this.watchDuration}s on ${this.name}`);
+        console.debug( `Watch Time: ${this.watchDuration}s on ${this.name}` );
       },
 
       getRandomBump() {
         // random id between 1 and 29
-        const id = (Math.floor(Math.random() * 29) + 1).toString().padStart(2, '0');
+        const id = ( Math.floor( Math.random() * 29 ) + 1 ).toString().padStart( 2, '0' );
         return `https://cdn.bitwave.tv/static/bumps/Bump${id}-sm.mp4`;
       },
 
       playerDispose(){
-        if (this.player) this.player.dispose();
+        if ( this.player ) this.player.dispose();
       },
 
       getStreamData () {
         const streamer = this.name.toLowerCase();
-        const streamRef = db.collection('streams').doc(streamer);
-        this.streamDataListener = streamRef.onSnapshot( async doc => await this.streamDataChanged( doc.data() ), error => console.warn(error) );
+        const streamRef = db.collection( 'streams' ).doc( streamer );
+        this.streamDataListener = streamRef.onSnapshot( async doc => await this.streamDataChanged( doc.data() ), error => console.warn( error ) );
       },
 
-      async streamDataChanged (data) {
+      async streamDataChanged ( data ) {
         // Grab Stream Data
         this.title = data.title;
         this.desc  = data.description;
         this.nsfw  = data.nsfw;
 
-        console.log(`Stream Metadata Update.`, data);
+        console.log( `Stream Metadata Update.`, data );
 
         const live = data.live;
         const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
@@ -284,16 +284,16 @@
         // this.poster = ( live && thumbnail ) ? thumbnail : this.poster;
 
         // Detect user going live
-        if (!this.live && live) {
+        if ( !this.live && live ) {
           this.live = live;
           // Load and Play stream
-          this.player.src({ src: url, type: type });
+          this.player.src( { src: url, type: type } );
           // this.player.load();
           this.reloadPlayer();
         }
 
         // Detect source change
-        if (this.url !== url  || this.type !== type) {
+        if ( this.url !== url  || this.type !== type ) {
           this.url  = url;
           this.type = type;
 
@@ -307,12 +307,12 @@
         this.live = live;
       },
 
-      async verifyChannel (user) {
+      async verifyChannel ( user ) {
         try {
-          const {data} = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
+          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
           return data.name;
-        } catch (error) {
-          console.log(`Channel ${user} does not exist`);
+        } catch ( error ) {
+          console.log( `Channel ${user} does not exist` );
           return null;
         }
       },
@@ -320,17 +320,17 @@
       reloadPlayer () {
         if ( !this.initialized ) return;
         this.player.reset();
-        this.player.src({ src: this.url, type: this.type });
-        if (this.poster) this.player.poster = this.poster;
+        this.player.src( { src: this.url, type: this.type } );
+        if ( this.poster ) this.player.poster = this.poster;
         this.player.load();
-        console.log('Player reloaded');
+        console.log( 'Player reloaded' );
       },
     },
 
-    async asyncData ({ $axios, params }) {
+    async asyncData ( { $axios, params } ) {
       const user = params.watch;
       try {
-        const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
+        const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
 
         const name   = data.name   || 'No Username';
         const title  = data.title  || 'No Title';
@@ -348,56 +348,56 @@
 
         return { name, title, desc, poster, live, nsfw, url, type };
 
-      } catch (error) {
-        console.log(`ERROR: Failed to find user ${user}`);
-        console.error(error.message);
+      } catch ( error ) {
+        console.log( `ERROR: Failed to find user ${user}` );
+        console.error( error.message );
 
         return {
-          name: '404 Error',
-          title: '⚠ 404 - STREAM NOT FOUND ⚠',
-          desc: 'Invalid Stream',
-          poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
-          live: false,
-          nsfw: false,
-          url: '',
-          type: '',
+          name   : '404 Error',
+          title  : '⚠ 404 - STREAM NOT FOUND ⚠',
+          desc   : 'Invalid Stream',
+          poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
+          live   : false,
+          nsfw   : false,
+          url    : '',
+          type   : '',
         }
       }
     },
 
-    async validate ({ params, query, store, $axios }) {
+    async validate ( { params, query, store, $axios } ) {
       const user = params.watch;
-      if (!user.match(/^[a-zA-Z0-9._-]+$/)) {
+      if ( !user.match( /^[a-zA-Z0-9._-]+$/ ) ) {
         return false;
       }
-      const { data } = await $axios.get(`https://api.bitwave.tv/api/channel/${user}`);
+      const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
       return !!data.name;
     },
 
-    beforeRouteUpdate (to, from, next) {
+    beforeRouteUpdate ( to, from, next ) {
       const params = to.params;
-      if (params) console.log(`Watching: ${params.watch}`);
+      if ( params ) console.log( `Watching: ${params.watch}` );
       next();
     },
 
     async mounted() {
 
-      if (this.live)
+      if ( this.live )
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
-      else if (this.name !== '404')
-        console.log(`${this.name} is offline.`);
+      else if ( this.name !== '404' )
+        console.log( `${this.name} is offline.` );
 
-      if (process.client) {
+      if ( process.client ) {
         this.$nextTick( () => {
           this.playerInitialize();
-          console.debug('video.js:', this.player);
+          console.debug( 'video.js:', this.player );
         });
       }
     },
 
     beforeDestroy() {
-      if (this.streamDataListener) this.streamDataListener();
-      if (this.watchTimer) clearInterval(this.watchTimer);
+      if ( this.streamDataListener ) this.streamDataListener();
+      if ( this.watchTimer ) clearInterval( this.watchTimer );
       this.playerDispose();
     },
   }

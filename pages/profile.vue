@@ -324,15 +324,15 @@
     methods: {
       async logout() {
         await auth.signOut();
-        this.$router.push('/signout');
+        this.$router.push( '/signout' );
       },
 
-      async authenticated(user) {
-        if (user) {
-          console.log(`[profile] User:`, user);
-          if ( !this.user ) await this.$store.dispatch('login', user);
+      async authenticated( user ) {
+        if ( user ) {
+          console.log( `[profile] User:`, user );
+          if ( !this.user ) await this.$store.dispatch( 'login', user );
         } else {
-          this.$router.push('/login');
+          this.$router.push( '/login' );
         }
       },
 
@@ -340,7 +340,7 @@
         this.streamDataLoading = true;
         // const userId = this.user.uid;
         const stream = this.user.username.toLowerCase();
-        const streamRef = db.collection('streams').doc(stream);
+        const streamRef = db.collection( 'streams' ).doc( stream );
         return streamRef.onSnapshot( async doc => {
           this.showStreamInfo = doc.exists;
           if (this.showStreamInfo) await this.streamDataChanged( doc.data() );
@@ -350,53 +350,53 @@
       getProfileData () {
         this.profileDataLoading = true;
         const userId = this.user.uid;
-        const profileRef = db.collection('users').doc(userId);
+        const profileRef = db.collection( 'users' ).doc( userId );
         return profileRef.onSnapshot( async doc => {
           await this.profileDataChanged( doc.data() );
-        }, err => console.log(err) );
+        }, error => console.log( error ) );
       },
 
-      async profileDataChanged (data) {
-        console.log(`[profile] Profile Data Changed:`, data);
+      async profileDataChanged ( data ) {
+        console.log( `[profile] Profile Data Changed:`, data );
         if (data.avatar) this.imageUrl = data.avatar;
         this.streamkey = data.streamkey;
         this.streamData.key = `${this.user.username}?key=${this.streamkey}`;
 
         // rest of profile is managed by store
-        this.$store.commit('setUser', data);
-        this.$store.commit('setUserCookie', data);
+        this.$store.commit( 'setUser', data );
+        this.$store.commit( 'setUserCookie', data );
         this.profileDataLoading = false;
       },
 
       async streamDataChanged (data) {
         console.log(`[profile] Stream Data Changed`, data);
-        this.streamData.title = data.title;
-        this.streamData.nsfw = data.nsfw;
-        this.description = data.description;
+        this.streamData.title  = data.title;
+        this.streamData.nsfw   = data.nsfw;
+        this.description       = data.description;
         this.streamDataLoading = false;
       },
 
       async updateStreamData () {
-        this.saveLoading = true;
-        const title = this.streamData.title;
-        const nsfw = this.streamData.nsfw;
+        this.saveLoading  = true;
+        const title       = this.streamData.title;
+        const nsfw        = this.streamData.nsfw;
         const description = this.description;
-        const stream = this.user.username.toLowerCase();
-        const streamRef = db.collection('streams').doc(stream);
+        const stream      = this.user.username.toLowerCase();
+        const streamRef   = db.collection( 'streams' ).doc( stream );
         await streamRef.update({
           nsfw,
           title,
           description
         });
         this.saveLoading = false;
-        this.showSave = false;
+        this.showSave    = false;
       },
 
       async resetStreamKey () {
         this.keyLoading = true;
-        const key = Math.random().toString(16).substr(2, 9);
+        const key    = Math.random().toString( 16 ).substr( 2, 9 );
         const userId = this.user.uid;
-        const docRef = db.collection('users').doc(userId);
+        const docRef = db.collection( 'users' ).doc( userId );
         await docRef.update({
           streamkey: key,
         });
@@ -405,21 +405,21 @@
       },
 
       async kickStream() {
-        const mode = 'drop';
-        const app = 'live';
-        const user = this.user.username;
+        const mode   = 'drop';
+        const app    = 'live';
+        const user   = this.user.username;
         const server = 'stream.bitwave.tv';
-        const url = `https://${server}/control/${mode}/publisher?app=${app}&name=${user}`;
-        await this.$axios.$get(url);
+        const url    = `https://${server}/control/${mode}/publisher?app=${app}&name=${user}`;
+        await this.$axios.$get( url );
       },
 
       copyToClipboard () {
         const initialState = this.showKey;
-        this.$copyText(this.streamData.key).then( () => {
+        this.$copyText( this.streamData.key ).then( () => {
           this.keyMessage = ['Copied to clipboard'];
           this.$refs['streamkeyinput'].focus();
-        }, (error) => {
-          console.log(error);
+        }, ( error ) => {
+          console.log( error );
           this.keyMessage = 'Failed to copy to clipboard';
         });
 
@@ -436,60 +436,60 @@
 
       onFilePicked(e) {
         const files = e.target.files;
-        if(files[0] !== undefined) {
+        if ( files[0] !== undefined ) {
           this.imageName = files[0].name;
-          if(this.imageName.lastIndexOf('.') <= 0) {
+          if( this.imageName.lastIndexOf('.') <= 0 ) {
             return;
           }
           const fr = new FileReader ();
-          fr.readAsDataURL(files[0]);
+          fr.readAsDataURL( files[0] );
           fr.addEventListener('load', () => {
-            this.imageUrl = fr.result;
+            this.imageUrl  = fr.result;
             this.imageFile = files[0]; // this is an image file that can be sent to server...
-          })
+          });
         } else {
           this.imageName = '';
           this.imageFile = null;
-          this.imageUrl = '';
+          this.imageUrl  = '';
         }
       },
 
       async uploadFile() {
         if ( !this.imageFile ) {
-          this.$refs.image.click ();
+          this.$refs.image.click();
           return false;
         }
         this.uploadingAvatar = true;
         const formData = new FormData();
-        formData.append('upload', this.imageFile);
+        formData.append( 'upload', this.imageFile );
         try {
           // const { data } = await this.$axios.post('http://localhost:4000/upload/image', formData, {
-          const { data } = await this.$axios.post('https://api.bitwave.tv/upload', formData, {
+          const { data } = await this.$axios.post( 'https://api.bitwave.tv/upload', formData, {
             headers: {
               'content-type': 'multipart/formdata',
             },
           });
-          console.log(`Upload successfull.`);
-          console.log(data);
-          this.imageUrl = data.transforms.find(image => image.id === 'thumbnail').location;
-          this.saveUserAvatar(this.imageUrl);
-        } catch (error) {
-          console.log(`Upload failed!`);
-          console.log(error.message);
+          console.log( `Upload successfull.` );
+          console.log( data );
+          this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
+          this.saveUserAvatar( this.imageUrl );
+        } catch ( error ) {
+          console.log( `Upload failed!` );
+          console.log( error.message );
         }
         this.uploadingAvatar = false;
       },
 
-      async saveUserAvatar(url) {
+      async saveUserAvatar( url ) {
         const userId = this.user.uid;
-        const docRef = db.collection('users').doc(userId);
+        const docRef = db.collection( 'users' ).doc( userId );
         await docRef.update({
           avatar: url,
         });
 
-        if (this.showStreamInfo) {
+        if ( this.showStreamInfo ) {
           const stream = this.user.username.toLowerCase();
-          const streamRef = db.collection('streams').doc(stream);
+          const streamRef = db.collection( 'streams' ).doc( stream );
           await streamRef.update({
             'user.avatar': url,
           });
@@ -508,7 +508,7 @@
         return this.user.username || 'null';
       },
       uid() {
-        if (this.$store.state.auth) {
+        if ( this.$store.state.auth ) {
           return this.$store.state.auth.uid;
         } else {
           return null;
@@ -517,14 +517,14 @@
     },
 
     mounted() {
-      auth.onAuthStateChanged( user => this.authenticated(user) );
+      auth.onAuthStateChanged( user => this.authenticated( user ) );
       this.streamDocListener = this.getStreamData();
       this.profileDocListener = this.getProfileData();
     },
 
     beforeDestroy() {
-      if (this.streamDocListener) this.streamDocListener();
-      if (this.profileDocListener) this.profileDocListener();
+      if ( this.streamDocListener ) this.streamDocListener();
+      if ( this.profileDocListener ) this.profileDocListener();
     }
   }
 </script>

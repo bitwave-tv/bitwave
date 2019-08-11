@@ -100,7 +100,7 @@
     },
 
     methods: {
-      authenticated (user) {
+      authenticated ( user ) {
         if ( user ) {
           this.getNotifications( user.uid );
         } else {
@@ -108,20 +108,20 @@
         }
       },
 
-      getNotifications (uid) {
-        console.log(uid);
-        const notificationsRef = db.collection('notifications').doc(uid).collection('alerts');
-        const query = notificationsRef.orderBy('timestamp', 'desc').limit(5);
-        this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications(snapshot) );
+      getNotifications ( uid ) {
+        console.log( uid );
+        const notificationsRef = db.collection( 'notifications' ).doc( uid ).collection( 'alerts' );
+        const query = notificationsRef.orderBy( 'timestamp', 'desc' ).limit( 5 );
+        this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications( snapshot ) );
       },
 
-      updateNotifications (snapshot) {
+      updateNotifications ( snapshot ) {
         let notifications = [];
-        snapshot.forEach(doc => {
+        snapshot.forEach( doc => {
           let data = doc.data();
           let id   = doc.id;
-          notifications.push( { id, ...data} );
-          console.log( { id, ...data} );
+          notifications.push( { id, ...data } );
+          console.log( { id, ...data } );
         });
         this.notifications = notifications;
       },
@@ -142,8 +142,8 @@
 
     computed: {
       ...mapGetters({
-        isAuth: 'isAuth',
-        user: 'user',
+        isAuth : 'isAuth',
+        user   : 'user',
       }),
 
       notificationCount () {
@@ -152,7 +152,7 @@
     },
 
     created () {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     beforeDestroy () {

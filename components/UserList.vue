@@ -118,10 +118,10 @@
 
         items: [
           {
-            icon: 'whatshot', //blur_on // ondemand_video // live_tv
-            size: 32,
-            title: 'Home',
-            to: '/',
+            icon   : 'whatshot', //blur_on // ondemand_video // live_tv
+            size   : 32,
+            title  : 'Home',
+            to     : '/',
           },
         ],
         users: [],
@@ -137,11 +137,11 @@
 
       async updateList() {
         try {
-          const { data } = await axios.get('https://api.bitwave.tv/api/channels/list');
+          const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
           this.users = data.users;
-        } catch (error) {
-          console.error(`ERROR: Failed to update user list.`);
-          console.log(error.message);
+        } catch ( error ) {
+          console.error( `ERROR: Failed to update user list.` );
+          console.log( error.message );
         }
       },
 
@@ -152,11 +152,11 @@
     },
 
     async mounted() {
-      this.userListTimer = setInterval( async () => await this.updateList(), 1000 * this.userUpdateRate );
+      this.userListTimer = setInterval( async () => await this.updateList(), this.userUpdateRate * 1000 );
     },
 
     beforeDestroy() {
-      if (this.userListTimer) clearInterval(this.userListTimer);
+      if ( this.userListTimer ) clearInterval( this.userListTimer );
     },
   }
 </script>

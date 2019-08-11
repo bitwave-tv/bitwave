@@ -125,7 +125,7 @@
               { label: '', votes: 0 },
               { label: '', votes: 0 },
             ];
-            this.$emit('close', true);
+            this.$emit( 'close', true );
           },
 
           createPoll () {
@@ -135,8 +135,8 @@
               options: this.options,
               time: this.time,
             };
-            this.$emit('create', pollOptions);
-            this.$emit('close', true);
+            this.$emit( 'create', pollOptions );
+            this.$emit( 'close', true );
           },
         },
 

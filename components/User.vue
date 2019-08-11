@@ -117,40 +117,40 @@
     data() {
       return {
         unsubscribeUser: null,
-        loading: true,
         profileMenu: false,
+        loading: true,
       }
     },
 
     methods: {
-      async authenticated(user) {
-        if (user) { /* user logged in */ }
+      async authenticated( user ) {
+        if ( user ) { /* user logged in */ }
         this.loading = false;
       },
 
       async logout () {
-        await this.$store.dispatch('logout');
+        await this.$store.dispatch( 'logout' );
       },
     },
 
     computed: {
       ...mapGetters({
-        isAuth: 'isAuth',
-        username: 'username',
-        user: 'user'
+        isAuth   : 'isAuth',
+        username : 'username',
+        user     : 'user',
       }),
 
       avatar () {
-        if (this.user) return this.user.avatar;
+        if ( this.user ) return this.user.avatar;
       }
     },
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     beforeDestroy() {
-      if (this.unsubscribeUser) this.unsubscribeUser();
+      if ( this.unsubscribeUser) this.unsubscribeUser();
     },
   };
 </script>

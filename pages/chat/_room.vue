@@ -35,7 +35,7 @@
     },
 
     mounted() {
-      console.log('mounted chatroom.');
+      console.log( 'mounted chatroom.' );
     }
   }
 </script>

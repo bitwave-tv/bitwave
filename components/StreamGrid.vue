@@ -62,21 +62,21 @@
 
     methods: {
       getData () {
-        const streamRef = db.collection('streams').where('live', '==', true).limit(16);
-        this.streamDataListener = streamRef.onSnapshot( async res => await this.dataChanged( res.docs ), error => console.warn(error) );
+        const streamRef = db.collection( 'streams' ).where( 'live', '==', true ).limit( 16 );
+        this.streamDataListener = streamRef.onSnapshot( async res => await this.dataChanged( res.docs ), error => console.warn( error ) );
       },
 
       async dataChanged( docs ) {
         this.streams = docs.map( doc => {
           const stream = doc.data();
-          const thumbnail = (stream.live ? stream.thumbnail || stream.cover : stream.cover) || stream.cover;
+          const thumbnail = ( stream.live ? stream.thumbnail || stream.cover : stream.cover ) || stream.cover;
           return {
-            title: stream.title,
-            live: stream.live,
-            nsfw: stream.nsfw,
-            owner: stream.owner,
-            thumbnail: thumbnail,
-            user: stream.user.name,
+            title     : stream.title,
+            live      : stream.live,
+            nsfw      : stream.nsfw,
+            owner     : stream.owner,
+            thumbnail : thumbnail,
+            user      : stream.user.name,
           }
         });
         this.loading = false;
@@ -97,7 +97,7 @@
     },
 
     beforeDestroy() {
-      if (this.streamDataListener) this.streamDataListener();
+      if ( this.streamDataListener ) this.streamDataListener();
     },
   }
 </script>
