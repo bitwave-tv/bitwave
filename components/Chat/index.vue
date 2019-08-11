@@ -548,6 +548,16 @@
                 console.log( `User not found: '${argument}'` );
               }
               break;
+            case 'ignorelist':
+              this.messages.push({
+                timestamp: Date.now(),
+                username: '[bitwave.tv]',
+                avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                message: `Ignored Users: ${this.ignoreList.join(', ')}`,
+                channel: this.page,
+              });
+              this.$nextTick( () => this.scrollToBottom() );
+              break;
             case 'skip':
             case    's':
               speechSynthesis.cancel();
