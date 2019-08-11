@@ -537,6 +537,14 @@
               if ( !exists ) {
                 this.ignoreList.push( argument );
                 localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+                this.messages.push({
+                  timestamp: Date.now(),
+                  username: '[bitwave.tv]',
+                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                  message: `Ignored User: ${argument}`,
+                  channel: this.page,
+                });
+                this.$nextTick( () => this.scrollToBottom() );
               }
               break;
             case 'unignore':
@@ -544,6 +552,14 @@
               if ( location !== -1 ) {
                 this.ignoreList.splice( location, 1 );
                 localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+                this.messages.push({
+                  timestamp: Date.now(),
+                  username: '[bitwave.tv]',
+                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                  message: `Unignored User: ${argument}`,
+                  channel: this.page,
+                });
+                this.$nextTick( () => this.scrollToBottom() );
               } else {
                 console.log( `User not found: '${argument}'` );
               }
