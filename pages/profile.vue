@@ -377,6 +377,11 @@
       },
 
       async updateStreamData () {
+        this.$ga.event({
+          eventCategory : 'profile',
+          eventAction   : 'update stream',
+          eventLabel    : this.user.username.toLowerCase(),
+        });
         this.saveLoading  = true;
         const title       = this.streamData.title;
         const nsfw        = this.streamData.nsfw;
@@ -393,6 +398,11 @@
       },
 
       async resetStreamKey () {
+        this.$ga.event({
+          eventCategory : 'profile',
+          eventAction   : 'reset key',
+          eventLabel    : this.user.username.toLowerCase(),
+        });
         this.keyLoading = true;
         const key    = Math.random().toString( 16 ).substr( 2, 9 );
         const userId = this.user.uid;
@@ -481,6 +491,12 @@
       },
 
       async saveUserAvatar( url ) {
+        this.$ga.event({
+          eventCategory : 'profile',
+          eventAction   : 'update avatar',
+          eventLabel    : this.user.username.toLowerCase(),
+        });
+
         const userId = this.user.uid;
         const docRef = db.collection( 'users' ).doc( userId );
         await docRef.update({
@@ -504,9 +520,11 @@
       ...mapGetters({
         user: 'user'
       }),
+
       username() {
         return this.user.username || 'null';
       },
+
       uid() {
         if ( this.$store.state.auth ) {
           return this.$store.state.auth.uid;

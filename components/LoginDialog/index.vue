@@ -205,6 +205,11 @@
       async createUser( username, email, password ) {
         if ( !this.$refs.loginForm.validate() ) return;
 
+        this.$ga.event({
+          eventCategory : 'login',
+          eventAction   : 'register',
+        });
+
         this.loading = true;
 
         // Verify Username is valid and not taken
@@ -248,6 +253,11 @@
       async signIn( email, password ) {
         if ( !this.$refs.loginForm.validate() ) return;
 
+        this.$ga.event({
+          eventCategory : 'login',
+          eventAction   : 'login',
+        });
+
         this.loading = true;
         try {
           await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
@@ -265,6 +275,11 @@
       },
 
       async resetPassword( email ) {
+        this.$ga.event({
+          eventCategory : 'login',
+          eventAction   : 'reset password',
+        });
+
         try {
           await auth.sendPasswordResetEmail( email );
           this.showSuccess( 'Check email for reset link.' );

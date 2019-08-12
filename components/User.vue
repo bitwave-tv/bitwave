@@ -129,6 +129,10 @@
       },
 
       async logout () {
+        this.$ga.event({
+          eventCategory : 'user',
+          eventAction   : 'signout',
+        });
         await this.$store.dispatch( 'logout' );
       },
     },

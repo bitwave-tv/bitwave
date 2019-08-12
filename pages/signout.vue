@@ -28,6 +28,10 @@
 
       methods: {
         async logout() {
+          this.$ga.event({
+            eventCategory : 'signout',
+            eventAction   : 'signout',
+          });
           await this.$store.dispatch('logout');
           setTimeout( () => this.$router.push('/login'), 1500 );
         },

@@ -153,7 +153,7 @@
         qualityLevels: null,
         initialized: false,
         watchDuration: 0,
-        watchInterval: 30,
+        watchInterval: 60,
         lastWatch: null,
         watchTimer: null,
         streamDataListener: null,
