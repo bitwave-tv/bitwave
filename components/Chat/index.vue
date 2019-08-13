@@ -840,11 +840,11 @@
 
     },
 
-    created() {
+    created () {
       auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
-    mounted() {
+    mounted () {
       this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
@@ -904,7 +904,7 @@
       }*/
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       if ( this.unsubscribeUser ) this.unsubscribeUser();
       if ( this.unsubscribePoll ) this.unsubscribePoll();
       if ( this.socket ) this.socket.disconnect();

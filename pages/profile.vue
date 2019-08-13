@@ -322,7 +322,7 @@
     },
 
     methods: {
-      async logout() {
+      async logout () {
         await auth.signOut();
         this.$router.push( '/signout' );
       },
@@ -410,11 +410,11 @@
         await docRef.update({
           streamkey: key,
         });
-        await this.kickStream();
+        await this.kickStream ();
         this.keyLoading = false;
       },
 
-      async kickStream() {
+      async kickStream () {
         const mode   = 'drop';
         const app    = 'live';
         const user   = this.user.username;
@@ -433,18 +433,18 @@
           this.keyMessage = 'Failed to copy to clipboard';
         });
 
-        setTimeout( () => {
+        setTimeout ( () => {
           this.showKey = initialState;
           this.keyMessage = 'Click to reveal key';
           this.$refs['streamkeyinput'].blur();
         }, 3000);
       },
 
-      pickFile() {
+      pickFile () {
         this.$refs.image.click ();
       },
 
-      onFilePicked(e) {
+      onFilePicked (e) {
         const files = e.target.files;
         if ( files[0] !== undefined ) {
           this.imageName = files[0].name;
@@ -464,7 +464,7 @@
         }
       },
 
-      async uploadFile() {
+      async uploadFile () {
         if ( !this.imageFile ) {
           this.$refs.image.click();
           return false;
@@ -490,7 +490,7 @@
         this.uploadingAvatar = false;
       },
 
-      async saveUserAvatar( url ) {
+      async saveUserAvatar ( url ) {
         this.$ga.event({
           eventCategory : 'profile',
           eventAction   : 'update avatar',
@@ -521,11 +521,11 @@
         user: 'user'
       }),
 
-      username() {
+      username () {
         return this.user.username || 'null';
       },
 
-      uid() {
+      uid () {
         if ( this.$store.state.auth ) {
           return this.$store.state.auth.uid;
         } else {
@@ -534,13 +534,13 @@
       },
     },
 
-    mounted() {
+    mounted () {
       auth.onAuthStateChanged( user => this.authenticated( user ) );
       this.streamDocListener = this.getStreamData();
       this.profileDocListener = this.getProfileData();
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       if ( this.streamDocListener ) this.streamDocListener();
       if ( this.profileDocListener ) this.profileDocListener();
     }

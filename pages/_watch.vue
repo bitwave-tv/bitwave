@@ -19,17 +19,18 @@
               :autoplay="live"
               preload="auto"
               data-setup='{ "aspectRatio":"16:9" }'
+              :poster="poster"
             >
               <source
                 v-if="live"
                 :src="url"
                 :type="type"
               >
-              <source
+              <!--<source
                 v-else
                 :src="getRandomBump()"
                 type="video/mp4"
-              >
+              >-->
             </video>
           </v-flex>
         </v-layout>
@@ -123,7 +124,7 @@
   import Chat from '~/components/Chat'
 
   export default {
-    head() {
+    head () {
       return {
         title: `${this.name} - [bitwave.tv]`,
         meta: [
@@ -147,7 +148,7 @@
       Chat,
     },
 
-    data() {
+    data () {
       return {
         player: null,
         qualityLevels: null,
@@ -187,17 +188,14 @@
     },
 
     methods: {
-      playerInitialize(){
-
-        // Get stream data
-        this.getStreamData();
+      playerInitialize () {
 
         // Create video.js player
         this.player = videojs( 'streamplayer', {
           liveui: true,
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
           plugins: { qualityLevels: {} },
-          // poster: this.poster,
+          poster: this.poster,
         });
 
         // Video Player Ready
@@ -233,9 +231,13 @@
         this.player.on( 'loadeddata', () => this.player.play() );
 
         this.initialized = true;
+
+
+        // Get stream data
+        this.getStreamData();
       },
 
-      trackWatchTime() {
+      trackWatchTime () {
         this.watchDuration += this.watchInterval;
         this.$ga.event({
           eventCategory : 'stream',
@@ -252,13 +254,13 @@
         console.debug( `Watch Time: ${this.watchDuration}s on ${this.name}` );
       },
 
-      getRandomBump() {
+      getRandomBump () {
         // random id between 1 and 29
         const id = ( Math.floor( Math.random() * 29 ) + 1 ).toString().padStart( 2, '0' );
         return `https://cdn.bitwave.tv/static/bumps/Bump${id}-sm.mp4`;
       },
 
-      playerDispose(){
+      playerDispose (){
         if ( this.player ) this.player.dispose();
       },
 
@@ -281,25 +283,38 @@
         const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
 
         const thumbnail = data['thumbnail'] || null;
-        // this.poster = ( live && thumbnail ) ? thumbnail : this.poster;
+
+        this.poster =  live ? thumbnail : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
+
+        // Detect offline stream
+        if ( !this.live && !live ) {
+          this.url = this.getRandomBump();
+          this.type = 'video/mp4';
+
+          console.log( 'User is offline' );
+
+          this.reloadPlayer();
+        }
 
         // Detect user going live
-        if ( !this.live && live ) {
+        else if ( !this.live && live ) {
           this.live = live;
+
           // Load and Play stream
-          this.player.src( { src: url, type: type } );
-          // this.player.load();
+          this.url  = url;
+          this.type = type;
+
+          console.log( 'User Going Live' );
+
           this.reloadPlayer();
         }
 
         // Detect source change
-        if ( this.url !== url  || this.type !== type ) {
+        else if ( this.url !== url  || this.type !== type ) {
           this.url  = url;
           this.type = type;
 
-          // Load and Play stream
-          // this.player.src({ src: url, type: type });
-          // this.player.load();
+          console.log( 'Video Source Changed' );
 
           this.reloadPlayer();
         }
@@ -319,10 +334,15 @@
 
       reloadPlayer () {
         if ( !this.initialized ) return;
-        this.player.reset();
+
+        // this.player.reset();
+
+        this.player.poster = this.poster;
+
         this.player.src( { src: this.url, type: this.type } );
-        if ( this.poster ) this.player.poster = this.poster;
-        this.player.load();
+
+        // this.player.load();
+
         console.log( 'Player reloaded' );
       },
     },
@@ -380,7 +400,7 @@
       next();
     },
 
-    async mounted() {
+    async mounted () {
 
       if ( this.live )
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
@@ -395,7 +415,7 @@
       }
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       if ( this.streamDataListener ) this.streamDataListener();
       if ( this.watchTimer ) clearInterval( this.watchTimer );
       this.playerDispose();
