@@ -26,11 +26,11 @@
                 :src="url"
                 :type="type"
               >
-              <!--<source
+              <source
                 v-else
                 :src="getRandomBump()"
                 type="video/mp4"
-              >-->
+              >
             </video>
           </v-flex>
         </v-layout>
@@ -284,16 +284,16 @@
 
         const thumbnail = data['thumbnail'] || null;
 
-        this.poster =  live ? thumbnail : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
+        if ( live ) this.poster = thumbnail;
 
         // Detect offline stream
         if ( !this.live && !live ) {
-          this.url = this.getRandomBump();
-          this.type = 'video/mp4';
+          // this.url = this.getRandomBump();
+          // this.type = 'video/mp4';
 
           console.log( 'User is offline' );
 
-          this.reloadPlayer();
+          // this.reloadPlayer();
         }
 
         // Detect user going live
