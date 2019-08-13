@@ -1,12 +1,14 @@
 
 
 export const state = () => ({
-  room: '',
-  global: false,
-  timestamps: true,
+  room : '',
+  global : false,
+  timestamps : true,
 
-  viewerList: [{name: 'NONE'}],
-  roomViewerList: {},
+  viewerList : [{name: 'NONE'}],
+  roomViewerList : {},
+
+  ignoreList : [],
 });
 
 
@@ -38,6 +40,10 @@ export const mutations = {
 
   SET_ROOM_VIEWERLIST ( state, data ) {
     state.roomViewerList = { ...data };
+  },
+
+  SET_IGNORE_LIST ( state, data ) {
+    state.ignoreList = data;
   },
 };
 

@@ -314,7 +314,6 @@
 
           await this.$store.dispatch( 'login', user );
 
-          // setTimeout( () => this.$router.push('/profile'), 1500 );
           setTimeout( () => this.show = false, 1500 );
         } else {
           if ( process.client )

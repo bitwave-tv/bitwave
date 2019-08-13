@@ -379,9 +379,9 @@
         this.$refs['chatmessageinput'].focus();
       },
 
-      authenticated ( user ) {
+      async authenticated ( user ) {
         if ( user ) {
-          this.subscribeToUser( user.uid );
+          await this.subscribeToUser( user.uid );
         } else {
           if ( this.unsubscribeUser ) this.unsubscribeUser();
           const trollUser = {
@@ -397,12 +397,29 @@
         this.loading = false;
       },
 
-      subscribeToUser ( uid ) {
+      async subscribeToUser ( uid ) {
         const userdocRef = db.collection( 'users' ).doc( uid );
-        this.unsubscribeUser = userdocRef.onSnapshot( doc => {
+        let lastUser = {};
+        this.unsubscribeUser = userdocRef.onSnapshot( async doc => {
           const user = doc.data();
           user.page  = this.page;
-          this.connectChat( user );
+
+          // Save local ignore list to account
+          const ignoreList = doc.get( 'ignoreList' );
+          if ( ignoreList !== undefined ) {
+            this.ignoreList = ignoreList;
+            localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+          } else {
+            await doc.ref.update( 'ignoreList', this.ignoreList );
+          }
+
+          // Check if reconnection required
+          if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username ) {
+            this.connectChat( user );
+          }
+
+          // Record user
+          lastUser = user;
         });
       },
 
@@ -521,7 +538,7 @@
         await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
-      sendMessage () {
+      async sendMessage () {
         if ( this.message.length > 300 ) return false;
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec( this.message );
@@ -533,49 +550,26 @@
 
           switch ( command ) {
             case 'ignore':
-              const exists = this.ignoreList.find( el => el.toLowerCase() === argument.toLowerCase() );
-              if ( !exists ) {
-                this.ignoreList.push( argument );
-                localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
-                this.messages.push({
-                  timestamp: Date.now(),
-                  username: '[bitwave.tv]',
-                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-                  message: `Ignored User: ${argument}`,
-                  channel: this.page,
-                });
-                this.$nextTick( () => this.scrollToBottom() );
-              }
+            case 'i':
+              await this.ignoreUser( argument.toLowerCase() );
               break;
             case 'unignore':
-              const location = this.ignoreList.findIndex( el => el.toLowerCase() === argument.toLowerCase() );
-              if ( location !== -1 ) {
-                this.ignoreList.splice( location, 1 );
-                localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
-                this.messages.push({
+            case 'u':
+              await this.unignoreUser( argument.toLowerCase() );
+              break;
+            case 'ignorelist':
+              await this.rcvMessageBulk([
+                {
                   timestamp: Date.now(),
                   username: '[bitwave.tv]',
                   avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-                  message: `Unignored User: ${argument}`,
+                  message: `Ignored Users: ${this.ignoreList.join(', ')}`,
                   channel: this.page,
-                });
-                this.$nextTick( () => this.scrollToBottom() );
-              } else {
-                console.log( `User not found: '${argument}'` );
-              }
-              break;
-            case 'ignorelist':
-              this.messages.push({
-                timestamp: Date.now(),
-                username: '[bitwave.tv]',
-                avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-                message: `Ignored Users: ${this.ignoreList.join(', ')}`,
-                channel: this.page,
-              });
-              this.$nextTick( () => this.scrollToBottom() );
+                },
+              ]);
               break;
             case 'skip':
-            case    's':
+            case 's':
               speechSynthesis.cancel();
               break;
             case 'w':
@@ -725,9 +719,60 @@
         localStorage.setItem( 'useignore', this.useIgnoreListForChat );
       },
 
+      async ignoreUser ( username ) {
+        const exists = this.ignoreList.find( el => el.toLowerCase() === username.toLowerCase() );
+        if ( !exists ) {
+          this.ignoreList.push( username );
+          localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+          // Save ignore list to profile
+          if ( this.isAuth ) {
+            const userDoc = db.collection( 'users' ).doc( this.user.uid );
+            await userDoc.update( 'ignoreList', this.ignoreList );
+          }
+          // Confirmation Message
+          await this.rcvMessageBulk([
+            {
+              timestamp: Date.now(),
+              username: '[bitwave.tv]',
+              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message: `Ignored User: ${username}`,
+              channel: this.page,
+            },
+          ]);
+        } else {
+          console.log( `User not found: '${username}'` );
+        }
+      },
+
+      async unignoreUser ( username ) {
+        const location = this.ignoreList.findIndex( el => el.toLowerCase() === username.toLowerCase() );
+        if ( location !== -1 ) {
+          this.ignoreList.splice( location, 1 );
+          localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+          // Save ignore list to profile
+          if ( this.isAuth ) {
+            const userDoc = db.collection( 'users' ).doc( this.user.uid );
+            await userDoc.update( 'ignoreList', this.ignoreList );
+          }
+          // Confirmation Message
+          await this.rcvMessageBulk([
+            {
+              timestamp: Date.now(),
+              username: '[bitwave.tv]',
+              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message: `Unignored User: ${username}`,
+              channel: this.page,
+            },
+          ]);
+        } else {
+          console.log( `User not found: '${username}'` );
+        }
+      },
+
       ...mapMutations ('chat', {
         setModeGlobal: 'SET_MODE_GLOBAL',
         setModeTimestamps: 'SET_TIMESTAMPS',
+        setIgnoreList: 'SET_IGNORE_LIST',
       }),
 
       ...mapActions ('chat', {
@@ -737,6 +782,7 @@
 
     computed: {
       ...mapGetters({
+        isAuth: 'isAuth',
         user: 'user',
         _username: 'username',
       }),
@@ -744,6 +790,7 @@
       ...mapState ('chat', {
         getModeGlobal: 'global',
         getModeTimestamps: 'timestamps',
+        getIgnoreList: 'ignoreList',
       }),
 
       global: {
@@ -788,6 +835,7 @@
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
       this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
 
+      // Get ignore list
       try {
         let ignores = localStorage.getItem( 'ignorelist' );
         if ( ignores ) this.ignoreList = JSON.parse( ignores );
