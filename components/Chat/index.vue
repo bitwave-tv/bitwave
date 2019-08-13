@@ -567,6 +567,11 @@
                   channel: this.page,
                 },
               ]);
+              // Analytics
+              this.$ga.event({
+                eventCategory : 'chat',
+                eventAction   : 'ignorelist',
+              });
               break;
             case 'skip':
             case 's':
@@ -739,6 +744,12 @@
               channel: this.page,
             },
           ]);
+          // Analytics
+          this.$ga.event({
+            eventCategory : 'chat',
+            eventAction   : 'ignore',
+            eventLabel    : username,
+          });
         } else {
           console.log( `User not found: '${username}'` );
         }
@@ -764,6 +775,12 @@
               channel: this.page,
             },
           ]);
+          // Analytics
+          this.$ga.event({
+            eventCategory : 'chat',
+            eventAction   : 'unignore',
+            eventLabel    : username,
+          });
         } else {
           console.log( `User not found: '${username}'` );
         }
