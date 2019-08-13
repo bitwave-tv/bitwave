@@ -725,6 +725,7 @@
       },
 
       async ignoreUser ( username ) {
+        username = username.replace('@', '');
         const exists = this.ignoreList.find( el => el.toLowerCase() === username.toLowerCase() );
         if ( !exists ) {
           this.ignoreList.push( username );
@@ -756,6 +757,7 @@
       },
 
       async unignoreUser ( username ) {
+        username = username.replace('@', '');
         const location = this.ignoreList.findIndex( el => el.toLowerCase() === username.toLowerCase() );
         if ( location !== -1 ) {
           this.ignoreList.splice( location, 1 );
