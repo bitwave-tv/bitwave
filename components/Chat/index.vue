@@ -580,6 +580,7 @@
               break;
             case 'unignorechannel':
             case 'uic':
+            case 'uc':
               await this.unignoreChannel( argument.toLowerCase() );
               break;
             case 'ignorelist':
