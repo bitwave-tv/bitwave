@@ -71,6 +71,12 @@
       },
 
       async follow () {
+        // Analytics
+        this.$ga.event({
+          eventCategory : 'follow',
+          eventAction   : 'follow',
+        });
+
         if ( this.user.uid ) {
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
           await followerRef.set({
@@ -88,6 +94,12 @@
       },
 
       async unfollow () {
+        // Analytics
+        this.$ga.event({
+          eventCategory : 'follow',
+          eventAction   : 'unfollow',
+        });
+
         if ( this.user.uid ) {
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
           await followerRef.delete();
