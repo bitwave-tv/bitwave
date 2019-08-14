@@ -341,6 +341,7 @@
         ],
 
         ignoreList: [],
+        ignoreChannelList: [],
         uid: null,
         chatLimit: 50,
         chatContainer: null,
@@ -411,6 +412,15 @@
             localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
           } else {
             await doc.ref.update( 'ignoreList', this.ignoreList );
+          }
+
+          // Save local ignore channel list to account
+          const ignoreChannelList = doc.get( 'ignoreChannelList' );
+          if ( ignoreChannelList !== undefined ) {
+            this.ignoreChannelList = ignoreChannelList;
+            localStorage.setItem( 'ignoreChannellist', JSON.stringify( this.ignoreChannelList ) );
+          } else {
+            await doc.ref.update( 'ignoreChannelList', this.ignoreChannelList );
           }
 
           // Check if reconnection required
@@ -516,6 +526,13 @@
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
         }
 
+        // Ignore channel messages
+        messages = messages.filter ( el => {
+          // Do not ignore a channel we are in
+          const list = this.ignoreChannelList.filter( channel => channel.toLowerCase() !== this.page.toLowerCase() );
+          return !list.includes( el.channel.toLowerCase() );
+        });
+
         // Filter by channel
         if ( !this.global && !this.forceGlobal ) {
           messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
@@ -557,6 +574,14 @@
             case 'u':
               await this.unignoreUser( argument.toLowerCase() );
               break;
+            case 'ignorechannel':
+            case 'ic':
+              await this.ignoreChannel( argument.toLowerCase() );
+              break;
+            case 'unignorechannel':
+            case 'uic':
+              await this.unignoreChannel( argument.toLowerCase() );
+              break;
             case 'ignorelist':
               await this.rcvMessageBulk([
                 {
@@ -564,6 +589,13 @@
                   username: '[bitwave.tv]',
                   avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
                   message: `Ignored Users: ${this.ignoreList.join(', ')}`,
+                  channel: this.page,
+                },
+                {
+                  timestamp: Date.now(),
+                  username: '[bitwave.tv]',
+                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+                  message: `Ignored Channels: ${this.ignoreChannelList.join(', ')}`,
                   channel: this.page,
                 },
               ]);
@@ -784,7 +816,69 @@
             eventLabel    : username,
           });
         } else {
-          console.log( `User not found: '${username}'` );
+          console.log( `Ignored user not found: '${username}'` );
+        }
+      },
+
+      async ignoreChannel ( channel ) {
+        const exists = this.ignoreChannelList.find( el => el.toLowerCase() === channel.toLowerCase() );
+        if ( !exists ) {
+          this.ignoreChannelList.push( channel );
+          localStorage.setItem( 'ignoreChannelList', JSON.stringify( this.ignoreChannelList ) );
+          // Save ignore list to profile
+          if ( this.isAuth ) {
+            const userDoc = db.collection( 'users' ).doc( this.user.uid );
+            await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
+          }
+          // Confirmation Message
+          await this.rcvMessageBulk([
+            {
+              timestamp: Date.now(),
+              username: '[bitwave.tv]',
+              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message: `Ignored Channel: ${channel}`,
+              channel: this.page,
+            },
+          ]);
+          // Analytics
+          this.$ga.event({
+            eventCategory : 'chat',
+            eventAction   : 'ignore-channel',
+            eventLabel    : channel,
+          });
+        } else {
+          console.log ( `Channel already ignored ${channel}` );
+        }
+      },
+
+      async unignoreChannel ( channel ) {
+        const location = this.ignoreChannelList.findIndex( el => el.toLowerCase() === channel.toLowerCase() );
+        if ( location !== -1 ) {
+          this.ignoreChannelList.splice( location, 1 );
+          localStorage.setItem( 'ignoreChannelList', JSON.stringify( this.ignoreChannelList ) );
+          // Save ignore list to profile
+          if ( this.isAuth ) {
+            const userDoc = db.collection( 'users' ).doc( this.user.uid );
+            await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
+          }
+          // Confirmation Message
+          await this.rcvMessageBulk([
+            {
+              timestamp: Date.now(),
+              username: '[bitwave.tv]',
+              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message: `Unignored Channel: ${channel}`,
+              channel: this.page,
+            },
+          ]);
+          // Analytics
+          this.$ga.event({
+            eventCategory : 'chat',
+            eventAction   : 'unignore-channel',
+            eventLabel    : channel,
+          });
+        } else {
+          console.log( `Ignored channel not found: '${channel}'` );
         }
       },
 
@@ -860,6 +954,14 @@
         if ( ignores ) this.ignoreList = JSON.parse( ignores );
       } catch ( error ) {
         console.log( 'No ignore list found.' );
+      }
+
+      // Get ignore channel list
+      try {
+        let ignores = localStorage.getItem( 'ignoreChannelList' );
+        if ( ignores ) this.ignoreChannelList = JSON.parse( ignores );
+      } catch ( error ) {
+        console.log( 'No ignore channel list found.' );
       }
 
       try {
