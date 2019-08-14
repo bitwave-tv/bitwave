@@ -32,6 +32,7 @@
         loading : true,
         following : false,
         followCount : 0,
+        disabled: false,
       }
     },
 
@@ -63,6 +64,7 @@
       },
 
       async onFollowClick () {
+        if ( this.disabled ) return false;
         if ( !this.following ) {
           await this.follow();
         } else {
@@ -91,6 +93,8 @@
           await this.getFollowCount();
         }
         this.following = true;
+        this.disabled = true;
+        setTimeout( () => this.disabled = false, 1500 );
       },
 
       async unfollow () {
@@ -110,6 +114,8 @@
           await this.getFollowCount();
         }
         this.following = false;
+        this.disabled = true;
+        setTimeout( () => this.disabled = false, 1500 );
       },
     },
 
