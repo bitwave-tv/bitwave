@@ -72,10 +72,16 @@
                   outline
                 >NSFW</v-chip>
               </v-flex>
-              <v-flex shrink>
+              <v-flex>
                 <h2>{{ title }}</h2>
               </v-flex>
+              <v-flex shrink>
+                <FollowButton
+                  :streamer-id="owner"
+                />
+              </v-flex>
             </v-layout>
+
             <v-layout>
               <v-flex id="description">
                 <vue-markdown
@@ -122,6 +128,7 @@
 
   import VueMarkdown from '~/components/VueMarkdown'
   import Chat from '~/components/Chat'
+  import FollowButton from '@/components/FollowButton';
 
   export default {
     head () {
@@ -144,6 +151,7 @@
     },
 
     components: {
+      FollowButton,
       VueMarkdown,
       Chat,
     },
@@ -275,6 +283,7 @@
         this.title = data.title;
         this.desc  = data.description;
         this.nsfw  = data.nsfw;
+        this.owner = data.owner;
 
         console.log( `Stream Metadata Update.`, data );
 
@@ -358,6 +367,7 @@
         let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
+        const owner  = data.owner  || '';
         const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
         const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
 
@@ -366,7 +376,7 @@
           poster = live ? thumb : poster;
         }
 
-        return { name, title, desc, poster, live, nsfw, url, type };
+        return { name, title, desc, poster, live, nsfw, owner, url, type };
 
       } catch ( error ) {
         console.log( `ERROR: Failed to find user ${user}` );
