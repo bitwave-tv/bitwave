@@ -80,15 +80,25 @@
         });
 
         if ( this.user.uid ) {
+          const batch = db.batch();
+
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
-          await followerRef.set({
+          /*await followerRef.set({
+            streamerId: this.streamerId,
+            timestamp: new Date(Date .now() ),
+            viewerId: this.user.uid,
+          });*/
+          batch.set(followerRef, {
             streamerId: this.streamerId,
             timestamp: new Date(Date .now() ),
             viewerId: this.user.uid,
           });
 
           const streamerRef = db.collection( 'followers' ).doc( `${this.streamerId}` );
-          await streamerRef.set( { 'followers': FieldValue.increment(1) }, { merge: true } );
+          // await streamerRef.set( { 'followers': FieldValue.increment(1) }, { merge: true } );
+          batch.set( streamerRef, { 'followers': FieldValue.increment(1) }, { merge: true } );
+
+          await batch.commit();
 
           await this.getFollowCount();
         }
@@ -105,11 +115,17 @@
         });
 
         if ( this.user.uid ) {
+          const batch = db.batch();
+
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
-          await followerRef.delete();
+          // await followerRef.delete();
+          batch.delete( followerRef );
 
           const streamerRef = db.collection( 'followers' ).doc( `${this.streamerId}` );
-          await streamerRef.set( { 'followers': FieldValue.increment(-1) }, { merge: true } );
+          // await streamerRef.set( { 'followers': FieldValue.increment(-1) }, { merge: true } );
+          batch.set( streamerRef, { 'followers': FieldValue.increment(-1) }, { merge: true } );
+
+          await batch.commit();
 
           await this.getFollowCount();
         }
