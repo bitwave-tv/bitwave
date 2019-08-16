@@ -73,21 +73,18 @@
       },
 
       async follow () {
+        this.disabled = true;
+
         // Analytics
         this.$ga.event({
           eventCategory : 'follow',
           eventAction   : 'follow',
         });
 
-        if ( this.user.uid ) {
+        if ( this.user.uid && !this.disabled ) {
           const batch = db.batch();
 
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
-          /*await followerRef.set({
-            streamerId: this.streamerId,
-            timestamp: new Date(Date .now() ),
-            viewerId: this.user.uid,
-          });*/
           batch.set(followerRef, {
             streamerId: this.streamerId,
             timestamp: new Date(Date .now() ),
@@ -95,42 +92,41 @@
           });
 
           const streamerRef = db.collection( 'followers' ).doc( `${this.streamerId}` );
-          // await streamerRef.set( { 'followers': FieldValue.increment(1) }, { merge: true } );
           batch.set( streamerRef, { 'followers': FieldValue.increment(1) }, { merge: true } );
 
           await batch.commit();
 
           await this.getFollowCount();
         }
+
         this.following = true;
-        this.disabled = true;
         setTimeout( () => this.disabled = false, 1500 );
       },
 
       async unfollow () {
+        this.disabled = true;
+
         // Analytics
         this.$ga.event({
           eventCategory : 'follow',
           eventAction   : 'unfollow',
         });
 
-        if ( this.user.uid ) {
+        if ( this.user.uid && !this.disabled ) {
           const batch = db.batch();
 
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
-          // await followerRef.delete();
           batch.delete( followerRef );
 
           const streamerRef = db.collection( 'followers' ).doc( `${this.streamerId}` );
-          // await streamerRef.set( { 'followers': FieldValue.increment(-1) }, { merge: true } );
           batch.set( streamerRef, { 'followers': FieldValue.increment(-1) }, { merge: true } );
 
           await batch.commit();
 
           await this.getFollowCount();
         }
+
         this.following = false;
-        this.disabled = true;
         setTimeout( () => this.disabled = false, 1500 );
       },
     },
