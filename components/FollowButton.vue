@@ -73,15 +73,15 @@
       },
 
       async follow () {
-        this.disabled = true;
-
         // Analytics
         this.$ga.event({
           eventCategory : 'follow',
           eventAction   : 'follow',
         });
 
+        // Update followers
         if ( this.user.uid && !this.disabled ) {
+          this.disabled = true;
           const batch = db.batch();
 
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
@@ -104,15 +104,15 @@
       },
 
       async unfollow () {
-        this.disabled = true;
-
         // Analytics
         this.$ga.event({
           eventCategory : 'follow',
           eventAction   : 'unfollow',
         });
 
+        // Update followers
         if ( this.user.uid && !this.disabled ) {
+          this.disabled = true;
           const batch = db.batch();
 
           const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
