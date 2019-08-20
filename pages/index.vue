@@ -87,8 +87,32 @@
               Want to help support the site?
             </v-flex>
 
-            <p>A straight forward streaming service built from the ground up on open source software.
-              Bitwave is a project that has grown from the ashes of Stream.me, with all the features Stream.me never implemented.</p>
+            <div class="mb-1">A straight forward streaming service built from the ground up on open source software.</div>
+            <p>If you're interested in streaming here, just ask for a stream key in any chat, or message us on twitter or discord.</p>
+
+            <v-flex>
+              <v-btn
+                small
+                outline
+                color="light-blue"
+                href="https://discord.gg/4WwJsKx"
+                target="_blank"
+                title="chat"
+              >Discord</v-btn>
+              If you have questions or feedback, join the discord chat.
+            </v-flex>
+
+            <v-flex class="mb-2">
+              <v-btn
+                small
+                outline
+                color="light-blue"
+                href="https://twitter.com/BitWaveTV"
+                target="_blank"
+                title="chat"
+              >Twitter</v-btn>
+              Message or tag us on Twitter for direct assistance.
+            </v-flex>
 
             <v-flex>
               <v-btn
@@ -118,26 +142,14 @@
                 small
                 outline
                 color="light-blue"
-                href="https://discord.gg/4WwJsKx"
-                target="_blank"
-                title="chat"
-              >Discord</v-btn>
-              If you have questions or feedback, join the discord chat.
-            </v-flex>
-
-            <v-flex>
-              <v-btn
-                small
-                outline
-                color="light-blue"
                 href="https://github.com/bitwave-tv/bitwave/issues"
                 target="_blank"
                 title="contribute"
               >issue</v-btn>
-              Find a bug? Report it on Github.
+              Found a bug? Report it on Github.
             </v-flex>
 
-            <v-flex class="my-2">
+            <v-flex class="mt-2">
               <v-btn
                 small
                 outline
@@ -147,7 +159,17 @@
               Need to report content?
             </v-flex>
 
-            <div class="mb-0">Thank you for helping ALPHA test [bitwave.tv] and I look forward to bringing more exciting features in the future.</div>
+            <v-flex class="mb-2">
+              <v-btn
+                small
+                outline
+                color="red"
+                to="/tos"
+              >ToS</v-btn>
+              Our terms of service.
+            </v-flex>
+
+            <div class="mb-1">Thank you for helping ALPHA test [bitwave.tv] and I look forward to bringing more exciting features in the future.</div>
             <div class="mb-0">We have not been served any secret court orders and are not under any gag orders.</div>
 
             <div class="text-xs-right">
