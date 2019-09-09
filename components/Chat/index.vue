@@ -480,7 +480,7 @@
 
           // this.chatContainer.scrollTop = scrollHeight + 750
 
-          document.querySelector("#chat-scroll > div:last-child").scrollIntoView({behavior: 'smooth'});
+          document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
         }
       },
 
