@@ -264,9 +264,9 @@
           const userCredential = await auth.signInWithEmailAndPassword( email, password );
 
           if ( process.client )
-            console.log( `%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user );
+            console.log( `%cLoginDialog.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user );
           else
-            console.log( 'Login.vue: Signing in...', userCredential.user );
+            console.log( 'LoginDialog.vue: Signing in...', userCredential.user );
         } catch ( error ) {
           this.showError( error.message );
           console.log( error.message );
@@ -306,9 +306,9 @@
       async authenticated( user ) {
         if ( user ) {
           if ( process.client )
-            console.log( `%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
+            console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
           else
-            console.log( 'Login: Logged in!', user );
+            console.log( 'LoginDialog: Logged in!', user );
 
           if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
 
@@ -317,9 +317,9 @@
           setTimeout( () => this.show = false, 1500 );
         } else {
           if ( process.client )
-            console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+            console.log(`%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
           else
-            console.log('Login: Not logged in.');
+            console.log('LoginDialog: Not logged in.');
         }
       },
 

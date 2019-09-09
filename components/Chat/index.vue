@@ -290,6 +290,7 @@
   import { auth, db } from '@/plugins/firebase.js'
   import ChatMessage from './ChatMessage'
   import moment from 'moment'
+  import jwt_decode from 'jwt-decode'
 
   import { mapGetters } from 'vuex'
 
@@ -340,9 +341,11 @@
           },
         ],
 
+        token: null,
+
         ignoreList: [],
         ignoreChannelList: [],
-        uid: null,
+        trollId: null,
         chatLimit: 50,
         chatContainer: null,
 
@@ -385,15 +388,12 @@
           await this.subscribeToUser( user.uid );
         } else {
           if ( this.unsubscribeUser ) this.unsubscribeUser();
-          const trollUser = {
-            type     : 'troll',
-            username : `troll:${this.uid}`,
-            color    : this.color,
-            email    : null,
-            uid      : this.uid,
-            page     : this.page,
+          const tokenTroll = {
+            type  : 'troll',
+            token : this.token,
+            page  : this.page,
           };
-          this.connectChat( trollUser );
+          this.connectChat( tokenTroll );
         }
         this.loading = false;
       },
@@ -402,6 +402,14 @@
         const userdocRef = db.collection( 'users' ).doc( uid );
         let lastUser = {};
         this.unsubscribeUser = userdocRef.onSnapshot( async doc => {
+
+          // Swap ID token for Chat Token
+          const idToken = await auth.currentUser.getIdToken();
+          console.log( `ID Token Generated in chat:`, idToken );
+          const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
+          const chatToken = data.chatToken;
+          console.log( 'Chat Token Exchanged:', chatToken );
+
           const user = doc.data();
           user.page  = this.page;
 
@@ -425,7 +433,12 @@
 
           // Check if reconnection required
           if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username ) {
-            this.connectChat( user );
+            const tokenUser = {
+              type  : 'user',
+              token : chatToken,
+              page  : this.page,
+            };
+            this.connectChat( tokenUser );
           }
 
           // Record user
@@ -468,12 +481,12 @@
         }
       },
 
-      connectChat ( user ) {
+      connectChat ( tokenUser ) {
         if ( this.socket) {
           this.socket.disconnect();
         }
 
-        if ( !user ) {
+        if ( !tokenUser ) {
           console.warn( `Failed to connect to chat. No user defined.` );
           return;
         }
@@ -481,7 +494,7 @@
         this.socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
         // const socket = socketio('chat.bitwave.tv');
 
-        this.socket.on( 'connect', () => this.socket.emit( 'new user', user ) );
+        this.socket.on( 'connect', () => this.socket.emit( 'new user', tokenUser ) );
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
         this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
@@ -647,17 +660,15 @@
         }
       },
 
-      setupTrollData () {
-        let uid   = localStorage.getItem( 'tuid' );
-        let color = localStorage.getItem( 'tcolor' );
-        if ( !uid || !color ) {
-          uid   = [...Array(4)].map(() => (~~(Math.random()*36)).toString(36)).join('');
-          color = `hsl( ${Math.round( 256 * Math.random() )},75%,50%,1)`;
-          localStorage.setItem( 'tuid'  , uid   );
-          localStorage.setItem( 'tcolor', color );
+      async setupTrollData () {
+        let trollToken = localStorage.getItem( 'troll' );
+        if ( !trollToken ) {
+          const { data } = await this.$axios.get('https://api.bitwave.tv/api/troll-token');
+          trollToken = data.chatToken;
+          localStorage.setItem( 'troll', trollToken );
         }
-        this.uid   = uid;
-        this.color = color
+        this.token = trollToken;
+        this.trollId = jwt_decode(trollToken).user.name;
       },
 
       speak ( message, username ) {
@@ -917,7 +928,7 @@
         get () { return this.getModeTimestamps }
       },
 
-      username () { return this._username || `troll:${this.uid}`; },
+      username () { return this._username || this.trollId; },
 
       page () {
         let channel = this.chatChannel;
@@ -941,8 +952,8 @@
       auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
-    mounted () {
-      this.setupTrollData();
+    async mounted () {
+      await this.setupTrollData();
       this.chatContainer = this.$refs.scroller;
 
       // Add listener for voice changes, then update voices.

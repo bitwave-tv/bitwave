@@ -12,6 +12,8 @@ export const state = () => ({
   metaUser: null,
   channel: null,
 
+  chatToken: null,
+
 });
 
 export const getters = {
@@ -32,7 +34,11 @@ export const getters = {
   channel : state => {
     if (!state.channel) return 'global';
     else return state.channel;
-  }
+  },
+
+  getChatToken : state => {
+    return state.chatToken;
+  },
 
 };
 
@@ -63,6 +69,10 @@ export const mutations = {
 
   setChannel (state, channel) {
     state.channel = channel;
+  },
+
+  setChatToken ( state, token ) {
+    state.chatToken = token;
   },
 
 };
@@ -114,7 +124,7 @@ export const actions = {
     await dispatch('nuxtServerInit', { req, params });
   },
 
-  async login ({ commit }, user) {
+  async login ({ dispatch, commit }, user) {
     const token = await user.getIdToken();
     const refreshToken = user.refreshToken;
     const uid = user.uid;
@@ -140,8 +150,9 @@ export const actions = {
       Cookie.set('user', data);
     });
 
-    if (process.client)
-      console.log(`%cSTORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+    if (process.client) console.log(`%cSTORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+
+    await dispatch ( 'exchangeIdTokenChatToken', token );
   },
 
   async logout ({ commit }) {
@@ -175,6 +186,12 @@ export const actions = {
         'user.avatar': url,
       });
     }
+  },
+
+  async exchangeIdTokenChatToken ({ store, commit }, idToken) {
+    const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
+    commit('setChatToken', data.chatToken);
+    console.log(`%cSTORE:%c Got ChatToken! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken);
   },
 
 };
