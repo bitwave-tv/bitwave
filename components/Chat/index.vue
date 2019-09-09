@@ -477,7 +477,10 @@
           if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
           // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
-          this.chatContainer.scrollTop = scrollHeight + 750
+
+          // this.chatContainer.scrollTop = scrollHeight + 750
+
+          document.querySelector("#chat-scroll > div:last-child").scrollIntoView({behavior: 'smooth'});
         }
       },
 
