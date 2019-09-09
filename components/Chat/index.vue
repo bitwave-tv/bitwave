@@ -526,7 +526,9 @@
         }
 
         this.messages = size > 100 ? data.splice( -this.chatLimit ) : data;
-        await this.$nextTick( async () => await this.scrollToBottom( true ) );
+        await this.$nextTick( async () => {
+          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750
+        });
         // re-highlight username mentions on hydration
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         this.messages.forEach( msg => {
