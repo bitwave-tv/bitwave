@@ -461,27 +461,44 @@
         });
       },
 
-      async scrollToBottom ( force ) {
+      checkIfBottom () {
         const scrollTop    = this.chatContainer.scrollTop;
+        const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
         const scrollHeight = this.chatContainer.scrollHeight;
+        return scrollTop + clientHeight >= scrollHeight;
+      },
 
-        const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
-        const scroll = !!force || scrollDistance < ( 0.55 * screen.height );
+      async scrollToBottom ( force ) {
+        if ( this.checkIfBottom() ) return;
+
+        // Scroll to last message
+        document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+
+        setTimeout( () => {
+          if ( !this.checkIfBottom() ) this.scrollToBottom()
+        }, 250);
+
+        if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
+
+        // ----------------
+
+        // const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
+        // const scroll = !!force || scrollDistance < ( 0.55 * screen.height );
 
         // console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
 
-        if ( scroll ) {
+        // if ( scroll ) {
           // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
           // if (this.messages.length > this.chatLimit) this.messages.shift();
 
-          if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
+          // if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
           // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
 
           // this.chatContainer.scrollTop = scrollHeight + 750
 
-          document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        }
+          // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        // }
       },
 
       connectChat ( tokenUser ) {
@@ -570,7 +587,7 @@
           this.messages.push( { ...{ id: Date.now() }, ...el } );
         });
 
-        await this.$nextTick( async () => await this.scrollToBottom() );
+        if ( this.checkIfBottom() ) await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
       async sendMessage () {
