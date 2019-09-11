@@ -479,7 +479,7 @@
             this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
             // this.scrollToBottom()
           }
-        }, 250);
+        }, 1000 );
 
         if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
