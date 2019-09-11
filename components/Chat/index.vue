@@ -475,7 +475,10 @@
         document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 
         setTimeout( () => {
-          if ( !this.checkIfBottom() ) this.scrollToBottom()
+          if ( !this.checkIfBottom() ) {
+            this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
+            // this.scrollToBottom()
+          }
         }, 250);
 
         if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
