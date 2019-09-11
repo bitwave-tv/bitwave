@@ -475,10 +475,10 @@
         document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 
         setTimeout( () => {
-          if ( !this.checkIfBottom() ) {
+          // if ( !this.checkIfBottom() ) {
             this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
             // this.scrollToBottom()
-          }
+          // }
         }, 1000 );
 
         if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
@@ -559,6 +559,8 @@
       async rcvMessageBulk ( messages ) {
         if ( !this.enable ) return;
 
+        let atBottom = this.checkIfBottom();
+
         // Remove ignored user messages
         if ( this.useIgnoreListForChat ){
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
@@ -590,7 +592,7 @@
           this.messages.push( { ...{ id: Date.now() }, ...el } );
         });
 
-        if ( this.checkIfBottom() ) await this.$nextTick( async () => await this.scrollToBottom() );
+        if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom() );
       },
 
       async sendMessage () {
