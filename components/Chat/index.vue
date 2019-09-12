@@ -469,18 +469,17 @@
       },
 
       async scrollToBottom ( force ) {
-        if ( this.checkIfBottom() ) return;
+        if ( this.checkIfBottom() && !force ) {
+          return;
+        }
 
         // Scroll to last message
         // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
         this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
 
         setTimeout( () => {
-          // if ( !this.checkIfBottom() ) {
-            this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
-            // this.scrollToBottom()
-          // }
-        }, 1000 );
+          this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight + 200;
+        }, 500 );
 
         if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
 
