@@ -95,7 +95,7 @@
     .username {
       font-weight: 500;
       color: #9e9e9e;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Audiowide', monospace;
     }
 
     blockquote p {
