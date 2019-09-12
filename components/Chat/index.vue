@@ -472,7 +472,8 @@
         if ( this.checkIfBottom() ) return;
 
         // Scroll to last message
-        document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
 
         setTimeout( () => {
           // if ( !this.checkIfBottom() ) {
@@ -546,13 +547,16 @@
         }
 
         this.messages = size > 100 ? data.splice( -this.chatLimit ) : data;
-        await this.$nextTick( async () => {
-          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750
-        });
+
         // re-highlight username mentions on hydration
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         this.messages.forEach( msg => {
           msg.message = msg.message.replace( pattern, `<span class="highlight">$&</span>` );
+        });
+
+        // Scroll after hydration
+        await this.$nextTick( async () => {
+          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750
         });
       },
 
