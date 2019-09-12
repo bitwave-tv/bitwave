@@ -474,9 +474,9 @@
         }
 
         // Scroll to last message
-        // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
         // this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
-        this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+        // this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
 
         setTimeout( () => {
           this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
