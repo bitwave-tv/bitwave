@@ -475,10 +475,11 @@
 
         // Scroll to last message
         // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
+        // this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
+        this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
 
         setTimeout( () => {
-          this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight + 200;
+          this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
         }, 500 );
 
         if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
@@ -595,7 +596,7 @@
           this.messages.push( { ...{ id: Date.now() }, ...el } );
         });
 
-        if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom() );
+        if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom(true) );
       },
 
       async sendMessage () {
