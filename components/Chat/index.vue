@@ -432,7 +432,7 @@
           }
 
           // Check if reconnection required
-          if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username ) {
+          if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username || lastUser.color !== user.color ) {
             const tokenUser = {
               type  : 'user',
               token : chatToken,
@@ -483,26 +483,6 @@
         }, 500 );
 
         if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
-
-        // ----------------
-
-        // const scrollDistance = scrollHeight - scrollTop - this.chatContainer.clientHeight;
-        // const scroll = !!force || scrollDistance < ( 0.55 * screen.height );
-
-        // console.debug(`ScrollTop: ${scrollTop} ScrollHeight: ${scrollHeight} ScrollDistance: ${scrollDistance} Scroll: ${scroll}`);
-
-        // if ( scroll ) {
-          // await this.$nextTick( () => this.chatContainer.$el.scrollTop = scrollHeight + 500 );
-          // if (this.messages.length > this.chatLimit) this.messages.shift();
-
-          // if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
-
-          // setTimeout( () => this.chatContainer.scrollTop = scrollHeight + 750, 0 );
-
-          // this.chatContainer.scrollTop = scrollHeight + 750
-
-          // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        // }
       },
 
       connectChat ( tokenUser ) {
