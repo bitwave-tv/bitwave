@@ -81,6 +81,9 @@
                 <v-list-tile-title>Report</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+
+            <braintree-drop-in />
+
             <v-list-tile @click="logout">
               <v-list-tile-action>
                 <v-icon>exit_to_app</v-icon>
@@ -102,6 +105,7 @@
 <script>
   import { auth } from '@/plugins/firebase.js'
   import LoginDialog from '~/components/LoginDialog'
+  import BraintreeDropIn from '~/components/Payment/braintree-drop-in'
 
 
   import { mapGetters } from 'vuex'
@@ -112,6 +116,7 @@
 
     components: {
       LoginDialog,
+      BraintreeDropIn,
     },
 
     data() {
