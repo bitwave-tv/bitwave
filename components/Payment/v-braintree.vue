@@ -1,16 +1,16 @@
 <template>
   <div class="payment">
     <v-responsive
-      :style="{ background: `${selectedColor}` }"
+      :style="{ background: `${color}` }"
       height="32px"
       class="mb-4"
     ></v-responsive>
-    <v-select
+    <v-combobox
       v-model="selectedColor"
       :items="colors"
-      label="Chat color"
+      label="Chat color (or custom hex value)"
       light
-    ></v-select>
+    ></v-combobox>
     <div ref="dropin"></div>
     <v-alert
       :value="error"
@@ -84,35 +84,35 @@
         instance: null,
         colors: [
           {
-            text: 'Red',
+            text: 'red',
             value: '#f44336'
           },
           {
-            text: 'Pink',
+            text: 'pink',
             value: '#e91e63'
           },
           {
-            text: 'Orange',
+            text: 'orange',
             value: '#ff9800'
           },
           {
-            text: 'Yellow',
+            text: 'yellow',
             value: '#f1c40f'
           },
           {
-            text: 'Green',
+            text: 'green',
             value: '#4caf50'
           },
           {
-            text: 'Teal',
+            text: 'teal',
             value: '#009688'
           },
           {
-            text: 'Blue',
+            text: 'blue',
             value: '#2196f3'
           },
           {
-            text: 'Purple',
+            text: 'purple',
             value: '#673ab7'
           },
         ],
@@ -166,7 +166,7 @@
           const response = await this.$axios.post( this.url, {
             nonce: nonce,
             username: this.$store.getters.username,
-            color: this.selectedColor,
+            color: this.color,
           });
           console.log(response);
           if ( response.data.success ) {
@@ -187,5 +187,12 @@
         }
       }
     },
+
+    computed: {
+      color () {
+        return !!this.selectedColor.value ? this.selectedColor.value : this.selectedColor;
+      }
+    },
+
   }
 </script>

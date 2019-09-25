@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import VBraintree from '~/components/payment/v-braintree'
+  import VBraintree from '~/components/Payment/v-braintree'
 
   export default {
     name: 'braintree-drop-in',
