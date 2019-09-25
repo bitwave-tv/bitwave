@@ -32,25 +32,6 @@
             :btn-class="'v-btn theme--light yellow'"
           ></v-braintree>
         </v-card-text>
-
-        <!--<v-divider></v-divider>-->
-
-        <!--<v-card-actions>
-          <v-btn
-            small
-            href="#"
-            flat color="#2196f3"
-            @click="resetPassword(user.email)"
-          >Forgot Password?</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="yellow"
-            flat
-            @click="show = false"
-          >
-            CANCEL
-          </v-btn>
-        </v-card-actions>-->
       </v-card>
     </v-dialog>
   </div>
@@ -84,7 +65,3 @@
     },
   }
 </script>
-
-<style lang='scss'>
-
-</style>

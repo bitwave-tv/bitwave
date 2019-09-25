@@ -115,7 +115,6 @@
             text: 'Purple',
             value: '#673ab7'
           },
-
         ],
         selectedColor: '#2196f3',
       }
