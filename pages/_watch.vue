@@ -22,14 +22,8 @@
               :poster="poster"
             >
               <source
-                v-if="live"
                 :src="url"
                 :type="type"
-              >
-              <source
-                v-else
-                :src="getRandomBump()"
-                type="video/mp4"
               >
             </video>
           </v-flex>
@@ -210,10 +204,14 @@
         this.player.ready( () => {
           // Restore Volume
           try {
+            /*console.log(`Volume: ${this.player.volume()}, Muted: ${this.player.muted()}`);
+            let muted = localStorage.getItem( 'muted' );
+            console.log(`Muted: ${muted}`);
+            if ( muted !== null ) {
+              this.player.muted( muted );
+            }*/
             let volume = localStorage.getItem( 'volume' );
-            if ( volume !== null ) {
-              this.player.volume( volume );
-            }
+            if ( volume !== null ) this.player.volume( volume );
           } catch ( error ) {
             // No volume value in memory
             console.warn( 'Failed to find prior volume level' );
@@ -237,6 +235,11 @@
 
         // Begin playing when new media is loaded
         this.player.on( 'loadeddata', () => this.player.play() );
+
+        this.player.on( 'ended', async () => {
+          this.url = await this.getRandomBump();
+          this.player.load();
+        });
 
         this.initialized = true;
 
@@ -262,10 +265,9 @@
         console.debug( `Watch Time: ${this.watchDuration}s on ${this.name}` );
       },
 
-      getRandomBump () {
-        // random id between 1 and 29
-        const id = ( Math.floor( Math.random() * 29 ) + 1 ).toString().padStart( 2, '0' );
-        return `https://cdn.bitwave.tv/static/bumps/Bump${id}-sm.mp4`;
+      async getRandomBump () {
+        const { data } = await this.$axios.get(`https://api.bitwave.tv/api/bump`);
+        return data.url;
       },
 
       playerDispose (){
@@ -368,12 +370,18 @@
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
         const owner  = data.owner  || '';
-        const url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
-        const type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
+        let   url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
+        let   type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
 
         const thumb  = data['thumbnail'] || false;
         if ( data.thumbnail ) {
           poster = live ? thumb : poster;
+        }
+
+        if ( !live ) {
+          const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump' );
+          url = data.url;
+          type = 'video/mp4';
         }
 
         return { name, title, desc, poster, live, nsfw, owner, url, type };
