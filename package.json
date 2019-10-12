@@ -31,7 +31,7 @@
     "nuxt": "^2.8.1",
     "sass-loader": "^7.1.0",
     "socket.io-client": "^2.2.0",
-    "video.js": "^7.6.0",
+    "video.js": "^7.6.5",
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.0.5",
