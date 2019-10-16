@@ -45,6 +45,7 @@
             avatar
             v-for="viewer in viewerList"
             :key="viewer.username"
+            @click=""
           >
             <template v-if="viewerList.length > 0">
               <v-list-tile-avatar>
@@ -61,7 +62,7 @@
                 <v-list-tile-sub-title
                   v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
                 >
-                  Just Watching {{`${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
+                  Just Watching {{ `${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
                 </v-list-tile-sub-title>
                 <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
               </v-list-tile-content>

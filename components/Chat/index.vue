@@ -3,6 +3,7 @@
     id="sidechat"
     column
     fill-height
+    v-resize="onResize"
   >
 
     <!-- Chat Header -->
@@ -148,7 +149,7 @@
                     <v-flex>
                       <v-switch
                         v-model="allowTrollTTS"
-                        v-show="useTTS"
+                        :disabled="!useTTS"
                         label="Troll TTS"
                         class="ml-0 mt-0 pt-0"
                         color="yellow"
@@ -329,8 +330,11 @@
         loading: true,
 
         socket: null,
+
         message: '',
-        lastMessage: '',
+        messageBuffer: [],
+        messageBufferIndex: 0,
+
         messages: [
           {
             timestamp: Date.now(),
@@ -350,7 +354,7 @@
         chatContainer: null,
 
         showToolMenu: false,
-        useIgnoreListForChat: false,
+        useIgnoreListForChat: true,
         useTTS: false,
         allowTrollTTS: true,
         selectionTTS: 1,
@@ -378,6 +382,10 @@
     },
 
     methods: {
+      onResize () {
+        this.$nextTick( () => this.scrollToBottom(false) );
+      },
+
       addUserTag ( user ) {
         this.message = `${this.$refs['chatmessageinput'].value}@${user} `;
         this.$refs['chatmessageinput'].focus();
@@ -649,20 +657,34 @@
           };
           this.socket.emit( 'message', msg );
         }
-        this.lastMessage = this.message;
+        this.messageBuffer.push(this.message);
+        this.messageBuffer = this.messageBuffer.splice(-10);
+        this.messageBufferIndex = this.messageBuffer.length;
         this.message = '';
       },
 
       lastMessageHandler ( event ) {
-        if ( !event.srcElement.value ) {
-          if ( event.keyCode == 38 ) {
-            this.message = this.lastMessage;
-          } else {
-            this.message = '';
+        if ( !event.srcElement.value || event.srcElement.value === this.messageBuffer[ this.messageBufferIndex ] ) {
+          // Up Arrow (keyCode 38)
+          if ( event.key === 'ArrowUp' ) {
+            this.messageBufferIndex -= ( this.messageBufferIndex > 0 ) ? 1 : 0;
+            this.message = this.messageBuffer[ this.messageBufferIndex ];
+            event.preventDefault();
+          }
+          // Down Arrow (keyCode 40)
+          else if ( event.key === 'ArrowDown' ) {
+            this.messageBufferIndex += ( this.messageBufferIndex < this.messageBuffer.length ) ? 1 : 0;
+            if ( this.messageBufferIndex === this.messageBuffer.length ) this.message = '';
+            else this.message = this.messageBuffer[ this.messageBufferIndex ];
+            event.preventDefault();
+          }
+          // Idk why this is needed
+          else {
+            // this.message = '';
           }
         }
 
-        if ( event.type === "cut" ) {
+        if ( event.type === 'cut' ) {
           setTimeout( () => {
             if ( !event.srcElement.value ) {
               this.message = '';
