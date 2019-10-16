@@ -40,7 +40,7 @@
             </v-list-tile-avatar>
 
             <v-list-tile-content>
-              <v-list-tile-title>{{ username }}</v-list-tile-title>
+              <v-list-tile-title>{{ title }}</v-list-tile-title>
             </v-list-tile-content>
 
           </v-list-tile>
@@ -51,9 +51,15 @@
         <v-sheet
           color="#222"
         >
-          <v-list single-line :style="{ background: 'transparent' }">
+          <v-list
+            single-line
+            :style="{ background: 'transparent' }"
+            class="pb-0"
+          >
 
-            <v-list-tile v-if="notifications.length === 0">
+            <v-list-tile
+              v-if="filteredNotifications.length === 0"
+            >
               <v-list-tile-action>
                 <v-icon>done</v-icon>
               </v-list-tile-action>
@@ -62,7 +68,11 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-for="notification in notifications" :key="notification.id">
+            <v-list-tile
+              v-for="notification in filteredNotifications"
+              :key="notification.id"
+              :to="notification.url"
+            >
               <v-list-tile-action>
                 <v-icon>{{ notification.icon }}</v-icon>
               </v-list-tile-action>
@@ -71,6 +81,17 @@
                 <v-list-tile-sub-title>{{ notification.message }}</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
+
+            <!--<v-layout row justify-center>
+              <v-btn
+                flat
+                small
+                color="yellow"
+                @click.stop="showRead = !showRead"
+              >
+                {{ showRead ? 'Hide Read' : 'Show All' }}
+              </v-btn>
+            </v-layout>-->
 
           </v-list>
         </v-sheet>
@@ -90,11 +111,10 @@
 
     data() {
       return {
-        username: 'Notifications',
+        title: 'Notifications',
         notificationMenu: false,
-
         notifications: [],
-
+        showRead: true,
         unsubscribeNotifications: null,
       }
     },
@@ -109,21 +129,17 @@
       },
 
       getNotifications ( uid ) {
-        console.log( uid );
         const notificationsRef = db.collection( 'notifications' ).doc( uid ).collection( 'alerts' );
         const query = notificationsRef.orderBy( 'timestamp', 'desc' ).limit( 5 );
         this.unsubscribeNotifications = query.onSnapshot( snapshot => this.updateNotifications( snapshot ) );
       },
 
       updateNotifications ( snapshot ) {
-        let notifications = [];
+        this.notifications = [];
         snapshot.forEach( doc => {
           let data = doc.data();
-          let id   = doc.id;
-          notifications.push( { id, ...data } );
-          console.log( { id, ...data } );
+          this.notifications.push( { id: doc.id, ...data } );
         });
-        this.notifications = notifications;
       },
 
       async markAsRead () {
@@ -135,7 +151,7 @@
             let ref = db.collection( 'notifications' ).doc( uid ).collection( 'alerts' ).doc( docId );
             batch.update( ref, { 'read': true } );
           });
-          setTimeout( async () => await batch.commit(), 500 );
+          setTimeout( async () => await batch.commit(), 750 );
         }
       },
     },
@@ -148,6 +164,13 @@
 
       notificationCount () {
         return this.notifications.filter( notification => !notification.read ).length;
+      },
+
+      filteredNotifications () {
+        if ( this.showRead )
+          return this.notifications;
+        else
+          return this.notifications.filter( n => !n.read );
       },
     },
 
