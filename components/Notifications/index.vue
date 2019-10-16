@@ -26,7 +26,7 @@
             <template #badge>
               <span>{{ notificationCount }}</span>
             </template>
-            <v-icon class="ml-1">notifications</v-icon>
+            <v-icon>notifications</v-icon>
           </v-badge>
         </v-btn>
       </template>

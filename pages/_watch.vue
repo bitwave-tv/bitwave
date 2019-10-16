@@ -243,7 +243,6 @@
 
         this.initialized = true;
 
-
         // Get stream data
         this.getStreamData();
       },
