@@ -45,7 +45,7 @@
             avatar
             v-for="viewer in viewerList"
             :key="viewer.username"
-            @click=""
+            :to="`${viewer.page.watch || viewer.page}`"
           >
             <template v-if="viewerList.length > 0">
               <v-list-tile-avatar>
