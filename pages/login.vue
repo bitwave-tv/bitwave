@@ -87,7 +87,7 @@
                 v-if="!signUp"
                 block
                 color="yellow"
-                light
+                class="black--text"
                 :loading="loading"
                 type="submit"
                 @click="signIn(user.email, user.password)"
@@ -99,7 +99,7 @@
                 v-if="signUp"
                 block
                 color="yellow"
-                light
+                class="black--text"
                 :loading="loading"
                 type="submit"
                 @click="createUser(user.username, user.email, user.password)"
@@ -134,14 +134,15 @@
             <v-btn
               small
               href="#"
-              flat color="#2196f3"
+              text
+              color="#2196f3"
               @click="resetPassword(user.email)"
             >Forgot Password?</v-btn>
             <v-spacer />
             <v-btn
               small
               color="#2196f3"
-              outline
+              outlined
               @click="switchForm"
             >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
           </v-card-actions>

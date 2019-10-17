@@ -39,7 +39,7 @@
                   v-on="on"
                   :style="{ 'min-width': '40px' }"
                   small
-                  light
+                  class="black--text"
                   :disabled="showPollClient"
                   color="yellow"
                   @click="scrollToBottom(true)"
@@ -75,7 +75,7 @@
                   v-on="on"
                   :style="{ 'min-width': '40px' }"
                   small
-                  light
+                  class="black--text"
                   color="yellow"
                   @click="scrollToBottom(true)"
                 >
@@ -204,10 +204,9 @@
             <v-btn
               :style="{ 'min-width': '40px' }"
               small
-              light
               color="yellow"
               @click="scrollToBottom(true)"
-              class="px-0"
+              class="px-0 black--text"
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
