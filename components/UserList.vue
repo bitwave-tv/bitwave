@@ -69,8 +69,8 @@
                 :color="!!user.nsfw ? 'orange' : 'green'"
                 overlap
               >
-                <template #badge>
-                  <v-icon>{{ user.nsfw ? 'flag' : '' }}</v-icon>
+                <template v-slot:badge>
+                  <v-icon small>flag</v-icon>
                 </template>
                 <v-avatar
                   :size="user.live ? 36 : 40"
