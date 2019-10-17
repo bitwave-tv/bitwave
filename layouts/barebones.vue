@@ -3,26 +3,28 @@
 
     <!-- Toolbar -->
     <v-toolbar
-      :clipped-left="clipped"
-      clipped-right
-      flat
+      text
       dark
       dense
       fixed
       app
+      color="#212121"
     >
       <v-toolbar-title class="ml-0 mr-1">
         <v-btn
           to="/"
           depressed
-          flat
+          text
           exact
-          active-class
+          id="logo"
+          exact-active-class="app-title-active"
           class="text-none title px-2"
         >{{ title }}</v-btn>
       </v-toolbar-title>
 
       <v-spacer />
+
+      <notifications />
 
       <user/>
 
@@ -37,10 +39,12 @@
 </template>
 
 <script>
+  import Notifications from '~/components/Notifications'
   import User from '~/components/User'
 
   export default {
     components: {
+      Notifications,
       User,
     },
 
@@ -53,3 +57,15 @@
     },
   }
 </script>
+
+<style lang="scss">
+  #logo.app-title-active {
+    &:hover::before {
+      opacity: 0.24;
+    }
+
+    &::before {
+      opacity: 0;
+    }
+  }
+</style>
