@@ -1,6 +1,7 @@
 <template>
-  <v-container flex pa-0>
-    <v-layout row>
+  <div>
+    <!-- <v-container flex pa-0> -->
+    <v-layout>
 
       <!-- Video And Description -->
       <v-flex>
@@ -108,7 +109,7 @@
       </v-flex>
 
     </v-layout>
-  </v-container>
+  </div>
 </template>
 
 <script>

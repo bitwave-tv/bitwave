@@ -3,12 +3,12 @@
 
     <!-- Toolbar -->
     <v-app-bar
+      app
       :clipped-left="false"
       text
       dark
       dense
       fixed
-      app
       color="#212121"
     >
       <v-btn

@@ -103,27 +103,8 @@
               <v-list-item-title>View All</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-
         </v-list>
       </v-flex>
-
-      <!-- Minify Panel -->
-      <!--<v-flex
-        shrink
-        :align-self-center="!!miniVariant"
-        :align-self-end="!miniVariant"
-        class="px-2 pb-2 pt-0"
-      >
-        <v-btn
-          style="min-width: 32px;"
-          color="yellow"
-          block
-          outlined
-          @click.stop="toggleMini"
-        >
-          <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
-        </v-btn>
-      </v-flex>-->
     </v-layout>
 
     <!-- Minify Panel -->
