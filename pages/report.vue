@@ -67,6 +67,7 @@
                   <v-alert
                     v-show="submitted"
                     :color="success ? 'success' : 'error'"
+                    class="mt-4"
                   >{{ success ? `Report sent. Ref: ${reportId.id}` : 'Error Occured' }}</v-alert>
                 </v-flex>
               </v-layout>
