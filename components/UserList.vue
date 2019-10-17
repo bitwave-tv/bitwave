@@ -1,8 +1,9 @@
 <template>
   <v-navigation-drawer
     :value="value"
+    @input="$emit('input', $event)"
     :mini-variant="miniVariant"
-    :clipped="clipped"
+    :clipped="false"
     fixed
     flat
     dark
@@ -14,12 +15,12 @@
     >
       <v-flex shrink>
         <v-list
-          class="pb-0"
+          class="py-0"
           dense
         >
           <v-list-item
             class="py-1"
-            v-for="(item, i) in items"
+            v-for="( item, i ) in items"
             :key="i"
             :to="item.to"
             router
@@ -52,7 +53,7 @@
         >
           <v-list-item
             class="py-1"
-            v-for="(user, i) in users"
+            v-for="( user, i ) in users"
             :key="i"
             :to="user.to"
             router
@@ -107,7 +108,7 @@
       </v-flex>
 
       <!-- Minify Panel -->
-      <v-flex
+      <!--<v-flex
         shrink
         :align-self-center="!!miniVariant"
         :align-self-end="!miniVariant"
@@ -122,8 +123,24 @@
         >
           <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
         </v-btn>
-      </v-flex>
+      </v-flex>-->
     </v-layout>
+
+    <!-- Minify Panel -->
+    <template v-slot:append>
+      <div class="pa-2">
+        <v-btn
+          style="min-width: 32px;"
+          color="yellow"
+          block
+          outlined
+          @click.stop="toggleMini"
+        >
+          <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
+        </v-btn>
+      </div>
+    </template>
+
   </v-navigation-drawer>
 </template>
 
@@ -140,7 +157,6 @@
     data() {
       return {
         drawer: true,
-        clipped: false,
         miniVariant: true,
 
         items: [

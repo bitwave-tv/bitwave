@@ -1,5 +1,5 @@
 <template>
-  <v-flex shrink>
+  <v-flex ml-3 shrink>
 
     <v-menu
       v-if="isAuth"
@@ -7,6 +7,7 @@
       :close-on-content-click="true"
       :nudge-width="200"
       offset-y
+      offset-x
       left
       origin="top right"
       transition="slide-y-transition"
@@ -28,14 +29,17 @@
       </template>
 
       <v-card>
-        <v-list class="py-1" color="yellow">
+        <v-list
+          class="py-1"
+          color="yellow"
+        >
           <v-list-item>
 
-            <v-list-item-avatar>
+            <v-list-item-avatar class="my-0">
               <img :src="avatar" :alt="username">
             </v-list-item-avatar>
 
-            <v-list-item-content>
+            <v-list-item-content class="px-0">
               <v-list-item-title class="black--text">{{ username }}</v-list-item-title>
               <v-list-item-subtitle class="black--text">basic user</v-list-item-subtitle>
             </v-list-item-content>
@@ -159,7 +163,7 @@
     },
 
     beforeDestroy() {
-      if ( this.unsubscribeUser) this.unsubscribeUser();
+      if ( this.unsubscribeUser ) this.unsubscribeUser();
     },
   };
 </script>

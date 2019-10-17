@@ -4,6 +4,7 @@
       row
       py-1
       ml-3
+      mr-1
     >
       <v-avatar
         class="mr-2"

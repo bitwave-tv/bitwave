@@ -56,7 +56,7 @@
             </v-menu>
           </v-flex>
 
-            <!-- Tools -->
+          <!-- Tools -->
           <v-flex
             shrink
             class="mx-2"
@@ -207,6 +207,7 @@
               light
               color="yellow"
               @click="scrollToBottom(true)"
+              class="px-0"
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
@@ -1098,7 +1099,7 @@
 
   #chat-scroll {
     height: 100%;
-    margin-right: 2px;
+    margin-right: 1px;
     overscroll-behavior: contain;
 
     &::-webkit-scrollbar-track

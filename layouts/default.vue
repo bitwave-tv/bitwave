@@ -3,13 +3,13 @@
 
     <!-- Toolbar -->
     <v-app-bar
-      :clipped-left="clipped"
-      clipped-right
+      :clipped-left="false"
       text
       dark
       dense
       fixed
       app
+      color="#212121"
     >
       <v-btn
         icon
@@ -24,7 +24,8 @@
           depressed
           text
           exact
-          active-class
+          id="logo"
+          exact-active-class="app-title-active"
           class="text-none title px-2"
         >{{ title }}</v-btn>
       </v-toolbar-title>
@@ -66,11 +67,10 @@
         title: '[bitwave.tv]',
 
         dark: true,
-        clipped: false,
         fixed: false,
 
         miniVariant: true,
-        drawer: null,
+        drawer: undefined,
 
         right: true,
         showChat: true,
@@ -100,3 +100,15 @@
     }
   }
 </script>
+
+<style lang="scss">
+  #logo.app-title-active {
+    &:hover::before {
+      opacity: 0.24;
+    }
+
+    &::before {
+      opacity: 0;
+    }
+  }
+</style>

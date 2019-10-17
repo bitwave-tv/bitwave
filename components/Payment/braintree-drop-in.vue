@@ -9,7 +9,6 @@
           <v-btn
             color="yellow"
             light
-            small
             v-on="on"
             @click.stop="show = !show"
           >

@@ -31,7 +31,9 @@
               icon
               pa-0
               @click="showViewers = false"
-            ><v-icon color="black">close</v-icon></v-btn>
+            >
+              <v-icon color="black">close</v-icon>
+            </v-btn>
           </v-flex>
         </v-layout>
       </v-sheet>
@@ -39,6 +41,7 @@
       <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain;">
         <v-list
           dense
+          class="py-0"
         >
           <v-list-item
             v-for="viewer in viewerList"
