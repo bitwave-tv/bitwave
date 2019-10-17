@@ -79,10 +79,11 @@
             <v-flex class="mb-2">
               <v-btn
                 small
-                outline
+                outlined
                 color="yellow"
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
                 target="_blank"
+                class="my-1 mr-1"
               >Donate</v-btn>
               Want to help support the site?
             </v-flex>
@@ -93,11 +94,12 @@
             <v-flex>
               <v-btn
                 small
-                outline
+                outlined
                 color="light-blue"
                 href="https://discord.gg/4WwJsKx"
                 target="_blank"
                 title="chat"
+                class="my-1 mr-1"
               >Discord</v-btn>
               If you have questions or feedback, join the discord chat.
             </v-flex>
@@ -105,11 +107,12 @@
             <v-flex class="mb-2">
               <v-btn
                 small
-                outline
+                outlined
                 color="light-blue"
                 href="https://twitter.com/BitWaveTV"
                 target="_blank"
                 title="chat"
+                class="my-1 mr-1"
               >Twitter</v-btn>
               Message or tag us on Twitter for direct assistance.
             </v-flex>
@@ -117,10 +120,11 @@
             <v-flex>
               <v-btn
                 small
-                outline
+                outlined
                 color="light-blue"
                 href="https://github.com/bitwave-tv/bitwave"
                 target="_blank"
+                class="my-1 mr-1"
               >Github</v-btn>
               For more information on Bitwave's source code.
             </v-flex>
@@ -128,7 +132,7 @@
             <v-flex v-if="false">
               <v-btn
                 small
-                outline
+                outlined
                 color="light-blue"
                 href="https://riot.im/app/#/group/+ops:ethanralph.com?hs_url=https://ethanralph.com"
                 target="_blank"
@@ -140,11 +144,12 @@
             <v-flex>
               <v-btn
                 small
-                outline
+                outlined
                 color="light-blue"
                 href="https://github.com/bitwave-tv/bitwave/issues"
                 target="_blank"
                 title="contribute"
+                class="my-1 mr-1"
               >issue</v-btn>
               Found a bug? Report it on Github.
             </v-flex>
@@ -152,19 +157,21 @@
             <v-flex class="mt-2">
               <v-btn
                 small
-                outline
+                outlined
                 color="red"
                 to="/report"
-              >File a report</v-btn>
+                class="my-1 mr-1"
+              >report</v-btn>
               Need to report content?
             </v-flex>
 
             <v-flex class="mb-2">
               <v-btn
                 small
-                outline
+                outlined
                 color="red"
                 to="/tos"
+                class="my-1 mr-1"
               >ToS</v-btn>
               Our terms of service.
             </v-flex>
@@ -187,7 +194,7 @@
             <v-btn
               small
               color="yellow"
-              flat
+              text
               nuxt
               to="/login"
             >Login</v-btn>
