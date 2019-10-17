@@ -23,7 +23,7 @@
           <v-layout column>
             <v-flex>
               <v-layout
-                justify-center
+                justify-space-around
                 align-center
                 row
               >
@@ -70,7 +70,7 @@
                       <v-btn
                         :loading="uploadingAvatar"
                         color="primary"
-                        :outline="!imageFile"
+                        :outlined="!imageFile"
                         @click="uploadFile"
                       >{{ imageFile ? 'save' : 'open' }}</v-btn>
                     </template>
@@ -89,7 +89,7 @@
                     v-model="user.uid"
                     label="UserID"
                     disabled
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -98,7 +98,7 @@
                     v-model="username"
                     label="username"
                     readonly
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -107,7 +107,7 @@
                     v-model="user.email"
                     label="email"
                     readonly
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -117,7 +117,7 @@
                     type="password"
                     value="************"
                     disabled
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -128,6 +128,7 @@
                     @click="logout"
                     light
                     disabled
+                    class="mr-2"
                   >Edit</v-btn>
                   <v-btn
                     color="yellow"
@@ -160,7 +161,7 @@
                 v-model="streamData.title"
                 label="Stream Title"
                 color="yellow"
-                outline
+                outlined
                 hide-details
                 :loading="streamDataLoading || saveLoading"
                 @input="showSave = true"
@@ -170,7 +171,7 @@
               <v-textarea
                 v-model="description"
                 name="input-7-1"
-                outline
+                outlined
                 hide-details
                 color="yellow"
                 label="Stream Description (markdown supported)"
@@ -193,7 +194,7 @@
                 :disabled="!showSave"
                 :loading="saveLoading"
                 color="yellow"
-                outline
+                outlined
                 @click="updateStreamData"
               >save</v-btn>
             </v-layout>
@@ -222,7 +223,7 @@
                 label="Stream URL"
                 color="yellow"
                 readonly
-                outline
+                outlined
                 hide-details
                 :loading="streamDataLoading"
               ></v-text-field>
@@ -234,7 +235,7 @@
                 label="Stream Key"
                 color="yellow"
                 readonly
-                outline
+                outlined
                 :messages="keyMessage"
                 :loading="streamDataLoading || keyLoading"
                 :type="showKey ? 'text' : 'password'"
@@ -248,9 +249,10 @@
               <v-spacer/>
               <v-btn
                 color="yellow"
-                outline
+                outlined
                 :loading="keyLoading"
                 @click="resetStreamKey"
+                class="mr-2"
               >Reset</v-btn>
               <v-btn
                 color="yellow"
