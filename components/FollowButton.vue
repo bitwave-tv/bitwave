@@ -3,7 +3,7 @@
     <v-btn
       small
       light
-      :outline="following || !streamerId"
+      :outlined="following || !streamerId"
       :loading="loading"
       :disabled="!isAuth"
       color="yellow"

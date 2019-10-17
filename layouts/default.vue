@@ -2,10 +2,10 @@
   <v-app :dark="dark">
 
     <!-- Toolbar -->
-    <v-toolbar
+    <v-app-bar
       :clipped-left="clipped"
       clipped-right
-      flat
+      text
       dark
       dense
       fixed
@@ -18,16 +18,15 @@
         <v-icon>menu</v-icon>
       </v-btn>
 
-      <v-toolbar-title class="ml-1 mr-1">
+      <v-toolbar-title class="pl-0">
         <v-btn
           to="/"
           depressed
-          flat
+          text
           exact
           active-class
           class="text-none title px-2"
         >{{ title }}</v-btn>
-
       </v-toolbar-title>
 
       <v-spacer />
@@ -36,7 +35,7 @@
 
       <user />
 
-    </v-toolbar>
+    </v-app-bar>
 
     <!-- L-Nav Drawer -->
     <user-list v-model="drawer" />

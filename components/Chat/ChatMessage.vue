@@ -1,15 +1,21 @@
 <template>
   <v-flex class="msg">
-    <v-layout row py-1 pl-3>
-      <v-list-tile-avatar
+    <v-layout
+      row
+      py-1
+      ml-3
+    >
+      <v-avatar
+        class="mr-2"
         size="34"
         @click="$emit('reply', username)"
       >
         <img v-if="!!avatar" :src="avatar" :alt="username">
         <v-icon v-else :style="{ background: color }">person</v-icon>
-      </v-list-tile-avatar>
-      <v-list-tile-content>
-        <v-list-tile-sub-title>
+      </v-avatar>
+
+      <v-list-item-content class="py-0">
+        <v-list-item-subtitle>
           <v-layout>
             <v-flex shrink>
               <span class="time">{{ timestamp }}</span>
@@ -24,9 +30,10 @@
               </nuxt-link>
             </v-flex>
           </v-layout>
-        </v-list-tile-sub-title>
+        </v-list-item-subtitle>
         <slot></slot>
-      </v-list-tile-content>
+      </v-list-item-content>
+
     </v-layout>
   </v-flex>
 </template>
@@ -83,7 +90,7 @@
       user-select: none;
     }
 
-    .v-list__tile__avatar {
+    .v-list-item__avatar {
       min-width: 42px;
     }
 

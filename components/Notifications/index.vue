@@ -15,7 +15,7 @@
         <v-btn
           v-on="on"
           icon
-          flat
+          text
           @click="markAsRead"
         >
           <v-badge
@@ -33,17 +33,17 @@
 
       <v-card>
         <v-list class="py-0" color="yellow">
-          <v-list-tile>
+          <v-list-item>
 
-            <v-list-tile-avatar>
-              <v-icon class="ml-1">notifications</v-icon>
-            </v-list-tile-avatar>
+            <v-list-item-avatar>
+              <v-icon color="black" class="ml-1">notifications</v-icon>
+            </v-list-item-avatar>
 
-            <v-list-tile-content>
-              <v-list-tile-title>{{ title }}</v-list-tile-title>
-            </v-list-tile-content>
+            <v-list-item-content>
+              <v-list-item-title class="black--text">{{ title }}</v-list-item-title>
+            </v-list-item-content>
 
-          </v-list-tile>
+          </v-list-item>
         </v-list>
 
         <v-divider/>
@@ -57,30 +57,30 @@
             class="pb-0"
           >
 
-            <v-list-tile
+            <v-list-item
               v-if="filteredNotifications.length === 0"
             >
-              <v-list-tile-action>
+              <v-list-item-action>
                 <v-icon>done</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>No New Notifications</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>No New Notifications</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
 
-            <v-list-tile
+            <v-list-item
               v-for="notification in filteredNotifications"
               :key="notification.id"
               :to="notification.url"
             >
-              <v-list-tile-action>
+              <v-list-item-action>
                 <v-icon>{{ notification.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{ notification.title }}</v-list-tile-title>
-                <v-list-tile-sub-title>{{ notification.message }}</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ notification.title }}</v-list-item-title>
+                <v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
             <!--<v-layout row justify-center>
               <v-btn

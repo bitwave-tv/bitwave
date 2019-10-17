@@ -57,17 +57,17 @@
                   class="blink mr-2"
                 >lens</v-icon>
               </v-flex>
+              <v-flex>
+                <h2>{{ title }}</h2>
+              </v-flex>
               <v-flex shrink>
                 <v-chip
                   v-if="nsfw"
                   color="red"
                   class="mr-2"
                   small
-                  outline
+                  :outlined="false"
                 >NSFW</v-chip>
-              </v-flex>
-              <v-flex>
-                <h2>{{ title }}</h2>
               </v-flex>
               <v-flex shrink>
                 <FollowButton

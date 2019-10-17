@@ -16,7 +16,7 @@
           v-on="on"
           color="transparent"
           light
-          round
+          rounded
           fab
           small
           :loading="loading"
@@ -29,18 +29,18 @@
 
       <v-card>
         <v-list class="py-1" color="yellow">
-          <v-list-tile avatar>
+          <v-list-item>
 
-            <v-list-tile-avatar>
+            <v-list-item-avatar>
               <img :src="avatar" :alt="username">
-            </v-list-tile-avatar>
+            </v-list-item-avatar>
 
-            <v-list-tile-content>
-              <v-list-tile-title>{{ username }}</v-list-tile-title>
-              <v-list-tile-sub-title>basic user</v-list-tile-sub-title>
-            </v-list-tile-content>
+            <v-list-item-content>
+              <v-list-item-title class="black--text">{{ username }}</v-list-item-title>
+              <v-list-item-subtitle class="black--text">basic user</v-list-item-subtitle>
+            </v-list-item-content>
 
-          </v-list-tile>
+          </v-list-item>
         </v-list>
 
         <v-divider/>
@@ -49,49 +49,49 @@
           color="#222"
         >
           <v-list dense :style="{ background: 'transparent' }">
-            <v-list-tile to="/">
-              <v-list-tile-action>
+            <v-list-item to="/">
+              <v-list-item-action>
                 <v-icon>home</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Home</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile to="/profile">
-              <v-list-tile-action>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Home</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/profile">
+              <v-list-item-action>
                 <v-icon>account_box</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Profile</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile :to="`/chat/${username}`">
-              <v-list-tile-action>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Profile</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="`/chat/${username}`">
+              <v-list-item-action>
                 <v-icon>forum</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Live Chat</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile to="/report">
-              <v-list-tile-action>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Live Chat</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/report">
+              <v-list-item-action>
                 <v-icon>flag</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Report</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Report</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
 
             <braintree-drop-in />
 
-            <v-list-tile @click="logout">
-              <v-list-tile-action>
+            <v-list-item @click="logout">
+              <v-list-item-action>
                 <v-icon>exit_to_app</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Sign Out</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Sign Out</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-sheet>
       </v-card>

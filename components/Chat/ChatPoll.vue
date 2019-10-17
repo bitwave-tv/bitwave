@@ -41,7 +41,7 @@
                     v-if="index+1 < options.length"
                     small
                     light
-                    outline
+                    outlined
                     tabindex="-1"
                     color="yellow"
                     :disabled="!index"

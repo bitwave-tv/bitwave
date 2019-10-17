@@ -1,10 +1,12 @@
 <template>
   <div class="payment">
+    <div class="subtitle-1 mt-2">Preview:</div>
     <v-responsive
-      :style="{ background: `${color}` }"
-      height="32px"
-      class="mb-4"
-    ></v-responsive>
+      :style="{ background: `black` }"
+      class="mb-4 px-4 py-2"
+    >
+      <div :style="{ color: color }">ExampleUsername</div>
+    </v-responsive>
     <v-combobox
       v-model="selectedColor"
       :items="colors"
