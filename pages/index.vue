@@ -10,11 +10,7 @@
           v-if="live"
           color="black"
         >
-          <v-layout
-            row
-            wrap
-            align-center
-          >
+          <v-layout wrap align-center>
             <v-flex
               style="min-width: 50%;"
             >
