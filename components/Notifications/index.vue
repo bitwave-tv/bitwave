@@ -1,5 +1,5 @@
 <template>
-  <v-flex mr-3 shrink>
+  <v-flex mr-2 shrink>
 
     <v-menu
       v-model="notificationMenu"
@@ -22,6 +22,7 @@
             :value="notificationCount > 0"
             color="red"
             right
+            overlap
           >
             <template #badge>
               <span>{{ notificationCount }}</span>
