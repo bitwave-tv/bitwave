@@ -199,7 +199,7 @@
               to="/login"
             >Login</v-btn>
             <v-btn
-              light
+              class="black--text"
               small
               color="yellow"
               nuxt

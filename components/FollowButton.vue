@@ -2,7 +2,7 @@
   <div>
     <v-btn
       small
-      light
+      class="black--text"
       :outlined="following || !streamerId"
       :loading="loading"
       :disabled="!isAuth"

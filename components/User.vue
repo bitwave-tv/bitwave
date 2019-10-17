@@ -16,7 +16,7 @@
         <v-btn
           v-on="on"
           color="transparent"
-          light
+          class="black--text"
           rounded
           fab
           small

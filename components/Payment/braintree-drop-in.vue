@@ -8,7 +8,7 @@
         <v-list-item>
           <v-btn
             color="yellow"
-            light
+            class="black--text"
             v-on="on"
             @click.stop="show = !show"
           >
