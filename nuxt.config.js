@@ -108,7 +108,7 @@ module.exports = {
   ],
 
   vuetify: {
-
+    optionsPath: './vuetify.options.js',
   },
 
   /*
