@@ -1,5 +1,5 @@
 <template>
-  <v-flex mr-2 shrink>
+  <v-flex mr-1 shrink>
 
     <v-menu
       v-model="notificationMenu"
@@ -82,17 +82,6 @@
                 <v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-
-            <!--<v-layout row justify-center>
-              <v-btn
-                flat
-                small
-                color="yellow"
-                @click.stop="showRead = !showRead"
-              >
-                {{ showRead ? 'Hide Read' : 'Show All' }}
-              </v-btn>
-            </v-layout>-->
 
           </v-list>
         </v-sheet>
