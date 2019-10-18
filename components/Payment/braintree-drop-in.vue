@@ -5,15 +5,17 @@
       width="500"
     >
       <template v-slot:activator="{ on }">
-        <v-btn
-          color="yellow"
-          light
-          small
-          v-on="on"
-        >
-          <v-icon class="mr-2">store</v-icon>
-          Buy Color
-        </v-btn>
+        <v-list-item>
+          <v-btn
+            color="yellow"
+            class="black--text"
+            v-on="on"
+            @click.stop="show = !show"
+          >
+            <v-icon class="mr-2">store</v-icon>
+            Buy Color
+          </v-btn>
+        </v-list-item>
       </template>
 
       <v-card light>

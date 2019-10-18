@@ -3,7 +3,7 @@
     id="sidechat"
     column
     fill-height
-    v-resize="onResize"
+    v-resize.quiet="onResize"
   >
 
     <!-- Chat Header -->
@@ -39,7 +39,7 @@
                   v-on="on"
                   :style="{ 'min-width': '40px' }"
                   small
-                  light
+                  class="black--text"
                   :disabled="showPollClient"
                   color="yellow"
                   @click="scrollToBottom(true)"
@@ -56,8 +56,11 @@
             </v-menu>
           </v-flex>
 
-            <!-- Tools -->
-          <v-flex shrink>
+          <!-- Tools -->
+          <v-flex
+            shrink
+            class="mx-2"
+          >
             <v-menu
               v-model="showToolMenu"
               :close-on-content-click="false"
@@ -72,7 +75,7 @@
                   v-on="on"
                   :style="{ 'min-width': '40px' }"
                   small
-                  light
+                  class="black--text"
                   color="yellow"
                   @click="scrollToBottom(true)"
                 >
@@ -89,7 +92,7 @@
                     <v-flex shrink>
                       <v-btn
                         color="black"
-                        flat
+                        text
                         icon
                         pa-0
                         @click="showToolMenu = false"
@@ -101,7 +104,7 @@
                 </v-sheet>
 
                 <v-list>
-                  <v-list-tile>
+                  <v-list-item>
                     <v-switch
                       v-model="global"
                       :label="`${ global ? 'Global' : 'Local' } Chat`"
@@ -117,8 +120,8 @@
                       color="yellow"
                       hide-details
                     ></v-switch>
-                  </v-list-tile>
-                  <v-list-tile>
+                  </v-list-item>
+                  <v-list-item>
                     <v-switch
                       v-model="useIgnoreListForChat"
                       @change="toggleUseIgnore"
@@ -127,7 +130,7 @@
                       color="yellow"
                       hide-details
                     ></v-switch>
-                  </v-list-tile>
+                  </v-list-item>
                 </v-list>
 
                 <v-divider/>
@@ -168,7 +171,7 @@
                     ></v-select>
                   </v-flex>
 
-                  <v-list-tile>
+                  <v-list-item>
                     <v-slider
                       label="Speed"
                       v-model="rateTTS"
@@ -189,7 +192,7 @@
                         ></v-text-field>
                       </template>
                     </v-slider>
-                  </v-list-tile>
+                  </v-list-item>
                 </v-list>
               </v-card>
             </v-menu>
@@ -201,9 +204,9 @@
             <v-btn
               :style="{ 'min-width': '40px' }"
               small
-              light
               color="yellow"
               @click="scrollToBottom(true)"
+              class="px-0 black--text"
             ><v-icon>keyboard_arrow_down</v-icon>
             </v-btn>
           </v-flex>
@@ -244,7 +247,11 @@
           :avatar="item.avatar"
           :color="item.color"
           @reply="addUserTag"
-        ><div v-html="item.message"></div>
+        >
+          <div
+            :style="{ 'font-size': '14px', 'line-height': '1.5' }"
+            v-html="item.message"
+          ></div>
         </chat-message>
       </div>
     </v-flex>
@@ -258,7 +265,7 @@
           row
           justify-center
           pb-1
-          px-3
+          mx-2
         >
           <v-flex>
             <v-text-field
@@ -1091,7 +1098,7 @@
 
   #chat-scroll {
     height: 100%;
-    margin-right: 2px;
+    margin-right: 1px;
     overscroll-behavior: contain;
 
     &::-webkit-scrollbar-track

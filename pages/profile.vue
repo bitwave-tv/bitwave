@@ -23,7 +23,7 @@
           <v-layout column>
             <v-flex>
               <v-layout
-                justify-center
+                justify-space-around
                 align-center
                 row
               >
@@ -50,46 +50,44 @@
 
                 <h2 class="mb-2">Profile</h2>
 
-                <v-flex>
-                  <v-text-field
-                    v-model="imageName"
-                    :loading="uploadingAvatar"
-                    label="Upload new profile photo"
-                    color=""
-                    solo
-                    light
-                    read-only
-                    spellcheck="off"
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    prepend-inner-icon="attach_file"
-                    @click='pickFile'
-                  >
-                    <template #append>
-                      <v-btn
-                        :loading="uploadingAvatar"
-                        color="primary"
-                        :outline="!imageFile"
-                        @click="uploadFile"
-                      >{{ imageFile ? 'save' : 'open' }}</v-btn>
-                    </template>
-                  </v-text-field>
-                  <input
-                    type="file"
-                    style="display: none"
-                    ref="image"
-                    accept="image/*"
-                    @change="onFilePicked"
-                  >
-                </v-flex>
+                <v-layout
+                  class="mb-4"
+                  align-center
+                >
+                  <v-flex>
+                    <v-file-input
+                      ref="image"
+                      label="Select new profile photo"
+                      solo
+                      light
+                      filled
+                      hide-details
+                      prepend-icon=""
+                      prepend-inner-icon="$file"
+                      background-color="white"
+                      truncate-length="30"
+                      @change="onFilePicked"
+                    ></v-file-input>
+                  </v-flex>
+                  <v-flex shrink>
+                    <v-btn
+                      large
+                      class="ml-2"
+                      :loading="uploadingAvatar"
+                      color="yellow"
+                      outlined
+                      :disabled="!imageFile"
+                      @click="uploadFile"
+                    >SAVE</v-btn>
+                  </v-flex>
+                </v-layout>
 
-                <v-flex>
+                <v-flex class="mt-4">
                   <v-text-field
                     v-model="user.uid"
                     label="UserID"
                     disabled
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -98,7 +96,7 @@
                     v-model="username"
                     label="username"
                     readonly
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -107,7 +105,7 @@
                     v-model="user.email"
                     label="email"
                     readonly
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -117,7 +115,7 @@
                     type="password"
                     value="************"
                     disabled
-                    outline
+                    outlined
                   ></v-text-field>
                 </v-flex>
 
@@ -126,13 +124,13 @@
                   <v-btn
                     color="yellow"
                     @click="logout"
-                    light
                     disabled
+                    class="mr-2 black--text"
                   >Edit</v-btn>
                   <v-btn
                     color="yellow"
                     @click="logout"
-                    light
+                    class="black--text"
                   >Logout</v-btn>
                 </v-layout>
               </v-layout>
@@ -160,7 +158,7 @@
                 v-model="streamData.title"
                 label="Stream Title"
                 color="yellow"
-                outline
+                outlined
                 hide-details
                 :loading="streamDataLoading || saveLoading"
                 @input="showSave = true"
@@ -170,7 +168,7 @@
               <v-textarea
                 v-model="description"
                 name="input-7-1"
-                outline
+                outlined
                 hide-details
                 color="yellow"
                 label="Stream Description (markdown supported)"
@@ -193,7 +191,7 @@
                 :disabled="!showSave"
                 :loading="saveLoading"
                 color="yellow"
-                outline
+                outlined
                 @click="updateStreamData"
               >save</v-btn>
             </v-layout>
@@ -222,7 +220,7 @@
                 label="Stream URL"
                 color="yellow"
                 readonly
-                outline
+                outlined
                 hide-details
                 :loading="streamDataLoading"
               ></v-text-field>
@@ -234,7 +232,7 @@
                 label="Stream Key"
                 color="yellow"
                 readonly
-                outline
+                outlined
                 :messages="keyMessage"
                 :loading="streamDataLoading || keyLoading"
                 :type="showKey ? 'text' : 'password'"
@@ -248,13 +246,14 @@
               <v-spacer/>
               <v-btn
                 color="yellow"
-                outline
+                outlined
                 :loading="keyLoading"
                 @click="resetStreamKey"
+                class="mr-2"
               >Reset</v-btn>
               <v-btn
                 color="yellow"
-                light
+                class="black--text"
                 :loading="keyLoading"
                 @click="copyToClipboard"
               >Copy</v-btn>
@@ -444,18 +443,17 @@
         this.$refs.image.click ();
       },
 
-      onFilePicked (e) {
-        const files = e.target.files;
-        if ( files[0] !== undefined ) {
-          this.imageName = files[0].name;
+      onFilePicked ( file ) {
+        if ( !!file ) {
+          this.imageName = file.name;
           if( this.imageName.lastIndexOf('.') <= 0 ) {
             return;
           }
           const fr = new FileReader ();
-          fr.readAsDataURL( files[0] );
+          fr.readAsDataURL( file );
           fr.addEventListener('load', () => {
             this.imageUrl  = fr.result;
-            this.imageFile = files[0]; // this is an image file that can be sent to server...
+            this.imageFile = file; // this is an image file that can be sent to server...
           });
         } else {
           this.imageName = '';
@@ -465,15 +463,11 @@
       },
 
       async uploadFile () {
-        if ( !this.imageFile ) {
-          this.$refs.image.click();
-          return false;
-        }
+        if ( !this.imageFile ) return false;
         this.uploadingAvatar = true;
         const formData = new FormData();
         formData.append( 'upload', this.imageFile );
         try {
-          // const { data } = await this.$axios.post('http://localhost:4000/upload/image', formData, {
           const { data } = await this.$axios.post( 'https://api.bitwave.tv/upload', formData, {
             headers: {
               'content-type': 'multipart/formdata',

@@ -27,11 +27,13 @@
           <v-flex shrink>
             <v-btn
               color="black"
-              flat
+              text
               icon
               pa-0
               @click="showViewers = false"
-            ><v-icon color="black">close</v-icon></v-btn>
+            >
+              <v-icon color="black">close</v-icon>
+            </v-btn>
           </v-flex>
         </v-layout>
       </v-sheet>
@@ -39,35 +41,34 @@
       <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain;">
         <v-list
           dense
-          two-line
+          class="py-0"
         >
-          <v-list-tile
-            avatar
+          <v-list-item
             v-for="viewer in viewerList"
             :key="viewer.username"
             :to="`${viewer.page.watch || viewer.page}`"
           >
             <template v-if="viewerList.length > 0">
-              <v-list-tile-avatar>
+              <v-list-item-avatar>
                 <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
                 <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
-              </v-list-tile-avatar>
-              <v-list-tile-content>
-                <v-list-tile-title>{{ viewer.username }}</v-list-tile-title>
-                <v-list-tile-sub-title
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ viewer.username }}</v-list-item-title>
+                <v-list-item-subtitle
                   v-if="viewer.page && viewer.page.watch && channelViews[ viewer.page.watch.toLowerCase() ]"
                 >
                   Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}
-                </v-list-tile-sub-title>
-                <v-list-tile-sub-title
+                </v-list-item-subtitle>
+                <v-list-item-subtitle
                   v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
                 >
                   Just Watching {{ `${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
-                </v-list-tile-sub-title>
-                <v-list-tile-sub-title v-else>Getting Soda</v-list-tile-sub-title>
-              </v-list-tile-content>
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else>Getting Soda</v-list-item-subtitle>
+              </v-list-item-content>
             </template>
-          </v-list-tile>
+          </v-list-item>
         </v-list>
       </v-layout>
 

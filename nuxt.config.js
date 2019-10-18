@@ -77,7 +77,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/vuetify',
+    // '@/plugins/vuetify',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
   ],
@@ -101,16 +101,27 @@ module.exports = {
   },
 
   /*
+  ** Build Modules
+   */
+  buildModules: [
+    '@nuxtjs/vuetify',
+  ],
+
+  vuetify: {
+    optionsPath: './vuetify.options.js',
+  },
+
+  /*
   ** Build configuration
   */
   build: {
-    transpile: [ 'vuetify/lib' ],
-    plugins: [ new VuetifyLoaderPlugin() ],
-    loaders: {
-      stylus: {
-        import: [ '~assets/style/variables.styl' ],
-      },
-    },
+    // transpile: [ 'vuetify/lib' ],
+    // plugins: [ new VuetifyLoaderPlugin() ],
+    // loaders: {
+    //   stylus: {
+    //     import: [ '~assets/style/variables.styl' ],
+    //   },
+    // },
 
     /*
     ** You can extend webpack config here
