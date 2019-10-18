@@ -3,7 +3,7 @@
     id="sidechat"
     column
     fill-height
-    v-resize="onResize"
+    v-resize.quiet="onResize"
   >
 
     <!-- Chat Header -->
@@ -249,7 +249,7 @@
           @reply="addUserTag"
         >
           <div
-            :style="{ 'font-size': '14px' }"
+            :style="{ 'font-size': '14px', 'line-height': '1.5' }"
             v-html="item.message"
           ></div>
         </chat-message>
