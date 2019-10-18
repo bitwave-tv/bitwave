@@ -1,11 +1,10 @@
 <template>
-  <v-app :dark="dark">
+  <v-app>
 
     <!-- Toolbar -->
     <v-app-bar
       app
       :clipped-left="false"
-      text
       dark
       dense
       fixed
@@ -45,6 +44,7 @@
     <v-content>
       <nuxt />
     </v-content>
+
   </v-app>
 </template>
 
@@ -66,13 +66,11 @@
       return {
         title: '[bitwave.tv]',
 
-        dark: true,
         fixed: false,
 
         miniVariant: true,
         drawer: undefined,
 
-        right: true,
         showChat: true,
       }
     },

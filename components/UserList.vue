@@ -4,9 +4,6 @@
     @input="$emit('input', $event)"
     :mini-variant="miniVariant"
     :clipped="false"
-    fixed
-    flat
-    dark
     app
   >
     <v-layout
@@ -35,8 +32,9 @@
                 <v-icon light :size="item.size" >{{ item.icon }}</v-icon>
               </v-avatar>
             </v-list-item-action>
-            <v-list-item-content>
+            <v-list-item-content class="py-0">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-subtitle>[bitwave.tv]</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -80,7 +78,10 @@
               </v-badge>
 
             </v-list-item-avatar>
-            <v-list-item-content>{{ user.name }}</v-list-item-content>
+            <v-list-item-content class="py-0">
+              <v-list-item-title>{{ user.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
 
           <!-- View All Streamers -->
@@ -111,7 +112,6 @@
     <template v-slot:append>
       <div class="pa-2">
         <v-btn
-          style="min-width: 32px;"
           color="yellow"
           block
           outlined
