@@ -12,7 +12,7 @@
         >
           <v-layout wrap align-center>
             <v-flex
-              style="min-width: 50%;"
+              style="min-width: 40%;"
             >
               <video
                 playsinline
@@ -34,13 +34,12 @@
 
             <v-flex
               shrink
-              style="width: 450px;"
+              :style="{ width: mobile ? '100%' : '450px' }"
             >
               <v-layout style="max-height: 500px;">
                 <v-flex>
                   <chat
                     :chat-channel="live[0].name"
-                    :dark="true"
                   />
                 </v-flex>
               </v-layout>
@@ -247,7 +246,9 @@
     },
 
     computed: {
-
+      mobile () {
+        return this.$vuetify.breakpoint.mdAndDown;
+      },
     },
 
     methods: {

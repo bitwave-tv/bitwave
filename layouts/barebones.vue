@@ -1,16 +1,16 @@
 <template>
-  <v-app :dark="dark">
+  <v-app>
 
     <!-- Toolbar -->
-    <v-toolbar
+    <v-app-bar
+      app
       text
       dark
       dense
       fixed
-      app
       color="#212121"
     >
-      <v-toolbar-title class="ml-0 mr-1">
+      <v-toolbar-title class="ml-0">
         <v-btn
           to="/"
           depressed
@@ -28,7 +28,7 @@
 
       <user/>
 
-    </v-toolbar>
+    </v-app-bar>
 
     <!-- Content -->
     <v-content style="max-height: 100vh">
