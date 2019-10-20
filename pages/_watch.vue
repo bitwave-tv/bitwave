@@ -1,6 +1,5 @@
 <template>
   <div :style="{ paddingRight: mobile ? '0' : '450px' }">
-    <!-- <v-container flex pa-0> -->
 
     <!-- Video And Description -->
 
@@ -31,16 +30,16 @@
     <!-- Mobile Chat -->
     <v-layout :class="{ 'chat-desktop': !mobile }">
       <v-flex :style="{ maxHeight: mobile ? '390px' : '100%' }">
-        <no-ssr placeholder="Loading...">
+        <client-only placeholder="Loading...">
           <chat
             :chat-channel="name"
           ></chat>
-        </no-ssr>
+        </client-only>
       </v-flex>
     </v-layout>
 
 
-    <!-- Stream Title, Status, Description -->
+    <!-- Stream Title, Status -->
     <v-layout class="px-3 my-2" align-center>
       <v-flex shrink>
         <v-icon
@@ -69,6 +68,7 @@
       </v-flex>
     </v-layout>
 
+    <!-- Description -->
     <v-layout class="px-3 my-2">
       <v-flex id="description">
         <vue-markdown

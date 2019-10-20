@@ -2,17 +2,15 @@
     <div>
       <v-layout>
 
-        <v-sheet color="yellow">
-          <div style="width:24px;"></div>
-        </v-sheet>
+        <v-sheet color="yellow" width="8px" />
 
-        <v-flex grow>
+        <v-flex>
           <v-sheet
             id="poll-vote-body"
-            :class="{ 'pa-2': true, 'py-1': showOptions }"
+            class="pa-2"
           >
 
-            <v-layout align-center>
+            <v-layout align-center mb-2>
               <v-flex shrink>
                 <v-progress-circular
                   size="22"
@@ -37,7 +35,7 @@
                   outlined
                   @click="showOptions = !showOptions"
                 >
-                  <v-icon>keyboard_arrow_down</v-icon>
+                  <v-icon>{{ `keyboard_arrow_${showOptions ? 'up' : 'down' }` }}</v-icon>
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -45,7 +43,7 @@
             <v-flex
               v-if="!showResults && showOptions"
               v-for="(val, index) in options"
-              :key="val.label"
+              :key="`options-${index}`"
               my-2
             >
               <v-btn

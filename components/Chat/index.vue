@@ -7,218 +7,214 @@
   >
 
     <!-- Chat Header -->
-    <v-flex id="chat-header">
-      <v-sheet>
-        <v-layout
-          align-center
-          class="pa-2"
+    <v-sheet id="chat-header">
+      <v-layout
+        align-center
+        class="pa-2"
+      >
+        <!-- Viewer List -->
+        <v-flex shrink>
+          <ViewerList :page="page" />
+        </v-flex>
+
+        <!-- Chat Label -->
+        <v-flex grow ml-2>
+          <h4>{{ page }}</h4>
+        </v-flex>
+
+        <!-- Create Poll Button -->
+        <v-flex
+          v-if="page === username"
+          shrink
         >
-          <!-- Viewer List -->
-          <v-flex shrink>
-            <ViewerList :page="page" />
-          </v-flex>
-
-          <!-- Chat Label -->
-          <v-flex grow ml-2>
-            <h4>{{ page }}</h4>
-          </v-flex>
-
-          <!-- Create Poll Button -->
-          <v-flex
-            v-if="page === username"
-            shrink
+          <v-menu
+            v-model="showPoll"
+            :close-on-content-click="false"
+            bottom
+            left
           >
-            <v-menu
-              v-model="showPoll"
-              :close-on-content-click="false"
-              bottom
-              left
-            >
-              <template #activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  :style="{ 'min-width': '40px' }"
-                  small
-                  class="black--text"
-                  :disabled="showPollClient"
-                  color="yellow"
-                  @click="scrollToBottom(true)"
-                >POLL</v-btn>
-              </template>
+            <template #activator="{ on }">
+              <v-btn
+                v-on="on"
+                :style="{ 'min-width': '40px' }"
+                small
+                class="black--text"
+                :disabled="showPollClient"
+                color="yellow"
+                @click="scrollToBottom(true)"
+              >POLL</v-btn>
+            </template>
 
-              <!-- Create Poll Dialog -->
-              <chat-poll
-                id="chat-poll"
-                @close="showPoll = false"
-                @create="createPoll"
-              />
+            <!-- Create Poll Dialog -->
+            <chat-poll
+              id="chat-poll"
+              @close="showPoll = false"
+              @create="createPoll"
+            />
 
-            </v-menu>
-          </v-flex>
+          </v-menu>
+        </v-flex>
 
-          <!-- Tools -->
-          <v-flex
-            shrink
-            class="mx-2"
+        <!-- Tools -->
+        <v-flex
+          shrink
+          class="mx-2"
+        >
+          <v-menu
+            v-model="showToolMenu"
+            :close-on-content-click="false"
+            transition="slide-x-reverse-transition"
+            :max-width="320"
+            bottom
+            offset-x
+            offset-y
           >
-            <v-menu
-              v-model="showToolMenu"
-              :close-on-content-click="false"
-              transition="slide-x-reverse-transition"
-              :max-width="320"
-              bottom
-              offset-x
-              offset-y
-            >
-              <template #activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  :style="{ 'min-width': '40px' }"
-                  small
-                  class="black--text"
-                  color="yellow"
-                  @click="scrollToBottom(true)"
-                >
-                  <v-icon>settings</v-icon>
-                </v-btn>
-              </template>
+            <template #activator="{ on }">
+              <v-btn
+                v-on="on"
+                :style="{ 'min-width': '40px' }"
+                small
+                class="black--text"
+                color="yellow"
+                @click="scrollToBottom(true)"
+              >
+                <v-icon>settings</v-icon>
+              </v-btn>
+            </template>
 
-              <v-card>
-                <v-sheet color="yellow">
-                  <v-layout class="pl-2" align-center>
-                    <v-flex>
-                      <h5 class="black--text body-2">Settings</h5>
-                    </v-flex>
-                    <v-flex shrink>
-                      <v-btn
-                        color="black"
-                        text
-                        icon
-                        pa-0
-                        @click="showToolMenu = false"
-                      >
-                        <v-icon color="black">close</v-icon>
-                      </v-btn>
-                    </v-flex>
-                  </v-layout>
-                </v-sheet>
-
-                <v-list>
-                  <v-list-item>
-                    <v-switch
-                      v-model="global"
-                      :label="`${ global ? 'Global' : 'Local' } Chat`"
-                      class="ml-0 mt-0 pt-0"
-                      :disabled="false"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                    <v-switch
-                      v-model="showTimestamps"
-                      label="Timestamps"
-                      class="ml-2 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-switch
-                      v-model="useIgnoreListForChat"
-                      @change="toggleUseIgnore"
-                      label="Ignore chat messages"
-                      class="ml-0 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-list-item>
-                </v-list>
-
-                <v-divider/>
-
-                <v-list subheader pb-2>
-                  <v-subheader class="mb-0">Text To Speech Options</v-subheader>
-
-                  <v-layout mb-3>
-                    <v-flex>
-                      <v-switch
-                        v-model="useTTS"
-                        label="Use TTS"
-                        class="ml-3 mt-0 pt-0"
-                        color="yellow"
-                        hide-details
-                        @change="toggleTTS"
-                      ></v-switch>
-                    </v-flex>
-                    <v-flex>
-                      <v-switch
-                        v-model="allowTrollTTS"
-                        :disabled="!useTTS"
-                        label="Troll TTS"
-                        class="ml-0 mt-0 pt-0"
-                        color="yellow"
-                        hide-details
-                      ></v-switch>
-                    </v-flex>
-                  </v-layout>
-
-                  <v-flex mx-3>
-                    <v-select
-                      v-model="selectionTTS"
-                      :items="voices"
-                      label="TTS Voice"
-                      style="font-size: 12px;"
-                      hide-details
-                    ></v-select>
+            <v-card>
+              <v-sheet color="yellow">
+                <v-layout class="pl-2" align-center>
+                  <v-flex>
+                    <h5 class="black--text body-2">Settings</h5>
                   </v-flex>
-
-                  <v-list-item>
-                    <v-slider
-                      label="Speed"
-                      v-model="rateTTS"
-                      class="align-center"
-                      :max="20"
-                      :min="1"
-                      :step="0"
-                      hide-details
+                  <v-flex shrink>
+                    <v-btn
+                      color="black"
+                      text
+                      icon
+                      pa-0
+                      @click="showToolMenu = false"
                     >
-                      <template #append>
-                        <v-text-field
-                          v-model="rateTTS"
-                          class="mt-0 pt-0"
-                          hide-details
-                          single-line
-                          type="number"
-                          style="width: 40px"
-                        ></v-text-field>
-                      </template>
-                    </v-slider>
-                  </v-list-item>
-                </v-list>
-              </v-card>
-            </v-menu>
-          </v-flex>
+                      <v-icon color="black">close</v-icon>
+                    </v-btn>
+                  </v-flex>
+                </v-layout>
+              </v-sheet>
 
-          <!-- Scroll to Chat Bottom -->
-          <v-flex shrink v-show="enable">
-            <!-- Scroll to bottom button -->
-            <v-btn
-              :style="{ 'min-width': '40px' }"
-              small
-              color="yellow"
-              @click="scrollToBottom(true)"
-              class="px-0 black--text"
-            ><v-icon>keyboard_arrow_down</v-icon>
-            </v-btn>
-          </v-flex>
+              <v-list>
+                <v-list-item>
+                  <v-switch
+                    v-model="global"
+                    :label="`${ global ? 'Global' : 'Local' } Chat`"
+                    class="ml-0 mt-0 pt-0"
+                    :disabled="false"
+                    color="yellow"
+                    hide-details
+                  ></v-switch>
+                  <v-switch
+                    v-model="showTimestamps"
+                    label="Timestamps"
+                    class="ml-2 mt-0 pt-0"
+                    color="yellow"
+                    hide-details
+                  ></v-switch>
+                </v-list-item>
+                <v-list-item>
+                  <v-switch
+                    v-model="useIgnoreListForChat"
+                    @change="toggleUseIgnore"
+                    label="Ignore chat messages"
+                    class="ml-0 mt-0 pt-0"
+                    color="yellow"
+                    hide-details
+                  ></v-switch>
+                </v-list-item>
+              </v-list>
 
-        </v-layout>
-      </v-sheet>
-    </v-flex>
+              <v-divider/>
 
-    <v-divider/>
+              <v-list subheader pb-2>
+                <v-subheader class="mb-0">Text To Speech Options</v-subheader>
+
+                <v-layout mb-3>
+                  <v-flex>
+                    <v-switch
+                      v-model="useTTS"
+                      label="Use TTS"
+                      class="ml-3 mt-0 pt-0"
+                      color="yellow"
+                      hide-details
+                      @change="toggleTTS"
+                    ></v-switch>
+                  </v-flex>
+                  <v-flex>
+                    <v-switch
+                      v-model="allowTrollTTS"
+                      :disabled="!useTTS"
+                      label="Troll TTS"
+                      class="ml-0 mt-0 pt-0"
+                      color="yellow"
+                      hide-details
+                    ></v-switch>
+                  </v-flex>
+                </v-layout>
+
+                <v-flex mx-3>
+                  <v-select
+                    v-model="selectionTTS"
+                    :items="voices"
+                    label="TTS Voice"
+                    style="font-size: 12px;"
+                    hide-details
+                  ></v-select>
+                </v-flex>
+
+                <v-list-item>
+                  <v-slider
+                    label="Speed"
+                    v-model="rateTTS"
+                    class="align-center"
+                    :max="20"
+                    :min="1"
+                    :step="0"
+                    hide-details
+                  >
+                    <template #append>
+                      <v-text-field
+                        v-model="rateTTS"
+                        class="mt-0 pt-0"
+                        hide-details
+                        single-line
+                        type="number"
+                        style="width: 40px"
+                      ></v-text-field>
+                    </template>
+                  </v-slider>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+        </v-flex>
+
+        <!-- Scroll to Chat Bottom -->
+        <v-flex shrink>
+          <!-- Scroll to bottom button -->
+          <v-btn
+            :style="{ 'min-width': '40px' }"
+            small
+            color="yellow"
+            @click="scrollToBottom(true)"
+            class="px-0 black--text"
+          ><v-icon>keyboard_arrow_down</v-icon>
+          </v-btn>
+        </v-flex>
+
+      </v-layout>
+    </v-sheet>
 
     <!-- Show Poll to Users -->
-    <v-flex>
+    <v-flex id="user-chat-poll">
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
@@ -229,8 +225,8 @@
       />
     </v-flex>
 
+    <!-- Chat Messages -->
     <v-flex
-      v-show="enable"
       id="inner-chat"
       fill-height
       style="overflow: hidden;"
@@ -256,41 +252,34 @@
       </div>
     </v-flex>
 
-    <v-divider/>
-
     <!-- Chat Input -->
-    <v-flex v-show="enable">
-      <v-sheet>
-        <v-layout
-          row
-          justify-center
-          pb-1
-          mx-2
-        >
-          <v-flex>
-            <v-text-field
-              ref="chatmessageinput"
-              :value="message"
-              :label="`Chat as ${username}...`"
-              color="yellow"
-              autocomplete="off"
-              autocorrect="off"
-              autocapitalize="off"
-              spellcheck="true"
-              single-line
-              append-outer-icon="send"
-              counter="300"
-              validate-on-blur
-              @change="value => this.message = value"
-              @click:append-outer.prevent="sendMessage"
-              @keyup.enter.prevent="sendMessage"
-              @keyup.prevent="event => lastMessageHandler(event)"
-              @cut="event => lastMessageHandler(event)"
-            ></v-text-field>
-          </v-flex>
-        </v-layout>
-      </v-sheet>
-    </v-flex>
+
+    <v-sheet class="px-2 pb-1">
+      <v-layout>
+        <v-flex>
+          <v-text-field
+            ref="chatmessageinput"
+            :value="message"
+            :label="`Chat as ${username}...`"
+            color="yellow"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="true"
+            single-line
+            append-outer-icon="send"
+            counter="300"
+            validate-on-blur
+            @change="value => this.message = value"
+            @click:append-outer.prevent="sendMessage"
+            @keyup.enter.prevent="sendMessage"
+            @keyup.prevent="event => lastMessageHandler(event)"
+            @cut="event => lastMessageHandler(event)"
+          ></v-text-field>
+        </v-flex>
+      </v-layout>
+    </v-sheet>
+
   </v-layout>
 </template>
 
@@ -314,7 +303,6 @@
     name: 'Chat',
 
     props: {
-      enable      : { type: Boolean, default: true },
       dark        : { type: Boolean },
       chatChannel : { type: String },
       forceGlobal : { type: Boolean },
@@ -473,6 +461,9 @@
           this.pollData.id = doc.id;
 
           this.showPollClient = this.pollData.display;
+
+          // Scroll to bottom when showing / hiding polls
+          this.onResize();
         });
       },
 
@@ -556,8 +547,6 @@
       },
 
       async rcvMessageBulk ( messages ) {
-        if ( !this.enable ) return;
-
         let atBottom = this.checkIfBottom();
 
         // Remove ignored user messages
@@ -1051,14 +1040,8 @@
         console.log( 'No tts option found.' );
       }
 
-      if ( this.enable ) {
-        // this.useTTS = false;
-        this.subscribeToPoll( this.page );
-      }
-
-      /*if (this.query.tts === true) {
-        this.useTTS = true;
-      }*/
+      // Listen for new polls
+      this.subscribeToPoll( this.page );
     },
 
     beforeDestroy () {
