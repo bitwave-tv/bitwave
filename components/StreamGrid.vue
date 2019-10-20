@@ -24,20 +24,20 @@
       <v-flex
         v-else
         v-for="stream in streams"
-        :key="stream.owner"
+        :key="stream.name"
         xs12
         md4
         xl3
       >
           <v-card>
-            <n-link :to="stream.user">
+            <n-link :to="stream.name">
               <v-img :src="stream.thumbnail" :aspect-ratio="16/9" :class="{ 'blur': stream.nsfw }"/>
             </n-link>
             <v-flex>
-              <n-link :to="stream.user">
+              <n-link :to="stream.name">
                 <div class="body-2 font-weight-bold text-truncate text-no-wrap mb-0" style="color: #ffeb3b;">{{ stream.title }}</div>
               </n-link>
-              <div class="body-1">{{ stream.user }}</div>
+              <div class="body-1">{{ stream.name }}</div>
             </v-flex>
           </v-card>
       </v-flex>
@@ -50,6 +50,10 @@
 
   export default {
     name: 'StreamGrid',
+
+    props: {
+      streamers: {},
+    },
 
     data() {
       return {
@@ -76,7 +80,7 @@
             nsfw      : stream.nsfw,
             owner     : stream.owner,
             thumbnail : thumbnail,
-            user      : stream.user.name,
+            name      : stream.user.name,
           }
         });
         this.loading = false;
@@ -90,6 +94,11 @@
     },
 
     computed: {},
+
+    created () {
+      this.loading = !this.streamers;
+      this.streams = this.streamers;
+    },
 
     mounted () {
       this.getData();

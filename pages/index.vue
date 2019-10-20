@@ -49,7 +49,7 @@
 
         </v-card>
 
-        <stream-grid/>
+        <stream-grid :streamers="streamers" />
 
         <v-card class="mb-3">
           <v-card-title class="headline pb-0">
@@ -269,14 +269,15 @@
     },
 
     async asyncData({ $axios }) {
-      const host =  'https://api.bitwave.tv';
-      const { data } = await $axios.get( `${host}/api/sources/list` );
+      const live = (await $axios.get( `https://api.bitwave.tv/api/sources/list`) ).data.live;
+      const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
       return {
-        live: data.live,
-      };
+        streamers: data.users.filter( s => s.live ),
+        live: live,
+      }
     },
 
-    mounted() {
+    mounted () {
       this.playerInitialize();
     },
 
