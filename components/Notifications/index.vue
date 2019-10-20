@@ -79,7 +79,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>{{ notification.title }}</v-list-item-title>
-                <v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>
+                <v-list-item-subtitle>{{ `${timestamp( notification.timestamp.toDate() )} ${notification.message}` }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
 
@@ -143,6 +143,14 @@
           });
           setTimeout( async () => await batch.commit(), 750 );
         }
+      },
+
+      timestamp ( time ) {
+        const month = time.getMonth();
+        const day = time.getDate();
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        return `[${month}/${day} ${hours}:${minutes}]`;
       },
     },
 

@@ -7,7 +7,6 @@
       :close-on-content-click="true"
       :nudge-width="200"
       offset-y
-      offset-x
       left
       origin="top right"
       transition="slide-y-transition"
