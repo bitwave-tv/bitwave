@@ -9,7 +9,6 @@
             id="poll-vote-body"
             class="pa-2"
           >
-
             <v-layout align-center mb-2>
               <v-flex shrink>
                 <v-progress-circular
@@ -96,7 +95,6 @@
                 </v-btn>
               </v-flex>
             </v-layout>
-
           </v-sheet>
         </v-flex>
       </v-layout>
