@@ -40,7 +40,7 @@
 
 
     <!-- Stream Title, Status -->
-    <v-layout class="px-3 my-2" align-center>
+    <v-layout class="px-3 my-2" wrap align-center justify-end>
       <v-flex shrink>
         <v-icon
           v-show="live"
