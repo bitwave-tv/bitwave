@@ -33,7 +33,10 @@
       </template>
 
       <v-card>
-        <v-list class="py-0" color="yellow">
+        <v-list
+          class="py-0"
+          color="yellow"
+        >
           <v-list-item>
 
             <v-list-item-avatar>
@@ -56,6 +59,7 @@
             single-line
             :style="{ background: 'transparent' }"
             class="pb-0"
+            dense
           >
 
             <v-list-item
