@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <v-container flex pa-0> -->
-    <v-layout>
+    <v-layout :style="{ paddingRight: mobile ? '0' : '450px' }">
 
       <!-- Video And Description -->
       <v-flex>
@@ -33,12 +33,11 @@
         <!-- Mobile Chat -->
         <v-layout>
           <v-flex class="mb-3" >
-            <v-layout :style="chatStyling">
-              <v-flex :style="{ 'max-height': mobile ? '390px' : '100%' }">
+            <v-layout :class="{ 'chat-desktop': !mobile }">
+              <v-flex :style="{ maxHeight: mobile ? '390px' : '100%' }">
                 <no-ssr placeholder="Loading...">
                   <chat
                     :chat-channel="name"
-                    :dark="true"
                   ></chat>
                 </no-ssr>
               </v-flex>
@@ -92,21 +91,9 @@
 
 
       <!-- Desktop Chat -->
-      <v-flex shrink v-show="!mobile">
-        <v-layout :style="{ width: '450px' }">
-          <!--<v-flex
-            shrink
-            :style="{ position: 'fixed', top: '48px', right: '0', height: 'calc(100vh - 48px)', width: '450px' }"
-          >
-            <no-ssr placeholder="Loading...">
-              <chat
-                :chat-channel="name"
-                :dark="true"
-              ></chat>
-            </no-ssr>
-          </v-flex>-->
-        </v-layout>
-      </v-flex>
+      <!--<v-flex shrink v-show="!mobile">
+        <v-layout :style="{ width: '450px' }"></v-layout>
+      </v-flex>-->
 
     </v-layout>
   </div>
@@ -167,27 +154,7 @@
     computed: {
       mobile () {
         return this.$vuetify.breakpoint.mdAndDown;
-        // if (process.browser) return !this.$vuetify.breakpoint.smAndUp;
-        // return false;
       },
-
-      chatStyling () {
-        // mobile
-        if ( this.$vuetify.breakpoint.mdAndDown ) {
-          return {
-            //'max-height': '390px',
-          }
-        }
-
-        // desktop
-        return {
-          position : 'fixed',
-          top      : '48px',
-          right    : '0',
-          height   : 'calc(100vh - 48px)',
-          width    : '450px',
-        }
-      }
     },
 
     methods: {
@@ -419,6 +386,7 @@
     },
 
     async mounted () {
+      // this.chatStyles = {};
 
       if ( this.live )
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
@@ -429,6 +397,7 @@
         this.$nextTick( () => {
           this.playerInitialize();
           console.debug( 'video.js:', this.player );
+          this.chatStyles = {};
         });
       }
     },
@@ -445,6 +414,14 @@
   .video-js .vjs-tech {
     height: auto !important;
     position: absolute !important;
+  }
+
+  .chat-desktop {
+    position : fixed;
+    top      : 48px;
+    right    : 0;
+    height   : calc(100vh - 48px);
+    width    : 450px;
   }
 
   a {
