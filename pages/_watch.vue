@@ -1,101 +1,83 @@
 <template>
-  <div>
+  <div :style="{ paddingRight: mobile ? '0' : '450px' }">
     <!-- <v-container flex pa-0> -->
-    <v-layout :style="{ paddingRight: mobile ? '0' : '450px' }">
 
-      <!-- Video And Description -->
+    <!-- Video And Description -->
+
+    <!-- Video JS -->
+    <v-layout>
       <v-flex>
-
-        <!-- Video JS -->
-        <v-layout>
-          <v-flex>
-            <video
-              playsinline
-              id="streamplayer"
-              class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
-              height="100%"
-              width="100%"
-              style="min-width: 200px;"
-              controls
-              :autoplay="live"
-              preload="auto"
-              data-setup='{ "aspectRatio":"16:9" }'
-              :poster="poster"
-            >
-              <source
-                :src="url"
-                :type="type"
-              >
-            </video>
-          </v-flex>
-        </v-layout>
-
-        <!-- Mobile Chat -->
-        <v-layout>
-          <v-flex class="mb-3" >
-            <v-layout :class="{ 'chat-desktop': !mobile }">
-              <v-flex :style="{ maxHeight: mobile ? '390px' : '100%' }">
-                <no-ssr placeholder="Loading...">
-                  <chat
-                    :chat-channel="name"
-                  ></chat>
-                </no-ssr>
-              </v-flex>
-            </v-layout>
-          </v-flex>
-        </v-layout>
-
-        <!-- Stream Title, Status, Description -->
-        <v-layout mt-2>
-          <v-flex class="px-3">
-            <v-layout class="mb-2" align-center>
-              <v-flex shrink>
-                <v-icon
-                  v-show="live"
-                  size="14"
-                  color="red"
-                  class="blink mr-2"
-                >lens</v-icon>
-              </v-flex>
-              <v-flex>
-                <h2>{{ title }}</h2>
-              </v-flex>
-              <v-flex shrink>
-                <v-chip
-                  v-if="nsfw"
-                  color="red"
-                  class="mr-2"
-                  small
-                  :outlined="false"
-                >NSFW</v-chip>
-              </v-flex>
-              <v-flex shrink>
-                <FollowButton
-                  :streamer-id="owner"
-                />
-              </v-flex>
-            </v-layout>
-
-            <v-layout>
-              <v-flex id="description">
-                <vue-markdown
-                  v-if="desc"
-                  :source="desc"
-                ></vue-markdown>
-              </v-flex>
-            </v-layout>
-          </v-flex>
-        </v-layout>
-
+        <video
+          playsinline
+          id="streamplayer"
+          class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
+          height="100%"
+          width="100%"
+          style="min-width: 200px;"
+          controls
+          :autoplay="live"
+          preload="auto"
+          data-setup='{ "aspectRatio":"16:9" }'
+          :poster="poster"
+        >
+          <source
+            :src="url"
+            :type="type"
+          >
+        </video>
       </v-flex>
-
-
-      <!-- Desktop Chat -->
-      <!--<v-flex shrink v-show="!mobile">
-        <v-layout :style="{ width: '450px' }"></v-layout>
-      </v-flex>-->
-
     </v-layout>
+
+    <!-- Mobile Chat -->
+    <v-layout :class="{ 'chat-desktop': !mobile }">
+      <v-flex :style="{ maxHeight: mobile ? '390px' : '100%' }">
+        <no-ssr placeholder="Loading...">
+          <chat
+            :chat-channel="name"
+          ></chat>
+        </no-ssr>
+      </v-flex>
+    </v-layout>
+
+
+    <!-- Stream Title, Status, Description -->
+    <v-layout class="px-3 my-2" align-center>
+      <v-flex shrink>
+        <v-icon
+          v-show="live"
+          size="14"
+          color="red"
+          class="blink mr-2"
+        >lens</v-icon>
+      </v-flex>
+      <v-flex>
+        <h2>{{ title }}</h2>
+      </v-flex>
+      <v-flex shrink>
+        <v-chip
+          v-if="nsfw"
+          color="red"
+          class="mr-2"
+          small
+          :outlined="false"
+        >NSFW</v-chip>
+      </v-flex>
+      <v-flex shrink>
+        <FollowButton
+          :streamer-id="owner"
+        />
+      </v-flex>
+    </v-layout>
+
+    <v-layout class="px-3 my-2">
+      <v-flex id="description">
+        <vue-markdown
+          v-if="desc"
+          :source="desc"
+        ></vue-markdown>
+      </v-flex>
+    </v-layout>
+
   </div>
 </template>
 
@@ -386,7 +368,6 @@
     },
 
     async mounted () {
-      // this.chatStyles = {};
 
       if ( this.live )
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
@@ -397,7 +378,6 @@
         this.$nextTick( () => {
           this.playerInitialize();
           console.debug( 'video.js:', this.player );
-          this.chatStyles = {};
         });
       }
     },
