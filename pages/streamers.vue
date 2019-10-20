@@ -34,10 +34,10 @@
         <v-col
           v-for="streamer in filteredStreamers"
           :key="streamer.name"
-          cols="1"
-          md="2"
+          lg="2"
+          md="4"
           sm="6"
-          xs="12"
+          cols="12"
         >
           <v-card
             :to="streamer.to.toString()"
