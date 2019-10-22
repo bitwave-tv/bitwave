@@ -7,98 +7,58 @@
   >
 
     <!-- Chat Header -->
-    <v-sheet id="chat-header">
-      <v-layout
-        align-center
-        class="pa-2"
+    <v-sheet
+      id="chat-header"
+      class="d-flex align-center pa-2"
+    >
+      <!-- Viewer List -->
+      <ViewerList
+        :page="page"
+        class="flex-shrink-1"
+      ></ViewerList>
+
+      <!-- Chat Label -->
+      <div class="ml-2 flex-grow-1">
+        <h4>{{ page }}</h4>
+      </div>
+
+      <!-- Create Poll Button -->
+      <div v-if="page === username">
+        <v-menu
+          v-model="showPoll"
+          :close-on-content-click="false"
+          bottom
+          left
+        >
+          <template #activator="{ on }">
+            <v-btn
+              v-on="on"
+              small
+              class="black--text"
+              :disabled="showPollClient"
+              color="yellow"
+            >POLL</v-btn>
+          </template>
+
+          <!-- Create Poll Dialog -->
+          <chat-poll
+            id="chat-poll"
+            @close="showPoll = false"
+            @create="createPoll"
+          />
+        </v-menu>
+      </div>
+
+      <!-- Scroll to Chat Bottom -->
+      <v-btn
+        :style="{ 'min-width': '40px' }"
+        small
+        color="yellow"
+        @click="scrollToBottom(true)"
+        class="ml-2 px-0 black--text"
       >
-        <!-- Viewer List -->
-        <v-flex shrink>
-          <ViewerList :page="page" />
-        </v-flex>
-
-        <!-- Chat Label -->
-        <v-flex grow ml-2>
-          <h4>{{ page }}</h4>
-        </v-flex>
-
-        <!-- Create Poll Button -->
-        <v-flex
-          v-if="page === username"
-          shrink
-        >
-          <v-menu
-            v-model="showPoll"
-            :close-on-content-click="false"
-            bottom
-            left
-          >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                :style="{ 'min-width': '40px' }"
-                small
-                class="black--text"
-                :disabled="showPollClient"
-                color="yellow"
-                @click="scrollToBottom(true)"
-              >POLL</v-btn>
-            </template>
-
-            <!-- Create Poll Dialog -->
-            <chat-poll
-              id="chat-poll"
-              @close="showPoll = false"
-              @create="createPoll"
-            />
-
-          </v-menu>
-        </v-flex>
-
-        <!-- Tools -->
-        <v-flex
-          shrink
-          class="mx-2"
-        >
-          <v-menu
-            v-model="showToolMenu"
-            :close-on-content-click="false"
-            transition="slide-x-reverse-transition"
-            :max-width="320"
-            bottom
-            offset-x
-            offset-y
-          >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                small
-                class="black--text"
-                color="yellow"
-              >
-                <v-icon>settings</v-icon>
-              </v-btn>
-            </template>
-            <chat-settings
-              @close="showToolMenu = false"
-            ></chat-settings>
-          </v-menu>
-        </v-flex>
-
-        <!-- Scroll to Chat Bottom -->
-        <v-flex shrink>
-          <!-- Scroll to bottom button -->
-          <v-btn
-            :style="{ 'min-width': '40px' }"
-            small
-            color="yellow"
-            @click="scrollToBottom(true)"
-            class="px-0 black--text"
-          ><v-icon>keyboard_arrow_down</v-icon>
-          </v-btn>
-        </v-flex>
-
-      </v-layout>
+        <v-icon>keyboard_arrow_down</v-icon>
+      </v-btn>
     </v-sheet>
 
     <!-- Show Poll to Users -->
@@ -141,73 +101,66 @@
     </v-flex>
 
     <!-- Chat Input -->
-    <v-sheet class="px-2 py-2" color="black">
-      <v-layout class="pb-2">
-        <v-flex>
-          <v-text-field
-            ref="chatmessageinput"
-            :value="message"
-            :label="`Chat as ${username}...`"
-            color="yellow"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="true"
-            single-line
-            counter="300"
-            hide-details
-            validate-on-blur
-            outlined
-            dense
-            @change="value => this.message = value"
-            @keyup.enter.prevent="sendMessage"
-            @keyup.prevent="event => lastMessageHandler(event)"
-            @cut="event => lastMessageHandler(event)"
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-layout>
-        <div class="d-flex">
-          <v-menu
-            v-model="showToolMenu2"
-            :close-on-content-click="false"
-            :close-on-click="false"
-            transition="slide-x-transition"
-            :max-width="320"
-            top
-            right
-            offset-y
-          >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                small
-                text
-                icon
-              >
-                <v-icon>settings</v-icon>
-              </v-btn>
-            </template>
-            <chat-settings
-              @close="showToolMenu2 = false"
-            ></chat-settings>
-          </v-menu>
-        </div>
+    <v-sheet class="pa-2" color="black">
+      <div class="d-flex pb-2">
+        <v-text-field
+          ref="chatmessageinput"
+          :value="message"
+          :label="`Chat as ${username}...`"
+          color="yellow"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="true"
+          single-line
+          counter="300"
+          hide-details
+          validate-on-blur
+          outlined
+          dense
+          @change="value => this.message = value"
+          @keyup.enter.prevent="sendMessage"
+          @keyup.prevent="event => lastMessageHandler(event)"
+          @cut="event => lastMessageHandler(event)"
+        ></v-text-field>
+      </div>
+      <div class="d-flex">
+        <v-menu
+          v-model="showChatSettings"
+          :close-on-content-click="false"
+          :close-on-click="false"
+          transition="slide-x-transition"
+          :max-width="320"
+          top
+          right
+          offset-y
+        >
+          <template #activator="{ on }">
+            <v-btn
+              v-on="on"
+              small
+              text
+              icon
+            >
+              <v-icon>settings</v-icon>
+            </v-btn>
+          </template>
+          <chat-settings
+            @close="showChatSettings = false"
+          ></chat-settings>
+        </v-menu>
         <v-spacer/>
-        <div class="d-flex">
-          <v-btn
-            small
-            color="yellow black--text"
-            class="px-2"
-            @click="sendMessage"
-          >
-            send
-            <v-icon small>send</v-icon>
-          </v-btn>
-        </div>
-      </v-layout>
+        <v-btn
+          small
+          color="yellow black--text"
+          class="px-2"
+          @click="sendMessage"
+        >
+          send
+          <v-icon small>send</v-icon>
+        </v-btn>
+      </div>
     </v-sheet>
-
   </v-layout>
 </template>
 
@@ -217,15 +170,13 @@
   import moment from 'moment'
   import jwt_decode from 'jwt-decode'
 
-  import { mapGetters } from 'vuex'
-
   import socketio from 'socket.io-client'
 
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
   import ChatSettings from '@/components/Chat/ChatSettings'
 
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import ViewerList from '@/components/Chat/ViewerList'
 
   export default {
@@ -247,8 +198,6 @@
 
     data() {
       return {
-        color: null,
-
         unsubscribeUser: null,
         unsubscribePoll: null,
 
@@ -278,8 +227,7 @@
         chatLimit: 50,
         chatContainer: null,
 
-        showToolMenu: false,
-        showToolMenu2: false,
+        showChatSettings: false,
 
         useIgnoreListForChat: true,
         voicesListTTS: [],
@@ -408,8 +356,6 @@
 
         // Scroll to last message
         document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        // this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
-        // this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
 
         setTimeout( () => {
           this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
