@@ -79,7 +79,11 @@
       fill-height
       style="overflow: hidden;"
     >
-      <div id="chat-scroll" ref="scroller" style="overflow-y: scroll;">
+      <div
+        id="chat-scroll"
+        ref="scroller"
+        style="overflow-y: scroll;"
+      >
         <chat-message
           v-for="item in messages"
           :key="item.timestamp"
@@ -400,7 +404,7 @@
       },
 
       async sendMessage () {
-        if ( this.getMessage.length > 300 ) return false;
+        if ( !this.getMessage || this.getMessage.length > 300 ) return false;
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
         const parts = this.getMessage.split( ' ' );

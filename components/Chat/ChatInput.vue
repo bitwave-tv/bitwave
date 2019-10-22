@@ -16,7 +16,8 @@
         validate-on-blur
         outlined
         dense
-        :rules="[ value => value.length <= 300 || 'Max 300 characters' ]"
+        clearable
+        :rules="[ value => ( value === null || value.length <= 300 ) || 'Max 300 characters' ]"
         @input="value => this.setMessage( value )"
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
