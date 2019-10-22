@@ -4,6 +4,11 @@ export const state = () => ({
   room : '',
   global : false,
   timestamps : true,
+  useTts: false,
+  trollTts: true,
+  ttsRate: 10,
+  ttsVoices: [],
+  ttsVoice: 1,
 
   viewerList : [{name: 'NONE'}],
   roomViewerList : {},
@@ -32,6 +37,27 @@ export const mutations = {
   SET_MODE_GLOBAL ( state, data ) {
     state.global = JSON.parse( data );
     localStorage.setItem( 'globalchat', data );
+  },
+
+  SET_USE_TTS ( state, data ) {
+    state.useTts = JSON.parse(data);
+    localStorage.setItem( 'tts', data );
+  },
+
+  SET_TROLL_TTS ( state, data ) {
+    state.tollTts = data;
+  },
+
+  SET_TTS_RATE ( state, data ) {
+    state.ttsRate = JSON.parse(data);
+  },
+
+  SET_TTS_VOICES ( state, data ) {
+    state.ttsVoices = data;
+  },
+
+  SET_TTS_VOICE ( state, data ) {
+    state.ttsVoice = data;
   },
 
   SET_VIEWERLIST ( state, data ) {

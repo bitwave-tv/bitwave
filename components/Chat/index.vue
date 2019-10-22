@@ -72,128 +72,16 @@
             <template #activator="{ on }">
               <v-btn
                 v-on="on"
-                :style="{ 'min-width': '40px' }"
                 small
                 class="black--text"
                 color="yellow"
-                @click="scrollToBottom(true)"
               >
                 <v-icon>settings</v-icon>
               </v-btn>
             </template>
-
-            <v-card>
-              <v-sheet color="yellow">
-                <v-layout class="pl-2" align-center>
-                  <v-flex>
-                    <h5 class="black--text body-2">Settings</h5>
-                  </v-flex>
-                  <v-flex shrink>
-                    <v-btn
-                      color="black"
-                      text
-                      icon
-                      pa-0
-                      @click="showToolMenu = false"
-                    >
-                      <v-icon color="black">close</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-sheet>
-
-              <v-list>
-                <v-list-item>
-                  <v-switch
-                    v-model="global"
-                    :label="`${ global ? 'Global' : 'Local' } Chat`"
-                    class="ml-0 mt-0 pt-0"
-                    :disabled="false"
-                    color="yellow"
-                    hide-details
-                  ></v-switch>
-                  <v-switch
-                    v-model="showTimestamps"
-                    label="Timestamps"
-                    class="ml-2 mt-0 pt-0"
-                    color="yellow"
-                    hide-details
-                  ></v-switch>
-                </v-list-item>
-                <v-list-item>
-                  <v-switch
-                    v-model="useIgnoreListForChat"
-                    @change="toggleUseIgnore"
-                    label="Ignore chat messages"
-                    class="ml-0 mt-0 pt-0"
-                    color="yellow"
-                    hide-details
-                  ></v-switch>
-                </v-list-item>
-              </v-list>
-
-              <v-divider/>
-
-              <v-list subheader pb-2>
-                <v-subheader class="mb-0">Text To Speech Options</v-subheader>
-
-                <v-layout mb-3>
-                  <v-flex>
-                    <v-switch
-                      v-model="useTTS"
-                      label="Use TTS"
-                      class="ml-3 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                      @change="toggleTTS"
-                    ></v-switch>
-                  </v-flex>
-                  <v-flex>
-                    <v-switch
-                      v-model="allowTrollTTS"
-                      :disabled="!useTTS"
-                      label="Troll TTS"
-                      class="ml-0 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-flex>
-                </v-layout>
-
-                <v-flex mx-3>
-                  <v-select
-                    v-model="selectionTTS"
-                    :items="voices"
-                    label="TTS Voice"
-                    style="font-size: 12px;"
-                    hide-details
-                  ></v-select>
-                </v-flex>
-
-                <v-list-item>
-                  <v-slider
-                    label="Speed"
-                    v-model="rateTTS"
-                    class="align-center"
-                    :max="20"
-                    :min="1"
-                    :step="0"
-                    hide-details
-                  >
-                    <template #append>
-                      <v-text-field
-                        v-model="rateTTS"
-                        class="mt-0 pt-0"
-                        hide-details
-                        single-line
-                        type="number"
-                        style="width: 40px"
-                      ></v-text-field>
-                    </template>
-                  </v-slider>
-                </v-list-item>
-              </v-list>
-            </v-card>
+            <chat-settings
+              @close="showToolMenu = false"
+            ></chat-settings>
           </v-menu>
         </v-flex>
 
@@ -253,9 +141,8 @@
     </v-flex>
 
     <!-- Chat Input -->
-
-    <v-sheet class="px-2 pb-1">
-      <v-layout>
+    <v-sheet class="px-2 py-2" color="black">
+      <v-layout class="pb-2">
         <v-flex>
           <v-text-field
             ref="chatmessageinput"
@@ -267,16 +154,57 @@
             autocapitalize="off"
             spellcheck="true"
             single-line
-            append-outer-icon="send"
             counter="300"
+            hide-details
             validate-on-blur
+            outlined
+            dense
             @change="value => this.message = value"
-            @click:append-outer.prevent="sendMessage"
             @keyup.enter.prevent="sendMessage"
             @keyup.prevent="event => lastMessageHandler(event)"
             @cut="event => lastMessageHandler(event)"
           ></v-text-field>
         </v-flex>
+      </v-layout>
+      <v-layout>
+        <div class="d-flex">
+          <v-menu
+            v-model="showToolMenu2"
+            :close-on-content-click="false"
+            :close-on-click="false"
+            transition="slide-x-transition"
+            :max-width="320"
+            top
+            right
+            offset-y
+          >
+            <template #activator="{ on }">
+              <v-btn
+                v-on="on"
+                small
+                text
+                icon
+              >
+                <v-icon>settings</v-icon>
+              </v-btn>
+            </template>
+            <chat-settings
+              @close="showToolMenu2 = false"
+            ></chat-settings>
+          </v-menu>
+        </div>
+        <v-spacer/>
+        <div class="d-flex">
+          <v-btn
+            small
+            color="yellow black--text"
+            class="px-2"
+            @click="sendMessage"
+          >
+            send
+            <v-icon small>send</v-icon>
+          </v-btn>
+        </div>
       </v-layout>
     </v-sheet>
 
@@ -295,6 +223,7 @@
 
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
+  import ChatSettings from '@/components/Chat/ChatSettings'
 
   import { mapState, mapMutations, mapActions } from 'vuex'
   import ViewerList from '@/components/Chat/ViewerList'
@@ -313,6 +242,7 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
+      ChatSettings,
     },
 
     data() {
@@ -349,11 +279,9 @@
         chatContainer: null,
 
         showToolMenu: false,
+        showToolMenu2: false,
+
         useIgnoreListForChat: true,
-        useTTS: false,
-        allowTrollTTS: true,
-        selectionTTS: 1,
-        rateTTS: 10.00,
         voicesListTTS: [],
 
         showPoll: false,
@@ -372,7 +300,6 @@
           title: '',
           voters: 0,
         },
-
       }
     },
 
@@ -702,9 +629,9 @@
       },
 
       speak ( message, username ) {
-        if ( !this.useTTS ) return;
+        if ( !this.getUseTts ) return;
         if ( this.ignoreList.find( user => user === username ) ) return;
-        if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) return; // disables troll TTS
+        if ( !this.getTrollTts && /troll:\w+/.test(username) ) return; // disables troll TTS
 
         function unescapeHtml(unsafe) {
           return unsafe
@@ -725,8 +652,8 @@
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
-        voice.voice = this.voicesListTTS[this.selectionTTS];
-        voice.rate  = this.rateTTS / 10.0;
+        voice.voice = this.voicesListTTS[this.getTtsVoice];
+        voice.rate  = this.getTtsRate / 10.0;
         voice.pitch = pitch;
         voice.text  = message;
 
@@ -735,11 +662,6 @@
         };
 
         speechSynthesis.speak(voice);
-      },
-
-      toggleTTS () {
-        speechSynthesis.cancel();
-        localStorage.setItem( 'tts', this.useTTS );
       },
 
 
@@ -946,6 +868,10 @@
         getModeGlobal: 'global',
         getModeTimestamps: 'timestamps',
         getIgnoreList: 'ignoreList',
+        getUseTts: 'useTts',
+        getTrollTts: 'trollTts',
+        getTtsRate: 'ttsRate',
+        getTtsVoice: 'ttsVoice',
       }),
 
       global: {
@@ -971,11 +897,6 @@
           return 'Global';
         }
       },
-
-      voices () {
-        return this.voicesListTTS.map( ( voice, index ) => { return { text: voice.name, value: index } } );
-      },
-
     },
 
     created () {
@@ -987,7 +908,7 @@
       this.chatContainer = this.$refs.scroller;
 
       // Add listener for voice changes, then update voices.
-      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      // speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
       this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
 
       // Get ignore list
