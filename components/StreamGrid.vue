@@ -112,10 +112,3 @@
     },
   }
 </script>
-
-<style lang="scss">
-  .blur > div {
-    filter: blur(15px);
-    -webkit-filter: blur(15px);
-  }
-</style>
