@@ -101,66 +101,12 @@
     </v-flex>
 
     <!-- Chat Input -->
-    <v-sheet class="pa-2" color="black">
-      <div class="d-flex pb-2">
-        <v-text-field
-          ref="chatmessageinput"
-          :value="message"
-          :label="`Chat as ${username}...`"
-          color="yellow"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="true"
-          single-line
-          counter="300"
-          hide-details
-          validate-on-blur
-          outlined
-          dense
-          @change="value => this.message = value"
-          @keyup.enter.prevent="sendMessage"
-          @keyup.prevent="event => lastMessageHandler(event)"
-          @cut="event => lastMessageHandler(event)"
-        ></v-text-field>
-      </div>
-      <div class="d-flex">
-        <v-menu
-          v-model="showChatSettings"
-          :close-on-content-click="false"
-          :close-on-click="false"
-          transition="slide-x-transition"
-          :max-width="320"
-          top
-          right
-          offset-y
-        >
-          <template #activator="{ on }">
-            <v-btn
-              v-on="on"
-              small
-              text
-              icon
-            >
-              <v-icon>settings</v-icon>
-            </v-btn>
-          </template>
-          <chat-settings
-            @close="showChatSettings = false"
-          ></chat-settings>
-        </v-menu>
-        <v-spacer/>
-        <v-btn
-          small
-          color="yellow black--text"
-          class="px-2"
-          @click="sendMessage"
-        >
-          send
-          <v-icon small>send</v-icon>
-        </v-btn>
-      </div>
-    </v-sheet>
+    <chat-input
+      ref="chat-input"
+      :username="username"
+      @send="sendMessage"
+    ></chat-input>
+
   </v-layout>
 </template>
 
@@ -175,6 +121,7 @@
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
   import ChatSettings from '@/components/Chat/ChatSettings'
+  import ChatInput from '@/components/Chat/ChatInput'
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import ViewerList from '@/components/Chat/ViewerList'
@@ -194,6 +141,7 @@
       ChatPoll,
       ChatMessage,
       ChatSettings,
+      ChatInput,
     },
 
     data() {
@@ -204,10 +152,6 @@
         loading: true,
 
         socket: null,
-
-        message: '',
-        messageBuffer: [],
-        messageBufferIndex: 0,
 
         messages: [
           {
@@ -256,9 +200,10 @@
         await this.$nextTick( async () => await this.scrollToBottom(false) );
       },
 
-      addUserTag ( user ) {
-        this.message = `${this.$refs['chatmessageinput'].value}@${user} `;
-        this.$refs['chatmessageinput'].focus();
+      async addUserTag ( user ) {
+        // this.$refs['chat-input'].$refs['chatmessageinput'].blur();
+        this.appendChatMessage(`@${user} `);
+        this.$refs['chat-input'].$refs['chatmessageinput'].focus();
       },
 
       async authenticated ( user ) {
@@ -383,7 +328,7 @@
         this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
-        this.socket.on( 'blocked',   data => this.message = data.message );
+        this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
 
       },
@@ -457,10 +402,10 @@
       },
 
       async sendMessage () {
-        if ( this.message.length > 300 ) return false;
+        if ( this.getMessage.length > 300 ) return false;
 
-        const match = /^\/(\w+)\s?(\w+)?/g.exec( this.message );
-        const parts = this.message.split( ' ' );
+        const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
+        const parts = this.getMessage.split( ' ' );
 
         if ( match ) {
           const command  = match[1].toLowerCase();
@@ -514,52 +459,18 @@
             case 'w':
             case 'whisper':
               const msg = {
-                message: this.message,
+                message: this.getMessage,
                 channel: this.page,
               };
               this.socket.emit( 'whisper', msg );
           }
         } else {
           const msg = {
-            message: this.message,
+            message: this.getMessage,
             channel: this.page,
             global: this.global,
           };
           this.socket.emit( 'message', msg );
-        }
-        this.messageBuffer.push(this.message);
-        this.messageBuffer = this.messageBuffer.splice(-10);
-        this.messageBufferIndex = this.messageBuffer.length;
-        this.message = '';
-      },
-
-      lastMessageHandler ( event ) {
-        if ( !event.srcElement.value || event.srcElement.value === this.messageBuffer[ this.messageBufferIndex ] ) {
-          // Up Arrow (keyCode 38)
-          if ( event.key === 'ArrowUp' ) {
-            this.messageBufferIndex -= ( this.messageBufferIndex > 0 ) ? 1 : 0;
-            this.message = this.messageBuffer[ this.messageBufferIndex ];
-            event.preventDefault();
-          }
-          // Down Arrow (keyCode 40)
-          else if ( event.key === 'ArrowDown' ) {
-            this.messageBufferIndex += ( this.messageBufferIndex < this.messageBuffer.length ) ? 1 : 0;
-            if ( this.messageBufferIndex === this.messageBuffer.length ) this.message = '';
-            else this.message = this.messageBuffer[ this.messageBufferIndex ];
-            event.preventDefault();
-          }
-          // Idk why this is needed
-          else {
-            // this.message = '';
-          }
-        }
-
-        if ( event.type === 'cut' ) {
-          setTimeout( () => {
-            if ( !event.srcElement.value ) {
-              this.message = '';
-            }
-          }, 20 );
         }
       },
 
@@ -796,6 +707,8 @@
         setModeGlobal: 'SET_MODE_GLOBAL',
         setModeTimestamps: 'SET_TIMESTAMPS',
         setIgnoreList: 'SET_IGNORE_LIST',
+        setMessage: 'SET_CHAT_MESSAGE',
+        appendChatMessage: 'APPEND_CHAT_MESSAGE',
       }),
 
       ...mapActions ('chat', {
@@ -818,6 +731,7 @@
         getTrollTts: 'trollTts',
         getTtsRate: 'ttsRate',
         getTtsVoice: 'ttsVoice',
+        getMessage: 'message',
       }),
 
       global: {

@@ -14,6 +14,8 @@ export const state = () => ({
   roomViewerList : {},
 
   ignoreList : [],
+
+  message: '',
 });
 
 
@@ -70,6 +72,14 @@ export const mutations = {
 
   SET_IGNORE_LIST ( state, data ) {
     state.ignoreList = data;
+  },
+
+  SET_CHAT_MESSAGE ( state, data ) {
+    state.message = data;
+  },
+
+  APPEND_CHAT_MESSAGE ( state, data ) {
+    state.message += data;
   },
 };
 
