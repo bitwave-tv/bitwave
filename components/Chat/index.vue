@@ -120,7 +120,6 @@
 
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
-  import ChatSettings from '@/components/Chat/ChatSettings'
   import ChatInput from '@/components/Chat/ChatInput'
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
@@ -140,7 +139,6 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
-      ChatSettings,
       ChatInput,
     },
 
