@@ -39,19 +39,14 @@
           sm="6"
           cols="12"
         >
-          <v-card
+          <stream-card
             :to="streamer.to.toString()"
-          >
-            <v-img :src="`${streamer.live ? streamer.thumbnail : streamer.avatar}`" :aspect-ratio="16/9" :class="{ 'blur': (streamer.live && streamer.nsfw) }"/>
-            <v-card-text class="pa-2">
-              <div class="body-2 font-weight-bold text-truncate text-no-wrap mb-0" style="color: #ffeb3b;">
-                {{ streamer.title }}
-              </div>
-              <div class="body-1">
-                {{ streamer.name }}
-              </div>
-            </v-card-text>
-          </v-card>
+            :image="`${streamer.live ? streamer.thumbnail : streamer.avatar}`"
+            :live="streamer.live"
+            :nsfw="streamer.nsfw"
+            :title="streamer.title"
+            :name="streamer.name"
+          ></stream-card>
         </v-col>
       </v-row>
     </v-container>
@@ -59,8 +54,14 @@
 </template>
 
 <script>
+  import StreamCard from '@/components/StreamCard';
+
   export default {
     name: 'streamers',
+
+    components: {
+      StreamCard,
+    },
 
     async asyncData ({ $axios }) {
       let { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );

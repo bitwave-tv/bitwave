@@ -29,23 +29,21 @@
         md4
         xl3
       >
-          <v-card>
-            <n-link :to="stream.name">
-              <v-img :src="stream.thumbnail" :aspect-ratio="16/9" :class="{ 'blur': stream.nsfw }"/>
-            </n-link>
-            <v-flex>
-              <n-link :to="stream.name">
-                <div class="body-2 font-weight-bold text-truncate text-no-wrap mb-0" style="color: #ffeb3b;">{{ stream.title }}</div>
-              </n-link>
-              <div class="body-1">{{ stream.name }}</div>
-            </v-flex>
-          </v-card>
+        <stream-card
+          :to="stream.name"
+          :image="stream.thumbnail"
+          live
+          :nsfw="stream.nsfw"
+          :title="stream.title"
+          :name="stream.name"
+        ></stream-card>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+  import StreamCard from '@/components/StreamCard';
   import { db } from '@/plugins/firebase';
 
   export default {
@@ -53,6 +51,10 @@
 
     props: {
       streamers: {},
+    },
+
+    components: {
+      StreamCard,
     },
 
     data() {
