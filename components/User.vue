@@ -21,7 +21,7 @@
           small
           :loading="loading"
         >
-          <v-avatar size="40">
+          <v-avatar size="32">
             <img :src="avatar" :alt="username">
           </v-avatar>
         </v-btn>

@@ -1,14 +1,9 @@
 <template>
   <v-flex class="msg">
-    <v-layout
-      row
-      py-1
-      ml-3
-      mr-1
-    >
+    <div class="d-flex py-1 ml-3 mr-1">
       <v-avatar
         class="mr-2"
-        size="34"
+        size="32"
         @click="$emit('reply', username)"
       >
         <img v-if="!!avatar" :src="avatar" :alt="username">
@@ -17,25 +12,25 @@
 
       <v-list-item-content class="py-0">
         <v-list-item-subtitle>
-          <v-layout>
-            <v-flex shrink>
+          <div class="d-flex">
+            <div class="d-flex-shrink-1">
               <span class="time">{{ timestamp }}</span>
               <span class="username" :style="userStyling" v-html="displayName"></span>
-            </v-flex>
-            <v-spacer/>
-            <v-flex shrink>
+            </div>
+            <div class="flex-grow-1"></div>
+            <div class="d-flex-shrink-1">
               <nuxt-link
                 :to="channel"
               >
                 <kbd>{{ channel }}</kbd>
               </nuxt-link>
-            </v-flex>
-          </v-layout>
+            </div>
+          </div>
         </v-list-item-subtitle>
         <slot></slot>
       </v-list-item-content>
 
-    </v-layout>
+    </div>
   </v-flex>
 </template>
 

@@ -71,10 +71,11 @@
         @end="endPoll"
         @destroy="destroyPoll"
       />
+
     </v-flex>
 
     <!-- Chat Messages -->
-    <v-flex
+    <!--<v-flex
       id="inner-chat"
       fill-height
       style="overflow: hidden;"
@@ -102,12 +103,13 @@
           ></div>
         </chat-message>
       </div>
-    </v-flex>
+    </v-flex>-->
 
-    <!--<chat-messages
+    <chat-messages
       ref="chat-messages"
       :messages="messages"
-    ></chat-messages>-->
+      @reply="addUserTag"
+    ></chat-messages>
 
 
     <!-- Chat Input -->
@@ -128,7 +130,7 @@
   import socketio from 'socket.io-client'
 
   import ChatMessage from '@/components/Chat/ChatMessage'
-  // import ChatMessages from '@/components/Chat/ChatMessages'
+  import ChatMessages from '@/components/Chat/ChatMessages'
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
   import ChatInput from '@/components/Chat/ChatInput'
@@ -149,7 +151,7 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
-      // ChatMessages,
+      ChatMessages,
       ChatInput,
     },
 
@@ -303,7 +305,11 @@
       },
 
       async scrollToBottom ( force ) {
-        if ( this.checkIfBottom() && !force ) {
+        this.$refs['chat-messages'].scrollToBottom( force );
+
+        /*return;
+
+        if ( !this.checkIfBottom() && !force ) {
           return;
         }
 
@@ -316,7 +322,7 @@
 
         setTimeout( () => {
           this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
-        }, 500 );
+        }, 500 );*/
       },
 
       connectChat ( tokenUser ) {
@@ -360,7 +366,7 @@
           data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
         }
 
-        this.messages = size > 100 ? data.splice( -this.chatLimit ) : data;
+        this.messages = size > 2 * this.chatLimit ? data.splice( -this.chatLimit ) : data;
 
         // re-highlight username mentions on hydration
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
@@ -370,13 +376,13 @@
 
         // Scroll after hydration
         await this.$nextTick( async () => {
-          // this.$refs['chat-messages'].jumpToBottom();
-          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750;
+          this.$refs['chat-messages'].jumpToBottom();
+          // this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750;
         });
       },
 
       async rcvMessageBulk ( messages ) {
-        let atBottom = this.checkIfBottom();
+        // let atBottom = this.checkIfBottom();
 
         // Remove ignored user messages
         if ( this.useIgnoreListForChat ){
@@ -406,13 +412,18 @@
           if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
 
           // Add message to list
-          this.messages.push( { ...{ id: Date.now() }, ...el } );
+          this.messages.push( el );
         });
 
-        if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom(true) );
-        // this.$refs['chat-messages'].scrollToBottom();
+        // Trim chat history
+        if ( this.messages.length > 1.25 * this.chatLimit ) {
+          this.messages = this.messages.splice( -this.chatLimit );
+          console.log('Trimmed History');
+        }
 
-        if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
+        // if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom(true) );
+        // this.$refs['chat-messages'].scrollToBottom();
+        this.scrollToBottom();
       },
 
       async sendMessage () {

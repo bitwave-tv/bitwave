@@ -4,9 +4,13 @@
     fill-height
     style="overflow: hidden;"
   >
-    <div id="chat-scroll" ref="scroller" style="overflow-y: scroll;">
+    <div
+      id="chat-scroll"
+      ref="scroller"
+      style="overflow-y: scroll; will-change: transform;"
+    >
       <chat-message
-        v-for="item in messages"
+        v-for="(item, index) in messages"
         :key="item.timestamp"
         :username="item.username"
         :display-name="item.username"
@@ -49,8 +53,9 @@
     },
 
     methods: {
-      addUserTag () {
+      addUserTag ( user ) {
         console.log( 'Add User Tag' );
+        this.$emit('reply', user);
       },
 
       checkIfBottom () {
@@ -61,6 +66,7 @@
       },
 
       async scrollToBottom ( force ) {
+        // If we are NOT at the bottom && NOT forcing scroll, bail early
         if ( !this.checkIfBottom() && !force ) {
           return;
         }
@@ -100,7 +106,7 @@
 
     async mounted () {
       this.chatContainer = this.$refs.scroller;
-      this.chatContainer.addEventListener( 'scroll', e => this.onScroll(e) );
+      // this.chatContainer.addEventListener( 'scroll', e => this.onScroll(e) );
     },
   }
 </script>
