@@ -1,7 +1,7 @@
 <template>
   <!-- Chat Input -->
   <v-sheet class="px-2 py-2" color="black">
-    <div class="d-flex pb-2">
+    <div class="d-flex">
       <v-text-field
         ref="chatmessageinput"
         :value="getMessage"
@@ -12,13 +12,13 @@
         autocapitalize="off"
         spellcheck="true"
         single-line
-        hide-details
         validate-on-blur
         outlined
         dense
         clearable
-        :rules="[ value => ( value === null || value.length <= 300 ) || 'Max 300 characters' ]"
-        @input="value => this.setMessage( value )"
+        :error="error"
+        counter="300"
+        @change="value => this.setMessage( value )"
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
         @cut="event => lastMessageHandler(event)"
@@ -97,7 +97,8 @@
       }),
 
       sendMessage() {
-        this.$emit( 'send', this.message );
+        if ( this.getMessage.length > 300 ) return;
+        this.$emit( 'send' );
         this.messageBuffer.push(this.getMessage);
         this.messageBuffer = this.messageBuffer.splice(-10);
         this.messageBufferIndex = this.messageBuffer.length;
@@ -139,6 +140,10 @@
       ...mapState( 'chat', {
         getMessage: 'message',
       }),
+
+      error () {
+        return this.getMessage.length > 300;
+      }
     },
   }
 </script>

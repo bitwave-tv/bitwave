@@ -210,8 +210,8 @@
       },
 
       async addUserTag ( user ) {
-        this.appendChatMessage(`@${user} `);
         this.$refs['chat-input'].$refs['chatmessageinput'].focus();
+        this.appendChatMessage(`@${user} `);
       },
 
       async authenticated ( user ) {
