@@ -104,6 +104,12 @@
       </div>
     </v-flex>
 
+    <!--<chat-messages
+      ref="chat-messages"
+      :messages="messages"
+    ></chat-messages>-->
+
+
     <!-- Chat Input -->
     <chat-input
       ref="chat-input"
@@ -116,12 +122,13 @@
 
 <script>
   import { auth, db } from '@/plugins/firebase.js'
-  import ChatMessage from './ChatMessage'
   import moment from 'moment'
   import jwt_decode from 'jwt-decode'
 
   import socketio from 'socket.io-client'
 
+  import ChatMessage from '@/components/Chat/ChatMessage'
+  // import ChatMessages from '@/components/Chat/ChatMessages'
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
   import ChatInput from '@/components/Chat/ChatInput'
@@ -133,7 +140,6 @@
     name: 'Chat',
 
     props: {
-      dark        : { type: Boolean },
       chatChannel : { type: String },
       forceGlobal : { type: Boolean },
     },
@@ -143,6 +149,7 @@
       ChatPollVote,
       ChatPoll,
       ChatMessage,
+      // ChatMessages,
       ChatInput,
     },
 
@@ -203,7 +210,6 @@
       },
 
       async addUserTag ( user ) {
-        // this.$refs['chat-input'].$refs['chatmessageinput'].blur();
         this.appendChatMessage(`@${user} `);
         this.$refs['chat-input'].$refs['chatmessageinput'].focus();
       },
@@ -311,8 +317,6 @@
         setTimeout( () => {
           this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
         }, 500 );
-
-        if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
       },
 
       connectChat ( tokenUser ) {
@@ -366,7 +370,8 @@
 
         // Scroll after hydration
         await this.$nextTick( async () => {
-          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750
+          // this.$refs['chat-messages'].jumpToBottom();
+          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750;
         });
       },
 
@@ -405,6 +410,9 @@
         });
 
         if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom(true) );
+        // this.$refs['chat-messages'].scrollToBottom();
+
+        if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
       },
 
       async sendMessage () {
@@ -578,10 +586,6 @@
       },
 
       getTime ( timestamp ) { return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : ''; },
-
-      toggleUseIgnore () {
-        localStorage.setItem( 'useignore', this.useIgnoreListForChat );
-      },
 
       async ignoreUser ( username ) {
         username = username.replace('@', '');
