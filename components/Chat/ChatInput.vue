@@ -70,7 +70,7 @@
 <script>
   import { mapState, mapMutations } from 'vuex'
 
-  import ChatSettings from '@/components/Chat/ChatSettings'
+  const ChatSettings = () => import( '@/components/Chat/ChatSettings' );
 
   export default {
     name: 'ChatInput',
