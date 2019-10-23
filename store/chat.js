@@ -75,7 +75,8 @@ export const mutations = {
   },
 
   SET_CHAT_MESSAGE ( state, data ) {
-    state.message = data;
+    if ( data === null ) state.message = '';
+    else state.message = data;
   },
 
   APPEND_CHAT_MESSAGE ( state, data ) {
