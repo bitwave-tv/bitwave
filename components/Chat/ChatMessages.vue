@@ -10,7 +10,7 @@
       style="overflow-y: scroll; will-change: transform;"
     >
       <chat-message
-        v-for="(item, index) in messages"
+        v-for="item in messages"
         :key="item.timestamp"
         :username="item.username"
         :display-name="item.username"
@@ -44,6 +44,7 @@
 
     props: {
       messages: { type: Array },
+      showTimestamps: { type: Boolean },
     },
 
     data() {
@@ -54,7 +55,6 @@
 
     methods: {
       addUserTag ( user ) {
-        console.log( 'Add User Tag' );
         this.$emit('reply', user);
       },
 
@@ -67,9 +67,7 @@
 
       async scrollToBottom ( force ) {
         // If we are NOT at the bottom && NOT forcing scroll, bail early
-        if ( !this.checkIfBottom() && !force ) {
-          return;
-        }
+        if ( !this.checkIfBottom() && !force ) return;
 
         // Scroll to last message
         this.chatContainer.scroll({
@@ -89,7 +87,9 @@
         this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750;
       },
 
-      getTime ( timestamp ) { return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : ''; },
+      getTime ( timestamp ) {
+        return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : '';
+      },
 
       onScroll ( event ) {
         console.log( `At Bottom: ${this.checkIfBottom()}` );

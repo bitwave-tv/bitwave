@@ -48,8 +48,6 @@
       </v-list-item>-->
     </v-list>
 
-    <v-divider/>
-
     <v-list subheader pb-2>
       <v-subheader class="mb-0">Text To Speech Options</v-subheader>
 
@@ -81,6 +79,7 @@
         <v-select
           v-model="ttsVoice"
           :items="ttsVoices"
+          :disabled="!useTts"
           label="TTS Voice"
           style="font-size: 12px;"
           hide-details
@@ -89,12 +88,13 @@
 
       <v-list-item>
         <v-slider
+          :disabled="!useTts"
           label="Speed"
           v-model="ttsRate"
           class="align-center"
           :max="20"
           :min="1"
-          :step="0"
+          :step="0.5"
           hide-details
         >
           <template #append>
@@ -104,7 +104,7 @@
               hide-details
               single-line
               type="number"
-              style="width: 40px"
+              style="width: 50px"
             ></v-text-field>
           </template>
         </v-slider>
@@ -126,6 +126,7 @@
     data() {
       return {
         useIgnoreList: true,
+        ttsVoices: [],
       }
     },
 
@@ -136,7 +137,6 @@
         setUseTts: 'SET_USE_TTS',
         setTrollTts: 'SET_TROLL_TTS',
         setTtsRate: 'SET_TTS_RATE',
-        setTtsVoices: 'SET_TTS_VOICES',
         setTtsVoice: 'SET_TTS_VOICE',
       }),
 
@@ -169,7 +169,6 @@
         getUseTts: 'useTts',
         getTrollTts: 'trollTts',
         getTtsRate: 'ttsRate',
-        getTtsVoices: 'ttsVoices',
         getTtsVoice: 'ttsVoice',
       }),
 
@@ -198,11 +197,6 @@
         get () { return this.getTtsRate }
       },
 
-      ttsVoices: {
-        set ( val ) { this.setTtsVoices( val ) },
-        get () { return this.getTtsVoices }
-      },
-
       ttsVoice: {
         set ( val ) { this.setTtsVoice( val ) },
         get () { return this.getTtsVoice }
@@ -214,8 +208,8 @@
     },
 
     async mounted () {
-      // speechSynthesis.onvoiceschanged = () => this.ttsVoices = speechSynthesis.getVoices().map( ( voice, index ) => ({ text: voice.name, value: index }) );
-      this.$nextTick( () => this.ttsVoices = speechSynthesis.getVoices().map( ( voice, index ) => ({ text: voice.name, value: index }) ) );
+      this.ttsVoices = speechSynthesis.getVoices().map( ( voice, index ) => ({ text: voice.name, value: index }));
+      speechSynthesis.onvoiceschanged = () => this.ttsVoices = speechSynthesis.getVoices().map( ( voice, index ) => ({ text: voice.name, value: index }) );
     },
   }
 </script>

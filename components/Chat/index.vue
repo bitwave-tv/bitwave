@@ -75,39 +75,10 @@
     </v-flex>
 
     <!-- Chat Messages -->
-    <!--<v-flex
-      id="inner-chat"
-      fill-height
-      style="overflow: hidden;"
-    >
-      <div
-        id="chat-scroll"
-        ref="scroller"
-        style="overflow-y: scroll;"
-      >
-        <chat-message
-          v-for="item in messages"
-          :key="item.timestamp"
-          :username="item.username"
-          :display-name="item.username"
-          :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-          :channel="item.channel"
-          :timestamp="getTime(item.timestamp)"
-          :avatar="item.avatar"
-          :color="item.color"
-          @reply="addUserTag"
-        >
-          <div
-            :style="{ 'font-size': '14px', 'line-height': '1.5' }"
-            v-html="item.message"
-          ></div>
-        </chat-message>
-      </div>
-    </v-flex>-->
-
     <chat-messages
       ref="chat-messages"
       :messages="messages"
+      :show-timestamps="showTimestamps"
       @reply="addUserTag"
     ></chat-messages>
 
@@ -124,12 +95,10 @@
 
 <script>
   import { auth, db } from '@/plugins/firebase.js'
-  import moment from 'moment'
   import jwt_decode from 'jwt-decode'
 
   import socketio from 'socket.io-client'
 
-  import ChatMessage from '@/components/Chat/ChatMessage'
   import ChatMessages from '@/components/Chat/ChatMessages'
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
@@ -150,7 +119,6 @@
       ViewerList,
       ChatPollVote,
       ChatPoll,
-      ChatMessage,
       ChatMessages,
       ChatInput,
     },
@@ -306,23 +274,6 @@
 
       async scrollToBottom ( force ) {
         this.$refs['chat-messages'].scrollToBottom( force );
-
-        /*return;
-
-        if ( !this.checkIfBottom() && !force ) {
-          return;
-        }
-
-        // Scroll to last message
-        // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        this.chatContainer.scroll({
-          top: this.chatContainer.scrollHeight,
-          behavior: 'smooth',
-        });
-
-        setTimeout( () => {
-          this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
-        }, 500 );*/
       },
 
       connectChat ( tokenUser ) {
@@ -351,10 +302,12 @@
 
       async hydrate ( data ) {
         await this.socket.emit( 'hydratepoll', this.pollData.id );
+
         if ( !data ) {
           console.log( 'Failed to receive hydration data' );
           return;
         }
+
         const size = data.length;
         if ( !size ) {
           console.log( 'Hydration data was empty' );
@@ -377,13 +330,10 @@
         // Scroll after hydration
         await this.$nextTick( async () => {
           this.$refs['chat-messages'].jumpToBottom();
-          // this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750;
         });
       },
 
       async rcvMessageBulk ( messages ) {
-        // let atBottom = this.checkIfBottom();
-
         // Remove ignored user messages
         if ( this.useIgnoreListForChat ){
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
@@ -421,8 +371,6 @@
           console.log('Trimmed History');
         }
 
-        // if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom(true) );
-        // this.$refs['chat-messages'].scrollToBottom();
         this.scrollToBottom();
       },
 
@@ -595,8 +543,6 @@
         this.pollData.options = data.options;
         this.pollData.voters  = data.voters;
       },
-
-      getTime ( timestamp ) { return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : ''; },
 
       async ignoreUser ( username ) {
         username = username.replace('@', '');
@@ -789,8 +735,8 @@
       this.chatContainer = this.$refs.scroller;
 
       // Add listener for voice changes, then update voices.
-      // speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
-      this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
+      this.voicesListTTS = speechSynthesis.getVoices();
+      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
 
       // Get ignore list
       try {

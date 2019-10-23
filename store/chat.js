@@ -7,7 +7,6 @@ export const state = () => ({
   useTts: false,
   trollTts: true,
   ttsRate: 10,
-  ttsVoices: [],
   ttsVoice: 1,
 
   viewerList : [{name: 'NONE'}],
@@ -52,10 +51,6 @@ export const mutations = {
 
   SET_TTS_RATE ( state, data ) {
     state.ttsRate = JSON.parse(data);
-  },
-
-  SET_TTS_VOICES ( state, data ) {
-    state.ttsVoices = data;
   },
 
   SET_TTS_VOICE ( state, data ) {
