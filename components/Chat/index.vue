@@ -302,7 +302,11 @@
         }
 
         // Scroll to last message
-        document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        // document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        this.chatContainer.scroll({
+          top: this.chatContainer.scrollHeight,
+          behavior: 'smooth',
+        });
 
         setTimeout( () => {
           this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
