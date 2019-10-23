@@ -1,35 +1,34 @@
-<template>
+<template functional>
   <v-flex class="msg">
     <div class="d-flex py-1 ml-3 mr-1">
       <v-avatar
         class="mr-2"
         size="32"
-        @click="$emit('reply', username)"
+        @click="listeners.reply(props.username)"
       >
-        <img v-if="!!avatar" :src="avatar" :alt="username">
-        <v-icon v-else :style="{ background: color }">person</v-icon>
+        <img v-if="!!props.avatar" :src="props.avatar" :alt="props.username">
+        <v-icon v-else :style="{ background: props.color }">person</v-icon>
       </v-avatar>
 
       <v-list-item-content class="py-0">
         <v-list-item-subtitle>
           <div class="d-flex">
             <div class="d-flex-shrink-1">
-              <span class="time">{{ timestamp }}</span>
-              <span class="username" :style="userStyling" v-html="displayName"></span>
+              <span class="time">{{ props.timestamp }}</span>
+              <span class="username" :style="props.userStyling" v-html="props.displayName"></span>
             </div>
             <div class="flex-grow-1"></div>
             <div class="d-flex-shrink-1">
               <nuxt-link
-                :to="channel"
+                :to="props.channel"
               >
-                <kbd>{{ channel }}</kbd>
+                <kbd>{{ props.channel }}</kbd>
               </nuxt-link>
             </div>
           </div>
         </v-list-item-subtitle>
         <slot></slot>
       </v-list-item-content>
-
     </div>
   </v-flex>
 </template>
@@ -58,10 +57,6 @@
       timestamp: {
         type: String,
       },
-    },
-
-    data() {
-      return {}
     },
   }
 </script>
