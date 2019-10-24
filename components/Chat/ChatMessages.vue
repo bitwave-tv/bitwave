@@ -22,7 +22,7 @@
         @reply="addUserTag"
       >
         <div
-          :style="{ 'font-size': '14px', 'line-height': '1.1rem' }"
+          class="body-2"
           v-html="item.message"
         ></div>
       </chat-message>
