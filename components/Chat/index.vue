@@ -172,7 +172,7 @@
           voters: 0,
         },
 
-        sound: new Audio(),
+        sound: process.server ? null : new Audio(),
       }
     },
 
