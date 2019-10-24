@@ -43,7 +43,7 @@
       <!-- User Channels -->
       <v-flex
         class="hide-scrollbar"
-        style="overflow-y: auto"
+        style="overflow-y: auto; will-change: transform;"
       >
         <v-list
           class="pt-0"
