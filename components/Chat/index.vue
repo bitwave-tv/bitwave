@@ -171,10 +171,16 @@
           title: '',
           voters: 0,
         },
+
+        sound: new Audio(),
       }
     },
 
     methods: {
+      async playSound () {
+        await this.sound.play();
+      },
+
       async onResize () {
         await this.$nextTick( async () => await this.scrollToBottom(false) );
       },
@@ -353,6 +359,11 @@
 
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         messages.forEach( el => {
+          // Notification Sounds
+          if ( this.notify ) {
+            if ( pattern.test(el.message) ) this.playSound();
+          }
+
           // Highlight username tags in new messages
           el.message = el.message.replace( pattern, `<span class="highlight">$&</span>` );
 
@@ -676,6 +687,7 @@
         setIgnoreList: 'SET_IGNORE_LIST',
         setMessage: 'SET_CHAT_MESSAGE',
         appendChatMessage: 'APPEND_CHAT_MESSAGE',
+        setNotify: 'SET_NOTIFY',
       }),
 
       ...mapActions ('chat', {
@@ -699,6 +711,7 @@
         getTtsRate: 'ttsRate',
         getTtsVoice: 'ttsVoice',
         getMessage: 'message',
+        notify: 'notify',
       }),
 
       global: {
@@ -782,6 +795,14 @@
       }
 
       try {
+        const notify = localStorage.getItem( 'notify' );
+        if ( !!notify ) this.setNotify( notify );
+      } catch ( error ) {
+        console.log ( 'No notification sound option found.' );
+        this.setNotify ( false );
+      }
+
+      try {
         let tts = localStorage.getItem( 'tts' );
         // if ( tts ) this.useTTS = tts;
       } catch ( error ) {
@@ -790,6 +811,10 @@
 
       // Listen for new polls
       this.subscribeToPoll( this.page );
+
+      // Setup Notification Sound
+      this.sound.src = '/sounds/tweet.mp3';
+      this.sound.volume = .2;
     },
 
     beforeDestroy () {
