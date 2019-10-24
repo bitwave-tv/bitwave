@@ -16,9 +16,9 @@
         outlined
         dense
         clearable
-        :error="error"
         counter="300"
         @change="value => this.setMessage( value )"
+        @keyup.delete="updateMessage"
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
         @cut="event => lastMessageHandler(event)"
@@ -96,6 +96,10 @@
         setMessage: 'SET_CHAT_MESSAGE',
       }),
 
+      updateMessage ( event ) {
+        this.setMessage( event.srcElement.value );
+      },
+
       sendMessage() {
         if ( this.getMessage.length > 300 ) return;
         this.$emit( 'send' );
@@ -140,10 +144,6 @@
       ...mapState( 'chat', {
         getMessage: 'message',
       }),
-
-      error () {
-        return this.getMessage.length > 300;
-      }
     },
   }
 </script>

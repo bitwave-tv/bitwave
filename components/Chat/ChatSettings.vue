@@ -19,34 +19,31 @@
       </v-layout>
     </v-sheet>
 
-    <v-list>
-      <v-list-item>
+    <div class="px-2">
+      <div class="d-flex justify-space-between">
         <v-switch
           v-model="globalChat"
           :label="`${ globalChat ? 'Global' : 'Local' } Chat`"
-          class="ml-0 mt-0 pt-0"
           color="yellow"
           hide-details
         ></v-switch>
         <v-switch
           v-model="showTimestamps"
           label="Timestamps"
-          class="ml-2 mt-0 pt-0"
           color="yellow"
           hide-details
         ></v-switch>
-      </v-list-item>
-      <!--<v-list-item>
+      </div>
+
+      <div class="mb-2">
         <v-switch
-          v-model="useIgnoreList"
-          @change="toggleUseIgnore"
-          label="Ignore chat messages"
-          class="ml-0 mt-0 pt-0"
+          v-model="notificationSound"
+          label="Notification Sounds"
           color="yellow"
           hide-details
         ></v-switch>
-      </v-list-item>-->
-    </v-list>
+      </div>
+    </div>
 
     <v-divider/>
 
@@ -140,6 +137,7 @@
         setTrollTts: 'SET_TROLL_TTS',
         setTtsRate: 'SET_TTS_RATE',
         setTtsVoice: 'SET_TTS_VOICE',
+        setNotify: 'SET_NOTIFY',
       }),
 
       toggleUseIgnore() {
@@ -172,6 +170,7 @@
         getTrollTts: 'trollTts',
         getTtsRate: 'ttsRate',
         getTtsVoice: 'ttsVoice',
+        getNotify: 'notify'
       }),
 
       globalChat: {
@@ -202,6 +201,11 @@
       ttsVoice: {
         set ( val ) { this.setTtsVoice( val ) },
         get () { return this.getTtsVoice }
+      },
+
+      notificationSound: {
+        set ( val ) { this.setNotify( val ) },
+        get () { return this.getNotify }
       },
     },
 
