@@ -15,6 +15,8 @@ export const state = () => ({
   ignoreList : [],
 
   message: '',
+
+  notify: false,
 });
 
 
@@ -76,6 +78,11 @@ export const mutations = {
 
   APPEND_CHAT_MESSAGE ( state, data ) {
     state.message += data;
+  },
+
+  SET_NOTIFY ( state, data ) {
+    state.notify = JSON.parse(data);
+    localStorage.setItem( 'notify', data );
   },
 };
 
