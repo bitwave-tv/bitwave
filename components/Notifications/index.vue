@@ -1,5 +1,5 @@
 <template>
-  <v-flex mr-1 shrink>
+  <v-flex shrink>
 
     <v-menu
       v-model="notificationMenu"

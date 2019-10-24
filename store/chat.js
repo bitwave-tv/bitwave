@@ -4,11 +4,17 @@ export const state = () => ({
   room : '',
   global : false,
   timestamps : true,
+  useTts: false,
+  trollTts: true,
+  ttsRate: 10,
+  ttsVoice: 1,
 
   viewerList : [{name: 'NONE'}],
   roomViewerList : {},
 
   ignoreList : [],
+
+  message: '',
 });
 
 
@@ -34,6 +40,23 @@ export const mutations = {
     localStorage.setItem( 'globalchat', data );
   },
 
+  SET_USE_TTS ( state, data ) {
+    state.useTts = JSON.parse(data);
+    localStorage.setItem( 'tts', data );
+  },
+
+  SET_TROLL_TTS ( state, data ) {
+    state.tollTts = data;
+  },
+
+  SET_TTS_RATE ( state, data ) {
+    state.ttsRate = JSON.parse(data);
+  },
+
+  SET_TTS_VOICE ( state, data ) {
+    state.ttsVoice = data;
+  },
+
   SET_VIEWERLIST ( state, data ) {
     state.viewerList = [ ...data ];
   },
@@ -44,6 +67,15 @@ export const mutations = {
 
   SET_IGNORE_LIST ( state, data ) {
     state.ignoreList = data;
+  },
+
+  SET_CHAT_MESSAGE ( state, data ) {
+    if ( data === null ) state.message = '';
+    else state.message = data;
+  },
+
+  APPEND_CHAT_MESSAGE ( state, data ) {
+    state.message += data;
   },
 };
 

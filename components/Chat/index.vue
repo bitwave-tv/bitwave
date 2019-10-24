@@ -7,210 +7,58 @@
   >
 
     <!-- Chat Header -->
-    <v-sheet id="chat-header">
-      <v-layout
-        align-center
-        class="pa-2"
+    <v-sheet
+      id="chat-header"
+      class="d-flex align-center pa-2"
+    >
+      <!-- Viewer List -->
+      <ViewerList
+        :page="page"
+        class="flex-shrink-1"
+      ></ViewerList>
+
+      <!-- Chat Label -->
+      <div class="ml-2 flex-grow-1">
+        <h4>{{ page }}</h4>
+      </div>
+
+      <!-- Create Poll Button -->
+      <div v-if="page === username">
+        <v-menu
+          v-model="showPoll"
+          :close-on-content-click="false"
+          bottom
+          left
+        >
+          <template #activator="{ on }">
+            <v-btn
+              v-on="on"
+              small
+              class="black--text"
+              :disabled="showPollClient"
+              color="yellow"
+            >POLL</v-btn>
+          </template>
+
+          <!-- Create Poll Dialog -->
+          <chat-poll
+            id="chat-poll"
+            @close="showPoll = false"
+            @create="createPoll"
+          />
+        </v-menu>
+      </div>
+
+      <!-- Scroll to Chat Bottom -->
+      <v-btn
+        :style="{ 'min-width': '40px' }"
+        small
+        color="yellow"
+        @click="scrollToBottom(true)"
+        class="ml-2 px-0 black--text"
       >
-        <!-- Viewer List -->
-        <v-flex shrink>
-          <ViewerList :page="page" />
-        </v-flex>
-
-        <!-- Chat Label -->
-        <v-flex grow ml-2>
-          <h4>{{ page }}</h4>
-        </v-flex>
-
-        <!-- Create Poll Button -->
-        <v-flex
-          v-if="page === username"
-          shrink
-        >
-          <v-menu
-            v-model="showPoll"
-            :close-on-content-click="false"
-            bottom
-            left
-          >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                :style="{ 'min-width': '40px' }"
-                small
-                class="black--text"
-                :disabled="showPollClient"
-                color="yellow"
-                @click="scrollToBottom(true)"
-              >POLL</v-btn>
-            </template>
-
-            <!-- Create Poll Dialog -->
-            <chat-poll
-              id="chat-poll"
-              @close="showPoll = false"
-              @create="createPoll"
-            />
-
-          </v-menu>
-        </v-flex>
-
-        <!-- Tools -->
-        <v-flex
-          shrink
-          class="mx-2"
-        >
-          <v-menu
-            v-model="showToolMenu"
-            :close-on-content-click="false"
-            transition="slide-x-reverse-transition"
-            :max-width="320"
-            bottom
-            offset-x
-            offset-y
-          >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                :style="{ 'min-width': '40px' }"
-                small
-                class="black--text"
-                color="yellow"
-                @click="scrollToBottom(true)"
-              >
-                <v-icon>settings</v-icon>
-              </v-btn>
-            </template>
-
-            <v-card>
-              <v-sheet color="yellow">
-                <v-layout class="pl-2" align-center>
-                  <v-flex>
-                    <h5 class="black--text body-2">Settings</h5>
-                  </v-flex>
-                  <v-flex shrink>
-                    <v-btn
-                      color="black"
-                      text
-                      icon
-                      pa-0
-                      @click="showToolMenu = false"
-                    >
-                      <v-icon color="black">close</v-icon>
-                    </v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-sheet>
-
-              <v-list>
-                <v-list-item>
-                  <v-switch
-                    v-model="global"
-                    :label="`${ global ? 'Global' : 'Local' } Chat`"
-                    class="ml-0 mt-0 pt-0"
-                    :disabled="false"
-                    color="yellow"
-                    hide-details
-                  ></v-switch>
-                  <v-switch
-                    v-model="showTimestamps"
-                    label="Timestamps"
-                    class="ml-2 mt-0 pt-0"
-                    color="yellow"
-                    hide-details
-                  ></v-switch>
-                </v-list-item>
-                <v-list-item>
-                  <v-switch
-                    v-model="useIgnoreListForChat"
-                    @change="toggleUseIgnore"
-                    label="Ignore chat messages"
-                    class="ml-0 mt-0 pt-0"
-                    color="yellow"
-                    hide-details
-                  ></v-switch>
-                </v-list-item>
-              </v-list>
-
-              <v-divider/>
-
-              <v-list subheader pb-2>
-                <v-subheader class="mb-0">Text To Speech Options</v-subheader>
-
-                <v-layout mb-3>
-                  <v-flex>
-                    <v-switch
-                      v-model="useTTS"
-                      label="Use TTS"
-                      class="ml-3 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                      @change="toggleTTS"
-                    ></v-switch>
-                  </v-flex>
-                  <v-flex>
-                    <v-switch
-                      v-model="allowTrollTTS"
-                      :disabled="!useTTS"
-                      label="Troll TTS"
-                      class="ml-0 mt-0 pt-0"
-                      color="yellow"
-                      hide-details
-                    ></v-switch>
-                  </v-flex>
-                </v-layout>
-
-                <v-flex mx-3>
-                  <v-select
-                    v-model="selectionTTS"
-                    :items="voices"
-                    label="TTS Voice"
-                    style="font-size: 12px;"
-                    hide-details
-                  ></v-select>
-                </v-flex>
-
-                <v-list-item>
-                  <v-slider
-                    label="Speed"
-                    v-model="rateTTS"
-                    class="align-center"
-                    :max="20"
-                    :min="1"
-                    :step="0"
-                    hide-details
-                  >
-                    <template #append>
-                      <v-text-field
-                        v-model="rateTTS"
-                        class="mt-0 pt-0"
-                        hide-details
-                        single-line
-                        type="number"
-                        style="width: 40px"
-                      ></v-text-field>
-                    </template>
-                  </v-slider>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-menu>
-        </v-flex>
-
-        <!-- Scroll to Chat Bottom -->
-        <v-flex shrink>
-          <!-- Scroll to bottom button -->
-          <v-btn
-            :style="{ 'min-width': '40px' }"
-            small
-            color="yellow"
-            @click="scrollToBottom(true)"
-            class="px-0 black--text"
-          ><v-icon>keyboard_arrow_down</v-icon>
-          </v-btn>
-        </v-flex>
-
-      </v-layout>
+        <v-icon>keyboard_arrow_down</v-icon>
+      </v-btn>
     </v-sheet>
 
     <!-- Show Poll to Users -->
@@ -223,87 +71,46 @@
         @end="endPoll"
         @destroy="destroyPoll"
       />
+
     </v-flex>
 
     <!-- Chat Messages -->
-    <v-flex
-      id="inner-chat"
-      fill-height
-      style="overflow: hidden;"
-    >
-      <div id="chat-scroll" ref="scroller" style="overflow-y: scroll;">
-        <chat-message
-          v-for="item in messages"
-          :key="item.timestamp"
-          :username="item.username"
-          :display-name="item.username"
-          :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-          :channel="item.channel"
-          :timestamp="getTime(item.timestamp)"
-          :avatar="item.avatar"
-          :color="item.color"
-          @reply="addUserTag"
-        >
-          <div
-            :style="{ 'font-size': '14px', 'line-height': '1.5' }"
-            v-html="item.message"
-          ></div>
-        </chat-message>
-      </div>
-    </v-flex>
+    <chat-messages
+      ref="chat-messages"
+      :messages="messages"
+      :show-timestamps="showTimestamps"
+      @reply="addUserTag"
+    ></chat-messages>
+
 
     <!-- Chat Input -->
-
-    <v-sheet class="px-2 pb-1">
-      <v-layout>
-        <v-flex>
-          <v-text-field
-            ref="chatmessageinput"
-            :value="message"
-            :label="`Chat as ${username}...`"
-            color="yellow"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="true"
-            single-line
-            append-outer-icon="send"
-            counter="300"
-            validate-on-blur
-            @change="value => this.message = value"
-            @click:append-outer.prevent="sendMessage"
-            @keyup.enter.prevent="sendMessage"
-            @keyup.prevent="event => lastMessageHandler(event)"
-            @cut="event => lastMessageHandler(event)"
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-    </v-sheet>
+    <chat-input
+      ref="chat-input"
+      :username="username"
+      @send="sendMessage"
+    ></chat-input>
 
   </v-layout>
 </template>
 
 <script>
   import { auth, db } from '@/plugins/firebase.js'
-  import ChatMessage from './ChatMessage'
-  import moment from 'moment'
   import jwt_decode from 'jwt-decode'
-
-  import { mapGetters } from 'vuex'
 
   import socketio from 'socket.io-client'
 
+  import ChatMessages from '@/components/Chat/ChatMessages'
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
+  import ChatInput from '@/components/Chat/ChatInput'
 
-  import { mapState, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import ViewerList from '@/components/Chat/ViewerList'
 
   export default {
     name: 'Chat',
 
     props: {
-      dark        : { type: Boolean },
       chatChannel : { type: String },
       forceGlobal : { type: Boolean },
     },
@@ -312,23 +119,18 @@
       ViewerList,
       ChatPollVote,
       ChatPoll,
-      ChatMessage,
+      ChatMessages,
+      ChatInput,
     },
 
     data() {
       return {
-        color: null,
-
         unsubscribeUser: null,
         unsubscribePoll: null,
 
         loading: true,
 
         socket: null,
-
-        message: '',
-        messageBuffer: [],
-        messageBufferIndex: 0,
 
         messages: [
           {
@@ -348,12 +150,9 @@
         chatLimit: 50,
         chatContainer: null,
 
-        showToolMenu: false,
+        showChatSettings: false,
+
         useIgnoreListForChat: true,
-        useTTS: false,
-        allowTrollTTS: true,
-        selectionTTS: 1,
-        rateTTS: 10.00,
         voicesListTTS: [],
 
         showPoll: false,
@@ -372,7 +171,6 @@
           title: '',
           voters: 0,
         },
-
       }
     },
 
@@ -381,9 +179,9 @@
         await this.$nextTick( async () => await this.scrollToBottom(false) );
       },
 
-      addUserTag ( user ) {
-        this.message = `${this.$refs['chatmessageinput'].value}@${user} `;
-        this.$refs['chatmessageinput'].focus();
+      async addUserTag ( user ) {
+        this.$refs['chat-input'].$refs['chatmessageinput'].focus();
+        this.appendChatMessage(`@${user} `);
       },
 
       async authenticated ( user ) {
@@ -475,20 +273,7 @@
       },
 
       async scrollToBottom ( force ) {
-        if ( this.checkIfBottom() && !force ) {
-          return;
-        }
-
-        // Scroll to last message
-        document.querySelector("#chat-scroll > div:last-child").scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        // this.chatContainer.scrollTop = this.chatContainer.scrollTop + this.chatContainer.clientHeight;
-        // this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
-
-        setTimeout( () => {
-          this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
-        }, 500 );
-
-        if (this.messages.length > 2 * this.chatLimit) this.messages = this.messages.splice( -this.chatLimit );
+        this.$refs['chat-messages'].scrollToBottom( force );
       },
 
       connectChat ( tokenUser ) {
@@ -510,17 +295,19 @@
         this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
-        this.socket.on( 'blocked',   data => this.message = data.message );
+        this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
 
       },
 
       async hydrate ( data ) {
         await this.socket.emit( 'hydratepoll', this.pollData.id );
+
         if ( !data ) {
           console.log( 'Failed to receive hydration data' );
           return;
         }
+
         const size = data.length;
         if ( !size ) {
           console.log( 'Hydration data was empty' );
@@ -532,7 +319,7 @@
           data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
         }
 
-        this.messages = size > 100 ? data.splice( -this.chatLimit ) : data;
+        this.messages = size > 2 * this.chatLimit ? data.splice( -this.chatLimit ) : data;
 
         // re-highlight username mentions on hydration
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
@@ -542,13 +329,11 @@
 
         // Scroll after hydration
         await this.$nextTick( async () => {
-          this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750
+          this.$refs['chat-messages'].jumpToBottom();
         });
       },
 
       async rcvMessageBulk ( messages ) {
-        let atBottom = this.checkIfBottom();
-
         // Remove ignored user messages
         if ( this.useIgnoreListForChat ){
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
@@ -577,17 +362,23 @@
           if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
 
           // Add message to list
-          this.messages.push( { ...{ id: Date.now() }, ...el } );
+          this.messages.push( el );
         });
 
-        if ( atBottom ) await this.$nextTick( async () => await this.scrollToBottom(true) );
+        // Trim chat history
+        if ( this.messages.length > 1.25 * this.chatLimit ) {
+          this.messages = this.messages.splice( -this.chatLimit );
+          console.log('Trimmed History');
+        }
+
+        this.scrollToBottom();
       },
 
       async sendMessage () {
-        if ( this.message.length > 300 ) return false;
+        if ( !this.getMessage || this.getMessage.length > 300 ) return false;
 
-        const match = /^\/(\w+)\s?(\w+)?/g.exec( this.message );
-        const parts = this.message.split( ' ' );
+        const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
+        const parts = this.getMessage.split( ' ' );
 
         if ( match ) {
           const command  = match[1].toLowerCase();
@@ -641,52 +432,18 @@
             case 'w':
             case 'whisper':
               const msg = {
-                message: this.message,
+                message: this.getMessage,
                 channel: this.page,
               };
               this.socket.emit( 'whisper', msg );
           }
         } else {
           const msg = {
-            message: this.message,
+            message: this.getMessage,
             channel: this.page,
             global: this.global,
           };
           this.socket.emit( 'message', msg );
-        }
-        this.messageBuffer.push(this.message);
-        this.messageBuffer = this.messageBuffer.splice(-10);
-        this.messageBufferIndex = this.messageBuffer.length;
-        this.message = '';
-      },
-
-      lastMessageHandler ( event ) {
-        if ( !event.srcElement.value || event.srcElement.value === this.messageBuffer[ this.messageBufferIndex ] ) {
-          // Up Arrow (keyCode 38)
-          if ( event.key === 'ArrowUp' ) {
-            this.messageBufferIndex -= ( this.messageBufferIndex > 0 ) ? 1 : 0;
-            this.message = this.messageBuffer[ this.messageBufferIndex ];
-            event.preventDefault();
-          }
-          // Down Arrow (keyCode 40)
-          else if ( event.key === 'ArrowDown' ) {
-            this.messageBufferIndex += ( this.messageBufferIndex < this.messageBuffer.length ) ? 1 : 0;
-            if ( this.messageBufferIndex === this.messageBuffer.length ) this.message = '';
-            else this.message = this.messageBuffer[ this.messageBufferIndex ];
-            event.preventDefault();
-          }
-          // Idk why this is needed
-          else {
-            // this.message = '';
-          }
-        }
-
-        if ( event.type === 'cut' ) {
-          setTimeout( () => {
-            if ( !event.srcElement.value ) {
-              this.message = '';
-            }
-          }, 20 );
         }
       },
 
@@ -702,9 +459,9 @@
       },
 
       speak ( message, username ) {
-        if ( !this.useTTS ) return;
+        if ( !this.getUseTts ) return;
         if ( this.ignoreList.find( user => user === username ) ) return;
-        if ( !this.allowTrollTTS && /troll:\w+/.test(username) ) return; // disables troll TTS
+        if ( !this.getTrollTts && /troll:\w+/.test(username) ) return; // disables troll TTS
 
         function unescapeHtml(unsafe) {
           return unsafe
@@ -725,8 +482,8 @@
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
-        voice.voice = this.voicesListTTS[this.selectionTTS];
-        voice.rate  = this.rateTTS / 10.0;
+        voice.voice = this.voicesListTTS[this.getTtsVoice];
+        voice.rate  = this.getTtsRate / 10.0;
         voice.pitch = pitch;
         voice.text  = message;
 
@@ -735,11 +492,6 @@
         };
 
         speechSynthesis.speak(voice);
-      },
-
-      toggleTTS () {
-        speechSynthesis.cancel();
-        localStorage.setItem( 'tts', this.useTTS );
       },
 
 
@@ -790,12 +542,6 @@
       async updatePoll ( data ) {
         this.pollData.options = data.options;
         this.pollData.voters  = data.voters;
-      },
-
-      getTime ( timestamp ) { return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : ''; },
-
-      toggleUseIgnore () {
-        localStorage.setItem( 'useignore', this.useIgnoreListForChat );
       },
 
       async ignoreUser ( username ) {
@@ -928,6 +674,8 @@
         setModeGlobal: 'SET_MODE_GLOBAL',
         setModeTimestamps: 'SET_TIMESTAMPS',
         setIgnoreList: 'SET_IGNORE_LIST',
+        setMessage: 'SET_CHAT_MESSAGE',
+        appendChatMessage: 'APPEND_CHAT_MESSAGE',
       }),
 
       ...mapActions ('chat', {
@@ -946,6 +694,11 @@
         getModeGlobal: 'global',
         getModeTimestamps: 'timestamps',
         getIgnoreList: 'ignoreList',
+        getUseTts: 'useTts',
+        getTrollTts: 'trollTts',
+        getTtsRate: 'ttsRate',
+        getTtsVoice: 'ttsVoice',
+        getMessage: 'message',
       }),
 
       global: {
@@ -971,11 +724,6 @@
           return 'Global';
         }
       },
-
-      voices () {
-        return this.voicesListTTS.map( ( voice, index ) => { return { text: voice.name, value: index } } );
-      },
-
     },
 
     created () {
@@ -987,8 +735,8 @@
       this.chatContainer = this.$refs.scroller;
 
       // Add listener for voice changes, then update voices.
+      this.voicesListTTS = speechSynthesis.getVoices();
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
-      this.$nextTick( () => this.voicesListTTS = speechSynthesis.getVoices() );
 
       // Get ignore list
       try {

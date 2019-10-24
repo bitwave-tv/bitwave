@@ -38,7 +38,7 @@
         </v-layout>
       </v-sheet>
 
-      <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain;">
+      <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain; will-change: transform;">
         <v-list
           dense
           class="py-0"
