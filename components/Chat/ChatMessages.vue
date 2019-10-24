@@ -23,6 +23,7 @@
       >
         <div
           class="body-2"
+          :style="{ lineHeight: 1.5, }"
           v-html="item.message"
         ></div>
       </chat-message>
