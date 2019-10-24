@@ -1,40 +1,44 @@
 <template functional>
   <v-flex class="msg">
     <div class="d-flex py-1 ml-3 mr-1">
-      <v-avatar
-        class="mr-2"
-        size="32"
+
+      <!-- Chat Avatar -->
+      <div
+        class="v-avatar mr-2 mt-2"
         @click="listeners.reply(props.username)"
       >
         <img v-if="!!props.avatar" :src="props.avatar" :alt="props.username">
-        <v-icon v-else :style="{ background: props.color }">person</v-icon>
-      </v-avatar>
+        <div v-else class="v-icon notranslate material-icons" :style="{ background: props.color }">person</div>
+      </div>
 
-      <v-list-item-content class="py-0">
-        <v-list-item-subtitle>
-          <div class="d-flex">
-            <div class="d-flex-shrink-1">
-              <span class="time">{{ props.timestamp }}</span>
-              <span class="username" :style="props.userStyling" v-html="props.displayName"></span>
-            </div>
-            <div class="flex-grow-1"></div>
-            <div class="d-flex-shrink-1">
-              <nuxt-link
-                :to="props.channel"
-              >
-                <kbd>{{ props.channel }}</kbd>
-              </nuxt-link>
-            </div>
+      <!-- Chat Content -->
+      <div class="flex-grow-1">
+
+        <!-- Message Header -->
+        <div class="d-flex align-center">
+
+          <!-- Timestamp & Username -->
+          <div class="flex-grow-1 subtitle-2">
+            <span class="time">{{ props.timestamp }}</span>
+            <span class="username" :style="props.userStyling" v-html="props.displayName"></span>
           </div>
-        </v-list-item-subtitle>
+
+          <!-- Room Label -->
+          <div class="flex-shrink-1">
+            <nuxt-link :to="props.channel">
+              <kbd>{{ props.channel }}</kbd>
+            </nuxt-link>
+          </div>
+        </div>
+
+        <!-- Chat Body -->
         <slot></slot>
-      </v-list-item-content>
+      </div>
     </div>
   </v-flex>
 </template>
 
 <script>
-
   export default {
     name: 'ChatMessage',
 
@@ -79,6 +83,19 @@
     .v-avatar {
       cursor: pointer;
       user-select: none;
+
+      align-items: center;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      line-height: normal;
+      position: relative;
+      text-align: center;
+      vertical-align: middle;
+
+      height: 32px;
+      min-width: 32px;
+      width: 32px;
     }
 
     .v-list-item__avatar {
