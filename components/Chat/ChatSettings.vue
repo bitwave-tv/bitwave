@@ -48,6 +48,8 @@
       </v-list-item>-->
     </v-list>
 
+    <v-divider/>
+
     <v-list subheader pb-2>
       <v-subheader class="mb-0">Text To Speech Options</v-subheader>
 
