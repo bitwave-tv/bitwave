@@ -7,7 +7,7 @@
         :value="getMessage"
         :label="`Chat as ${username}...`"
         color="yellow"
-        autocomplete="off"
+        autocomplete="new-chat-message"
         autocorrect="off"
         autocapitalize="off"
         spellcheck="true"
