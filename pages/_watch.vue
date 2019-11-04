@@ -16,7 +16,7 @@
           controls
           :autoplay="live"
           preload="auto"
-          data-setup='{ "aspectRatio":"16:9" }'
+          data-setup='{ "aspectRatio":"16:9", "html": { "hls": { "overrideNative": "true" } } }'
           :poster="poster"
         >
           <source
@@ -40,33 +40,35 @@
 
 
     <!-- Stream Title, Status -->
-    <v-layout class="px-3 my-2" wrap align-center justify-end>
-      <v-flex shrink>
-        <v-icon
-          v-show="live"
-          size="14"
-          color="red"
-          class="blink mr-2"
-        >lens</v-icon>
-      </v-flex>
-      <v-flex>
-        <h2>{{ title }}</h2>
-      </v-flex>
-      <v-flex shrink>
-        <v-chip
-          v-if="nsfw"
-          color="red"
-          class="mr-2"
-          small
-          :outlined="false"
-        >NSFW</v-chip>
-      </v-flex>
-      <v-flex shrink>
-        <FollowButton
-          :streamer-id="owner"
-        />
-      </v-flex>
-    </v-layout>
+    <v-sheet class="elevation-3">
+      <v-layout class="pa-3 mb-4" wrap align-center justify-end>
+        <v-flex>
+          <h3>
+            <v-icon
+              v-show="live"
+              size="14"
+              color="red"
+              class="blink mr-2"
+            >lens</v-icon>
+            {{ title }}
+          </h3>
+        </v-flex>
+        <v-flex shrink>
+          <v-chip
+            v-if="nsfw"
+            color="red"
+            class="mr-2"
+            small
+            :outlined="false"
+          >NSFW</v-chip>
+        </v-flex>
+        <v-flex shrink>
+          <FollowButton
+            :streamer-id="owner"
+          />
+        </v-flex>
+      </v-layout>
+    </v-sheet>
 
     <!-- Description -->
     <v-layout class="px-3 my-2">
@@ -145,7 +147,7 @@
         // Create video.js player
         this.player = videojs( 'streamplayer', {
           liveui: true,
-          playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 1.75, 2 ],
+          playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
           plugins: { qualityLevels: {} },
           poster: this.poster,
           html5: {
@@ -398,10 +400,105 @@
 </script>
 
 <style lang='scss'>
-  .video-js .vjs-tech {
-    height: auto !important;
-    position: absolute !important;
+  .video-js {
+    font-size: 11px;
+    overflow: hidden;
+
+    // Control Bar (container)
+    .vjs-control-bar {
+      background-color: #333;
+      background-color: rgba(50, 50, 50, 0.65);
+    }
+
+    // Progress Bar
+    .vjs-progress-control.vjs-control {
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 50%;
+      transform: translateY(-75%);
+
+      // Circle play head
+      .vjs-play-progress::before {
+        transform: scale(0);
+        transition: transform .3s;
+      }
+
+      &:hover {
+        .vjs-play-progress::before {
+          transform: scale(1);
+        }
+      }
+
+      // Progress Slider
+      .vjs-slider {
+        margin: 0 5px;
+        top: 50%;
+      }
+    }
+
+    // Load progress color
+    .vjs-load-progress,
+    .vjs-load-progress div {
+      background-color: rgba(60, 60, 60, 0.5);
+    }
+
+    // Progress Bar Background
+    .vjs-slider {
+      background-color: rgba(60, 60, 60, 0.5);
+    }
+
+    // Primary Color Progress
+    .vjs-slider-bar {
+      background-color: #ffeb3b;
+    }
+
+    // Inner Progress Bar
+    .vjs-play-progress {
+      background-color: #ffeb3b;
+      color: #ffeb3b;
+    }
+
+    // Spacer
+    .vjs-custom-control-spacer {
+      display: flex;
+      flex: auto;
+    }
+
+    // Transcoding menu
+    .vjs-tech {
+      height: auto !important;
+      position: absolute !important;
+    }
+
+    // Menu size
+    .vjs-playback-rate .vjs-menu .vjs-menu-content {
+      width: 125%;
+      font-size: 10px;
+    }
   }
+
+  // Tooltips
+  .vjs-mouse-display .vjs-time-tooltip {
+    color: #ffeb3b;
+  }
+
+  .vjs-has-started {
+    .vjs-control-bar {
+      opacity: 1;
+      transform: translateY(0);
+      transition: transform .3s;
+    }
+
+    &.vjs-user-inactive.vjs-playing {
+      .vjs-control-bar {
+        opacity: 1;
+        transform: translateY(127%);
+        transition: transform .5s;
+      }
+    }
+  }
+
 
   .chat-desktop {
     position : fixed;

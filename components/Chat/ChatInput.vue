@@ -29,7 +29,6 @@
       <v-menu
         v-model="showChatSettings"
         :close-on-content-click="false"
-        :close-on-click="false"
         transition="slide-x-transition"
         :max-width="320"
         top

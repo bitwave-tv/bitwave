@@ -33,24 +33,14 @@
       </template>
 
       <v-card>
-        <v-list
-          class="py-0"
-          color="yellow"
-        >
-          <v-list-item>
-
-            <v-list-item-avatar>
+        <v-sheet color="yellow">
+          <v-flex>
+            <h5 class="black--text body-2">
               <v-icon color="black" class="ml-1">notifications</v-icon>
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title class="black--text">{{ title }}</v-list-item-title>
-            </v-list-item-content>
-
-          </v-list-item>
-        </v-list>
-
-        <v-divider/>
+              Notifications
+            </h5>
+          </v-flex>
+        </v-sheet>
 
         <v-sheet
           color="#222"

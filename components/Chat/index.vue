@@ -767,12 +767,13 @@
         console.log( 'No ignore channel list found.' );
       }
 
-      try {
+      // Always enable ignore
+      /*try {
         let useIgnore = localStorage.getItem( 'useignore' );
         if ( !!useIgnore ) this.useIgnoreListForChat = JSON.parse( useIgnore );
       } catch ( error ) {
         console.log( 'No useIgnore option found.' );
-      }
+      }*/
 
       try {
         const showTimestamps = localStorage.getItem( 'showtimestamps' );
