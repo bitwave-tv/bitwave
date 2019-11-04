@@ -68,7 +68,7 @@
 <style lang='scss'>
   .msg {
     word-break: break-word;
-    max-height: 50vh;
+    max-height: 20rem;
     overflow: hidden;
 
     kbd {
@@ -77,6 +77,7 @@
       user-select: none;
       text-overflow: ellipsis;
       white-space: nowrap;
+      overflow: hidden;
       max-width: 75px;
     }
 

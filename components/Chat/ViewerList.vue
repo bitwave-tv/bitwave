@@ -3,7 +3,6 @@
   <v-menu
     v-model="showViewers"
     :close-on-content-click="false"
-    :nudge-width="250"
     offset-y
     bottom
   >
