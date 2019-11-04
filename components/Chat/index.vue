@@ -129,8 +129,10 @@
         unsubscribePoll: null,
 
         loading: true,
-
+        token: null,
+        trollId: null,
         socket: null,
+        chatLimit: 50,
 
         messages: [
           {
@@ -142,13 +144,8 @@
           },
         ],
 
-        token: null,
-
         ignoreList: [],
         ignoreChannelList: [],
-        trollId: null,
-        chatLimit: 50,
-        chatContainer: null,
 
         showChatSettings: false,
 
@@ -156,7 +153,6 @@
         voicesListTTS: [],
 
         showPoll: false,
-
         showPollClient: false,
         pollData: {
           channel: '',
@@ -248,8 +244,7 @@
             this.connectChat( tokenUser );
           }
 
-          // Record user
-          lastUser = user;
+          lastUser = user; // Record user state
         });
       },
 
@@ -269,13 +264,6 @@
           // Scroll to bottom when showing / hiding polls
           this.onResize();
         });
-      },
-
-      checkIfBottom () {
-        const scrollTop    = this.chatContainer.scrollTop;
-        const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
-        const scrollHeight = this.chatContainer.scrollHeight;
-        return scrollTop + clientHeight >= scrollHeight - document.querySelector("#chat-scroll > div:last-child").clientHeight;
       },
 
       async scrollToBottom ( force ) {
@@ -303,7 +291,6 @@
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
-
       },
 
       async hydrate ( data ) {
@@ -388,6 +375,12 @@
       async sendMessage () {
         if ( !this.getMessage || this.getMessage.length > 300 ) return false;
 
+        const msg = {
+          message: this.getMessage,
+          channel: this.page,
+          global: this.global,
+        };
+
         const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
         const parts = this.getMessage.split( ' ' );
 
@@ -430,11 +423,10 @@
                   channel: this.page,
                 },
               ]);
-              // Analytics
               this.$ga.event({
                 eventCategory : 'chat',
                 eventAction   : 'ignorelist',
-              });
+              }); // Analytics
               break;
             case 'skip':
             case 's':
@@ -442,29 +434,30 @@
               break;
             case 'w':
             case 'whisper':
-              const msg = {
-                message: this.getMessage,
-                channel: this.page,
-              };
               this.socket.emit( 'whisper', msg );
+              break;
           }
         } else {
-          const msg = {
-            message: this.getMessage,
-            channel: this.page,
-            global: this.global,
-          };
           this.socket.emit( 'message', msg );
         }
       },
 
       async setupTrollData () {
         let trollToken = localStorage.getItem( 'troll' );
+
+        // Get new troll token
         if ( !trollToken ) {
           const { data } = await this.$axios.get('https://api.bitwave.tv/api/troll-token');
           trollToken = data.chatToken;
           localStorage.setItem( 'troll', trollToken );
+          const tokenTroll = {
+            type  : 'troll',
+            token : trollToken,
+            page  : this.page,
+          };
+          this.connectChat( tokenTroll );
         }
+
         this.token = trollToken;
         this.trollId = jwt_decode(trollToken).user.name;
       },
@@ -724,7 +717,9 @@
         get () { return this.getModeTimestamps }
       },
 
-      username () { return this._username || this.trollId; },
+      username () {
+        return this._username || this.trollId;
+      },
 
       page () {
         let channel = this.chatChannel;
@@ -745,11 +740,18 @@
 
     async mounted () {
       await this.setupTrollData();
-      this.chatContainer = this.$refs.scroller;
 
       // Add listener for voice changes, then update voices.
       this.voicesListTTS = speechSynthesis.getVoices();
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+
+      // Always enable ignore now
+      /*try {
+        let useIgnore = localStorage.getItem( 'useignore' );
+        if ( !!useIgnore ) this.useIgnoreListForChat = JSON.parse( useIgnore );
+      } catch ( error ) {
+        console.log( 'No useIgnore option found.' );
+      }*/
 
       // Get ignore list
       try {
@@ -767,21 +769,12 @@
         console.log( 'No ignore channel list found.' );
       }
 
-      // Always enable ignore
-      /*try {
-        let useIgnore = localStorage.getItem( 'useignore' );
-        if ( !!useIgnore ) this.useIgnoreListForChat = JSON.parse( useIgnore );
-      } catch ( error ) {
-        console.log( 'No useIgnore option found.' );
-      }*/
-
       try {
         const showTimestamps = localStorage.getItem( 'showtimestamps' );
         if ( !!showTimestamps ) this.showTimestamps = showTimestamps;
         else this.showTimestamps = true;
       } catch ( error ) {
         console.log( 'No showTimestamps option found.' );
-        this.showTimestamps = true;
       }
 
       try {
@@ -791,7 +784,7 @@
         else this.setModeGlobal( false );
 
       } catch ( error ) {
-        console.log( 'No showTimestamps option found.' );
+        console.log( 'No global chat option found.' );
         this.setModeGlobal( true );
       }
 
@@ -803,19 +796,12 @@
         this.setNotify ( false );
       }
 
-      try {
-        let tts = localStorage.getItem( 'tts' );
-        // if ( tts ) this.useTTS = tts;
-      } catch ( error ) {
-        console.log( 'No tts option found.' );
-      }
-
       // Listen for new polls
       this.subscribeToPoll( this.page );
 
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
-      this.sound.volume = .2;
+      this.sound.volume = .25;
     },
 
     beforeDestroy () {
@@ -827,12 +813,6 @@
 </script>
 
 <style lang='scss'>
-  #chat-poll {
-    button {
-      /*min-width: 55px;*/
-    }
-  }
-
   #sidechat {
     border-top: 3px yellow;
     background-color: #000;

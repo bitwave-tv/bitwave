@@ -61,7 +61,6 @@
               :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
               class="my-1"
             >
-
               <v-badge
                 v-model="user.live && user.nsfw"
                 :color="!!user.nsfw ? 'orange' : 'green'"
@@ -76,7 +75,6 @@
                   <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
                 </v-avatar>
               </v-badge>
-
             </v-list-item-avatar>
             <v-list-item-content class="py-0">
               <v-list-item-title>{{ user.title }}</v-list-item-title>
@@ -121,7 +119,6 @@
         </v-btn>
       </div>
     </template>
-
   </v-navigation-drawer>
 </template>
 
@@ -168,7 +165,6 @@
           console.log( error.message );
         }
       },
-
     },
 
     async created() {

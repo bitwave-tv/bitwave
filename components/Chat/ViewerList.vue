@@ -70,7 +70,6 @@
           </v-list-item>
         </v-list>
       </v-layout>
-
     </v-card>
   </v-menu>
 </template>

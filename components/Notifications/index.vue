@@ -1,6 +1,5 @@
 <template>
   <v-flex shrink>
-
     <v-menu
       v-model="notificationMenu"
       :close-on-content-click="true"
@@ -33,13 +32,20 @@
       </template>
 
       <v-card>
-        <v-sheet color="yellow">
-          <v-flex>
-            <h5 class="black--text body-2">
-              <v-icon color="black" class="ml-1">notifications</v-icon>
-              Notifications
-            </h5>
-          </v-flex>
+        <v-sheet color="yellow" class="px-2 d-flex justify-space-between align-center">
+          <h4 class="black--text body-2">
+            <v-icon color="black" class="mx-1" small>notifications</v-icon>
+            Notifications
+          </h4>
+          <v-btn
+            color="black"
+            text
+            icon
+            pa-0
+            @click="notificationMenu = !notificationMenu"
+          >
+            <v-icon color="black" small>close</v-icon>
+          </v-btn>
         </v-sheet>
 
         <v-sheet
@@ -51,7 +57,6 @@
             class="pb-0"
             dense
           >
-
             <v-list-item
               v-if="filteredNotifications.length === 0"
             >
@@ -76,12 +81,10 @@
                 <v-list-item-subtitle>{{ `${timestamp( notification.timestamp.toDate() )} ${notification.message}` }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-
           </v-list>
         </v-sheet>
       </v-card>
     </v-menu>
-
   </v-flex>
 </template>
 
