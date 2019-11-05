@@ -97,14 +97,6 @@
       },
     },
 
-    computed: {},
-
-    watch: {
-      /*messages: async function () {
-        // await this.scrollToBottom(true);
-      },*/
-    },
-
     async mounted () {
       this.chatContainer = this.$refs.scroller;
       // this.chatContainer.addEventListener( 'scroll', e => this.onScroll(e) );

@@ -166,9 +166,3 @@
     },
   };
 </script>
-
-<style lang='scss'>
-  /*.profile-link {
-      min-width: 100px;
-    }*/
-</style>

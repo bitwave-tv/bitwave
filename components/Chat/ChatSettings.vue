@@ -140,10 +140,6 @@
         setNotify: 'SET_NOTIFY',
       }),
 
-      toggleUseIgnore() {
-
-      },
-
       toggleTts() {
 
       },

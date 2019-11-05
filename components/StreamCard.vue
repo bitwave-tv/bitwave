@@ -42,10 +42,6 @@
     data() {
       return {}
     },
-
-    methods: {},
-
-    computed: {},
   }
 </script>
 
