@@ -27,7 +27,7 @@
       </v-flex>
     </v-layout>
 
-    <!-- Mobile Chat -->
+    <!-- Chat -->
     <v-layout :class="{ 'chat-desktop': !mobile }">
       <v-flex :style="{ maxHeight: mobile ? '390px' : '100%' }">
         <client-only placeholder="Loading...">
@@ -37,7 +37,6 @@
         </client-only>
       </v-flex>
     </v-layout>
-
 
     <!-- Stream Title, Status -->
     <v-sheet class="elevation-3">
@@ -181,11 +180,6 @@
         this.qualityLevels = this.player.qualityLevels();
         this.player.hlsQualitySelector();
 
-        // Listen to change events for when the player selects a new quality level
-        this.qualityLevels.on( 'change', () => {
-          console.log( 'Quality Level changed:', this.qualityLevels[this.qualityLevels.selectedIndex] );
-        });
-
         // Save volume on change
         this.player.on( 'volumechange', () => {
           localStorage.setItem( 'volume', this.player.volume() );
@@ -202,8 +196,7 @@
 
         this.initialized = true;
 
-        // Get stream data
-        this.getStreamData();
+        this.getStreamData(); // Get stream data
       },
 
       trackWatchTime () {
@@ -220,7 +213,7 @@
           eventLabel    : this.name,
           eventValue    : this.watchInterval / 60,
         });
-        console.debug( `Watch Time: ${this.watchDuration}s on ${this.name}` );
+        // console.debug( `Watch Time: ${this.watchDuration}s on ${this.name}` );
       },
 
       async getRandomBump () {
@@ -256,24 +249,16 @@
         if ( live ) this.poster = thumbnail;
 
         // Detect offline stream
-        if ( !this.live && !live ) {
-          // this.url = this.getRandomBump();
-          // this.type = 'video/mp4';
-
-          console.log( 'User is offline' );
-
-          // this.reloadPlayer();
-        }
+        if ( !this.live && !live ) console.log( 'User is offline' );
 
         // Detect user going live
         else if ( !this.live && live ) {
+          console.log( 'Livestream starting' );
           this.live = live;
 
           // Load and Play stream
           this.url  = url;
           this.type = type;
-
-          console.log( 'User Going Live' );
 
           this.reloadPlayer();
         }
@@ -291,26 +276,13 @@
         this.live = live;
       },
 
-      async verifyChannel ( user ) {
-        try {
-          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
-          return data.name;
-        } catch ( error ) {
-          console.log( `Channel ${user} does not exist` );
-          return null;
-        }
-      },
-
       reloadPlayer () {
-        if ( !this.initialized ) return;
-
         // this.player.reset();
-
-        this.player.poster = this.poster;
-
-        this.player.src( { src: this.url, type: this.type } );
-
         // this.player.load();
+
+        if ( !this.initialized ) return;
+        this.player.poster = this.poster;
+        this.player.src( { src: this.url, type: this.type } );
 
         console.log( 'Player reloaded' );
       },
@@ -350,7 +322,7 @@
 
         return {
           name   : '404 Error',
-          title  : '⚠ 404 - STREAM NOT FOUND ⚠',
+          title  : 'Streamer not found',
           desc   : 'Invalid Stream',
           poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
           live   : false,
@@ -377,7 +349,6 @@
     },
 
     async mounted () {
-
       if ( this.live )
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
       else if ( this.name !== '404' )

@@ -9,7 +9,7 @@
     <!-- Chat Header -->
     <v-sheet
       id="chat-header"
-      class="d-flex align-center pa-2"
+      class="d-flex align-center justify-space-between pa-2"
     >
       <!-- Viewer List -->
       <ViewerList
@@ -18,9 +18,7 @@
       ></ViewerList>
 
       <!-- Chat Label -->
-      <div class="ml-2 flex-grow-1">
-        <h4>{{ page }}</h4>
-      </div>
+      <h4>{{ page }}</h4>
 
       <!-- Create Poll Button -->
       <div v-if="page === username">
@@ -81,7 +79,6 @@
       :show-timestamps="showTimestamps"
       @reply="addUserTag"
     ></chat-messages>
-
 
     <!-- Chat Input -->
     <chat-input
