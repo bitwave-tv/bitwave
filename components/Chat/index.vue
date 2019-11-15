@@ -20,43 +20,46 @@
       <!-- Chat Label -->
       <h4>{{ page }}</h4>
 
-      <!-- Create Poll Button -->
-      <div v-if="page === username">
-        <v-menu
-          v-model="showPoll"
-          :close-on-content-click="false"
-          bottom
-          left
-        >
-          <template #activator="{ on }">
-            <v-btn
-              v-on="on"
-              small
-              class="black--text"
-              :disabled="showPollClient"
-              color="yellow"
-            >POLL</v-btn>
-          </template>
+      <div class="d-flex">
+        <!-- Create Poll Button -->
+        <div v-if="page === username">
+          <v-menu
+            v-model="showPoll"
+            :close-on-content-click="false"
+            bottom
+            left
+          >
+            <template #activator="{ on }">
+              <v-btn
+                v-on="on"
+                small
+                class="black--text"
+                :disabled="showPollClient"
+                color="yellow"
+              >POLL</v-btn>
+            </template>
 
-          <!-- Create Poll Dialog -->
-          <chat-poll
-            id="chat-poll"
-            @close="showPoll = false"
-            @create="createPoll"
-          />
-        </v-menu>
+            <!-- Create Poll Dialog -->
+            <chat-poll
+              id="chat-poll"
+              @close="showPoll = false"
+              @create="createPoll"
+            />
+          </v-menu>
+        </div>
+
+        <!-- Scroll to Chat Bottom -->
+        <v-btn
+          :style="{ 'min-width': '40px' }"
+          small
+          color="yellow"
+          @click="scrollToBottom(true)"
+          class="ml-2 px-0 black--text"
+        >
+          <v-icon>keyboard_arrow_down</v-icon>
+        </v-btn>
       </div>
 
-      <!-- Scroll to Chat Bottom -->
-      <v-btn
-        :style="{ 'min-width': '40px' }"
-        small
-        color="yellow"
-        @click="scrollToBottom(true)"
-        class="ml-2 px-0 black--text"
-      >
-        <v-icon>keyboard_arrow_down</v-icon>
-      </v-btn>
     </v-sheet>
 
     <!-- Show Poll to Users -->
