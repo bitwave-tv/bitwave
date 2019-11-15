@@ -185,6 +185,15 @@
                 @change="showSave = true"
               ></v-switch>
             </v-flex>
+            <v-flex shrink>
+              <v-switch
+                v-model="streamData.archive"
+                label="Archive"
+                color="yellow"
+                hide-details
+                @change="showSave = true"
+              ></v-switch>
+            </v-flex>
             <v-layout>
               <v-spacer/>
               <v-btn
@@ -296,6 +305,7 @@
         streamDocListener: null,
 
         streamData: {
+          archive: false,
           title: '',
           nsfw: false,
           url: '',
@@ -367,12 +377,13 @@
         this.profileDataLoading = false;
       },
 
-      async streamDataChanged (data) {
+      async streamDataChanged ( data ) {
         console.log(`[profile] Stream Data Changed`, data);
-        this.streamData.title  = data.title;
-        this.streamData.nsfw   = data.nsfw;
-        this.description       = data.description;
-        this.streamDataLoading = false;
+        this.streamData.archive = !!data.archive;
+        this.streamData.title   = data.title;
+        this.streamData.nsfw    = data.nsfw;
+        this.description        = data.description;
+        this.streamDataLoading  = false;
       },
 
       async updateStreamData () {
@@ -382,12 +393,14 @@
           eventLabel    : this.user.username.toLowerCase(),
         });
         this.saveLoading  = true;
+        const archive     = this.streamData.archive;
         const title       = this.streamData.title;
         const nsfw        = this.streamData.nsfw;
         const description = this.description;
         const stream      = this.user.username.toLowerCase();
         const streamRef   = db.collection( 'streams' ).doc( stream );
         await streamRef.update({
+          archive,
           nsfw,
           title,
           description
