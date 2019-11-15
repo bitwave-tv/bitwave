@@ -27,6 +27,7 @@
             v-model="showPoll"
             :close-on-content-click="false"
             bottom
+            offset-y
             left
           >
             <template #activator="{ on }">
