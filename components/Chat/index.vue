@@ -17,7 +17,7 @@
       ></ViewerList>
 
       <!-- Chat Label -->
-      <h4>{{ page }}</h4>
+      <h4 @click="addUserTag(page)">{{ page }}</h4>
 
       <div class="d-flex">
         <!-- Create Poll Button -->
@@ -838,7 +838,7 @@
   #chat-scroll {
     height: 100%;
     margin-right: 1px;
-    overscroll-behavior: contain;
+    overscroll-behavior: auto;
 
     &::-webkit-scrollbar-track
     {

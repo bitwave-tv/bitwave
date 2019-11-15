@@ -117,8 +117,6 @@
 
       viewerList () {
         if (!this.viewers || !this.showViewers) return [];
-
-        console.log('Viewer List:', this.viewers);
         return this.viewers.filter( viewer => {
           if ( this.showAll ) {
             return viewer;
