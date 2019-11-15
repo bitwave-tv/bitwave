@@ -9,7 +9,7 @@ export const state = () => ({
   ttsRate: 10,
   ttsVoice: 1,
 
-  viewerList : [{name: 'NONE'}],
+  viewerList : [],
   roomViewerList : {},
 
   ignoreList : [],

@@ -14,7 +14,6 @@
       <!-- Viewer List -->
       <ViewerList
         :page="page"
-        class="flex-shrink-1"
       ></ViewerList>
 
       <!-- Chat Label -->
@@ -268,7 +267,8 @@
       },
 
       async scrollToBottom ( force ) {
-        this.$refs['chat-messages'].scrollToBottom( force );
+        if ( this.$refs['chat-messages'] )
+          this.$refs['chat-messages'].scrollToBottom( force );
       },
 
       connectChat ( tokenUser ) {
@@ -323,7 +323,8 @@
 
         // Scroll after hydration
         await this.$nextTick( async () => {
-          this.$refs['chat-messages'].jumpToBottom();
+          if ( this.$refs['chat-messages'] )
+            this.$refs['chat-messages'].jumpToBottom();
         });
       },
 

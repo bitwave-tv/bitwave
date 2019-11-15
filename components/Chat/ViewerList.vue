@@ -17,37 +17,45 @@
       </v-chip>
     </template>
 
-    <v-card>
-      <v-sheet color="yellow">
-        <v-layout class="pl-2" align-center>
-          <v-flex>
-            <h5 class="black--text body-2">Live Viewers ({{ viewerCount }})</h5>
-          </v-flex>
-          <v-flex shrink>
-            <v-btn
-              color="black"
-              text
-              icon
-              pa-0
-              @click="showViewers = false"
-            >
-              <v-icon color="black">close</v-icon>
-            </v-btn>
-          </v-flex>
-        </v-layout>
+    <v-card
+      width="350px"
+      class="mt-1"
+    >
+      <!-- Header -->
+      <v-sheet color="yellow" class="d-flex align-center justify-space-between pl-2">
+        <h5 class="black--text body-2">Live Viewers ({{ viewerCount }})</h5>
+        <v-btn
+          color="black"
+          text
+          icon
+          pa-0
+          @click="showViewers = false"
+        >
+          <v-icon color="black">close</v-icon>
+        </v-btn>
       </v-sheet>
 
-      <v-layout style="max-height: 75vh; overflow: auto; overscroll-behavior: contain; will-change: transform;">
+      <div class="elevation-3 pa-3" style="border-bottom: solid 1px #111;">
+        <v-switch
+          v-model="showAll"
+          label="Show All Viewers"
+          class="mt-0"
+          color="yellow"
+          hide-details
+        ></v-switch>
+      </div>
+
+      <div style="max-height: 65vh; overflow: auto; overscroll-behavior: contain; will-change: transform;">
         <v-list
           dense
           class="py-0"
         >
-          <v-list-item
-            v-for="viewer in viewerList"
-            :key="viewer.username"
-            :to="`${viewer.page.watch || viewer.page}`"
-          >
-            <template v-if="viewerList.length > 0">
+          <template v-if="showViewers && viewerList.length > 0">
+            <v-list-item
+              v-for="viewer in viewerList"
+              :key="viewer.username"
+              :to="`${viewer.page.watch || viewer.page}`"
+            >
               <v-list-item-avatar>
                 <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
                 <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
@@ -66,10 +74,10 @@
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>Getting Soda</v-list-item-subtitle>
               </v-list-item-content>
-            </template>
-          </v-list-item>
+            </v-list-item>
+          </template>
         </v-list>
-      </v-layout>
+      </div>
     </v-card>
   </v-menu>
 </template>
@@ -87,6 +95,7 @@
     data() {
       return {
         showViewers : false,
+        showAll: true,
       }
     },
 
@@ -107,7 +116,19 @@
       },
 
       viewerList () {
-        return this.showViewers ? this.viewers : [];
+        if (!this.viewers || !this.showViewers) return [];
+
+        console.log('Viewer List:', this.viewers);
+        return this.viewers.filter( viewer => {
+          if ( this.showAll ) {
+            return viewer;
+          } else {
+            const page = (typeof(viewer.page) === 'object') ? viewer.page.watch : viewer.page;
+            if ( page.toLowerCase() === this.page.toLowerCase() ) {
+              return viewer;
+            }
+          }
+        });
       },
     },
   }
