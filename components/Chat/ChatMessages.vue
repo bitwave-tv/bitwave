@@ -51,6 +51,7 @@
     data() {
       return {
         chatContainer: null,
+        scrollTimeout: null,
       }
     },
 
@@ -76,7 +77,9 @@
           behavior: 'smooth',
         });
 
-        setTimeout( () => {
+        clearTimeout( this.scrollTimeout );
+
+        this.scrollTimeout = setTimeout( () => {
           this.chatContainer.scroll({
             top: this.chatContainer.scrollHeight,
             behavior: 'smooth',

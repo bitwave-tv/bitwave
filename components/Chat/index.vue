@@ -208,10 +208,10 @@
 
           // Swap ID token for Chat Token
           const idToken = await auth.currentUser.getIdToken();
-          console.log( `ID Token Generated in chat:`, idToken );
+          // console.log( `ID Token Generated in chat:`, idToken );
           const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
           const chatToken = data.chatToken;
-          console.log( 'Chat Token Exchanged:', chatToken );
+          // console.log( 'Chat Token Exchanged:', chatToken );
 
           const user = doc.data();
           user.page  = this.page;
@@ -269,6 +269,8 @@
       async scrollToBottom ( force ) {
         if ( this.$refs['chat-messages'] )
           this.$refs['chat-messages'].scrollToBottom( force );
+        else
+          console.warn('Could not find scroll container for chat.');
       },
 
       connectChat ( tokenUser ) {
@@ -325,6 +327,8 @@
         await this.$nextTick( async () => {
           if ( this.$refs['chat-messages'] )
             this.$refs['chat-messages'].jumpToBottom();
+          else
+            console.warn('Failed to find chat container after hydration');
         });
       },
 
