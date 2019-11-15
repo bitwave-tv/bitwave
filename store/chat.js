@@ -9,7 +9,7 @@ export const state = () => ({
   ttsRate: 10,
   ttsVoice: 1,
 
-  viewerList : [{name: 'NONE'}],
+  viewerList : [],
   roomViewerList : {},
 
   ignoreList : [],
@@ -45,6 +45,7 @@ export const mutations = {
   SET_USE_TTS ( state, data ) {
     state.useTts = JSON.parse(data);
     localStorage.setItem( 'tts', data );
+    if ( !data ) speechSynthesis.cancel();
   },
 
   SET_TROLL_TTS ( state, data ) {

@@ -14,49 +14,52 @@
       <!-- Viewer List -->
       <ViewerList
         :page="page"
-        class="flex-shrink-1"
       ></ViewerList>
 
       <!-- Chat Label -->
-      <h4>{{ page }}</h4>
+      <h4 @click="addUserTag(page)">{{ page }}</h4>
 
-      <!-- Create Poll Button -->
-      <div v-if="page === username">
-        <v-menu
-          v-model="showPoll"
-          :close-on-content-click="false"
-          bottom
-          left
+      <div class="d-flex">
+        <!-- Create Poll Button -->
+        <div v-if="page === username">
+          <v-menu
+            v-model="showPoll"
+            :close-on-content-click="false"
+            bottom
+            offset-y
+            left
+          >
+            <template #activator="{ on }">
+              <v-btn
+                v-on="on"
+                small
+                class="black--text"
+                :disabled="showPollClient"
+                color="yellow"
+              >POLL</v-btn>
+            </template>
+
+            <!-- Create Poll Dialog -->
+            <chat-poll
+              id="chat-poll"
+              @close="showPoll = false"
+              @create="createPoll"
+            />
+          </v-menu>
+        </div>
+
+        <!-- Scroll to Chat Bottom -->
+        <v-btn
+          :style="{ 'min-width': '40px' }"
+          small
+          color="yellow"
+          @click="scrollToBottom(true)"
+          class="ml-2 px-0 black--text"
         >
-          <template #activator="{ on }">
-            <v-btn
-              v-on="on"
-              small
-              class="black--text"
-              :disabled="showPollClient"
-              color="yellow"
-            >POLL</v-btn>
-          </template>
-
-          <!-- Create Poll Dialog -->
-          <chat-poll
-            id="chat-poll"
-            @close="showPoll = false"
-            @create="createPoll"
-          />
-        </v-menu>
+          <v-icon>keyboard_arrow_down</v-icon>
+        </v-btn>
       </div>
 
-      <!-- Scroll to Chat Bottom -->
-      <v-btn
-        :style="{ 'min-width': '40px' }"
-        small
-        color="yellow"
-        @click="scrollToBottom(true)"
-        class="ml-2 px-0 black--text"
-      >
-        <v-icon>keyboard_arrow_down</v-icon>
-      </v-btn>
     </v-sheet>
 
     <!-- Show Poll to Users -->
@@ -205,10 +208,10 @@
 
           // Swap ID token for Chat Token
           const idToken = await auth.currentUser.getIdToken();
-          console.log( `ID Token Generated in chat:`, idToken );
+          // console.log( `ID Token Generated in chat:`, idToken );
           const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
           const chatToken = data.chatToken;
-          console.log( 'Chat Token Exchanged:', chatToken );
+          // console.log( 'Chat Token Exchanged:', chatToken );
 
           const user = doc.data();
           user.page  = this.page;
@@ -264,7 +267,10 @@
       },
 
       async scrollToBottom ( force ) {
-        this.$refs['chat-messages'].scrollToBottom( force );
+        if ( this.$refs['chat-messages'] )
+          this.$refs['chat-messages'].scrollToBottom( force );
+        else
+          console.warn('Could not find scroll container for chat.');
       },
 
       connectChat ( tokenUser ) {
@@ -319,7 +325,10 @@
 
         // Scroll after hydration
         await this.$nextTick( async () => {
-          this.$refs['chat-messages'].jumpToBottom();
+          if ( this.$refs['chat-messages'] )
+            this.$refs['chat-messages'].jumpToBottom();
+          else
+            console.warn('Failed to find chat container after hydration');
         });
       },
 
@@ -833,7 +842,7 @@
   #chat-scroll {
     height: 100%;
     margin-right: 1px;
-    overscroll-behavior: contain;
+    overscroll-behavior: auto;
 
     &::-webkit-scrollbar-track
     {

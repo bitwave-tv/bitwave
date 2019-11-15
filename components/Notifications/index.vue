@@ -32,7 +32,7 @@
       </template>
 
       <v-card>
-        <v-sheet color="yellow" class="px-2 d-flex justify-space-between align-center">
+        <v-sheet color="yellow" class="pl-2 d-flex justify-space-between align-center">
           <h4 class="black--text body-2">
             <v-icon color="black" class="mx-1" small>notifications</v-icon>
             Notifications
