@@ -10,7 +10,9 @@
     <v-sheet
       id="chat-header"
       class="d-flex align-center justify-space-between pa-2"
+      color="grey darken-4"
     >
+
       <!-- Viewer List -->
       <ViewerList
         :page="page"

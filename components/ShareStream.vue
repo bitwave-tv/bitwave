@@ -15,6 +15,7 @@
         class="black--text aligh-self-end"
         outlined
         color="yellow"
+        @click="openShare"
       >
         <v-icon small>share</v-icon>
       </v-btn>
@@ -77,6 +78,7 @@
           color="#1dcaff"
           :href="twitterLink"
           target="_blank"
+          @click="shareToTwitter"
         >
           Share to Twitter
           <v-icon small class="ml-2">open_in_new</v-icon>
@@ -107,8 +109,30 @@
     },
 
     methods: {
+      openShare () {
+        this.$ga.event({
+          eventCategory : 'share',
+          eventAction   : 'show share stream',
+          eventLabel    : this.user,
+        });
+      },
+
+      shareToTwitter () {
+        this.$ga.event({
+          eventCategory : 'share',
+          eventAction   : 'share to twitter',
+          eventLabel    : this.user,
+        });
+      },
+
       copyToClipboard ( text ) {
         clearTimeout(this.alertTimeout);
+
+        this.$ga.event({
+          eventCategory : 'share',
+          eventAction   : 'copy link',
+          eventLabel    : this.user,
+        });
 
         this.$copyText( text ).then( () => {
           this.alertMessage = 'Copied to clipboard';
@@ -117,7 +141,7 @@
         }, ( error ) => {
           console.log( error );
           this.alertMessage = 'Failed to copy to clipboard';
-          this.alertType = 'error'
+          this.alertType = 'error';
           this.showAlert = true;
         });
       },
@@ -127,6 +151,7 @@
       streamlink () {
         return `https://bitwave.tv/${this.user}`;
       },
+
       twitterLink () {
         const text = `Come watch ${this.user}'s stream!\n`;
         const url = this.streamlink;
