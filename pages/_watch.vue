@@ -1,6 +1,36 @@
 <template>
   <div :style="{ paddingRight: mobile ? '0' : '450px' }">
 
+    <v-sheet class="pa-2" color="#212121" style="border-right: solid 1px #ffeb3b">
+      <div class="d-flex align-center justify-space-between">
+
+        <div class="d-flex align-center grey--text">
+          <v-avatar
+            size="32"
+            class="mr-2"
+          >
+            <img
+              :src="avatar"
+              :alt="name"
+            />
+          </v-avatar>
+          {{ name }}
+        </div>
+
+        <div class="d-flex align-center">
+          <v-chip
+            v-if="nsfw"
+            color="red"
+            class="mr-2"
+            :outlined="false"
+          >NSFW</v-chip>
+
+          <FollowButton :streamer-id="owner" />
+        </div>
+
+      </div>
+    </v-sheet>
+
     <!-- Video And Description -->
 
     <!-- Video JS -->
@@ -39,9 +69,9 @@
     </v-layout>
 
     <!-- Stream Title, Status -->
-    <v-sheet class="elevation-3 pa-3 mb-4">
+    <v-sheet class="elevation-2 pa-2 mb-4" color="grey darken-4">
 
-      <div class="d-flex align-center mb-3">
+      <div class="d-flex align-center">
         <div>
           <v-chip
             v-show="live"
@@ -55,7 +85,7 @@
             LIVE
           </v-chip>
         </div>
-        <h3 class="flex-grow-1">
+        <h3 class="flex-grow-1 subtitle-1">
           <v-icon
             v-show="false"
             size="14"
@@ -66,34 +96,6 @@
         </h3>
 
         <ShareStream :user="name"></ShareStream>
-      </div>
-
-      <div class="d-flex align-center justify-space-between flex-wrap">
-        <div class="d-flex align-center grey--text">
-          <v-avatar
-            size="28"
-            class="mr-2"
-          >
-            <img
-              :src="avatar"
-              :alt="name"
-            />
-          </v-avatar>
-          {{ name }}
-        </div>
-
-        <div class="d-flex align-center">
-          <v-chip
-            v-if="nsfw"
-            color="red"
-            class="mr-2"
-            small
-            :outlined="false"
-          >NSFW</v-chip>
-
-          <FollowButton :streamer-id="owner" />
-        </div>
-
       </div>
 
     </v-sheet>
