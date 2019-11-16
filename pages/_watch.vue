@@ -39,20 +39,50 @@
     </v-layout>
 
     <!-- Stream Title, Status -->
-    <v-sheet class="elevation-3">
-      <v-layout class="pa-3 mb-4" wrap align-center justify-end>
-        <v-flex>
-          <h3>
-            <v-icon
-              v-show="live"
-              size="14"
-              color="red"
-              class="blink mr-2"
-            >lens</v-icon>
-            {{ title }}
-          </h3>
-        </v-flex>
-        <v-flex shrink>
+    <v-sheet class="elevation-3 pa-3 mb-4">
+
+      <div class="d-flex align-center mb-3">
+        <div>
+          <v-chip
+            v-show="live"
+            class="blink mr-2"
+            label
+            outlined
+            color="red"
+            small
+          >
+            <v-icon left size="10" class="mr-2">lens</v-icon>
+            LIVE
+          </v-chip>
+        </div>
+        <h3 class="flex-grow-1">
+          <v-icon
+            v-show="false"
+            size="14"
+            color="red"
+            class="blink mr-2"
+          >lens</v-icon>
+          {{ title }}
+        </h3>
+
+        <ShareStream :user="name"></ShareStream>
+      </div>
+
+      <div class="d-flex align-center justify-space-between flex-wrap">
+        <div class="d-flex align-center grey--text">
+          <v-avatar
+            size="28"
+            class="mr-2"
+          >
+            <img
+              :src="avatar"
+              :alt="name"
+            />
+          </v-avatar>
+          {{ name }}
+        </div>
+
+        <div class="d-flex align-center">
           <v-chip
             v-if="nsfw"
             color="red"
@@ -60,13 +90,12 @@
             small
             :outlined="false"
           >NSFW</v-chip>
-        </v-flex>
-        <v-flex shrink>
-          <FollowButton
-            :streamer-id="owner"
-          />
-        </v-flex>
-      </v-layout>
+
+          <FollowButton :streamer-id="owner" />
+        </div>
+
+      </div>
+
     </v-sheet>
 
     <!-- Description -->
@@ -94,6 +123,7 @@
   import VueMarkdown from '~/components/VueMarkdown'
   import Chat from '~/components/Chat'
   import FollowButton from '@/components/FollowButton';
+  import ShareStream from '@/components/ShareStream';
 
   export default {
     head () {
@@ -116,6 +146,7 @@
     },
 
     components: {
+      ShareStream,
       FollowButton,
       VueMarkdown,
       Chat,
@@ -191,7 +222,8 @@
 
         this.player.on( 'ended', async () => {
           this.url = await this.getRandomBump();
-          this.player.load();
+          // this.player.load();
+          this.reloadPlayer();
         });
 
         this.initialized = true;
@@ -294,6 +326,7 @@
         const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
 
         const name   = data.name   || 'No Username';
+        const avatar = data.avatar || 'https://cdn.bitwave.tv/static/img/glitchwave.gif';
         const title  = data.title  || 'No Title';
         const desc   = data.description || 'No Description';
         let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
@@ -314,7 +347,7 @@
           type = 'video/mp4';
         }
 
-        return { name, title, desc, poster, live, nsfw, owner, url, type };
+        return { name, avatar, title, desc, poster, live, nsfw, owner, url, type };
 
       } catch ( error ) {
         console.log( `ERROR: Failed to find user ${user}` );
@@ -322,6 +355,7 @@
 
         return {
           name   : '404 Error',
+          avatar : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
           title  : 'Streamer not found',
           desc   : 'Invalid Stream',
           poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
