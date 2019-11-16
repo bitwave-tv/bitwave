@@ -99,7 +99,7 @@
           <!-- Stream Actions -->
           <div class="d-flex flex-shrink-0">
             <EditStreamData
-              v-if="name.toLowerCase() === username.toLowerCase()"
+              v-if="showEditStream"
               :username="username"
               :title="title"
               :description="description"
@@ -204,6 +204,11 @@
 
       mobile () {
         return this.$vuetify.breakpoint.mdAndDown;
+      },
+
+      showEditStream () {
+        if ( !this.username ) return false;
+        return this.name.toLowerCase() === this.username.toLowerCase();
       },
     },
 
