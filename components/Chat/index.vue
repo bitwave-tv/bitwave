@@ -149,7 +149,6 @@
 
         showChatSettings: false,
 
-        useIgnoreListForChat: true,
         voicesListTTS: [],
 
         showPoll: false,
@@ -334,7 +333,7 @@
 
       async rcvMessageBulk ( messages ) {
         // Remove ignored user messages
-        if ( this.useIgnoreListForChat ){
+        if ( this.useIgnore ){
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
         }
 
@@ -687,6 +686,7 @@
         setMessage: 'SET_CHAT_MESSAGE',
         appendChatMessage: 'APPEND_CHAT_MESSAGE',
         setNotify: 'SET_NOTIFY',
+        setUseIgnore: 'SET_USE_IGNORE',
       }),
 
       ...mapActions ('chat', {
@@ -706,6 +706,7 @@
         getModeTimestamps: 'timestamps',
         getIgnoreList: 'ignoreList',
         getUseTts: 'useTts',
+        getUseIgnore: 'useIgnore',
         getTrollTts: 'trollTts',
         getTtsRate: 'ttsRate',
         getTtsVoice: 'ttsVoice',
@@ -721,6 +722,11 @@
       showTimestamps: {
         set ( val ) { this.setModeTimestamps( val ) },
         get () { return this.getModeTimestamps }
+      },
+
+      useIgnore: {
+        set ( val ) { this.setUseIgnore( val ) },
+        get () { return this.getUseIgnore }
       },
 
       username () {
@@ -751,13 +757,13 @@
       this.voicesListTTS = speechSynthesis.getVoices();
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
 
-      // Always enable ignore now
-      /*try {
-        let useIgnore = localStorage.getItem( 'useignore' );
-        if ( !!useIgnore ) this.useIgnoreListForChat = JSON.parse( useIgnore );
+      // Ignore users
+      try {
+        let ignore = localStorage.getItem( 'useignore' );
+        if ( !!ignore ) this.useIgnore = JSON.parse( ignore );
       } catch ( error ) {
-        console.log( 'No useIgnore option found.' );
-      }*/
+        console.log( 'No ignore option found.' );
+      }
 
       // Get ignore list
       try {

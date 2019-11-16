@@ -35,14 +35,21 @@
         ></v-switch>
       </div>
 
-      <div class="mb-2">
-        <v-switch
-          v-model="notificationSound"
-          label="Notification Sounds"
-          color="yellow"
-          hide-details
-        ></v-switch>
-      </div>
+      <v-switch
+        v-model="useIgnore"
+        label="Ignore Users"
+        class="mb-2"
+        color="yellow"
+        hide-details
+      ></v-switch>
+
+      <v-switch
+        v-model="notificationSound"
+        label="Notification Sounds"
+        class="mb-2"
+        color="yellow"
+        hide-details
+      ></v-switch>
     </div>
 
     <v-divider/>
@@ -134,6 +141,7 @@
         setModeGlobal: 'SET_MODE_GLOBAL',
         setModeTimestamps: 'SET_TIMESTAMPS',
         setUseTts: 'SET_USE_TTS',
+        setUseIgnore: 'SET_USE_IGNORE',
         setTrollTts: 'SET_TROLL_TTS',
         setTtsRate: 'SET_TTS_RATE',
         setTtsVoice: 'SET_TTS_VOICE',
@@ -163,6 +171,7 @@
         getModeGlobal: 'global',
         getModeTimestamps: 'timestamps',
         getUseTts: 'useTts',
+        getUseIgnore: 'useIgnore',
         getTrollTts: 'trollTts',
         getTtsRate: 'ttsRate',
         getTtsVoice: 'ttsVoice',
@@ -182,6 +191,11 @@
       useTts: {
         set ( val ) { this.setUseTts( val ) },
         get () { return this.getUseTts }
+      },
+
+      useIgnore: {
+        set ( val ) { this.setUseIgnore( val ) },
+        get () { return this.getUseIgnore }
       },
 
       trollTts: {
