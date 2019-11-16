@@ -13,6 +13,7 @@ export const state = () => ({
   roomViewerList : {},
 
   ignoreList : [],
+  useIgnore: true,
 
   message: '',
 
@@ -46,6 +47,11 @@ export const mutations = {
     state.useTts = JSON.parse(data);
     localStorage.setItem( 'tts', data );
     if ( !data ) speechSynthesis.cancel();
+  },
+
+  SET_USE_IGNORE ( state, data ) {
+    state.useIgnore = JSON.parse(data);
+    localStorage.setItem( 'useignore', data );
   },
 
   SET_TROLL_TTS ( state, data ) {
