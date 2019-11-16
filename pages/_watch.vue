@@ -1,6 +1,7 @@
 <template>
   <div :style="{ paddingRight: mobile ? '0' : '450px' }">
 
+    <!-- Streamer Top Bar -->
     <v-sheet class="pa-2" color="#212121" style="border-right: solid 1px #ffeb3b">
       <div class="d-flex align-center justify-space-between">
 
@@ -23,6 +24,8 @@
             color="red"
             class="mr-2"
             :outlined="false"
+            small
+            outlined
           >NSFW</v-chip>
 
           <FollowButton :streamer-id="owner" />
@@ -68,14 +71,17 @@
       </v-flex>
     </v-layout>
 
-    <!-- Stream Title, Status -->
-    <v-sheet class="elevation-2 pa-2 mb-4" color="grey darken-4">
+      <!-- Stream Title, Status -->
+      <v-sheet
+        class="elevation-2 pa-3 mb-4"
+        color="grey darken-4"
+      >
 
-      <div class="d-flex align-center">
-        <div>
+        <div class="d-flex align-center">
+          <!-- Live Indicator -->
           <v-chip
             v-show="live"
-            class="blink mr-2"
+            class="blink flex-shrink-0"
             label
             outlined
             color="red"
@@ -84,31 +90,48 @@
             <v-icon left size="10" class="mr-2">lens</v-icon>
             LIVE
           </v-chip>
+
+          <!-- Stream Title -->
+          <h3 class="mx-2 flex-grow-1 subtitle-1">
+            {{ title }}
+          </h3>
+
+          <!-- Stream Actions -->
+          <div class="d-flex flex-shrink-0">
+            <EditStreamData
+              v-if="showEditStream"
+              :username="username"
+              :title="title"
+              :description="description"
+              :nsfw="nsfw"
+            ></EditStreamData>
+
+            <v-btn
+              v-if="false"
+              color="yellow"
+              class="mr-2"
+              outlined
+              small
+              @click="showStreamStats = !showStreamStats"
+            >
+              <v-icon>timeline</v-icon>
+            </v-btn>
+
+            <ShareStream :user="name"></ShareStream>
+          </div>
         </div>
-        <h3 class="flex-grow-1 subtitle-1">
-          <v-icon
-            v-show="false"
-            size="14"
-            color="red"
-            class="blink mr-2"
-          >lens</v-icon>
-          {{ title }}
-        </h3>
 
-        <ShareStream :user="name"></ShareStream>
-      </div>
+      </v-sheet>
 
-    </v-sheet>
-
-    <!-- Description -->
-    <v-layout class="px-3 my-2">
-      <v-flex id="description">
-        <vue-markdown
-          v-if="desc"
-          :source="desc"
-        ></vue-markdown>
-      </v-flex>
-    </v-layout>
+      <!-- Description -->
+      <v-layout class="px-3 my-2" ref="description">
+        <v-flex id="description">
+          <vue-markdown
+            v-if="description"
+            :source="description"
+          ></vue-markdown>
+        </v-flex>
+      </v-layout>
 
   </div>
 </template>
@@ -120,12 +143,16 @@
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
-  import { db } from '@/plugins/firebase.js'
+  import { mapGetters } from 'vuex';
+  import { db } from '@/plugins/firebase.js';
 
-  import VueMarkdown from '~/components/VueMarkdown'
-  import Chat from '~/components/Chat'
+  import Chat from '~/components/Chat';
+  import VueMarkdown from '~/components/VueMarkdown';
   import FollowButton from '@/components/FollowButton';
-  import ShareStream from '@/components/ShareStream';
+
+  // Async Components - We don't expect these components to be required frequently
+  const ShareStream    = () => import ( '@/components/ShareStream' );
+  const EditStreamData = () => import ( '@/components/EditStreamData' );
 
   export default {
     head () {
@@ -133,7 +160,7 @@
         title: `${this.name} - [bitwave.tv]`,
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: (this.desc || '').substring( 0, 200 ) },
+          { name: 'og:description', hid: 'og:description', content: (this.description || '').substring( 0, 200 ) },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
           { name: 'author',         content: this.name },
           { name: 'description',    hid: 'description',    content: (this.name || '').substring( 0, 200 ) },
@@ -141,13 +168,14 @@
           { name: 'twitter:card',        content: 'summary_large_image' },
           { name: 'twitter:site',        content: '@BitwaveTV' },
           { name: 'twitter:title',       content: ( this.title || '' ).substring( 0,  70 ) },
-          { name: 'twitter:description', content: ( this.desc  || '' ).substring( 0, 200 ) },
+          { name: 'twitter:description', content: ( this.description  || '' ).substring( 0, 200 ) },
           { name: 'twitter:image',       content: this.poster },
         ],
       }
     },
 
     components: {
+      EditStreamData,
       ShareStream,
       FollowButton,
       VueMarkdown,
@@ -164,12 +192,23 @@
         lastWatch: null,
         watchTimer: null,
         streamDataListener: null,
+        description: null,
+        showStreamStats: false,
       }
     },
 
     computed: {
+      ...mapGetters({
+        username: 'username',
+      }),
+
       mobile () {
         return this.$vuetify.breakpoint.mdAndDown;
+      },
+
+      showEditStream () {
+        if ( !this.username ) return false;
+        return this.name.toLowerCase() === this.username.toLowerCase();
       },
     },
 
@@ -179,6 +218,9 @@
         // Create video.js player
         this.player = videojs( 'streamplayer', {
           liveui: true,
+          // fluid: true,
+          // fill: true,
+          // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
           plugins: { qualityLevels: {} },
           poster: this.poster,
@@ -247,11 +289,10 @@
           eventLabel    : this.name,
           eventValue    : this.watchInterval / 60,
         });
-        // console.debug( `Watch Time: ${this.watchDuration}s on ${this.name}` );
       },
 
       async getRandomBump () {
-        const { data } = await this.$axios.get(`https://api.bitwave.tv/api/bump`);
+        const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
         return data.url;
       },
 
@@ -262,13 +303,16 @@
       getStreamData () {
         const streamer = this.name.toLowerCase();
         const streamRef = db.collection( 'streams' ).doc( streamer );
-        this.streamDataListener = streamRef.onSnapshot( async doc => await this.streamDataChanged( doc.data() ), error => console.warn( error ) );
+        this.streamDataListener = streamRef.onSnapshot(
+          async doc => await this.streamDataChanged( doc.data() ),
+          error => console.warn( error )
+        );
       },
 
       async streamDataChanged ( data ) {
         // Grab Stream Data
         this.title = data.title;
-        this.desc  = data.description;
+        this.description = data.description;
         this.nsfw  = data.nsfw;
         this.owner = data.owner;
 
@@ -320,6 +364,10 @@
 
         console.log( 'Player reloaded' );
       },
+
+      updateStreamData ( data ) {
+        console.log( data );
+      },
     },
 
     async asyncData ( { $axios, params } ) {
@@ -330,7 +378,7 @@
         const name   = data.name   || 'No Username';
         const avatar = data.avatar || 'https://cdn.bitwave.tv/static/img/glitchwave.gif';
         const title  = data.title  || 'No Title';
-        const desc   = data.description || 'No Description';
+        const description = data.description || 'No Description';
         let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const live   = data.live   || false;
         const nsfw   = data.nsfw   || false;
@@ -349,7 +397,7 @@
           type = 'video/mp4';
         }
 
-        return { name, avatar, title, desc, poster, live, nsfw, owner, url, type };
+        return { name, avatar, title, description, poster, live, nsfw, owner, url, type };
 
       } catch ( error ) {
         console.log( `ERROR: Failed to find user ${user}` );
@@ -359,7 +407,7 @@
           name   : '404 Error',
           avatar : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
           title  : 'Streamer not found',
-          desc   : 'Invalid Stream',
+          description : 'Invalid Stream',
           poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
           live   : false,
           nsfw   : false,
@@ -387,8 +435,6 @@
     async mounted () {
       if ( this.live )
         this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
-      else if ( this.name !== '404' )
-        console.log( `${this.name} is offline.` );
 
       if ( process.client ) {
         this.$nextTick( () => {
