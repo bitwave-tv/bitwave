@@ -5,20 +5,19 @@
       width="500"
     >
       <template v-slot:activator="{ on }">
-        <v-list-item>
-          <v-btn
-            color="yellow"
-            class="black--text"
-            v-on="on"
-            @click.stop="show = !show"
-          >
-            <v-icon class="mr-2">store</v-icon>
-            Buy Color
-          </v-btn>
-        </v-list-item>
+        <v-btn
+          color="yellow"
+          class="black--text"
+          v-on="on"
+          block
+          @click.stop="show = !show"
+        >
+          <v-icon class="mr-2">shop</v-icon>
+          Buy Color
+        </v-btn>
       </template>
 
-      <v-card light>
+      <v-card colr="grey darken-4">
         <v-card-title
           class="title yellow black--text"
           primary-title

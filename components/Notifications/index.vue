@@ -165,12 +165,12 @@
         if ( this.showRead )
           return this.notifications;
         else
-          return this.notifications.filter( n => !n.read );
+          return this.notifications.filter ( n => !n.read );
       },
     },
 
     created () {
-      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      auth.onAuthStateChanged ( async user => await this.authenticated ( user ) );
     },
 
     beforeDestroy () {

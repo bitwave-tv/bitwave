@@ -1,18 +1,36 @@
 <template>
   <div class="payment">
+
+    <div class="mt-3">
+      Username colors appear sitewide in all stream chats.
+      Newly purchased colors will replace existing color.<br>
+      Purchased colors will immediately apply to account.
+    </div>
+
     <div class="subtitle-1 mt-2">Preview:</div>
-    <v-responsive
-      :style="{ background: `black` }"
-      class="mb-4 px-4 py-2"
+
+    <!-- Preview Name Color -->
+    <v-card
+      color="black"
+      class="mb-4 mt-2 px-4 py-2 elevation-3"
     >
-      <div :style="{ color: color }">ExampleUsername</div>
-    </v-responsive>
-    <v-combobox
+      <div>
+        <span style="color: #757575;">[00:00]</span>
+        <span class="font-weight-bold" :style="{ color: color }">{{ user ? user.username : 'FailedToLoadUsername' }}</span>
+      </div>
+    </v-card>
+
+    <!-- Select Color -->
+    <v-color-picker
       v-model="selectedColor"
-      :items="colors"
-      label="Chat color (or custom hex value)"
+      mode="hexa"
+      class="mt-4"
+      width="100%"
+      hide-canvas
       light
-    ></v-combobox>
+    ></v-color-picker>
+
+    <!-- Purchase Color UI -->
     <div ref="dropin"></div>
     <v-alert
       :value="error"
@@ -37,6 +55,7 @@
         :disabled="disabled"
         :loading="loading"
         v-show="!success"
+        light
         @click="requestPaymentMethod"
       >
         {{ btnText }}
@@ -46,7 +65,8 @@
 </template>
 
 <script>
-  import dropIn from 'braintree-web-drop-in'
+  import { mapGetters } from 'vuex';
+  import dropIn from 'braintree-web-drop-in';
 
   export default {
     props: {
@@ -118,7 +138,7 @@
             value: '#673ab7'
           },
         ],
-        selectedColor: '#2196f3',
+        selectedColor: '#20EEEE',
       }
     },
 
@@ -176,6 +196,11 @@
             this.loading = false;
             this.disabled = true;
             this.success = true;
+            this.$ga.event({
+              eventCategory : 'merchant',
+              eventAction   : 'purchased color',
+              eventLabel    : this.username.toLowerCase(),
+            });
           } else {
             this.loading = false;
             this.error = true;
@@ -191,6 +216,10 @@
     },
 
     computed: {
+      ...mapGetters({
+        user: 'user',
+      }),
+
       color () {
         return !!this.selectedColor.value ? this.selectedColor.value : this.selectedColor;
       }
