@@ -6,7 +6,6 @@
     <div
       id="chat-scroll"
       ref="scroller"
-      style="overflow-y: scroll; will-change: transform;"
     >
       <chat-message
         v-for="item in messages"
@@ -21,8 +20,7 @@
         @reply="addUserTag"
       >
         <div
-          class="body-2"
-          :style="{ lineHeight: 1.5, }"
+          class="body-2 msg"
           v-html="item.message"
         ></div>
       </chat-message>
@@ -121,7 +119,7 @@
 
     async mounted () {
       this.chatContainer = this.$refs.scroller;
-      // this.chatContainer.addEventListener( 'scroll', e => this.onScroll(e) );
+      // this.chatContainer.addEventListener( 'scroll', e => this.onScroll(e), { passive: true } );
     },
   }
 </script>
@@ -130,6 +128,10 @@
   #inner-chat {
     position: relative;
     overflow: hidden;
+
+    .msg {
+      line-height: 1.5;
+    }
 
     .stb-fab {
       position: absolute;

@@ -2,20 +2,25 @@
   <div :style="{ paddingRight: mobile ? '0' : '450px' }">
 
     <!-- Streamer Top Bar -->
-    <v-sheet class="pa-2" color="#212121" style="border-right: solid 1px #ffeb3b">
+    <v-sheet
+      class="py-2 px-3"
+      color="#212121"
+      style="border-right: solid 1px #ffeb3b"
+    >
       <div class="d-flex align-center justify-space-between">
 
         <div class="d-flex align-center grey--text">
           <v-avatar
             size="32"
-            class="mr-2"
           >
             <img
               :src="avatar"
               :alt="name"
             />
           </v-avatar>
-          {{ name }}
+          <div class="mx-2">
+            {{ name }}
+          </div>
         </div>
 
         <div class="d-flex align-center">
@@ -27,14 +32,11 @@
             small
             outlined
           >NSFW</v-chip>
-
           <FollowButton :streamer-id="owner" />
         </div>
 
       </div>
     </v-sheet>
-
-    <!-- Video And Description -->
 
     <!-- Video JS -->
     <v-layout>
@@ -71,67 +73,67 @@
       </v-flex>
     </v-layout>
 
-      <!-- Stream Title, Status -->
-      <v-sheet
-        class="elevation-2 pa-3 mb-4"
-        color="grey darken-4"
-      >
+    <!-- Stream Title, Status -->
+    <v-sheet
+      class="elevation-2 pa-3 mb-4"
+      color="grey darken-4"
+    >
 
-        <div class="d-flex align-center">
-          <!-- Live Indicator -->
-          <v-chip
-            v-show="live"
-            class="blink flex-shrink-0"
-            label
+      <div class="d-flex align-center">
+        <!-- Live Indicator -->
+        <v-chip
+          v-show="live"
+          class="blink flex-shrink-0"
+          label
+          outlined
+          color="red"
+          small
+        >
+          <v-icon left size="10" class="mr-2">lens</v-icon>
+          LIVE
+        </v-chip>
+
+        <!-- Stream Title -->
+        <h3 class="mx-2 flex-grow-1 subtitle-1">
+          {{ title }}
+        </h3>
+
+        <!-- Stream Actions -->
+        <div class="d-flex flex-shrink-0">
+          <EditStreamData
+            v-if="showEditStream"
+            :username="username"
+            :title="title"
+            :description="description"
+            :nsfw="nsfw"
+          ></EditStreamData>
+
+          <v-btn
+            v-if="false"
+            color="yellow"
+            class="mr-2"
             outlined
-            color="red"
             small
+            @click="showStreamStats = !showStreamStats"
           >
-            <v-icon left size="10" class="mr-2">lens</v-icon>
-            LIVE
-          </v-chip>
+            <v-icon>timeline</v-icon>
+          </v-btn>
 
-          <!-- Stream Title -->
-          <h3 class="mx-2 flex-grow-1 subtitle-1">
-            {{ title }}
-          </h3>
-
-          <!-- Stream Actions -->
-          <div class="d-flex flex-shrink-0">
-            <EditStreamData
-              v-if="showEditStream"
-              :username="username"
-              :title="title"
-              :description="description"
-              :nsfw="nsfw"
-            ></EditStreamData>
-
-            <v-btn
-              v-if="false"
-              color="yellow"
-              class="mr-2"
-              outlined
-              small
-              @click="showStreamStats = !showStreamStats"
-            >
-              <v-icon>timeline</v-icon>
-            </v-btn>
-
-            <ShareStream :user="name"></ShareStream>
-          </div>
+          <ShareStream :user="name"></ShareStream>
         </div>
+      </div>
 
-      </v-sheet>
+    </v-sheet>
 
-      <!-- Description -->
-      <v-layout class="px-3 my-2" ref="description">
-        <v-flex id="description">
-          <vue-markdown
-            v-if="description"
-            :source="description"
-          ></vue-markdown>
-        </v-flex>
-      </v-layout>
+    <!-- Description -->
+    <v-layout class="px-3 my-2" ref="description">
+      <v-flex id="description">
+        <vue-markdown
+          v-if="description"
+          :source="description"
+        ></vue-markdown>
+      </v-flex>
+    </v-layout>
 
   </div>
 </template>
