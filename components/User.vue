@@ -1,11 +1,12 @@
 <template>
-  <v-flex ml-3 shrink>
+  <v-flex shrink>
 
     <v-menu
       v-if="isAuth"
       v-model="profileMenu"
       :close-on-content-click="true"
       :nudge-width="200"
+      bottom
       offset-y
       left
       origin="top right"
@@ -28,44 +29,45 @@
       </template>
 
       <v-card>
-        <v-list
-          class="py-1"
-          color="yellow"
-        >
-          <v-list-item>
-
-            <v-list-item-avatar class="my-0">
+        <v-sheet color="yellow" class="pa-2">
+          <div class="d-flex align-center">
+            <v-avatar class="mr-4" size="40">
               <img :src="avatar" :alt="username">
-            </v-list-item-avatar>
+            </v-avatar>
 
-            <v-list-item-content class="px-0">
-              <v-list-item-title class="black--text">{{ username }}</v-list-item-title>
-              <v-list-item-subtitle class="black--text">basic user</v-list-item-subtitle>
-            </v-list-item-content>
-
-          </v-list-item>
-        </v-list>
+            <div>
+              <div class="title black--text">{{ username }}</div>
+              <div class="body-2 black--text">{{ userRank }} {{ userType }}</div>
+            </div>
+          </div>
+        </v-sheet>
 
         <v-divider/>
 
         <v-sheet
-          color="#222"
+          color="grey darken-4"
         >
-          <v-list dense :style="{ background: 'transparent' }">
-            <v-list-item to="/">
-              <v-list-item-action>
-                <v-icon>home</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Home</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+          <v-list
+            dense
+            :style="{ background: 'transparent' }"
+          >
             <v-list-item to="/profile">
               <v-list-item-action>
                 <v-icon>account_box</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Profile</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              v-if="userType === 'Streamer'"
+              :to="`/${username}`"
+            >
+              <v-list-item-action>
+                <v-icon>live_tv</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Channel</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item :to="`/chat/${username}`">
@@ -85,7 +87,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <braintree-drop-in />
+            <braintree-drop-in class="my-1" />
 
             <v-list-item @click="logout">
               <v-list-item-action>
@@ -106,12 +108,12 @@
 </template>
 
 <script>
-  import { auth } from '@/plugins/firebase.js'
-  import LoginDialog from '~/components/LoginDialog'
-  import BraintreeDropIn from '~/components/Payment/braintree-drop-in'
+  import { auth } from '@/plugins/firebase.js';
+  import LoginDialog from '~/components/LoginDialog';
+  const BraintreeDropIn = () => import ( '~/components/Payment/braintree-drop-in' );
 
 
-  import { mapGetters } from 'vuex'
+  import { mapGetters } from 'vuex';
 
   export default {
 
@@ -126,7 +128,7 @@
       return {
         unsubscribeUser: null,
         profileMenu: false,
-        loading: true,
+        loading: false,
       }
     },
 
@@ -154,11 +156,34 @@
 
       avatar () {
         if ( this.user ) return this.user.avatar;
-      }
+      },
+
+      userType () {
+        if ( !this.user )
+          return 'Troll';
+
+        if ( this.user.hasOwnProperty( 'streamkey' ) )
+          return 'Streamer';
+
+        else
+          return 'Viewer'
+      },
+
+      userRank () {
+        if ( !this.user )
+          return 'Troll';
+
+        if ( this.user.hasOwnProperty( 'rank' ) )
+          return this.user.rank;
+
+        else
+          return 'Basic';
+      },
     },
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      if ( !this.isAuth ) this.loading = true;
+      auth.onAuthStateChanged ( async user => await this.authenticated( user ) );
     },
 
     beforeDestroy() {

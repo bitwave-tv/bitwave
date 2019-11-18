@@ -40,6 +40,13 @@ export const getters = {
     return state.chatToken;
   },
 
+  getStreamkey ( state ) {
+    if ( state.user.hasOwnProperty( 'streamkey' ) ) {
+      return state.user.streamkey;
+    }
+    return null;
+  },
+
 };
 
 export const mutations = {

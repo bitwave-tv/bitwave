@@ -33,7 +33,7 @@
 
       <notifications />
 
-      <user />
+      <user class="ml-3" />
 
     </v-app-bar>
 

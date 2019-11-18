@@ -4,6 +4,7 @@
     @input="$emit('input', $event)"
     :mini-variant="miniVariant"
     :clipped="false"
+    color="grey darken-4"
     app
   >
     <v-layout

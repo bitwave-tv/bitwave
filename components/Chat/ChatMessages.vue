@@ -2,7 +2,6 @@
   <v-flex
     id="inner-chat"
     fill-height
-    style="overflow: hidden;"
   >
     <div
       id="chat-scroll"
@@ -28,6 +27,20 @@
         ></div>
       </chat-message>
     </div>
+
+    <!-- FAB for Scroll Down -->
+    <div class="stb-fab d-flex justify-center" :class="{ show: showFAB }">
+      <v-btn
+        fab
+        small
+        color="yellow"
+        @click="scrollToBottom( true )"
+        class="black--text mb-3"
+      >
+        <v-icon>keyboard_arrow_down</v-icon>
+      </v-btn>
+    </div>
+
   </v-flex>
 </template>
 
@@ -52,6 +65,7 @@
       return {
         chatContainer: null,
         scrollTimeout: null,
+        showFAB: true,
       }
     },
 
@@ -69,11 +83,16 @@
 
       async scrollToBottom ( force ) {
         // If we are NOT at the bottom && NOT forcing scroll, bail early
-        if ( !this.checkIfBottom() && !force ) return;
+        if ( !this.checkIfBottom() && !force ) {
+          this.showFAB = true;
+          return;
+        }
+
+        this.showFAB = false;
 
         // Scroll to last message
         this.chatContainer.scroll({
-          top: this.chatContainer.scrollHeight,
+          top: this.chatContainer.scrollHeight + 500,
           behavior: 'smooth',
         });
 
@@ -81,7 +100,7 @@
 
         this.scrollTimeout = setTimeout( () => {
           this.chatContainer.scroll({
-            top: this.chatContainer.scrollHeight,
+            top: this.chatContainer.scrollHeight + 500,
             behavior: 'smooth',
           });
         }, 500 );
@@ -106,3 +125,29 @@
     },
   }
 </script>
+
+<style lang="scss">
+  #inner-chat {
+    position: relative;
+    overflow: hidden;
+
+    .stb-fab {
+      position: absolute;
+      right: 0;
+      left: 0;
+      bottom: 0;
+
+      transform: translateY(150%);
+      transition: .5s transform;
+
+      &.show {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  #chat-scroll {
+    overflow-y: scroll;
+    will-change: transform;
+  }
+</style>
