@@ -57,8 +57,9 @@
           color="yellow"
           @click="scrollToBottom(true)"
           class="ml-2 px-0 black--text"
+          disabled
         >
-          <v-icon>keyboard_arrow_down</v-icon>
+          <v-icon>verified_user</v-icon>
         </v-btn>
       </div>
 
