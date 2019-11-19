@@ -1,60 +1,91 @@
 <template>
-  <div id="overlay-container">
-    <div id="overlay">
-      <!-- Chat message -->
-      <v-sheet
-        v-for="message in messages"
-        :key="message.timestamp"
-        class="my-1 pa-1 msg"
-        color="transparent"
+  <div
+    id="overlay-container"
+    class="fill-height"
+    ref="container"
+  >
+
+    <!-- Loading Spinner -->
+    <v-fade-transition>
+      <div
+        v-if="!loaded"
+        class="d-flex align-center justify-center mt-5 fill-height"
       >
-        <div class="d-flex">
-
-          <!-- Chat Avatar -->
-          <div class="v-avatar mr-2 mt-2">
-            <img v-if="!!message.avatar" :src="message.avatar" :alt="message.username">
-            <div v-else class="v-icon notranslate material-icons" :style="{ background: message.color }">person</div>
-          </div>
-
-          <div class="flex-grow-1">
-
-            <!-- Message Header -->
-            <div class="d-flex align-center">
-
-              <!-- Timestamp & Username -->
-              <div class="flex-grow-1 subtitle-2">
-                <span class="time">{{ getTime(message.timestamp) }}</span>
-                <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
-              </div>
-
-              <!-- Room Label -->
-              <div class="flex-shrink-1">
-                <nuxt-link :to="message.channel">
-                  <kbd>{{ message.channel }}</kbd>
-                </nuxt-link>
-              </div>
-
-            </div>
-
-            <div v-html="message.message"></div>
-
-          </div>
-        </div>
-      </v-sheet>
-
-      <!-- Debug Info -->
-      <div v-if="debug">
-        <h1 class="title">[DEBUG] OBS Chat Overlay</h1>
-        <div>Overlay ID: {{ overlayId }}</div>
-        <div>Debug: {{ debug }}</div>
-        <div
-          v-for="(value, prop) in overlay"
-          :key="prop"
-        >
-          {{ `${prop}: ${value}` }}
+        <v-progress-circular
+          color="yellow"
+          class="circular mr-3"
+          indeterminate
+          :size="50"
+          :width="5"
+        ></v-progress-circular>
+        <div class="display-1">
+          Connecting to Chat...
         </div>
       </div>
-    </div>
+    </v-fade-transition>
+
+    <!-- Scroll Container -->
+    <v-fade-transition>
+      <div
+        v-if="loaded"
+        id="overlay"
+        ref="scroller"
+      >
+        <!-- Chat message -->
+        <v-sheet
+          v-for="message in messages"
+          :key="message.timestamp"
+          class="my-1 pa-1 msg"
+          color="transparent"
+        >
+          <div class="d-flex">
+
+            <!-- Chat Avatar -->
+            <div class="v-avatar mr-2 mt-2">
+              <img v-if="!!message.avatar" :src="message.avatar" :alt="message.username">
+              <div v-else class="v-icon notranslate material-icons" :style="{ background: message.color }">person</div>
+            </div>
+
+            <div class="flex-grow-1">
+
+              <!-- Message Header -->
+              <div class="d-flex align-center">
+
+                <!-- Timestamp & Username -->
+                <div class="flex-grow-1 subtitle-2">
+                  <span class="time">{{ getTime(message.timestamp) }}</span>
+                  <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
+                </div>
+
+                <!-- Room Label -->
+                <div class="flex-shrink-1">
+                  <nuxt-link :to="message.channel">
+                    <kbd>{{ message.channel }}</kbd>
+                  </nuxt-link>
+                </div>
+
+              </div>
+
+              <div v-html="message.message"></div>
+
+            </div>
+          </div>
+        </v-sheet>
+
+        <!-- Debug Info -->
+        <div v-if="debug">
+          <h1 class="title">[DEBUG] OBS Chat Overlay</h1>
+          <div>Overlay ID: {{ overlayId }}</div>
+          <div>Debug: {{ debug }}</div>
+          <div
+            v-for="(value, prop) in overlay"
+            :key="prop"
+          >
+            {{ `${prop}: ${value}` }}
+          </div>
+        </div>
+      </div>
+    </v-fade-transition>
   </div>
 </template>
 
@@ -68,15 +99,17 @@
 
     layout: 'overlay',
 
-    data() {
+    data () {
       return {
         debug: false,
         unsubscribeOverlay: null,
+        scrollInterval: null,
         overlayId: '',
         overlay: null,
         socket: null,
         loaded: false,
         messages: [],
+        scrollContainer: null,
       };
     },
 
@@ -100,12 +133,10 @@
 
         const config = {
           id: this.overlayId,
-          channel: this.overlay.channel,
-          global: this.overlay.global,
-          owner: this.overlay.owner,
+          channel : this.overlay.channel,
+          global  : this.overlay.global,
+          owner   : this.overlay.owner,
         };
-
-        this.loaded = true;
 
         this.socket.on( 'connect', () => this.socket.emit( 'new overlay', config ) );
         this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
@@ -115,17 +146,25 @@
       hydrate ( data ) {
         this.messages = data;
         this.processMessages();
+        this.loaded = true;
+        this.$nextTick( () =>
+          this.scrollContainer.scroll({
+            top: this.scrollContainer.scrollHeight + 500,
+            behavior: 'auto',
+          })
+        );
+        this.scrollInterval = setInterval( () => this.onInterval(), 1000 );
       },
 
       rcvMessageBulk ( data ) {
-        console.log( 'messages', data );
         this.messages.push( ...data );
         this.processMessages();
       },
 
       processMessages () {
-        if ( !this.overlay.global )
+        if ( !this.overlay.global ) {
           this.messages = this.messages.filter( msg => msg.channel.toLowerCase() === this.overlay.channel.toLowerCase() );
+        }
         this.messages = this.messages.splice( -this.overlay.history );
       },
 
@@ -134,9 +173,8 @@
       },
 
       onInterval () {
-        const scrollContainer = document.querySelector( '#overlay' );
-        scrollContainer.scroll({
-          top: scrollContainer.scrollHeight + 500,
+        this.scrollContainer.scroll({
+          top: this.scrollContainer.scrollHeight + 500,
           behavior: 'smooth',
         });
       },
@@ -148,13 +186,15 @@
 
     mounted () {
       this.overlayId = this.$route.params.id;
-      this.subscribeToOverlay( this.overlayId );
       this.debug = !!this.$route.query.debug;
-      setInterval( () => this.onInterval(), 1000 );
+      this.scrollContainer = document.querySelector( '#overlay' );
+      // this.scrollContainer = this.$refs['scroller']; // container
+      this.subscribeToOverlay( this.overlayId );
     },
 
     beforeDestroy () {
       if ( this.unsubscribeOverlay ) this.unsubscribeOverlay();
+      if ( this.scrollInterval ) clearInterval( this.scrollInterval );
     }
   };
 </script>
@@ -165,7 +205,7 @@
   }
 
   #overlay {
-    height: 100%;
+    /*height: 100%;*/
     overflow-y: hidden;
 
     .msg {
