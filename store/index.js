@@ -51,30 +51,30 @@ export const getters = {
 
 export const mutations = {
 
-  setAuth(state, auth) {
+  setAuth( state, auth ) {
     state.auth = auth
   },
 
-  setUser(state, user) {
+  setUser( state, user ) {
     state.user = user;
   },
 
-  setUserCookie(state, user) {
-    if (user) Cookie.set('user', user);
-    else console.log(`Tried to update cookie, but user is not set.`);
+  setUserCookie( state, user ) {
+    if ( user ) Cookie.set( 'user', user );
+    else console.log( `Tried to update cookie, but user is not set.` );
   },
 
-  setMetaUser(state, data) {
+  setMetaUser( state, data ) {
     state.metaUser = data;
   },
 
-  setAvatar(state, url) {
+  setAvatar( state, url ) {
     state.user = {
 
     }
   },
 
-  setChannel (state, channel) {
+  setChannel ( state, channel ) {
     state.channel = channel;
   },
 
@@ -90,38 +90,40 @@ export const actions = {
     let authUser = null;
     let metaUser = null;
     let user     = null;
+
     const cookie = req.headers.cookie;
-    if (!!cookie) {
+    if ( !!cookie ) {
       let parsed = null;
 
       try {
-        parsed = cookieparser.parse(cookie);
-      } catch (error) {
-        console.log(`ERROR: Failed to parse cookie.`);
-        console.log(cookie);
+        parsed = cookieparser.parse( cookie );
+      } catch ( error ) {
+        console.log( `ERROR: Failed to parse cookie.` );
+        console.log( error );
+        console.log( cookie );
       }
 
-      if (!!parsed) {
+      if ( !!parsed ) {
         try {
-          if (!!parsed.auth && !!parsed.user) {
-            authUser = JSON.parse(parsed.auth);
-            metaUser = JSON.parse(parsed.metaUser);
-            user     = JSON.parse(parsed.user);
-            console.log(`${user.username} logged in via nuxtServerInit: `, params);
+          if ( !!parsed.auth && !!parsed.user ) {
+            authUser = JSON.parse( parsed.auth );
+            metaUser = JSON.parse( parsed.metaUser );
+            user     = JSON.parse( parsed.user );
+            console.log( `${user.username} logged in via nuxtServerInit: `, params );
           } else {
-            console.log(`User is not logged in.`, params);
+            console.log( `User is not logged in.`, params );
           }
-        } catch (error) {
+        } catch ( error ) {
           // No valid cookie found
-          console.log(`ERROR: No valid cookie found.`);
-          console.log(`ERROR: ${error}`);
-          console.log(cookie);
+          console.log( `ERROR: No valid cookie found.` );
+          console.log( `ERROR: ${error}` );
+          console.log( cookie );
         }
       }
     }
-    commit('setAuth', authUser);
-    commit('setMetaUser', metaUser);
-    commit('setUser', user);
+    commit( 'setAuth', authUser );
+    commit( 'setMetaUser', metaUser );
+    commit( 'setUser', user );
   },
 
   async nuxtClientInit ({ dispatch }, { req, params }) {
