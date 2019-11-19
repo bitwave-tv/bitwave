@@ -29,6 +29,7 @@
 
     data() {
       return {
+        unsubAuthChanged: null,
         loading : true,
         following : false,
         followCount : 0,
@@ -140,8 +141,12 @@
     },
 
     async mounted () {
-      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
       await this.getFollowCount();
-    }
+    },
+
+    beforeDestroy() {
+      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
+    },
   }
 </script>

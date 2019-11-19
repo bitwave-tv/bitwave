@@ -15,6 +15,7 @@
           v-on="on"
           icon
           text
+          :disabled="!isAuth"
           @click="markAsRead"
         >
           <v-badge
@@ -98,6 +99,7 @@
 
     data() {
       return {
+        unsubAuthChanged: null,
         title: 'Notifications',
         notificationMenu: false,
         notifications: [],
@@ -107,7 +109,7 @@
     },
 
     methods: {
-      authenticated ( user ) {
+      onAuthChanged ( user ) {
         if ( user ) {
           this.getNotifications( user.uid );
         } else {
@@ -170,10 +172,11 @@
     },
 
     created () {
-      auth.onAuthStateChanged ( async user => await this.authenticated ( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged ( async user => await this.onAuthChanged ( user ) );
     },
 
     beforeDestroy () {
+      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeNotifications ) this.unsubscribeNotifications();
     },
   }

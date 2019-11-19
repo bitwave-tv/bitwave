@@ -297,9 +297,7 @@
       },
     },
 
-    computed: {
-
-    },
+    computed: {},
   };
 </script>
 

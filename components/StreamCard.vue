@@ -2,7 +2,7 @@
   <div>
     <v-lazy
       :options="{ threshhold: 0.75 }"
-      transition="expand-transition"
+      transition="fade-transition"
       min-height="150px"
     >
       <v-card

@@ -1,33 +1,36 @@
 <template>
-  <v-container
-    fluid
-    grid-list-lg
-    px-0
-  >
-    <v-layout row wrap>
-      <v-flex v-if="loading">
+  <v-container fluid px-0>
+    <transition-group
+      tag="div"
+      class="row flex-wrap"
+      name="fade-transition"
+    >
+      <!-- Loading placeholder -->
+      <v-col v-if="loading">
         <v-card>
           <v-card-text>
-            <v-layout row align-center>
-              <v-flex shrink>
+            <v-row align-center>
+              <v-col shrink>
                 <v-progress-circular
                   indeterminate
                   color="yellow"
                 />
-              </v-flex>
+              </v-col>
               <v-flex>Loading...</v-flex>
-            </v-layout>
+            </v-row>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        v-else
+      <!-- Cards -->
+      <v-col
+        v-if="!loading"
         v-for="stream in streams"
         :key="stream.name"
-        xs12
-        md4
-        xl3
+        cols="12"
+        md="6"
+        lg="4"
+        xl="3"
       >
         <stream-card
           :to="stream.name"
@@ -37,8 +40,8 @@
           :title="stream.title"
           :name="stream.name"
         ></stream-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </transition-group>
   </v-container>
 </template>
 
