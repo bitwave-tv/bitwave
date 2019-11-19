@@ -55,7 +55,7 @@
 </template>
 
 <script>
-  import { db } from '@/plugins/firebase.js';
+  import { auth, db } from '@/plugins/firebase.js';
   import { mapGetters } from 'vuex';
 
   import ChatOverlayInfoCards from '@/components/Overlay/ChatOverlayInfoCards';
@@ -82,6 +82,12 @@
     },
 
     methods: {
+      async onAuthChanged ( user ) {
+        if ( !user ) {
+          this.$router.push( '/login' );
+        }
+      },
+
       subscribeToOverlays ( uid ) {
         const overlayRefs = db.collection( 'overlays' ).where( 'owner', '==', uid ).orderBy( 'edited', 'desc' ).limit( 10 );
         this.unsubscribeOverlays = overlayRefs.onSnapshot( docs => this.onOverlaysChange( docs ) );
@@ -101,6 +107,10 @@
       ...mapGetters ({
         user: 'user',
       }),
+    },
+
+    created () {
+      auth.onAuthStateChanged( user => this.onAuthChanged ( user ) );
     },
 
     mounted () {
