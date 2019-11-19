@@ -96,13 +96,16 @@
           >
             View
           </v-btn>
+
+          <!-- Open edit dialog -->
           <v-btn
             color="yellow"
             text
-            disabled
+            @click="editOverlay( overlay.id )"
           >
             Edit
           </v-btn>
+
           <v-spacer></v-spacer>
           <v-btn
             color="yellow"
@@ -115,6 +118,19 @@
       </v-card>
     </transition-group>
 
+    <!-- Open edit dialog -->
+    <v-dialog
+      v-model="showEditDialog"
+      width="500"
+      persistent
+    >
+      <create-overlay-dialog
+        v-model="showEditDialog"
+        :data="overlayData"
+      ></create-overlay-dialog>
+    </v-dialog>
+
+    <!-- Snackbar Notifications -->
     <v-snackbar
       v-model="showAlert"
       :color="alertType"
@@ -133,8 +149,14 @@
   import { db } from '@/plugins/firebase.js';
   import moment from 'moment';
 
+  const CreateOverlayDialog = () => import ( '@/components/Overlay/CreateOverlayDialog' );
+
   export default {
     name: 'ChatOverlayInfoCard',
+
+    components: {
+      CreateOverlayDialog,
+    },
 
     props: {
       overlays: { type: Array },
@@ -142,6 +164,8 @@
 
     data() {
       return {
+        showEditDialog: false,
+        overlayData: {},
         showAlert: false,
         alertType: '',
         alertIcon: '',
@@ -150,6 +174,11 @@
     },
 
     methods: {
+      editOverlay ( overlayId ) {
+        this.overlayData = this.overlays.find( overlay => overlay.id === overlayId );
+        this.showEditDialog = true;
+      },
+
       async deleteOverlay ( overlay ) {
         const overlayRef = db.collection( 'overlays' ).doc( overlay.id );
         await overlayRef.delete();
@@ -182,7 +211,3 @@
     computed: {},
   };
 </script>
-
-<style lang='scss'>
-
-</style>

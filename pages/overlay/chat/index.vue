@@ -11,6 +11,7 @@
         <v-dialog
           v-model="showCreateDialog"
           width="500"
+          persistent
         >
           <template #activator="{ on }">
             <v-btn
@@ -19,13 +20,12 @@
               outlined
             >
               create
-              <!--<v-icon>add</v-icon>-->
             </v-btn>
           </template>
 
           <create-overlay-dialog
             v-model="showCreateDialog"
-            :count="overlayCount"
+            :data="defaultOverlay"
           ></create-overlay-dialog>
         </v-dialog>
       </div>
@@ -67,14 +67,13 @@
       CreateOverlayDialog,
     },
 
-    data() {
+    data () {
       return {
         loading: true,
-        username: '',
         unsubscribeOverlays: null,
         overlays: [],
         showCreateDialog: false,
-        overlayCount: 0,
+        defaultOverlay: null,
       };
     },
 
@@ -88,16 +87,14 @@
         this.loading = false;
         if ( !docs.empty ) {
           this.overlays = docs.docs.map( doc => ({ id: doc.id, ...doc.data() }) );
-          this.overlayCount = docs.size + 1;
         } else {
           this.overlays = [];
-          this.overlayCount = 1;
         }
       },
     },
 
     computed: {
-      ...mapGetters({
+      ...mapGetters ({
         user: 'user',
       }),
     },

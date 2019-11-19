@@ -1,29 +1,45 @@
 <template>
   <div>
     <v-card>
-      <v-sheet color="yellow">
-        <div class="title black--text pa-3">Create New OBS Chat Overlay</div>
+      <v-sheet color="yellow" class="d-flex justify-space-between align-center pa-3">
+        <div class="title black--text">
+          <v-icon color="black" class="mr-1">{{ !!this.data ? 'edit' : 'add_to_queue' }}</v-icon>
+          {{ !!this.data ? 'Edit' : 'Create New' }} OBS Chat Overlay
+        </div>
+        <v-btn
+          color="black"
+          text
+          icon
+          pa-0
+          @click="cancel"
+        >
+          <v-icon color="black">close</v-icon>
+        </v-btn>
       </v-sheet>
 
+      <!-- Overlay Settings -->
       <v-card-text>
 
+        <!-- Title -->
         <v-text-field
           v-model="overlay.title"
-          class="mb-3"
+          class="mb-2"
           label="Name"
           color="yellow"
           clearable
           outlined
           dense
           counter="240"
+          validate-on-blur
           :loading="saveLoading"
           :disabled="saveLoading"
           prepend-icon="event_note"
           @change="enableSave = true"
         ></v-text-field>
 
+        <!-- Channel -->
         <v-autocomplete
-          v-model="overlay.channel"
+          v-model="streamers.selection"
           label="Choose channel..."
           no-data-text="No channels found"
           prepend-icon="search"
@@ -32,6 +48,7 @@
           :items="streamers.names"
           :search-input.sync="streamers.filter"
           clearable
+          open-on-clear
           return-object
           outlined
           dense
@@ -47,9 +64,13 @@
           </template>
         </v-autocomplete>
 
-        <div class="d-flex justify-space-around">
+        <!-- Toggles -->
+        <div class="d-flex flex-wrap">
+
+          <!-- Global / Local -->
           <v-switch
             v-model="overlay.global"
+            class="flex-grow-1"
             :label="`${overlay.global ? 'Global' : 'Local'} Chat`"
             color="yellow"
             hide-details
@@ -58,8 +79,10 @@
             @change="enableSave = true"
           ></v-switch>
 
+          <!-- Show Timestamps -->
           <v-switch
             v-model="overlay.showTimestamps"
+            class="flex-grow-1"
             label="Show Timestamps"
             color="yellow"
             hide-details
@@ -69,9 +92,9 @@
           ></v-switch>
         </div>
 
+        <!-- History Size -->
         <div class="mt-3">
           <div class="subtitle-1">Show {{ overlay.history }} messages.</div>
-
           <v-slider
             v-model="overlay.history"
             prepend-icon="remove"
@@ -95,7 +118,6 @@
             </template>
           </v-slider>
         </div>
-
       </v-card-text>
 
       <v-card-actions class="justify-end">
@@ -111,9 +133,9 @@
           color="yellow"
           light
           :loading="saveLoading"
-          @click="createOverlay"
+          @click="save"
         >
-          create
+          {{ !!data ? 'Save' : 'Create' }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -163,6 +185,17 @@
   import { db } from '@/plugins/firebase.js';
   import { mapGetters } from 'vuex';
 
+  const DEFAULT_OVERLAY = {
+    id: null,
+    channel: '',
+    global: false,
+    history: 25,
+    showTimestamps: true,
+    showTrolls: true,
+    title: '',
+    type: 'chat',
+  };
+
   export default {
     name: 'CreateOverlayDialog',
 
@@ -172,37 +205,39 @@
     },
 
     props: {
-      count: { type: Number },
+      data:  { type: Object, required: false },
     },
 
-    data() {
+    data () {
       return {
         enableSave: false,
         saveLoading: false,
         showExitConfirm: false,
-        overlay: {
-          title: '',
-          channel: '',
-          global: false,
-          history: 25,
-          showTimestamps: true,
-          showTrolls: true,
-          type: 'chat',
-        },
+
+        overlay: { ...DEFAULT_OVERLAY },
+
         streamers: {
           names: [],
           filter: '',
+          selection: null,
         },
       };
     },
 
     methods: {
+      async save () {
+        if ( this.data )
+          await this.updateOverlay();
+        else
+          await this.createOverlay();
+      },
+
       async createOverlay () {
         this.saveLoading = true;
 
         const date = new Date ( Date.now() );
-        const channel = this.overlay.channel ? this.overlay.channel.text.toLowerCase() : this.user._username;
-        const title = this.overlay.title ? this.overlay.title : `Overlay ${this.count}`;
+        const channel = this.streamers.selection ? this.streamers.selection.text.toLowerCase() : this.user._username;
+        const title = this.overlay.title ? this.overlay.title : `${channel}'s Overlay`;
 
         const data = {
           _username: this.user._username,
@@ -226,11 +261,37 @@
         this.forceQuit();
       },
 
+      async updateOverlay () {
+        this.saveLoading = true;
+
+        const date = new Date ( Date.now() );
+        const channel = this.streamers.selection ? this.streamers.selection.text.toLowerCase() : this.user._username;
+        const title = this.overlay.title;
+
+        const data = {
+          channel: channel,
+          edited: date,
+          global: this.overlay.global,
+          history: this.overlay.history,
+          showTimestamps: this.overlay.showTimestamps,
+          showTrolls: true,
+          title: title,
+        };
+
+        const overlayRef = db.collection( 'overlays' ).doc( this.overlay.id );
+        await overlayRef.update( data );
+
+        this.saveLoading = false;
+        this.forceQuit();
+      },
+
       reset () {
-        this.overlay.history = 25;
-        this.overlay.global = false;
-        this.overlay.showTimestamps = true;
-        this.overlay.title = '';
+        this.overlay = {
+          ...DEFAULT_OVERLAY,
+          ...this.data
+        };
+        this.streamers.filter = '';
+        this.streamers.selection = null;
       },
 
       cancel () {
@@ -247,32 +308,46 @@
 
       async getStreamers () {
         let { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list' );
-        this.streamers.names = data.users.map( s => ({
-          text: s.name,
-          value: s.name,
-          avatar: s.avatar,
+
+        this.streamers.names = data.users.map( streamer => ({
+          text   : streamer.name,
+          value  : streamer.name,
+          avatar : streamer.avatar,
         }));
+
         this.streamers.filtered = this.streamers.names;
+
+        const name = ( this.overlay.channel ? this.overlay.channel : this.user.username ).toLowerCase();
+        this.streamers.selection = this.streamers.names.find( s => s.text.toLowerCase() === name );
+        this.streamers.filter    = this.streamers.selection.text;
       },
     },
 
     computed: {
-      ...mapGetters({
+      ...mapGetters ({
         user: 'user',
       }),
     },
 
     async created () {
+      this.overlay = {
+        ...DEFAULT_OVERLAY,
+        ...this.data
+      };
       await this.getStreamers();
     },
 
-    async mounted () {
-
-    },
+    watch: {
+      data ( value ) {
+        this.overlay = {
+          ...DEFAULT_OVERLAY,
+          ...value
+        };
+        const name = ( value.channel ? value.channel : this.user.username ).toLowerCase();
+        this.streamers.selection = this.streamers.names.find( s => s.text.toLowerCase() === name );
+        this.streamers.filter    = this.streamers.selection.text;
+      },
+    }
 
   };
 </script>
-
-<style lang='scss' scoped>
-
-</style>
