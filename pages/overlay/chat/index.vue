@@ -17,6 +17,7 @@
             <v-btn
               v-on="on"
               color="yellow"
+              :loading="loading"
               outlined
             >
               create
@@ -61,6 +62,8 @@
 
   export default {
     name: 'chat',
+
+    middleware: 'auth',
 
     components: {
       ChatOverlayInfoCards,

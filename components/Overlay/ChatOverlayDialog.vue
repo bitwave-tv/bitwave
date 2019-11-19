@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card>
+    <v-card color="grey darken-4">
       <v-sheet color="yellow" class="d-flex justify-space-between align-center pa-3">
         <div class="title black--text">
           <v-icon color="black" class="mr-1">{{ !!this.data ? 'edit' : 'add_to_queue' }}</v-icon>

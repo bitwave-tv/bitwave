@@ -1,15 +1,12 @@
 <template>
   <v-flex shrink>
-
     <v-menu
       v-if="isAuth"
       v-model="profileMenu"
       :close-on-content-click="true"
-      :nudge-width="200"
       bottom
       offset-y
       left
-      origin="top right"
       transition="slide-y-transition"
     >
       <template #activator="{ on }">
@@ -28,7 +25,7 @@
         </v-btn>
       </template>
 
-      <v-card>
+      <v-card width="225">
         <v-sheet color="yellow" class="pa-2">
           <div class="d-flex align-center">
             <v-avatar class="mr-4" size="40">
@@ -76,6 +73,17 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Live Chat</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              v-if="userType === 'Streamer'"
+              to="/overlay/chat"
+            >
+              <v-list-item-action>
+                <v-icon>add_to_queue</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>OBS Overlay</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/report">
