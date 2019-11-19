@@ -19,6 +19,7 @@
               color="yellow"
               :loading="loading"
               outlined
+              :disabled="overlays.length >= 10"
             >
               create
             </v-btn>
