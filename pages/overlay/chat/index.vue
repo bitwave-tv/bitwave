@@ -23,10 +23,10 @@
             </v-btn>
           </template>
 
-          <create-overlay-dialog
+          <chat-overlay-dialog
             v-model="showCreateDialog"
             :data="defaultOverlay"
-          ></create-overlay-dialog>
+          ></chat-overlay-dialog>
         </v-dialog>
       </div>
     </div>
@@ -79,7 +79,7 @@
 
     methods: {
       subscribeToOverlays ( uid ) {
-        const overlayRefs = db.collection( 'overlays' ).where( 'owner', '==', uid ).orderBy( 'edited', 'desc' );
+        const overlayRefs = db.collection( 'overlays' ).where( 'owner', '==', uid ).orderBy( 'edited', 'desc' ).limit( 10 );
         this.unsubscribeOverlays = overlayRefs.onSnapshot( docs => this.onOverlaysChange( docs ) );
       },
 

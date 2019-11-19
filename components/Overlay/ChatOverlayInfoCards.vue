@@ -124,10 +124,10 @@
       width="500"
       persistent
     >
-      <create-overlay-dialog
+      <chat-overlay-dialog
         v-model="showEditDialog"
         :data="overlayData"
-      ></create-overlay-dialog>
+      ></chat-overlay-dialog>
     </v-dialog>
 
     <!-- Snackbar Notifications -->
