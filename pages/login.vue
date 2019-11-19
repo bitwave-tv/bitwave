@@ -10,7 +10,7 @@
       <v-flex xs12 md10 lg8 xl6>
         <v-img
           src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_banner.png"
-          alt="bitwave tv streaming platform banner" />
+          alt="bitwave tv live streaming platform" />
       </v-flex>
     </v-layout>
 
@@ -19,16 +19,14 @@
       justify-space-around
     >
       <v-flex xs12 md8 lg6 xl4>
-        <v-card class="my-3">
+        <v-card class="my-3" color="grey darken-4">
 
-          <v-card-title>
+          <v-sheet color="yellow" class="d-flex align-center pa-3 black--text">
+            <v-icon class="mr-2" large color="black">ondemand_video</v-icon>
             <h2>
-              <v-icon class="mr-1">ondemand_video</v-icon>
-              {{ `${signUp ? 'Create a' : ''} BitWave.tv Account` }}
+              [bitwave.tv] {{ signUp ? 'Register' : 'Login' }}
             </h2>
-          </v-card-title>
-
-          <hr>
+          </v-sheet>
 
           <v-card-text>
             <v-form
@@ -48,6 +46,8 @@
                 autocomplete="off"
                 required
                 validate-on-blur
+                outlined
+                clearable
                 :loading="loading"
                 :disabled="loading"
               ></v-text-field>
@@ -61,6 +61,8 @@
                 autocomplete="email"
                 required
                 validate-on-blur
+                outlined
+                clearable
                 :loading="loading"
                 :disabled="loading"
               ></v-text-field>
@@ -78,10 +80,21 @@
                 autocomplete="password"
                 counter
                 validate-on-blur
+                outlined
+                clearable
                 :loading="loading"
                 :disabled="loading"
                 @click:append="showPassword = !showPassword"
               ></v-text-field>
+
+              <v-checkbox
+                v-if="signUp"
+                label=" I confirm that I am eighteen (18) years of age or older."
+                color="yellow"
+                class="pt-0 mt-0 mb-3"
+                :rules="[ val => val || 'You must be 18 to use this site!' ]"
+                :disabled="loading"
+              ></v-checkbox>
 
               <v-btn
                 v-if="!signUp"
@@ -120,6 +133,7 @@
 
               <v-alert
                 v-model="alert"
+                class="mt-4 mb-0"
                 dismissible
                 :type="alertType"
               >
@@ -128,20 +142,18 @@
             </v-form>
           </v-card-text>
 
-          <hr/>
-
           <v-card-actions>
             <v-btn
               small
               href="#"
               text
-              color="#2196f3"
+              color="yellow"
               @click="resetPassword(user.email)"
             >Forgot Password?</v-btn>
             <v-spacer />
             <v-btn
               small
-              color="#2196f3"
+              color="yellow"
               outlined
               @click="switchForm"
             >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
