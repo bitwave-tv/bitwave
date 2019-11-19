@@ -1,8 +1,5 @@
 import { auth, db } from '@/plugins/firebase.js';
 
-const cookieparser = process.server ? require('cookieparser') : undefined;
-const Cookie = process.client ? require('js-cookie') : undefined;
-
 let unsubscribeUser = null;
 
 export const state = () => ({
@@ -60,7 +57,7 @@ export const mutations = {
   },
 
   setUserCookie( state, user ) {
-    if ( user ) Cookie.set( 'user', user );
+    if ( user ) this.$cookies.set( 'user', user );
     else console.log( `Tried to update cookie, but user is not set.` );
   },
 
@@ -91,34 +88,21 @@ export const actions = {
     let metaUser = null;
     let user     = null;
 
-    const cookie = req.headers.cookie;
-    if ( !!cookie ) {
-      let parsed = null;
+    const cookies = this.$cookies.getAll();
 
+    if ( !!cookies ) {
       try {
-        parsed = cookieparser.parse( cookie );
-      } catch ( error ) {
-        console.log( `ERROR: Failed to parse cookie.` );
-        console.log( error );
-        console.log( cookie );
-      }
-
-      if ( !!parsed ) {
-        try {
-          if ( !!parsed.auth && !!parsed.user ) {
-            authUser = JSON.parse( parsed.auth );
-            metaUser = JSON.parse( parsed.metaUser );
-            user     = JSON.parse( parsed.user );
-            console.log( `${user.username} logged in via nuxtServerInit: `, params );
-          } else {
-            console.log( `User is not logged in.`, params );
-          }
-        } catch ( error ) {
-          // No valid cookie found
-          console.log( `ERROR: No valid cookie found.` );
-          console.log( `ERROR: ${error}` );
-          console.log( cookie );
+        if ( !!cookies.auth && !!cookies.user ) {
+          authUser = cookies.auth;
+          metaUser = cookies.metaUser;
+          user     = cookies.user;
+          console.log( `${user.username} logged in via nuxtServerInit: `, params );
+        } else {
+          console.log( `User is not logged in.`, params );
         }
+      } catch ( error ) {
+        console.log( `ERROR: No valid cookie found.`, error );
+        console.log( `Cookies:`, cookies );
       }
     }
     commit( 'setAuth', authUser );
@@ -145,21 +129,22 @@ export const actions = {
     };
 
     commit('setAuth', _auth);
-    Cookie.set('auth', _auth);
+    this.$cookies.set('auth', _auth);
 
     user =  JSON.parse(JSON.stringify(user));
 
     commit('setMetaUser', user);
-    Cookie.set('metaUser', user);
+    this.$cookies.set('metaUser', user);
 
     const userdocRef = db.collection('users').doc(uid);
     unsubscribeUser = userdocRef.onSnapshot( doc => {
       const data = doc.data();
       commit('setUser', data);
-      Cookie.set('user', data);
+      this.$cookies.set('user', data);
     });
 
-    if (process.client) console.log(`%cSTORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+    if ( process.client )
+      console.log(`%cSTORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
 
     await dispatch ( 'exchangeIdTokenChatToken', token );
   },
@@ -170,13 +155,13 @@ export const actions = {
       await auth.signOut();
 
       commit('setUser', null);
-      Cookie.remove('user');
+      this.$cookies.remove('user');
 
       commit('setAuth', null);
-      Cookie.remove('auth');
+      this.$cookies.remove('auth');
 
       commit('setMetaUser', null);
-      Cookie.remove('metaUser');
+      this.$cookies.remove('metaUser');
     } catch (error) {
       console.log(`ERROR: ${error}`);
     }
