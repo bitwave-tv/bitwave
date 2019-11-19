@@ -48,6 +48,7 @@
             <div class="d-flex align-center">
               <div class="mx-3">
                 <v-img
+                  class="d-block"
                   contain
                   max-height="2rem"
                   max-width="2rem"
