@@ -288,6 +288,7 @@
 
     data() {
       return {
+        unsubAuthChanged: null,
         currentTab: 0,
 
         allowEdit: false,
@@ -366,7 +367,6 @@
       },
 
       async profileDataChanged ( data ) {
-        console.log( `[profile] Profile Data Changed:`, data );
         if (data.avatar) this.imageUrl = data.avatar;
         this.streamkey = data.streamkey;
         this.streamData.key = `${this.user.username}?key=${this.streamkey}`;
@@ -378,7 +378,6 @@
       },
 
       async streamDataChanged ( data ) {
-        console.log(`[profile] Stream Data Changed`, data);
         this.streamData.archive = !!data.archive;
         this.streamData.title   = data.title;
         this.streamData.nsfw    = data.nsfw;
@@ -542,14 +541,18 @@
     },
 
     mounted () {
-      auth.onAuthStateChanged( user => this.authenticated( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged( user => this.authenticated( user ) );
       this.streamDocListener = this.getStreamData();
       this.profileDocListener = this.getProfileData();
     },
 
     beforeDestroy () {
+      if ( this.unsubAuthChanged ) {
+        this.unsubAuthChanged();
+        console.log(`%cProfile.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+      }
       if ( this.streamDocListener ) this.streamDocListener();
       if ( this.profileDocListener ) this.profileDocListener();
-    }
+    },
   }
 </script>

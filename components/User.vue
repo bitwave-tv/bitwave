@@ -189,12 +189,13 @@
       },
     },
 
-    created() {
+    created () {
       if ( !this.isAuth ) this.loading = true;
-      auth.onAuthStateChanged ( async user => await this.authenticated( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged ( async user => await this.authenticated( user ) );
     },
 
     beforeDestroy() {
+      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeUser ) this.unsubscribeUser();
     },
   };

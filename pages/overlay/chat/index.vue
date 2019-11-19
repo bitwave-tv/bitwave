@@ -110,7 +110,7 @@
     },
 
     created () {
-      auth.onAuthStateChanged( user => this.onAuthChanged ( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged( user => this.onAuthChanged ( user ) );
     },
 
     mounted () {
@@ -118,6 +118,7 @@
     },
 
     beforeDestroy () {
+      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeOverlays ) this.unsubscribeOverlays();
     },
   };

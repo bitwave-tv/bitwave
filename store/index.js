@@ -162,6 +162,8 @@ export const actions = {
 
       commit('setMetaUser', null);
       this.$cookies.remove('metaUser');
+
+      console.log('Logged Out');
     } catch (error) {
       console.log(`ERROR: ${error}`);
     }

@@ -136,11 +136,14 @@
                 class="mt-4 mb-0"
                 dismissible
                 :type="alertType"
+                transition="fade-transition"
               >
                 {{ alertMessage }}
               </v-alert>
             </v-form>
           </v-card-text>
+
+          <v-divider></v-divider>
 
           <v-card-actions>
             <v-btn
@@ -176,6 +179,7 @@
 
     data() {
       return {
+        unsubAuthChanged: null,
         signUp: false,
         loading: false,
         alert: false,
@@ -211,8 +215,13 @@
       },
 
       // Create User
-      async createUser(username, email, password) {
+      async createUser ( username, email, password ) {
         if ( !this.$refs.loginForm.validate() ) return;
+
+        this.$ga.event({
+          eventCategory : 'login',
+          eventAction   : 'register',
+        });
 
         this.loading = true;
 
@@ -254,26 +263,32 @@
       },
 
       // Sign In
-      async signIn(email, password) {
-        if (!this.$refs.loginForm.validate()) return;
+      async signIn( email, password ) {
+        if ( !this.$refs.loginForm.validate() ) return;
+
+        this.$ga.event({
+          eventCategory : 'login',
+          eventAction   : 'login',
+        });
 
         this.loading = true;
         try {
-          await auth.setPersistence(this.shouldStayLoggedIn ? 'local' : 'session'); // firebase.auth.Auth.Persistence.SESSION
-          const userCredential = await auth.signInWithEmailAndPassword(email, password);
-
-          if (process.client)
-            console.log(`%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user);
-          else
-            console.log('Login.vue: Signing in...', userCredential.user);
-        } catch (error) {
-          this.showError(error.message);
-          console.log(error.message);
+          await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
+          const userCredential = await auth.signInWithEmailAndPassword( email, password );
+          console.log(`%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user);
+        } catch ( error ) {
+          this.showError( error.message );
+          console.log( error.message );
           this.loading = false;
         }
       },
 
       async resetPassword(email) {
+        this.$ga.event({
+          eventCategory : 'login',
+          eventAction   : 'reset password',
+        });
+
         try {
           await auth.sendPasswordResetEmail(email);
           this.showSuccess('Check email for reset link.');
@@ -283,9 +298,8 @@
       },
 
       validate () {
-        if (this.$refs.form.validate()) {
+        if ( this.$refs.form.validate() )
           this.showError('Please fix errors highlighted in red.');
-        }
       },
 
       reset () {
@@ -297,33 +311,33 @@
         this.hideAlert();
       },
 
-      async authenticated(user) {
-        if (user) {
-          if (process.client)
+      async authenticated( user ) {
+        if ( user ) {
+          if ( process.client )
             console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
           else
             console.log('Login: Logged in!', user);
 
-          if (user.displayName) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
+          if ( user.displayName ) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
 
-          await this.$store.dispatch('login', user);
+          await this.$store.dispatch( 'login', user );
 
           setTimeout( () => this.$router.push('/profile'), 1500 );
         } else {
-          if (process.client)
+          if ( process.client )
             console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
           else
             console.log('Login: Not logged in.');
         }
       },
 
-      showError(message) {
+      showError( message ) {
         this.alertType = 'error';
         this.alert = true;
         this.alertMessage = message;
       },
 
-      showSuccess(message) {
+      showSuccess( message ) {
         this.alertType = 'success';
         this.alert = true;
         this.alertMessage = message;
@@ -334,12 +348,17 @@
       },
     },
 
-    computed: {
-
-    },
+    computed: {},
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated(user) );
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+    },
+
+    beforeDestroy() {
+      if ( this.unsubAuthChanged ) {
+        this.unsubAuthChanged();
+        console.log(`%cLogin.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+      }
     },
   }
 </script>

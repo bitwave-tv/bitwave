@@ -215,7 +215,7 @@
   import StreamGrid from '@/components/StreamGrid'
 
   export default {
-    head() {
+    head () {
       return {
         title: `Homepage - [bitwave.tv]`,
         meta: [
@@ -237,7 +237,7 @@
       Chat,
     },
 
-    data() {
+    data () {
       return {
         player: null,
         initialized: false,
@@ -252,25 +252,25 @@
     },
 
     methods: {
-      playerInitialize(){
-        this.player = videojs('solo-player', {
+      playerInitialize () {
+        this.player = videojs( 'solo-player', {
           // liveui: true,
           // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
         });
         this.initialized = true;
       },
 
-      playerDispose(){
+      playerDispose () {
         this.player.dispose();
       },
 
-      updatePlayerSrc() {
+      updatePlayerSrc () {
         this.player.src({ type: 'video/mp4', src: 'https://cdn.bitwave.tv/static/bumps/Bump33-sm.mp4' });
       },
     },
 
-    async asyncData({ $axios }) {
-      const live = (await $axios.get( `https://api.bitwave.tv/api/sources/list`) ).data.live;
+    async asyncData ({ $axios }) {
+      const live = ( await $axios.get( `https://api.bitwave.tv/api/sources/list`) ).data.live;
       const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
       return {
         streamers: data.users.filter( s => s.live ),
@@ -282,7 +282,7 @@
       this.playerInitialize();
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       this.playerDispose();
     },
   }

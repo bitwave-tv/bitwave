@@ -222,7 +222,7 @@
 
       color () {
         return !!this.selectedColor.value ? this.selectedColor.value : this.selectedColor;
-      }
+      },
     },
 
   }

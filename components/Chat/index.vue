@@ -80,7 +80,7 @@
 
     <!-- Chat Messages -->
     <chat-messages
-      ref="chat-messages"
+      ref="chatmessages"
       :messages="messages"
       :show-timestamps="showTimestamps"
       @reply="addUserTag"
@@ -269,8 +269,8 @@
       },
 
       async scrollToBottom ( force ) {
-        if ( this.$refs['chat-messages'] )
-          this.$refs['chat-messages'].scrollToBottom( force );
+        if ( this.$refs['chatmessages'] )
+          this.$refs['chatmessages'].scrollToBottom( force );
         else
           console.warn('Could not find scroll container for chat.');
       },
@@ -327,8 +327,8 @@
 
         // Scroll after hydration
         await this.$nextTick( async () => {
-          if ( this.$refs['chat-messages'] )
-            this.$refs['chat-messages'].jumpToBottom();
+          if ( this.$refs['chatmessages'] )
+            this.$refs['chatmessages'].jumpToBottom();
           else
             console.warn('Failed to find chat container after hydration');
         });
@@ -750,7 +750,7 @@
     },
 
     created () {
-      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     async mounted () {
@@ -820,6 +820,7 @@
     },
 
     beforeDestroy () {
+      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeUser ) this.unsubscribeUser();
       if ( this.unsubscribePoll ) this.unsubscribePoll();
       if ( this.socket ) this.socket.disconnect();

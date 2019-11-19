@@ -6,26 +6,26 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
+          v-on="on"
           color="yellow"
           class="black--text"
           small
-          v-on="on"
         >
           Login
-          <v-icon class="ml-1">input</v-icon>
+          <!--<v-icon class="ml-1">input</v-icon>-->
         </v-btn>
       </template>
 
-      <v-card>
-        <v-card-title
-          class="title yellow black--text"
-          primary-title
-        >
-          Login to [bitwave.tv]
-        </v-card-title>
+      <v-card class="my-3" color="grey darken-4">
 
-        <v-card-text>
+        <v-sheet color="yellow" class="d-flex align-center pa-3 black--text">
+          <v-icon class="mr-2" color="black">ondemand_video</v-icon>
+          <h2 class="title">
+            [bitwave.tv] {{ signUp ? 'Create Account' : 'Login' }}
+          </h2>
+        </v-sheet>
 
+        <v-card-text class="py-3">
           <v-form
             ref="loginForm"
             v-model="valid"
@@ -34,6 +34,7 @@
             <v-text-field
               v-if="signUp"
               id="username"
+              class="mt-3"
               key="username"
               ref="username"
               v-model="user.username"
@@ -43,12 +44,15 @@
               autocomplete="off"
               required
               validate-on-blur
+              outlined
+              clearable
               :loading="loading"
               :disabled="loading"
             ></v-text-field>
 
             <v-text-field
               id="email"
+              class="mt-3"
               key="email"
               v-model="user.email"
               :rules="rules.email"
@@ -56,12 +60,15 @@
               autocomplete="email"
               required
               validate-on-blur
+              outlined
+              clearable
               :loading="loading"
               :disabled="loading"
             ></v-text-field>
 
             <v-text-field
               id="password"
+              class="mt-3"
               key="password"
               v-model="user.password"
               :append-icon="showPassword ? 'visibility' : 'visibility_off'"
@@ -73,10 +80,21 @@
               autocomplete="password"
               counter
               validate-on-blur
+              outlined
+              clearable
               :loading="loading"
               :disabled="loading"
               @click:append="showPassword = !showPassword"
             ></v-text-field>
+
+            <v-checkbox
+              v-if="signUp"
+              label=" I confirm that I am eighteen (18) years of age or older."
+              color="yellow"
+              class="pt-0 mt-0 mb-3"
+              :rules="[ val => val || 'You must be 18 to use this site!' ]"
+              :disabled="loading"
+            ></v-checkbox>
 
             <v-btn
               v-if="!signUp"
@@ -115,8 +133,10 @@
 
             <v-alert
               v-model="alert"
+              class="mt-4 mb-0"
               dismissible
               :type="alertType"
+              transition="fade-transition"
             >
               {{ alertMessage }}
             </v-alert>
@@ -160,9 +180,8 @@
 
     data() {
       return {
+        unsubAuthChanged: null,
         show: false,
-
-
         signUp: false,
         loading: false,
         alert: false,
@@ -336,12 +355,17 @@
 
       hideAlert() {
         this.alert = false;
-      },},
+      },
+    },
 
     computed: {},
 
     created() {
-      auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+    },
+
+    beforeDestroy() {
+      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
     },
   }
 </script>
