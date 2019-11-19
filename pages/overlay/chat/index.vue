@@ -1,0 +1,113 @@
+<template>
+  <v-container>
+    <!-- Header -->
+    <div class="d-flex align-baseline justify-space-between my-2">
+      <div>
+        Create & manage OBS chat overlays.
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex justify-end">
+        <v-dialog
+          v-model="showCreateDialog"
+          width="500"
+        >
+          <template #activator="{ on }">
+            <v-btn
+              v-on="on"
+              color="yellow"
+              outlined
+            >
+              create
+              <!--<v-icon>add</v-icon>-->
+            </v-btn>
+          </template>
+
+          <create-overlay-dialog
+            v-model="showCreateDialog"
+            :count="overlayCount"
+          ></create-overlay-dialog>
+        </v-dialog>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div>
+      <v-expand-transition>
+        <v-card
+          v-show="loading"
+          :loading="loading"
+        >
+          <v-card-title>Loading...</v-card-title>
+        </v-card>
+      </v-expand-transition>
+    </div>
+
+    <!-- Overlays -->
+    <chat-overlay-info-cards
+      v-show="!loading"
+      :overlays="overlays"
+    ></chat-overlay-info-cards>
+
+  </v-container>
+</template>
+
+<script>
+  import { db } from '@/plugins/firebase.js';
+  import { mapGetters } from 'vuex';
+
+  import ChatOverlayInfoCards from '@/components/Overlay/ChatOverlayInfoCards';
+  const CreateOverlayDialog = () => import ( '@/components/Overlay/CreateOverlayDialog' );
+
+  export default {
+    name: 'chat',
+
+    components: {
+      ChatOverlayInfoCards,
+      CreateOverlayDialog,
+    },
+
+    data() {
+      return {
+        loading: true,
+        username: '',
+        unsubscribeOverlays: null,
+        overlays: [],
+        showCreateDialog: false,
+        overlayCount: 0,
+      };
+    },
+
+    methods: {
+      subscribeToOverlays ( uid ) {
+        const overlayRefs = db.collection( 'overlays' ).where( 'owner', '==', uid ).orderBy( 'edited', 'desc' );
+        this.unsubscribeOverlays = overlayRefs.onSnapshot( docs => this.onOverlaysChange( docs ) );
+      },
+
+      onOverlaysChange ( docs ) {
+        this.loading = false;
+        if ( !docs.empty ) {
+          this.overlays = docs.docs.map( doc => ({ id: doc.id, ...doc.data() }) );
+          this.overlayCount = docs.size + 1;
+        } else {
+          this.overlays = [];
+          this.overlayCount = 1;
+        }
+      },
+    },
+
+    computed: {
+      ...mapGetters({
+        user: 'user',
+      }),
+    },
+
+    mounted () {
+      this.subscribeToOverlays( this.user.uid );
+    },
+
+    beforeDestroy () {
+      if ( this.unsubscribeOverlays ) this.unsubscribeOverlays();
+    },
+  };
+</script>
