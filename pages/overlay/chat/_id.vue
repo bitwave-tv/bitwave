@@ -144,7 +144,13 @@
       },
 
       hydrate ( data ) {
-        this.messages = data;
+        // Highlight username tags in new messages
+        const pattern = new RegExp( `@${this.overlay._username}\\b`, 'gi' );
+        data.forEach( el => {
+          el.message = el.message.replace( pattern, `<span class="highlight">$&</span>` );
+          this.messages.push( el );
+        });
+
         this.processMessages();
         this.loaded = true;
         this.$nextTick( () =>
@@ -157,14 +163,22 @@
       },
 
       rcvMessageBulk ( data ) {
-        this.messages.push( ...data );
+        // Highlight username tags in new messages
+        const pattern = new RegExp( `@${this.overlay._username}\\b`, 'gi' );
+        data.forEach( el => {
+          el.message = el.message.replace( pattern, `<span class="highlight">$&</span>` );
+          this.messages.push( el );
+        });
+
         this.processMessages();
       },
 
       processMessages () {
+        // Global / Local Filter
         if ( !this.overlay.global ) {
           this.messages = this.messages.filter( msg => msg.channel.toLowerCase() === this.overlay.channel.toLowerCase() );
         }
+
         this.messages = this.messages.splice( -this.overlay.history );
       },
 
@@ -246,6 +260,11 @@
         font-weight: 500;
         color: #9e9e9e;
         font-family: 'IBM Plex Sans', sans-serif;
+      }
+
+      .highlight {
+        font-weight: bold;
+        color: yellow;
       }
     }
 
