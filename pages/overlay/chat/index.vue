@@ -57,14 +57,14 @@
   import { mapGetters } from 'vuex';
 
   import ChatOverlayInfoCards from '@/components/Overlay/ChatOverlayInfoCards';
-  const CreateOverlayDialog = () => import ( '@/components/Overlay/CreateOverlayDialog' );
+  const ChatOverlayDialog = () => import ( '@/components/Overlay/ChatOverlayDialog' );
 
   export default {
     name: 'chat',
 
     components: {
       ChatOverlayInfoCards,
-      CreateOverlayDialog,
+      ChatOverlayDialog,
     },
 
     data () {

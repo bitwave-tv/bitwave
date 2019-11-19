@@ -190,6 +190,7 @@
     channel: '',
     global: false,
     history: 25,
+    showChannel: true,
     showTimestamps: true,
     showTrolls: true,
     title: '',
@@ -197,7 +198,7 @@
   };
 
   export default {
-    name: 'CreateOverlayDialog',
+    name: 'ChatOverlayDialog',
 
     model: {
       prop: 'value',
@@ -247,6 +248,7 @@
           global: this.overlay.global,
           history: this.overlay.history,
           owner: this.user.uid,
+          showChannel: true,
           showTimestamps: this.overlay.showTimestamps,
           showTrolls: true,
           title: title,
@@ -273,6 +275,7 @@
           edited: date,
           global: this.overlay.global,
           history: this.overlay.history,
+          showChannel: true,
           showTimestamps: this.overlay.showTimestamps,
           showTrolls: true,
           title: title,

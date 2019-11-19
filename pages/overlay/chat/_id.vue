@@ -40,35 +40,27 @@
             color="transparent"
           >
             <div class="d-flex">
-
               <!-- Chat Avatar -->
               <div class="v-avatar mr-2 mt-2">
                 <img v-if="!!message.avatar" :src="message.avatar" :alt="message.username">
                 <div v-else class="v-icon notranslate material-icons" :style="{ background: message.color }">person</div>
               </div>
-
               <div class="flex-grow-1">
-
                 <!-- Message Header -->
                 <div class="d-flex align-center">
-
                   <!-- Timestamp & Username -->
                   <div class="flex-grow-1 subtitle-2">
                     <span class="time">{{ getTime(message.timestamp) }}</span>
                     <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
                   </div>
-
                   <!-- Room Label -->
                   <div class="flex-shrink-1">
                     <nuxt-link :to="message.channel">
                       <kbd>{{ message.channel }}</kbd>
                     </nuxt-link>
                   </div>
-
                 </div>
-
                 <div v-html="message.message"></div>
-
               </div>
             </div>
           </v-sheet>
