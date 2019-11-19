@@ -8,70 +8,54 @@
       style="border-right: solid 1px #ffeb3b"
     >
       <div class="d-flex align-center justify-space-between">
-
         <div class="d-flex align-center grey--text">
-          <v-avatar
-            size="32"
-          >
-            <img
-              :src="avatar"
-              :alt="name"
-            />
+          <v-avatar size="32">
+            <img :src="avatar" :alt="name" />
           </v-avatar>
-          <div class="mx-2">
-            {{ name }}
-          </div>
+          <div class="mx-2">{{ name }}</div>
         </div>
-
         <div class="d-flex align-center">
           <v-chip
             v-if="nsfw"
             color="red"
             class="mr-2"
-            :outlined="false"
             small
             outlined
           >NSFW</v-chip>
           <FollowButton :streamer-id="owner" />
         </div>
-
       </div>
     </v-sheet>
 
     <!-- Video JS -->
-    <v-layout>
-      <v-flex>
-        <video
-          playsinline
-          id="streamplayer"
-          class="video-js vjs-fluid vjs-16-9 vjs-custom-skin vjs-big-play-centered"
-          height="100%"
-          width="100%"
-          style="min-width: 200px;"
-          controls
-          :autoplay="live"
-          preload="auto"
-          data-setup='{ "aspectRatio":"16:9", "html": { "hls": { "overrideNative": "true" } } }'
-          :poster="poster"
+    <div class="d-flex">
+      <video
+        playsinline
+        id="streamplayer"
+        class="video-js vjs-fluid vjs-custom-skin vjs-big-play-centered"
+        controls
+        autoplay
+        preload="auto"
+        :poster="poster"
+        :style="{ width: '100%' }"
+      >
+        <source
+          :src="url"
+          :type="type"
         >
-          <source
-            :src="url"
-            :type="type"
-          >
-        </video>
-      </v-flex>
-    </v-layout>
+      </video>
+    </div>
+
 
     <!-- Chat -->
-    <v-layout :class="{ 'chat-desktop': !mobile }">
-      <v-flex :style="{ maxHeight: mobile ? '390px' : '100%' }">
-        <client-only placeholder="Loading...">
-          <chat
-            :chat-channel="name"
-          ></chat>
-        </client-only>
-      </v-flex>
-    </v-layout>
+    <div
+      class="d-flex"
+      :class="{ 'chat-desktop': !mobile }"
+      :style="{ maxHeight: mobile ? '390px' : '100%' }"
+    >
+      <chat :chat-channel="name"></chat>
+    </div>
+
 
     <!-- Stream Title, Status -->
     <v-sheet
@@ -122,26 +106,27 @@
           <ShareStream :user="name"></ShareStream>
         </div>
       </div>
-
     </v-sheet>
 
     <!-- Description -->
-    <v-layout class="px-3 my-2" ref="description">
-      <v-flex id="description">
-        <vue-markdown
-          v-if="description"
-          :source="description"
-        ></vue-markdown>
-      </v-flex>
-    </v-layout>
+    <div
+      id="description"
+      ref="description"
+      class="px-3 my-2"
+    >
+      <vue-markdown
+        v-if="description"
+        :source="description"
+      ></vue-markdown>
+    </div>
 
   </div>
 </template>
 
 <script>
   import videojs from 'video.js'
-  import 'dashjs'
-  import 'videojs-contrib-dash'
+  // import 'dashjs'
+  // import 'videojs-contrib-dash'
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
@@ -220,8 +205,8 @@
         // Create video.js player
         this.player = videojs( 'streamplayer', {
           liveui: true,
-          // fluid: true,
-          // fill: true,
+          fluid: true,
+          fill: true,
           // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
           plugins: { qualityLevels: {} },
@@ -255,7 +240,9 @@
 
         // Load all qualities
         this.qualityLevels = this.player.qualityLevels();
-        this.player.hlsQualitySelector();
+        this.player.hlsQualitySelector({
+          displayCurrentQuality: true,
+        });
 
         // Save volume on change
         this.player.on( 'volumechange', () => {
