@@ -29,49 +29,50 @@
       <div
         v-if="loaded"
         id="overlay"
-        ref="scroller"
+        ref="overlay"
       >
         <!-- Chat message -->
-        <v-sheet
-          v-for="message in messages"
-          :key="message.timestamp"
-          class="my-1 pa-1 msg"
-          color="transparent"
-        >
-          <div class="d-flex">
+        <transition-group name="fade-transition">
+          <v-sheet
+            v-for="message in messages"
+            :key="message.timestamp"
+            class="my-1 pa-1 msg"
+            color="transparent"
+          >
+            <div class="d-flex">
 
-            <!-- Chat Avatar -->
-            <div class="v-avatar mr-2 mt-2">
-              <img v-if="!!message.avatar" :src="message.avatar" :alt="message.username">
-              <div v-else class="v-icon notranslate material-icons" :style="{ background: message.color }">person</div>
-            </div>
-
-            <div class="flex-grow-1">
-
-              <!-- Message Header -->
-              <div class="d-flex align-center">
-
-                <!-- Timestamp & Username -->
-                <div class="flex-grow-1 subtitle-2">
-                  <span class="time">{{ getTime(message.timestamp) }}</span>
-                  <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
-                </div>
-
-                <!-- Room Label -->
-                <div class="flex-shrink-1">
-                  <nuxt-link :to="message.channel">
-                    <kbd>{{ message.channel }}</kbd>
-                  </nuxt-link>
-                </div>
-
+              <!-- Chat Avatar -->
+              <div class="v-avatar mr-2 mt-2">
+                <img v-if="!!message.avatar" :src="message.avatar" :alt="message.username">
+                <div v-else class="v-icon notranslate material-icons" :style="{ background: message.color }">person</div>
               </div>
 
-              <div v-html="message.message"></div>
+              <div class="flex-grow-1">
 
+                <!-- Message Header -->
+                <div class="d-flex align-center">
+
+                  <!-- Timestamp & Username -->
+                  <div class="flex-grow-1 subtitle-2">
+                    <span class="time">{{ getTime(message.timestamp) }}</span>
+                    <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
+                  </div>
+
+                  <!-- Room Label -->
+                  <div class="flex-shrink-1">
+                    <nuxt-link :to="message.channel">
+                      <kbd>{{ message.channel }}</kbd>
+                    </nuxt-link>
+                  </div>
+
+                </div>
+
+                <div v-html="message.message"></div>
+
+              </div>
             </div>
-          </div>
-        </v-sheet>
-
+          </v-sheet>
+        </transition-group>
         <!-- Debug Info -->
         <div v-if="debug">
           <h1 class="title">[DEBUG] OBS Chat Overlay</h1>
@@ -179,7 +180,14 @@
           this.messages = this.messages.filter( msg => msg.channel.toLowerCase() === this.overlay.channel.toLowerCase() );
         }
 
+        // Trim history
         this.messages = this.messages.splice( -this.overlay.history );
+
+        // Jump down
+        this.scrollContainer.scroll({
+          top: this.scrollContainer.scrollHeight,
+          behavior: 'auto',
+        });
       },
 
       getTime ( timestamp ) {
@@ -202,7 +210,7 @@
       this.overlayId = this.$route.params.id;
       this.debug = !!this.$route.query.debug;
       this.scrollContainer = document.querySelector( '#overlay' );
-      // this.scrollContainer = this.$refs['scroller']; // container
+      // this.scrollContainer = this.$refs['overlay']; // container
       this.subscribeToOverlay( this.overlayId );
     },
 
@@ -219,7 +227,6 @@
   }
 
   #overlay {
-    /*height: 100%;*/
     overflow-y: hidden;
 
     .msg {
@@ -284,6 +291,11 @@
       height: 32px;
       min-width: 32px;
       width: 32px;
+    }
+
+    .fade-transition-enter-active,
+    .fade-transition-leave-active {
+      transition-duration: 1.5s;
     }
   }
 </style>
