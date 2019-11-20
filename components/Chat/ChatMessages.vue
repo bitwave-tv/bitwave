@@ -137,7 +137,7 @@
       position: absolute;
       right: 0;
       left: 0;
-      bottom: 0;
+      top: 0;
 
       transform: translateY(150%);
       transition: .5s transform;
