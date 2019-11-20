@@ -139,7 +139,7 @@
       left: 0;
       top: 0;
 
-      transform: translateY(150%);
+      transform: translateY(-150%);
       transition: .5s transform;
 
       &.show {
