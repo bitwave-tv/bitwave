@@ -90,7 +90,6 @@
       title   : { type: String },
       name    : { type: String },
       viewers : { type: Number },
-      totalViewers : { type: Number },
     },
 
     data() {
