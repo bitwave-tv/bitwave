@@ -3,14 +3,11 @@ import { auth, db } from '@/plugins/firebase.js';
 let unsubscribeUser = null;
 
 export const state = () => ({
-
   auth: null,
   user: null,
   metaUser: null,
   channel: null,
-
   chatToken: null,
-
 });
 
 export const getters = {

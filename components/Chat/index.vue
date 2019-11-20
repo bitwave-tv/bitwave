@@ -2,7 +2,6 @@
   <v-layout
     id="sidechat"
     column
-    fill-height
     v-resize.quiet="onResize"
   >
 

@@ -59,11 +59,11 @@
       showTimestamps: { type: Boolean },
     },
 
-    data() {
+    data () {
       return {
         chatContainer: null,
         scrollTimeout: null,
-        showFAB: true,
+        showFAB: false,
       }
     },
 

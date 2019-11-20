@@ -9,8 +9,9 @@ export const state = () => ({
   ttsRate: 10,
   ttsVoice: 1,
 
-  viewerList : [],
   roomViewerList : {},
+  viewerList : [],
+  streamViewerList: [],
 
   ignoreList : [],
   useIgnore: true,
@@ -24,6 +25,10 @@ export const state = () => ({
 export const getters = {
   viewerCount ( state ) {
     return state.viewerList.length;
+  },
+
+  GET_STREAM_VIEWERLIST ( state ) {
+    return state.streamViewerList;
   },
 };
 
@@ -66,12 +71,16 @@ export const mutations = {
     state.ttsVoice = data;
   },
 
+  SET_ROOM_VIEWERLIST ( state, data ) {
+    state.roomViewerList = { ...data };
+  },
+
   SET_VIEWERLIST ( state, data ) {
     state.viewerList = [ ...data ];
   },
 
-  SET_ROOM_VIEWERLIST ( state, data ) {
-    state.roomViewerList = { ...data };
+  SET_STREAM_VIEWERLIST ( state, data ) {
+    state.streamViewerList = data;
   },
 
   SET_IGNORE_LIST ( state, data ) {
@@ -135,6 +144,17 @@ export const actions = {
       return accumulator;
     }, []);
     commit( 'SET_VIEWERLIST', viewerList );
+
+    // Create list of viewers in each stream
+    const streamViewers = Object.entries(roomViewerList).map( streamer => {
+      const streamViewers = Object.entries( streamer[1] );
+      return {
+        streamer: streamer[0],
+        viewCount: streamViewers.length,
+        streamViewers,
+      }
+    });
+    commit( 'SET_STREAM_VIEWERLIST', streamViewers );
 
   },
 };

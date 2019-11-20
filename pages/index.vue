@@ -34,8 +34,8 @@
             </video>
           </div>
 
-          <div class="d-flex flex-shrink-1" :style="{ width: mobile ? '100%' : '450px', 'max-height': mobile ? '500px' : '655px' }" >
-            <chat :chat-channel="live[0].name" :style="{ height: 'auto' }" />
+          <div class="d-flex flex-shrink-1" :style="{ width: mobile ? '100%' : '450px', 'max-height': mobile ? '500px' : '555px' }" >
+            <chat :chat-channel="live[0].name"/>
           </div>
         </v-card>
 
@@ -175,8 +175,6 @@
             </div>
           </v-card-text>
 
-          <!--<hr class="mb-3">-->
-
           <v-divider></v-divider>
 
           <v-card-actions class="pt-0">
@@ -208,7 +206,7 @@
 <script>
   // videojs
   import videojs from 'video.js'
-  import 'videojs-contrib-dash'
+  // import 'videojs-contrib-dash'
   import Chat from '~/components/Chat'
   import StreamGrid from '@/components/StreamGrid'
 
@@ -259,7 +257,7 @@
       },
 
       playerDispose () {
-        this.player.dispose();
+        if ( this.player ) this.player.dispose();
       },
 
       updatePlayerSrc () {

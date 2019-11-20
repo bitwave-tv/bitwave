@@ -214,10 +214,6 @@
 </script>
 
 <style lang='scss'>
-  html {
-    background: black;
-  }
-
   #overlay {
     overflow-y: hidden;
 
