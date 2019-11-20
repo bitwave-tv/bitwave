@@ -3,7 +3,7 @@
     <v-sheet color="yellow">
       <v-layout class="pl-2" align-center>
         <v-flex>
-          <h5 class="black--text body-2">Settings</h5>
+          <h5 class="black--text body-2">Chat Settings</h5>
         </v-flex>
         <v-flex shrink>
           <v-btn

@@ -7,20 +7,47 @@
     >
       <v-card
         :to="to"
+        style="postion: relative;"
+        class="stream-card"
       >
         <v-img
           :src="image"
+          :key="image"
+          lazy-src="https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg"
           :aspect-ratio="16/9"
           :class="{ 'blur': (live && nsfw) }"
-        ></v-img>
-        <v-card-text class="pa-2">
-          <div class="body-1 font-weight-bold text-truncate text-no-wrap mb-0 yellow--text">
+        >
+          <!--<div class="fill-height bottom-gradient"></div>-->
+        </v-img>
+
+        <!-- View Counter -->
+        <div class="view-counter" :style="{  }">
+          <v-avatar
+            :color="'#21212177'"
+            :size="32"
+          >
+            <div>
+              <v-progress-circular
+                class="ma-3"
+                :color="nsfw ? 'yellow' : '#00ff00'"
+                :size="32"
+                :width="3"
+                :value="viewers / totalViewers * 100"
+              >
+                {{ viewers <= 3 ? '🐜' : viewers }}
+              </v-progress-circular>
+            </div>
+          </v-avatar>
+        </div>
+
+        <!-- Card Data -->
+        <div class="pa-2">
+          <!-- Stream Data -->
+          <div class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0">
             {{ title }}
           </div>
-          <div class="caption">
-            {{ name }}
-          </div>
-        </v-card-text>
+          <div class="caption">{{ name }}</div>
+        </div>
       </v-card>
     </v-lazy>
   </div>
@@ -31,12 +58,14 @@
     name: 'StreamCard',
 
     props: {
-      to    : { type: String },
-      live  : { type: Boolean },
-      image : { type: String },
-      nsfw  : { type: Boolean },
-      title : { type: String },
-      name  : { type: String },
+      to      : { type: String },
+      live    : { type: Boolean },
+      image   : { type: String },
+      nsfw    : { type: Boolean },
+      title   : { type: String },
+      name    : { type: String },
+      viewers : { type: Number },
+      totalViewers : { type: Number },
     },
 
     data() {
@@ -49,6 +78,27 @@
   .blur > div.v-image__image {
     filter: blur(15px);
     -webkit-filter: blur(15px);
+  }
+
+  .stream-card {
+
+    .view-counter {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      opacity: .5;
+      transition: .3s;
+    }
+
+    &:hover {
+      .view-counter {
+        opacity: 1;
+      }
+    }
+  }
+
+  .bottom-gradient {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
   }
 
   .v-card--reveal {

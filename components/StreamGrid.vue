@@ -25,7 +25,7 @@
       <!-- Cards -->
       <v-col
         v-if="!loading"
-        v-for="stream in streams"
+        v-for="stream in streamerList"
         :key="stream.name"
         cols="12"
         md="6"
@@ -39,6 +39,8 @@
           :nsfw="stream.nsfw"
           :title="stream.title"
           :name="stream.name"
+          :viewers="stream.viewCount"
+          :total-viewers="totalViewers"
         ></stream-card>
       </v-col>
     </transition-group>
@@ -48,6 +50,7 @@
 <script>
   import StreamCard from '@/components/StreamCard';
   import { db } from '@/plugins/firebase';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'StreamGrid',
@@ -66,6 +69,7 @@
         streams: [],
         thumbnailInterval: null,
         loading: true,
+        imageIndex: 0,
       }
     },
 
@@ -92,13 +96,41 @@
       },
 
       updateThumbnails () {
-        this.streams.forEach( stream => {
-          stream.thumbnail = `${stream.thumbnail}?${Date.now()}`
-        });
+        if ( this.imageIndex < this.streams.length ) this.imageIndex++;
+        else this.imageIndex = 0;
+
+        const coeff = 1000 * 60; // ms * sec
+        const timestamp = new Date(Math.round(Date.now() / coeff) * coeff);
+
+        this.streams[this.imageIndex].thumbnail = `${this.streams[this.imageIndex].thumbnail}?${timestamp}`;
+
+        /*this.streams.forEach( async stream => {
+          stream.thumbnail = `${stream.thumbnail}?${Date.now()}`;
+        });*/
       },
     },
 
-    computed: {},
+    computed: {
+      ...mapGetters( 'chat', {
+        streamViewerList: 'GET_STREAM_VIEWERLIST',
+      }),
+
+      streamerList () {
+        const streams = this.streams.map( stream => {
+          const streamViewList = this.streamViewerList.find( svl => svl.streamer.toLowerCase() === stream.name.toLowerCase() );
+          return { ...stream, viewCount: streamViewList ? streamViewList.viewCount : 0 };
+        });
+        return streams.sort( (a, b) => b.viewCount - a.viewCount );
+      },
+
+      totalViewers () {
+        // Total
+        // return this.streamViewerList.reduce( ( acc, curr ) => acc + curr.viewCount, 0 );
+
+        // Largest
+        return this.streamerList[0].viewCount;
+      },
+    },
 
     created () {
       this.loading = !this.streamers;
@@ -107,7 +139,7 @@
 
     mounted () {
       this.getData();
-      this.thumbnailInterval = setInterval( () => this.updateThumbnails(), 60 * 1000 );
+      this.thumbnailInterval = setInterval( () => this.updateThumbnails(), 10 * 1000 );
     },
 
     beforeDestroy() {
