@@ -21,8 +21,8 @@
         </v-img>
 
         <!-- View Counter -->
-        <div class="view-counter" :style="{  }">
-          <v-avatar
+        <div class="view-counter">
+          <!--<v-avatar
             :color="'#21212177'"
             :size="32"
           >
@@ -37,7 +37,21 @@
                 {{ viewers <= 3 ? '🐜' : viewers }}
               </v-progress-circular>
             </div>
-          </v-avatar>
+          </v-avatar>-->
+          <v-chip
+            color="grey darken-4"
+            small
+            tile
+          >
+            <div v-if="live" class="d-flex align-center">
+              <div class="white--text">{{ viewers < 2 ? '🐜🐜' : viewers }}</div>
+              <v-icon v-show="viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
+            </div>
+            <div v-else class="d-flex align-center">
+              <div class="grey--text mr-2">OFFLINE</div>
+              <v-icon small>visibility_off</v-icon>
+            </div>
+          </v-chip>
         </div>
 
         <!-- Card Data -->
@@ -46,7 +60,18 @@
           <div class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0">
             {{ title }}
           </div>
-          <div class="caption">{{ name }}</div>
+          <div class="caption d-flex align-center">
+
+            <div>{{ name }}</div>
+
+            <template v-if="nsfw">
+              <v-divider vertical class="mx-2"></v-divider>
+              <div class="d-flex align-center">
+                <div class="red--text">NSFW</div>
+              </div>
+            </template>
+
+          </div>
         </div>
       </v-card>
     </v-lazy>
@@ -86,7 +111,7 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      opacity: .5;
+      opacity: .75;
       transition: .3s;
     }
 
