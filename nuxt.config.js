@@ -89,6 +89,7 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
+    '@nuxtjs/device',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
     // { src: '~/plugins/nuxt-client-init', ssr: false },

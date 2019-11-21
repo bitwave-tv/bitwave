@@ -42,7 +42,9 @@
 
     <!-- Content -->
     <v-content>
-      <nuxt />
+      <v-fade-transition>
+        <nuxt />
+      </v-fade-transition>
     </v-content>
 
   </v-app>

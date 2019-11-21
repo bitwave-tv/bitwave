@@ -28,23 +28,25 @@
     </v-sheet>
 
     <!-- Video JS -->
-    <div class="d-flex">
-      <video
-        playsinline
-        id="streamplayer"
-        class="video-js vjs-fluid vjs-custom-skin vjs-big-play-centered"
-        controls
-        autoplay
-        preload="auto"
-        :poster="poster"
-        :style="{ width: '100%' }"
-      >
-        <source
-          :src="url"
-          :type="type"
+    <v-responsive :aspect-ratio="16/9">
+      <v-sheet color="black">
+        <video
+          playsinline
+          id="streamplayer"
+          class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
+          controls
+          autoplay
+          preload="auto"
+          :poster="poster"
+          :style="{ width: '100%' }"
         >
-      </video>
-    </div>
+          <source
+            :src="url"
+            :type="type"
+          >
+        </video>
+      </v-sheet>
+    </v-responsive>
 
 
     <!-- Chat -->
@@ -171,6 +173,7 @@
 
     data () {
       return {
+        mounted: false,
         player: null,
         qualityLevels: null,
         initialized: false,
@@ -182,21 +185,6 @@
         description: null,
         showStreamStats: false,
       }
-    },
-
-    computed: {
-      ...mapGetters({
-        username: 'username',
-      }),
-
-      mobile () {
-        return this.$vuetify.breakpoint.mdAndDown;
-      },
-
-      showEditStream () {
-        if ( !this.username ) return false;
-        return this.name.toLowerCase() === this.username.toLowerCase();
-      },
     },
 
     methods: {
@@ -290,7 +278,7 @@
       },
 
       getStreamData () {
-        const streamer = this.name.toLowerCase();
+        const streamer  = this.name.toLowerCase();
         const streamRef = db.collection( 'streams' ).doc( streamer );
         this.streamDataListener = streamRef.onSnapshot(
           async doc => await this.streamDataChanged( doc.data() ),
@@ -304,8 +292,6 @@
         this.description = data.description;
         this.nsfw  = data.nsfw;
         this.owner = data.owner;
-
-        console.log( `Stream Metadata Update.`, data );
 
         const live = data.live;
         const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
@@ -406,6 +392,23 @@
       }
     },
 
+    computed: {
+      ...mapGetters({
+        username: 'username',
+      }),
+
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
+      },
+
+      showEditStream () {
+        if ( !this.username ) return false;
+        return this.name.toLowerCase() === this.username.toLowerCase();
+      },
+    },
+
     async validate ( { params, query, store, $axios } ) {
       const user = params.watch;
       if ( !user.match( /^[a-zA-Z0-9._-]+$/ ) ) {
@@ -422,15 +425,14 @@
     },
 
     async mounted () {
-      if ( this.live )
-        this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
+      if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
 
-      if ( process.client ) {
-        this.$nextTick( () => {
-          this.playerInitialize();
-          console.debug( 'video.js:', this.player );
-        });
-      }
+      this.$nextTick( () => {
+        this.playerInitialize();
+        console.debug( 'video.js:', this.player );
+      });
+
+      this.mounted = true;
     },
 
     beforeDestroy () {
@@ -448,8 +450,7 @@
 
     // Control Bar (container)
     .vjs-control-bar {
-      background-color: #333;
-      background-color: rgba(50, 50, 50, 0.65);
+      background-color: rgba(20, 20, 20, 0.45);
     }
 
     // Progress Bar
@@ -563,6 +564,10 @@
     img {
       max-width: 100%;
     }
+  }
+
+  bottom-gradient {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
   }
 
   .blink{

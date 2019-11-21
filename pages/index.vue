@@ -235,25 +235,25 @@
 
     data () {
       return {
+        mounted: false,
         player: null,
         initialized: false,
         poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
       }
     },
 
-    computed: {
-      mobile () {
-        return this.$vuetify.breakpoint.mdAndDown;
-      },
-    },
-
     methods: {
       playerInitialize () {
-        this.player = videojs( 'solo-player', {
-          // liveui: true,
-          // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
-        });
-        this.initialized = true;
+        try {
+          this.player = videojs( 'solo-player', {
+            // liveui: true,
+            // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
+          } );
+          this.initialized = true;
+        } catch ( error ) {
+          console.error( error );
+          this.initialized = false;
+        }
       },
 
       playerDispose () {
@@ -266,16 +266,29 @@
     },
 
     async asyncData ({ $axios }) {
-      const live = ( await $axios.get( `https://api.bitwave.tv/api/sources/list`) ).data.live;
-      const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
+      const   live   = ( await $axios.get( `https://api.bitwave.tv/api/sources/list`) ).data.live;
+      const { data } =   await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
       return {
         streamers: data.users.filter( s => s.live ),
         live: live,
       }
     },
 
+    computed: {
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
+      },
+    },
+
+    created () {
+
+    },
+
     mounted () {
       this.playerInitialize();
+      this.mounted = true;
     },
 
     beforeDestroy () {

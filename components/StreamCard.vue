@@ -22,22 +22,6 @@
 
         <!-- View Counter -->
         <div class="view-counter">
-          <!--<v-avatar
-            :color="'#21212177'"
-            :size="32"
-          >
-            <div>
-              <v-progress-circular
-                class="ma-3"
-                :color="nsfw ? 'yellow' : '#00ff00'"
-                :size="32"
-                :width="3"
-                :value="viewers / totalViewers * 100"
-              >
-                {{ viewers <= 3 ? '🐜' : viewers }}
-              </v-progress-circular>
-            </div>
-          </v-avatar>-->
           <v-chip
             color="grey darken-4"
             small
@@ -90,7 +74,6 @@
       title   : { type: String },
       name    : { type: String },
       viewers : { type: Number },
-      totalViewers : { type: Number },
     },
 
     data() {
@@ -120,10 +103,6 @@
         opacity: 1;
       }
     }
-  }
-
-  .bottom-gradient {
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
   }
 
   .v-card--reveal {

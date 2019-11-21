@@ -35,12 +35,11 @@
         <stream-card
           :to="stream.name"
           :image="stream.thumbnail"
-          live
           :nsfw="stream.nsfw"
           :title="stream.title"
           :name="stream.name"
           :viewers="stream.viewCount"
-          :total-viewers="totalViewers"
+          live
         ></stream-card>
       </v-col>
     </transition-group>
@@ -63,11 +62,11 @@
       StreamCard,
     },
 
-    data() {
+    data () {
       return {
         streamDataListener: null,
-        streams: [],
         thumbnailInterval: null,
+        streams: [],
         loading: true,
         imageIndex: 0,
       }
@@ -100,13 +99,9 @@
         else this.imageIndex = 0;
 
         const coeff = 1000 * 60; // ms * sec
-        const timestamp = new Date(Math.round(Date.now() / coeff) * coeff);
+        const timestamp = new Date( Math.round( Date.now() / coeff) * coeff );
 
         this.streams[this.imageIndex].thumbnail = `${this.streams[this.imageIndex].thumbnail}?${timestamp}`;
-
-        /*this.streams.forEach( async stream => {
-          stream.thumbnail = `${stream.thumbnail}?${Date.now()}`;
-        });*/
       },
     },
 
@@ -122,14 +117,6 @@
         });
         return streams.sort( (a, b) => b.viewCount - a.viewCount );
       },
-
-      totalViewers () {
-        // Total
-        // return this.streamViewerList.reduce( ( acc, curr ) => acc + curr.viewCount, 0 );
-
-        // Largest
-        return this.streamerList[0].viewCount;
-      },
     },
 
     created () {
@@ -144,6 +131,7 @@
 
     beforeDestroy() {
       if ( this.streamDataListener ) this.streamDataListener();
+      if ( this.thumbnailInterval ) clearInterval( this.thumbnailInterval );
     },
   }
 </script>
