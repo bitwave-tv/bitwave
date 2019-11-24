@@ -38,7 +38,7 @@
 
         <v-btn
           color="yellow"
-          :disabled="alert.show"
+          :disabled="alert.type === 'error'"
           :light="!alert.show"
           @click="requestKey"
         >
