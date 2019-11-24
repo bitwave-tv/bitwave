@@ -16,6 +16,15 @@
       <v-card-title>
         Stream Server & Key
       </v-card-title>
+      <v-card-text>
+        <v-btn
+          color="yellow"
+          to="/profile"
+          light
+        >
+          View on Profile
+        </v-btn>
+      </v-card-text>
     </v-card>
 
     <v-card v-else>
