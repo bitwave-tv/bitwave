@@ -26,7 +26,7 @@
 
       <notifications />
 
-      <user class="ml-3" />
+      <user />
 
     </v-app-bar>
 
@@ -48,7 +48,7 @@
       User,
     },
 
-    data() {
+    data () {
       return {
         title: '[bitwave.tv]',
         dark: true,
