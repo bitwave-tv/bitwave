@@ -7,37 +7,13 @@
         xl="8"
       >
         <!-- Banner Stream -->
-        <v-card
-          v-if="live"
-          color="black"
-          class="d-flex align-center flex-wrap elevation-8 mb-2"
-        >
-          <div
-            class="flex-grow-1"
-            style="min-width: 40%;"
-          >
-            <video
-              playsinline
-              id="solo-player"
-              class="video-js vjs-default-skin vjs-fluid"
-              controls
-              autoplay
-              muted
-              preload="auto"
-              data-setup='{ "aspectRatio":"16:9" }'
-              :poster="poster"
-            >
-              <source
-                :src="live[0].src"
-                :type="live[0].type"
-              >
-            </video>
-          </div>
-
-          <div class="d-flex flex-shrink-1" :style="{ width: mobile ? '100%' : '450px', 'max-height': mobile ? '500px' : '555px' }" >
-            <chat :chat-channel="live[0].name"/>
-          </div>
-        </v-card>
+        <banner-video
+          :src="live[0].src"
+          :type="live[0].type"
+          :poster="poster"
+          :name="live[0].name"
+          :mobile="mobile"
+        ></banner-video>
 
         <!-- Live Grid -->
         <stream-grid :streamers="streamers" />
@@ -54,7 +30,6 @@
                   max-width="2rem"
                   src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif"
                   alt="Cool blobby with sunglasses"
-                  @click="updatePlayerSrc"
                 ></v-img>
               </div>
               <div class="ml-4">
@@ -204,11 +179,8 @@
 </template>
 
 <script>
-  // videojs
-  import videojs from 'video.js'
-  // import 'videojs-contrib-dash'
-  import Chat from '~/components/Chat'
   import StreamGrid from '@/components/StreamGrid'
+  import BannerVideo from '@/components/BannerVideo';
 
   export default {
     head () {
@@ -229,40 +201,20 @@
     },
 
     components: {
+      BannerVideo,
       StreamGrid,
-      Chat,
     },
 
     data () {
       return {
         mounted: false,
         player: null,
-        initialized: false,
         poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
       }
     },
 
     methods: {
-      playerInitialize () {
-        try {
-          this.player = videojs( 'solo-player', {
-            // liveui: true,
-            // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
-          } );
-          this.initialized = true;
-        } catch ( error ) {
-          console.error( error );
-          this.initialized = false;
-        }
-      },
 
-      playerDispose () {
-        if ( this.player ) this.player.dispose();
-      },
-
-      updatePlayerSrc () {
-        this.player.src({ type: 'video/mp4', src: 'https://cdn.bitwave.tv/static/bumps/Bump33-sm.mp4' });
-      },
     },
 
     async asyncData ({ $axios }) {
@@ -287,18 +239,8 @@
     },
 
     mounted () {
-      this.playerInitialize();
       this.mounted = true;
-    },
-
-    beforeDestroy () {
-      this.playerDispose();
     },
   }
 </script>
 
-<style>
-  .video-js .vjs-live-control {
-    margin-left: 1rem;
-  }
-</style>
