@@ -566,7 +566,7 @@
     }
   }
 
-  bottom-gradient {
+  .bottom-gradient {
     background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
   }
 
@@ -578,6 +578,7 @@
     -webkit-animation-timing-function:ease-in-out;
     -webkit-animation-direction: alternate;
   }
+
   @-webkit-keyframes blinker {
     from {opacity: 1.0;}
     to {opacity: 0.0;}
