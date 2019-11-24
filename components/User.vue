@@ -1,5 +1,5 @@
 <template>
-  <v-flex shrink>
+  <div>
     <v-menu
       v-if="isAuth"
       v-model="profileMenu"
@@ -19,8 +19,9 @@
           small
           :loading="loading"
         >
-          <v-avatar size="32">
-            <img :src="avatar" :alt="username">
+          <v-avatar size="32" color="grey">
+            <img v-if="avatar" :src="avatar" :alt="username">
+            <v-icon v-else color="white">person</v-icon>
           </v-avatar>
         </v-btn>
       </template>
@@ -28,8 +29,9 @@
       <v-card width="225">
         <v-sheet color="yellow" class="pa-2">
           <div class="d-flex align-center">
-            <v-avatar class="mr-4" size="40">
-              <img :src="avatar" :alt="username">
+            <v-avatar class="mr-4" size="40"  color="grey">
+              <img v-if="avatar" :src="avatar" :alt="username">
+              <v-icon v-else>person</v-icon>
             </v-avatar>
 
             <div>
@@ -112,14 +114,13 @@
 
     <login-dialog v-else />
 
-  </v-flex>
+  </div>
 </template>
 
 <script>
   import { auth } from '@/plugins/firebase.js';
   import LoginDialog from '~/components/LoginDialog';
   const BraintreeDropIn = () => import ( '~/components/Payment/braintree-drop-in' );
-
 
   import { mapGetters } from 'vuex';
 
@@ -132,7 +133,7 @@
       BraintreeDropIn,
     },
 
-    data() {
+    data () {
       return {
         unsubscribeUser: null,
         profileMenu: false,

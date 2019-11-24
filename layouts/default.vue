@@ -31,9 +31,11 @@
 
       <v-spacer />
 
+      <stream-info />
+
       <notifications />
 
-      <user class="ml-3" />
+      <user />
 
     </v-app-bar>
 
@@ -54,6 +56,7 @@
   import User from '~/components/User'
   import UserList from '~/components/UserList'
   import Notifications from '~/components/Notifications'
+  import StreamInfo from '@/components/StreamInfo';
 
   import { mapState } from 'vuex'
 
@@ -62,6 +65,7 @@
       User,
       UserList,
       Notifications,
+      StreamInfo,
     },
 
     data() {
@@ -85,10 +89,6 @@
       ...mapState({
         currentUser: state => state.user.currentUser,
       }),
-
-      mobile () {
-        return !this.$vuetify.breakpoint.smAndUpmdAndUp;
-      },
 
       width () {
         return this.$vuetify.breakpoint.smAndUp ? 450 : 300;
