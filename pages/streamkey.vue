@@ -7,8 +7,24 @@
       <v-card-text>
         <div>
           To stream on bitwave.tv you first need a streaming software.
-          For PC you can use OBS or StreamLabs.
+          For PC you can use OBS or Streamlabs.
         </div>
+        <v-btn
+          href="https://obsproject.com/download"
+          target="_blank"
+          color="blue"
+          outlined
+        >
+          OBS Studio
+        </v-btn>
+        <v-btn
+          href="https://streamlabs.com/slobs/download"
+          target="_blank"
+          color="blue"
+          outlined
+        >
+          Streamlabs
+        </v-btn>
       </v-card-text>
     </v-card>
 
