@@ -54,6 +54,14 @@
         >
           Request Key
         </v-btn>
+
+        <v-btn
+        color="yellow"
+        to="/profile"
+        light
+      >
+        View Profile
+      </v-btn>
       </v-card-text>
     </v-card>
 
