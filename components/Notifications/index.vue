@@ -1,5 +1,5 @@
 <template>
-  <v-flex shrink>
+  <div>
     <v-menu
       v-model="notificationMenu"
       :close-on-content-click="true"
@@ -86,7 +86,7 @@
         </v-sheet>
       </v-card>
     </v-menu>
-  </v-flex>
+  </div>
 </template>
 
 <script>

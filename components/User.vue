@@ -1,5 +1,5 @@
 <template>
-  <v-flex shrink>
+  <div>
     <v-menu
       v-if="isAuth"
       v-model="profileMenu"
@@ -114,14 +114,13 @@
 
     <login-dialog v-else />
 
-  </v-flex>
+  </div>
 </template>
 
 <script>
   import { auth } from '@/plugins/firebase.js';
   import LoginDialog from '~/components/LoginDialog';
   const BraintreeDropIn = () => import ( '~/components/Payment/braintree-drop-in' );
-
 
   import { mapGetters } from 'vuex';
 
