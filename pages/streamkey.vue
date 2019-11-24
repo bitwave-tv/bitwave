@@ -29,6 +29,7 @@
         >
           {{ alert.message }}
         </v-alert>
+
         <v-alert
           v-model="requestError.show"
           :type="requestError.type"
@@ -39,7 +40,7 @@
         <v-btn
           color="yellow"
           :disabled="alert.type === 'error'"
-          :light="!alert.show"
+          :light="!alert.type === 'error'"
           @click="requestKey"
         >
           Request Key
@@ -73,19 +74,26 @@
         const cover = 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg';
         const username = this.user.username.toLowerCase();
 
+
+        this.$ga.event({
+          eventCategory : 'profile',
+          eventAction   : 'request stream key',
+          eventLabel    : username,
+        });
+
         try {
           const res = await this.$axios.post( endpoint, { username, cover } );
-
+          const type = res.status === 200 ? 'success' : 'error';
           this.requestError = {
             show: true,
-            type: res.status === 200 ? 'success' : 'error',
+            type: type,
             message: res.data,
           };
         } catch ( error ) {
-          console.log( error );
+          const type = error.response.status === 200 ? 'success' : 'error';
           this.requestError = {
             show: true,
-            type: error.response.status === 200 ? 'success' : 'error',
+            type: type,
             message: error.response.data,
           };
         }
