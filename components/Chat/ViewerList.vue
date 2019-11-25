@@ -70,7 +70,7 @@
                 <v-list-item-subtitle
                   v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
                 >
-                  Just Watching {{ `${viewer.page} (${ getViewCount ( viewer.page) })` }}
+                  Watching: {{ `${viewer.page} (${ getViewCount ( viewer.page) })` }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>Getting Soda</v-list-item-subtitle>
               </v-list-item-content>

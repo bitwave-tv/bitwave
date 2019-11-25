@@ -122,14 +122,17 @@ export const actions = {
 
       if ( channel in accumulator ) {
         if ( username in accumulator[channel] ) {
-          accumulator[channel][username].push( user );
+          accumulator[channel].viewers[username].push( user );
         } else {
-          accumulator[channel][username] = [ user ];
+          accumulator[channel].viewers[username] = [ user ];
           accumulator[channel].total++;
         }
       } else {
-        accumulator[channel] = {};
-        accumulator[channel][username] = [ user ];
+        accumulator[channel] = {
+          viewers: {},
+          total: 1,
+        };
+        accumulator[channel].viewers[username] = [ user ];
         accumulator[channel].total = 1;
       }
       return accumulator;
@@ -147,7 +150,7 @@ export const actions = {
 
     // Create list of viewers in each stream
     const streamViewers = Object.entries(roomViewerList).map( streamer => {
-      const streamViewers = Object.entries( streamer[1] );
+      const streamViewers = Object.entries( streamer[1].viewers );
       return {
         streamer: streamer[0],
         viewCount: streamViewers.length,
