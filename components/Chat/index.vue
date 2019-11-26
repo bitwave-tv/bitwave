@@ -1,7 +1,7 @@
 <template>
-  <v-layout
+  <div
     id="sidechat"
-    column
+    class="d-flex flex-grow-1 flex-column"
     v-resize.quiet="onResize"
   >
 
@@ -13,14 +13,13 @@
     >
 
       <!-- Viewer List -->
-      <ViewerList
-        :page="page"
-      ></ViewerList>
+      <ViewerList :page="page" />
 
       <!-- Chat Label -->
       <h4 @click="addUserTag(page)">{{ page }}</h4>
 
       <div class="d-flex">
+
         <!-- Create Poll Button -->
         <div v-if="page === username">
           <v-menu
@@ -49,17 +48,18 @@
           </v-menu>
         </div>
 
-        <!-- Scroll to Chat Bottom -->
+        <!-- Placeholder -->
         <v-btn
           :style="{ 'min-width': '40px' }"
           small
           color="yellow"
-          @click="scrollToBottom(true)"
           class="ml-2 px-0 black--text"
           disabled
+          @click="scrollToBottom(true)"
         >
           <v-icon>verified_user</v-icon>
         </v-btn>
+
       </div>
 
     </v-sheet>
@@ -92,7 +92,7 @@
       @send="sendMessage"
     ></chat-input>
 
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -101,13 +101,13 @@
 
   import socketio from 'socket.io-client'
 
+  import ChatInput from '@/components/Chat/ChatInput'
   import ChatMessages from '@/components/Chat/ChatMessages'
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
-  import ChatInput from '@/components/Chat/ChatInput'
+  import ViewerList from '@/components/Chat/ViewerList'
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
-  import ViewerList from '@/components/Chat/ViewerList'
 
   export default {
     name: 'Chat',
@@ -118,11 +118,11 @@
     },
 
     components: {
-      ViewerList,
-      ChatPollVote,
-      ChatPoll,
-      ChatMessages,
       ChatInput,
+      ChatMessages,
+      ChatPoll,
+      ChatPollVote,
+      ViewerList,
     },
 
     data() {
@@ -138,11 +138,11 @@
 
         messages: [
           {
-            timestamp: Date.now(),
-            username: 'Dispatch',
-            avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-            message: 'Loading messages...',
-            channel: 'global',
+            timestamp : Date.now(),
+            username  : 'Dispatch',
+            avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+            message   : 'Loading messages...',
+            channel   : 'bitwave',
           },
         ],
 
@@ -179,12 +179,12 @@
       },
 
       async onResize () {
-        await this.$nextTick( async () => await this.scrollToBottom(false) );
+        await this.$nextTick( async () => await this.scrollToBottom( false ) );
       },
 
       async addUserTag ( user ) {
         this.$refs['chat-input'].$refs['chatmessageinput'].focus();
-        this.appendChatMessage(`@${user} `);
+        this.appendChatMessage( `@${user} ` );
       },
 
       async authenticated ( user ) {
@@ -244,7 +244,6 @@
             };
             this.connectChat( tokenUser );
           }
-
           lastUser = user; // Record user state
         });
       },
@@ -284,8 +283,15 @@
           return;
         }
 
-        this.socket = socketio( 'chat.bitwave.tv', { transports: ['websocket'] } );
-        // const socket = socketio('chat.bitwave.tv');
+        const socketOptions = {
+          transports: ['websocket'],
+          /*extraHeaders: {
+            auth: tokenUser,
+          },*/
+        };
+
+        this.socket = socketio( 'chat.bitwave.tv', socketOptions );
+        // this.socket = socketio( 'localhost:5000', socketOptions );
 
         this.socket.on( 'connect', () => this.socket.emit( 'new user', tokenUser ) );
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
@@ -335,7 +341,7 @@
 
       async rcvMessageBulk ( messages ) {
         // Remove ignored user messages
-        if ( this.useIgnore ){
+        if ( this.useIgnore ) {
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
         }
 
@@ -387,9 +393,9 @@
         if ( !this.getMessage || this.getMessage.length > 300 ) return false;
 
         const msg = {
-          message: this.getMessage,
-          channel: this.page,
-          global: this.global,
+          message : this.getMessage,
+          channel : this.page,
+          global  : this.global,
         };
 
         const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
@@ -470,13 +476,13 @@
         }
 
         this.token = trollToken;
-        this.trollId = jwt_decode(trollToken).user.name;
+        this.trollId = jwt_decode( trollToken ).user.name;
       },
 
       speak ( message, username ) {
         if ( !this.getUseTts ) return;
         if ( this.ignoreList.find( user => user === username ) ) return;
-        if ( !this.getTrollTts && /troll:\w+/.test(username) ) return; // disables troll TTS
+        if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return; // disables troll TTS
 
         function unescapeHtml(unsafe) {
           return unsafe
@@ -573,11 +579,11 @@
           // Confirmation Message
           await this.rcvMessageBulk([
             {
-              timestamp: Date.now(),
-              username: '[bitwave.tv]',
-              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message: `Ignored User: ${username}`,
-              channel: this.page,
+              timestamp : Date.now(),
+              username  : '[bitwave.tv]',
+              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message   : `Ignored User: ${username}`,
+              channel   : this.page,
             },
           ]);
           // Analytics
@@ -605,11 +611,11 @@
           // Confirmation Message
           await this.rcvMessageBulk([
             {
-              timestamp: Date.now(),
-              username: '[bitwave.tv]',
-              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message: `Unignored User: ${username}`,
-              channel: this.page,
+              timestamp : Date.now(),
+              username  : '[bitwave.tv]',
+              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message   : `Unignored User: ${username}`,
+              channel   : this.page,
             },
           ]);
           // Analytics
@@ -636,11 +642,11 @@
           // Confirmation Message
           await this.rcvMessageBulk([
             {
-              timestamp: Date.now(),
-              username: '[bitwave.tv]',
-              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message: `Ignored Channel: ${channel}`,
-              channel: this.page,
+              timestamp : Date.now(),
+              username  : '[bitwave.tv]',
+              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message   : `Ignored Channel: ${channel}`,
+              channel   : this.page,
             },
           ]);
           // Analytics
@@ -667,11 +673,11 @@
           // Confirmation Message
           await this.rcvMessageBulk([
             {
-              timestamp: Date.now(),
-              username: '[bitwave.tv]',
-              avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message: `Unignored Channel: ${channel}`,
-              channel: this.page,
+              timestamp : Date.now(),
+              username  : '[bitwave.tv]',
+              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+              message   : `Unignored Channel: ${channel}`,
+              channel   : this.page,
             },
           ]);
           // Analytics
@@ -824,8 +830,8 @@
 
     beforeDestroy () {
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
-      if ( this.unsubscribeUser ) this.unsubscribeUser();
-      if ( this.unsubscribePoll ) this.unsubscribePoll();
+      if ( this.unsubscribeUser )  this.unsubscribeUser();
+      if ( this.unsubscribePoll )  this.unsubscribePoll();
       if ( this.socket ) this.socket.disconnect();
     },
   }

@@ -54,7 +54,7 @@
             <v-list-item
               v-for="viewer in viewerList"
               :key="viewer.username"
-              :to="`${viewer.page.watch || viewer.page}`"
+              :to="`${viewer.page}`"
             >
               <v-list-item-avatar>
                 <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
@@ -62,17 +62,9 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>{{ viewer.username }}</v-list-item-title>
-                <v-list-item-subtitle
-                  v-if="viewer.page && viewer.page.watch && channelViews[ viewer.page.watch.toLowerCase() ]"
-                >
-                  Chatting in: {{ `${viewer.page.watch} (${ getViewCount ( viewer.page.watch ) })` }}
-                </v-list-item-subtitle>
-                <v-list-item-subtitle
-                  v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
-                >
+                <v-list-item-subtitle>
                   Watching: {{ `${viewer.page} (${ getViewCount ( viewer.page) })` }}
                 </v-list-item-subtitle>
-                <v-list-item-subtitle v-else>Getting Soda</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </template>
