@@ -65,12 +65,12 @@
                 <v-list-item-subtitle
                   v-if="viewer.page && viewer.page.watch && channelViews[ viewer.page.watch.toLowerCase() ]"
                 >
-                  Chatting in: {{ `${viewer.page.watch} (${ channelViews[ viewer.page.watch.toLowerCase() ].total })` }}
+                  Chatting in: {{ `${viewer.page.watch} (${ getViewCount ( viewer.page.watch ) })` }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle
                   v-else-if="viewer.page && channelViews[ viewer.page.toLowerCase() ]"
                 >
-                  Just Watching {{ `${viewer.page} (${ channelViews[ viewer.page.toLowerCase() ].total })` }}
+                  Watching: {{ `${viewer.page} (${ getViewCount ( viewer.page) })` }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle v-else>Getting Soda</v-list-item-subtitle>
               </v-list-item-content>
@@ -99,7 +99,16 @@
       }
     },
 
-    methods: {},
+    methods: {
+      getViewCount ( channel ) {
+        if ( this.streamViewerList ) {
+          const viewers = this.streamViewerList.find( svl => svl.streamer.toLowerCase() === channel.toLowerCase() );
+          return viewers ? viewers.viewCount : 0;
+        } else {
+          return 0;
+        }
+      },
+    },
 
     computed: {
       ...mapState ('chat', {
@@ -109,10 +118,11 @@
 
       ...mapGetters('chat', {
         viewerCount: 'viewerCount',
+        streamViewerList: 'GET_STREAM_VIEWERLIST',
       }),
 
       channelViewCount () {
-        return this.channelViews[ this.page.toLowerCase() ] ? this.channelViews[ this.page.toLowerCase() ].total : 0;
+        return this.getViewCount( this.page );
       },
 
       viewerList () {

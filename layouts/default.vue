@@ -71,13 +71,7 @@
     data() {
       return {
         title: '[bitwave.tv]',
-
-        fixed: false,
-
-        miniVariant: true,
         drawer: undefined,
-
-        showChat: true,
       }
     },
 
@@ -89,14 +83,10 @@
       ...mapState({
         currentUser: state => state.user.currentUser,
       }),
-
-      width () {
-        return this.$vuetify.breakpoint.smAndUp ? 450 : 300;
-      },
     },
 
     created() {
-      this.showChat = this.$vuetify.breakpoint.smAndUp;
+
     }
   }
 </script>

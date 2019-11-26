@@ -247,6 +247,11 @@
           this.reloadPlayer();
         });
 
+        this.player.on( 'error', error =>{
+          // Brush player errors under the rug
+          console.warn(error);
+        });
+
         this.initialized = true;
 
         this.getStreamData(); // Get stream data
@@ -302,7 +307,7 @@
         if ( live ) this.poster = thumbnail;
 
         // Detect offline stream
-        if ( !this.live && !live ) console.log( 'User is offline' );
+        if ( !this.live && !live ) console.debug( 'User is offline' );
 
         // Detect user going live
         else if ( !this.live && live ) {
@@ -320,12 +325,8 @@
         else if ( this.url !== url  || this.type !== type ) {
           this.url  = url;
           this.type = type;
-
-          console.log( 'Video Source Changed' );
-
           this.reloadPlayer();
         }
-
         this.live = live;
       },
 
@@ -336,12 +337,6 @@
         if ( !this.initialized ) return;
         this.player.poster = this.poster;
         this.player.src( { src: this.url, type: this.type } );
-
-        console.log( 'Player reloaded' );
-      },
-
-      updateStreamData ( data ) {
-        console.log( data );
       },
     },
 
@@ -528,16 +523,14 @@
 
   .vjs-has-started {
     .vjs-control-bar {
-      opacity: 1;
       transform: translateY(0);
-      transition: transform .3s;
+      transition: .3s;
     }
 
     &.vjs-user-inactive.vjs-playing {
       .vjs-control-bar {
-        opacity: 1;
         transform: translateY(127%);
-        transition: transform .5s;
+        transition: .5s;
       }
     }
   }
@@ -566,7 +559,7 @@
     }
   }
 
-  bottom-gradient {
+  .bottom-gradient {
     background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
   }
 
@@ -578,6 +571,7 @@
     -webkit-animation-timing-function:ease-in-out;
     -webkit-animation-direction: alternate;
   }
+
   @-webkit-keyframes blinker {
     from {opacity: 1.0;}
     to {opacity: 0.0;}
