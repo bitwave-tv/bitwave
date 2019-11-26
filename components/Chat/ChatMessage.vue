@@ -1,41 +1,39 @@
 <template functional>
-  <v-flex class="msg">
-    <div class="d-flex py-1 ml-3 mr-1">
+  <div class="msg d-flex py-1 ml-3 mr-1">
 
-      <!-- Chat Avatar -->
-      <div
-        class="v-avatar mr-2 mt-2"
-        @click="listeners.reply(props.username)"
-      >
-        <img v-if="!!props.avatar" :src="props.avatar" :alt="props.username">
-        <div v-else class="v-icon notranslate material-icons" :style="{ background: props.color }">person</div>
-      </div>
+    <!-- Chat Avatar -->
+    <div
+      class="v-avatar mr-2 mt-2"
+      @click="listeners.reply(props.username)"
+    >
+      <img v-if="!!props.avatar" :src="props.avatar" :alt="props.username">
+      <div v-else class="v-icon notranslate material-icons" :style="{ background: props.color }">person</div>
+    </div>
 
-      <!-- Chat Content -->
-      <div class="flex-grow-1">
+    <!-- Chat Content -->
+    <div class="flex-grow-1">
 
-        <!-- Message Header -->
-        <div class="d-flex align-center">
+      <!-- Message Header -->
+      <div class="d-flex align-center">
 
-          <!-- Timestamp & Username -->
-          <div class="flex-grow-1 subtitle-2">
-            <span class="time">{{ props.timestamp }}</span>
-            <span class="username" :style="props.userStyling" v-html="props.displayName"></span>
-          </div>
-
-          <!-- Room Label -->
-          <div class="flex-shrink-1">
-            <nuxt-link :to="props.channel">
-              <kbd>{{ props.channel }}</kbd>
-            </nuxt-link>
-          </div>
+        <!-- Timestamp & Username -->
+        <div class="flex-grow-1 subtitle-2">
+          <span class="time">{{ props.timestamp }}</span>
+          <span class="username" :style="props.userStyling" v-html="props.displayName"></span>
         </div>
 
-        <!-- Chat Body -->
-        <slot></slot>
+        <!-- Room Label -->
+        <div class="flex-shrink-1">
+          <nuxt-link :to="props.channel">
+            <kbd>{{ props.channel }}</kbd>
+          </nuxt-link>
+        </div>
       </div>
+
+      <!-- Chat Body -->
+      <slot></slot>
     </div>
-  </v-flex>
+  </div>
 </template>
 
 <script>

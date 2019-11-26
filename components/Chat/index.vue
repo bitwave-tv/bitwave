@@ -371,9 +371,13 @@
         });
 
         // Trim chat history
-        if ( this.messages.length > 1.25 * this.chatLimit ) {
+        /*if ( this.messages.length > 1.25 * this.chatLimit ) {
           this.messages = this.messages.splice( -this.chatLimit );
           console.log('Trimmed History');
+        }*/
+
+        if ( !this.$refs['chatmessages'].showFAB ) {
+          this.messages = this.messages.splice( -this.chatLimit );
         }
 
         this.scrollToBottom();

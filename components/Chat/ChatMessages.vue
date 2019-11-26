@@ -8,8 +8,9 @@
       ref="scroller"
     >
       <chat-message
-        v-for="item in messages"
-        :key="item.timestamp"
+        v-for="(item, index) in messages"
+        :key="index"
+        :kkey="item.timestamp"
         :username="item.username"
         :display-name="item.username"
         :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
@@ -33,7 +34,7 @@
         small
         color="yellow"
         @click="scrollToBottom( true )"
-        class="black--text mb-3"
+        class="black--text mt-3"
       >
         <v-icon>keyboard_arrow_down</v-icon>
       </v-btn>
@@ -89,19 +90,22 @@
         this.showFAB = false;
 
         // Scroll to last message
-        this.chatContainer.scroll({
-          top: this.chatContainer.scrollHeight + 500,
-          behavior: 'smooth',
-        });
-
-        clearTimeout( this.scrollTimeout );
-
-        this.scrollTimeout = setTimeout( () => {
+        // After it's added to DOM
+        this.$nextTick( () => {
           this.chatContainer.scroll({
-            top: this.chatContainer.scrollHeight + 500,
+            top: this.chatContainer.scrollHeight,
             behavior: 'smooth',
           });
-        }, 500 );
+
+          clearTimeout( this.scrollTimeout );
+
+          this.scrollTimeout = setTimeout( () => {
+            this.chatContainer.scroll({
+              top: this.chatContainer.scrollHeight + 500,
+              behavior: 'smooth',
+            });
+          }, 500 );
+        });
       },
 
       jumpToBottom () {
