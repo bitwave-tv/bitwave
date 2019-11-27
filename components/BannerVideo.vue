@@ -36,7 +36,6 @@
 </template>
 
 <script>
-  // videojs
   import videojs from 'video.js'
   // import 'videojs-contrib-dash'
 

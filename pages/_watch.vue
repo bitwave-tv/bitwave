@@ -299,10 +299,10 @@
         this.owner = data.owner;
 
         const live = data.live;
-        const url  = data.url  || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
-        const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+        const url  = data.url;
+        const type = data.type || `application/x-mpegURL`; // application/x-mpegURL | application/dash+xml
 
-        const thumbnail = data['thumbnail'] || null;
+        const thumbnail = data.thumbnail;
 
         if ( live ) this.poster = thumbnail;
 
@@ -345,21 +345,19 @@
       try {
         const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
 
-        const name   = data.name   || 'No Username';
-        const avatar = data.avatar || 'https://cdn.bitwave.tv/static/img/glitchwave.gif';
+        const name   = data.name;
+        const avatar = data.avatar;
+        let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
         const title  = data.title  || 'No Title';
         const description = data.description || 'No Description';
-        let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
-        const live   = data.live   || false;
-        const nsfw   = data.nsfw   || false;
-        const owner  = data.owner  || '';
-        let   url    = data.url    || `https://cdn.stream.bitwave.tv/stream/${name}/index.m3u8`;
+        const live   = data.live;
+        const nsfw   = data.nsfw;
+        const owner  = data.owner;
         let   type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
+        let   url    = data.url;
 
-        const thumb  = data['thumbnail'] || false;
-        if ( data.thumbnail ) {
-          poster = live ? thumb : poster;
-        }
+        const thumb  = data.thumbnail;
+        if ( data.thumbnail ) poster = live ? thumb : poster;
 
         if ( !live ) {
           const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump' );
@@ -370,19 +368,18 @@
         return { name, avatar, title, description, poster, live, nsfw, owner, url, type };
 
       } catch ( error ) {
-        console.log( `ERROR: Failed to find user ${user}` );
-        console.error( error.message );
+        console.log( `ERROR: Failed to find user ${user}: ${error.message}` );
 
         return {
           name   : '404 Error',
           avatar : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+          poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
           title  : 'Streamer not found',
           description : 'Invalid Stream',
-          poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
           live   : false,
           nsfw   : false,
-          url    : '',
-          type   : '',
+          url    : null,
+          type   : null,
         }
       }
     },
@@ -415,17 +412,13 @@
 
     beforeRouteUpdate ( to, from, next ) {
       const params = to.params;
-      if ( params ) console.log( `Watching: ${params.watch}` );
       next();
     },
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
 
-      this.$nextTick( () => {
-        this.playerInitialize();
-        console.debug( 'video.js:', this.player );
-      });
+      this.playerInitialize();
 
       this.mounted = true;
     },
