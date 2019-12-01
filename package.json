@@ -36,7 +36,7 @@
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.1.0",
     "vue-clipboard2": "^0.3.0",
-    "vue-recaptcha-v3": "^1.7.0",
+    "vue-recaptcha-v3": "^1.7.2",
     "vue-virtual-scroller": "^1.0.0-rc.2"
   },
   "devDependencies": {
