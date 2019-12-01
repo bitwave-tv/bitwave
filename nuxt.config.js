@@ -80,7 +80,6 @@ module.exports = {
     // '@/plugins/vuetify',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
-    { src: '@/plugins/vue-recaptcha-v3', mode: 'client' },
   ],
 
   /*
@@ -91,6 +90,7 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/device',
+    '@nuxtjs/recaptcha',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
     // { src: '~/plugins/nuxt-client-init', ssr: false },
@@ -114,18 +114,16 @@ module.exports = {
     optionsPath: './vuetify.options.js',
   },
 
+  recaptcha: {
+    hideBadge: true,
+    siteKey: '6LcEX8QUAAAAADjiUPfbzkyn0KYAaEK263quzCGh',
+    version: 3,
+  },
+
   /*
   ** Build configuration
   */
   build: {
-    // transpile: [ 'vuetify/lib' ],
-    // plugins: [ new VuetifyLoaderPlugin() ],
-    // loaders: {
-    //   stylus: {
-    //     import: [ '~assets/style/variables.styl' ],
-    //   },
-    // },
-
     /*
     ** You can extend webpack config here
     */
