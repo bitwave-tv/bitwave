@@ -774,7 +774,6 @@
     async mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 
-      await this.setupRECAPTCHA();
       await this.setupTrollData();
 
       // Add listener for voice changes, then update voices.
@@ -838,6 +837,8 @@
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
+
+      await this.setupRECAPTCHA();
     },
 
     beforeDestroy () {
