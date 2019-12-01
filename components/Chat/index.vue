@@ -297,7 +297,7 @@
         // this.socket.on( 'connect', () => this.socket.emit( 'new user', tokenUser ) );
         this.socket.on( 'connect', async () => {
           // Ensure we've loaded reCAPTCHA...
-          await this.$recaptchaLoaded();
+          // await this.$recaptchaLoaded();
 
           // If we need a new token...
           if ( !this.recaptcha ) {
