@@ -93,7 +93,7 @@
         // After it's added to DOM
         this.$nextTick( () => {
           this.chatContainer.scroll({
-            top: this.chatContainer.scrollHeight,
+            top: this.chatContainer.scrollHeight + 500,
             behavior: 'smooth',
           });
 

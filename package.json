@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "private": true,
@@ -36,6 +36,7 @@
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.1.0",
     "vue-clipboard2": "^0.3.0",
+    "vue-recaptcha-v3": "^1.7.0",
     "vue-virtual-scroller": "^1.0.0-rc.2"
   },
   "devDependencies": {
