@@ -302,7 +302,7 @@
           // If we need a new token...
           if ( !this.recaptcha ) {
             await this.insertMessage( `Verifying user...`, '#ffeb3b' );
-            tokenUser.recaptcha = await this.$recaptcha( 'connect' );
+            tokenUser.recaptcha = this.$recaptcha ? await this.$recaptcha( 'connect' ) : null;
           }
 
           // Attempt to connect...
