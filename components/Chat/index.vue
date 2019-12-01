@@ -294,15 +294,15 @@
         this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${attempt})` ));
         this.socket.on( 'disconnect', async data => await this.socketError( `Connection Lost!`, data ));
 
-        // this.socket.on( 'connect', () => this.socket.emit( 'new user', tokenUser ) );
         this.socket.on( 'connect', async () => {
-          // Ensure we've loaded reCAPTCHA...
-          // await this.$recaptchaLoaded();
 
-          // If we need a new token...
+          // Set reCAPTCHA token
           if ( !this.recaptcha ) {
+            // If we need a token...
             await this.insertMessage( `Verifying user...`, '#ffeb3b' );
-            tokenUser.recaptcha = await this.$recaptcha( 'connect' );
+            tokenUser.recaptcha = await this.$recaptcha.execute( 'connect' );
+          } else {
+            tokenUser.recaptcha = this.recaptcha;
           }
 
           // Attempt to connect...
@@ -487,9 +487,13 @@
       },
 
       async setupRECAPTCHA () {
-        if ( process.server ) return;
-        await this.$recaptchaLoaded();
-        this.recaptcha = await this.$recaptcha( 'connect' );
+        try {
+          await this.$recaptcha.init();
+          this.recaptcha = await this.$recaptcha.execute( 'connect' );
+        } catch ( error ) {
+          console.error(`reCAPTCHA failed to load!`, error);
+          this.recaptcha = null;
+        }
       },
 
       async setupTrollData () {
