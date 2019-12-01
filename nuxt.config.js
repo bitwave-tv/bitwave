@@ -80,6 +80,7 @@ module.exports = {
     // '@/plugins/vuetify',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
+    { src: '@/plugins/vue-recaptcha-v3', mode: 'client' },
   ],
 
   /*

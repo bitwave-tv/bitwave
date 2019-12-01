@@ -6,6 +6,7 @@
         ref="chatmessageinput"
         :value="getMessage"
         :label="`Chat as ${username}...`"
+        :loading="loading"
         color="yellow"
         autocomplete="new-chat-message"
         autocorrect="off"
@@ -22,7 +23,7 @@
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
         @cut="event => lastMessageHandler(event)"
-      ></v-text-field>
+      />
     </div>
 
     <div class="d-flex">
@@ -47,12 +48,14 @@
         </template>
         <chat-settings
           @close="showChatSettings = false"
-        ></chat-settings>
+        />
       </v-menu>
 
       <v-spacer/>
 
       <v-btn
+        :disabled="loading"
+        :light="!loading"
         small
         color="yellow black--text"
         class="px-2"
@@ -80,6 +83,7 @@
 
     props: {
       username: { type: String },
+      loading: { type: Boolean },
     },
 
     data() {

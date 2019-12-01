@@ -83,14 +83,15 @@
       :messages="messages"
       :show-timestamps="showTimestamps"
       @reply="addUserTag"
-    ></chat-messages>
+    />
 
     <!-- Chat Input -->
     <chat-input
       ref="chat-input"
       :username="username"
+      :loading="loading"
       @send="sendMessage"
-    ></chat-input>
+    />
 
   </div>
 </template>
@@ -132,6 +133,7 @@
 
         loading: true,
         token: null,
+        recaptcha: null,
         trollId: null,
         socket: null,
         chatLimit: 50,
@@ -141,7 +143,7 @@
             timestamp : Date.now(),
             username  : 'Dispatch',
             avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-            message   : 'Loading messages...',
+            message   : `<p>Connecting to chat server... <img src="https://cdn.bitwave.tv/static/emotes/catspin.gif" alt=":catspin:"></p>`,
             channel   : 'bitwave',
           },
         ],
@@ -199,7 +201,6 @@
           };
           this.connectChat( tokenTroll );
         }
-        this.loading = false;
       },
 
       async subscribeToUser ( uid ) {
@@ -273,34 +274,57 @@
           console.warn('Could not find scroll container for chat.');
       },
 
-      connectChat ( tokenUser ) {
+      async connectChat ( tokenUser ) {
         if ( this.socket) {
           this.socket.disconnect();
         }
 
         if ( !tokenUser ) {
+          await this.socketError( `Invalid User Token` );
           console.warn( `Failed to connect to chat. No user defined.` );
           return;
         }
 
-        const socketOptions = {
-          transports: ['websocket'],
-          /*extraHeaders: {
-            auth: tokenUser,
-          },*/
-        };
+        const socketOptions = { transports: [ 'websocket' ] };
 
         this.socket = socketio( 'chat.bitwave.tv', socketOptions );
         // this.socket = socketio( 'localhost:5000', socketOptions );
 
-        this.socket.on( 'connect', () => this.socket.emit( 'new user', tokenUser ) );
+        this.socket.on( 'error', async error => await this.socketError( `Connection Failed!`, error ));
+        this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${attempt})` ));
+        this.socket.on( 'disconnect', async data => await this.socketError( `Connection Lost!`, data ));
+
+        // this.socket.on( 'connect', () => this.socket.emit( 'new user', tokenUser ) );
+        this.socket.on( 'connect', async () => {
+          // Ensure we've loaded reCAPTCHA...
+          await this.$recaptchaLoaded();
+
+          // If we need a new token...
+          if ( !this.recaptcha ) {
+            await this.insertMessage( `Verifying user...`, '#ffeb3b' );
+            tokenUser.recaptcha = await this.$recaptcha( 'connect' );
+          }
+
+          // Attempt to connect...
+          this.socket.emit( 'new user', tokenUser );
+          this.recaptcha = null;
+          this.loading = false;
+        });
+
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
-        this.socket.on( 'hydrate', async data => await this.hydrate( data ) );
+        this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
+      },
+
+      async socketError ( error, reason ) {
+        const errorWrapper = content => `<p><img src="https://cdn.bitwave.tv/static/emotes/SadBlobby.png" alt=":("> ${content}</p>`;
+        const styledReason = msg => msg ? `<br>Reason: <span style="color: #F44336; font-weight: bold;">${msg}</span>` : '';
+        const message = errorWrapper( `${error}${styledReason( reason )}` );
+        await this.insertMessage( message );
       },
 
       async hydrate ( data ) {
@@ -382,8 +406,12 @@
           console.log('Trimmed History');
         }*/
 
-        if ( !this.$refs['chatmessages'].showFAB ) {
-          this.messages = this.messages.splice( -this.chatLimit );
+        if ( this.$refs['chatmessages'] ) {
+          if ( !this.$refs['chatmessages'].showFAB ) {
+            this.messages = this.messages.splice( -this.chatLimit );
+          }
+        } else {
+          console.warn( `Failed to find 'chatmessages' component...` );
         }
 
         this.scrollToBottom();
@@ -424,22 +452,8 @@
               await this.unignoreChannel( argument.toLowerCase() );
               break;
             case 'ignorelist':
-              await this.rcvMessageBulk([
-                {
-                  timestamp: Date.now(),
-                  username: '[bitwave.tv]',
-                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-                  message: `Ignored Users: ${this.ignoreList.join(', ')}`,
-                  channel: this.page,
-                },
-                {
-                  timestamp: Date.now(),
-                  username: '[bitwave.tv]',
-                  avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-                  message: `Ignored Channels: ${this.ignoreChannelList.join(', ')}`,
-                  channel: this.page,
-                },
-              ]);
+              await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
+              await this.insertMessage( `Ignored Channels: ${this.ignoreChannelList.join(', ')}` );
               this.$ga.event({
                 eventCategory : 'chat',
                 eventAction   : 'ignorelist',
@@ -457,6 +471,25 @@
         } else {
           this.socket.emit( 'message', msg );
         }
+      },
+
+      async insertMessage ( message, color ) {
+        await this.rcvMessageBulk([
+          {
+            timestamp: Date.now(),
+            username: '[bitwave.tv]',
+            userColor: color ? color : '#FFF',
+            avatar: 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+            message: message,
+            channel: this.page,
+          },
+        ]);
+      },
+
+      async setupRECAPTCHA () {
+        if ( process.server ) return;
+        await this.$recaptchaLoaded();
+        this.recaptcha = await this.$recaptcha( 'connect' );
       },
 
       async setupTrollData () {
@@ -576,16 +609,10 @@
             const userDoc = db.collection( 'users' ).doc( this.user.uid );
             await userDoc.update( 'ignoreList', this.ignoreList );
           }
+
           // Confirmation Message
-          await this.rcvMessageBulk([
-            {
-              timestamp : Date.now(),
-              username  : '[bitwave.tv]',
-              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message   : `Ignored User: ${username}`,
-              channel   : this.page,
-            },
-          ]);
+          await this.insertMessage( `Ignored User: ${username}` );
+
           // Analytics
           this.$ga.event({
             eventCategory : 'chat',
@@ -608,16 +635,10 @@
             const userDoc = db.collection( 'users' ).doc( this.user.uid );
             await userDoc.update( 'ignoreList', this.ignoreList );
           }
+
           // Confirmation Message
-          await this.rcvMessageBulk([
-            {
-              timestamp : Date.now(),
-              username  : '[bitwave.tv]',
-              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message   : `Unignored User: ${username}`,
-              channel   : this.page,
-            },
-          ]);
+          await this.insertMessage( `Unignored User: ${username}` );
+
           // Analytics
           this.$ga.event({
             eventCategory : 'chat',
@@ -639,16 +660,10 @@
             const userDoc = db.collection( 'users' ).doc( this.user.uid );
             await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
           }
+
           // Confirmation Message
-          await this.rcvMessageBulk([
-            {
-              timestamp : Date.now(),
-              username  : '[bitwave.tv]',
-              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message   : `Ignored Channel: ${channel}`,
-              channel   : this.page,
-            },
-          ]);
+          await this.insertMessage( `Ignored Channel: ${channel}` );
+
           // Analytics
           this.$ga.event({
             eventCategory : 'chat',
@@ -670,16 +685,10 @@
             const userDoc = db.collection( 'users' ).doc( this.user.uid );
             await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
           }
+
           // Confirmation Message
-          await this.rcvMessageBulk([
-            {
-              timestamp : Date.now(),
-              username  : '[bitwave.tv]',
-              avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-              message   : `Unignored Channel: ${channel}`,
-              channel   : this.page,
-            },
-          ]);
+          await this.insertMessage( `Unignored Channel: ${channel}` );
+
           // Analytics
           this.$ga.event({
             eventCategory : 'chat',
@@ -759,10 +768,13 @@
     },
 
     created () {
-      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      // this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     async mounted () {
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+
+      await this.setupRECAPTCHA();
       await this.setupTrollData();
 
       // Add listener for voice changes, then update voices.

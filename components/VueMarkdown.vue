@@ -10,7 +10,7 @@
     const linkRenderer = renderer.link;
     renderer.link = ( href, title, text ) => {
       const html = linkRenderer.call( renderer, href, title, text );
-      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
+      return html.replace(/^<a /, '<a target="_blank" rel="ugc" ');
     };
     return marked( data, { renderer: renderer, sanitize: true, breaks: true } );
   }
@@ -20,7 +20,7 @@
       source: { default: '', type: String },
     },
     computed: {
-      compiledMarkdown: function () {
+      compiledMarkdown () {
         // return marked(this.source, { sanitize: true, breaks: true });
         return renderMarkDown ( this.source );
       }
