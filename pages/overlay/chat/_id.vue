@@ -17,7 +17,7 @@
           indeterminate
           :size="50"
           :width="5"
-        />
+        ></v-progress-circular>
         <div class="display-1">
           Connecting to Chat...
         </div>

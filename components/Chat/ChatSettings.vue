@@ -26,13 +26,13 @@
           :label="`${ globalChat ? 'Global' : 'Local' } Chat`"
           color="yellow"
           hide-details
-        />
+        ></v-switch>
         <v-switch
           v-model="showTimestamps"
           label="Timestamps"
           color="yellow"
           hide-details
-        />
+        ></v-switch>
       </div>
 
       <v-switch
@@ -41,7 +41,7 @@
         class="mb-2"
         color="yellow"
         hide-details
-      />
+      ></v-switch>
 
       <v-switch
         v-model="notificationSound"
@@ -49,7 +49,7 @@
         class="mb-2"
         color="yellow"
         hide-details
-      />
+      ></v-switch>
     </div>
 
     <v-divider/>
@@ -66,7 +66,7 @@
             color="yellow"
             hide-details
             @change="toggleTts"
-          />
+          ></v-switch>
         </v-flex>
         <v-flex>
           <v-switch
@@ -77,7 +77,7 @@
             color="yellow"
             hide-details
             @change="toggleTrollTts"
-          />
+          ></v-switch>
         </v-flex>
       </v-layout>
 
@@ -89,7 +89,7 @@
           label="TTS Voice"
           style="font-size: 12px;"
           hide-details
-        />
+        ></v-select>
       </v-flex>
 
       <v-list-item>
@@ -111,7 +111,7 @@
               single-line
               type="number"
               style="width: 50px"
-            />
+            ></v-text-field>
           </template>
         </v-slider>
       </v-list-item>

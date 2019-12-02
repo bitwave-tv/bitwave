@@ -1,5 +1,8 @@
 const pkg = require('./package');
 
+
+// const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
+
 module.exports = {
   mode: 'universal',
 
@@ -74,6 +77,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    // '@/plugins/vuetify',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
   ],

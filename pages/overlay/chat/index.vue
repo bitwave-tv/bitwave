@@ -28,7 +28,7 @@
           <chat-overlay-dialog
             v-model="showCreateDialog"
             :data="defaultOverlay"
-          />
+          ></chat-overlay-dialog>
         </v-dialog>
       </div>
     </div>
@@ -49,7 +49,7 @@
     <chat-overlay-info-cards
       v-show="!loading"
       :overlays="overlays"
-    />
+    ></chat-overlay-info-cards>
 
   </v-container>
 </template>

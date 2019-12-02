@@ -145,7 +145,7 @@
       },
 
       timestamp ( time ) {
-        const month = time.getMonth() + 1;
+        const month = time.getMonth();
         const day = time.getDate();
         const hours = time.getHours().toString().padStart(2, '0');
         const minutes = time.getMinutes().toString().padStart(2, '0');
