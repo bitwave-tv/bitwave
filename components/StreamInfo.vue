@@ -1,6 +1,5 @@
 <template>
     <div>
-
       <v-tooltip bottom>
         <template #activator="{ on }">
           <v-btn
@@ -14,7 +13,6 @@
         </template>
         <span>Stream here</span>
       </v-tooltip>
-
     </div>
 </template>
 

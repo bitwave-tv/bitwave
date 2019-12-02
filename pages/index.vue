@@ -234,10 +234,6 @@
       },
     },
 
-    created () {
-
-    },
-
     mounted () {
       this.mounted = true;
     },

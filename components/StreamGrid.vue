@@ -99,7 +99,7 @@
         else this.imageIndex = 0;
 
         const coeff = 1000 * 60; // ms * sec
-        const timestamp = new Date( Math.round( Date.now() / coeff) * coeff );
+        const timestamp = Math.round( Date.now() / coeff ) * coeff;
 
         this.streams[this.imageIndex].thumbnail = `${this.streams[this.imageIndex].thumbnail}?${timestamp}`;
       },
