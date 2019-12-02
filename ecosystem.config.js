@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: 'bitwave.tv',
-    cwd: './current',
+    cwd: './',
     script: 'server/index.js', // Start server
 
     // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/

@@ -13,7 +13,7 @@
           :poster="poster"
           :name="live[0].name"
           :mobile="mobile"
-        />
+        ></banner-video>
 
         <!-- Live Grid -->
         <stream-grid :streamers="streamers" />
@@ -30,7 +30,7 @@
                   max-width="2rem"
                   src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif"
                   alt="Cool blobby with sunglasses"
-                />
+                ></v-img>
               </div>
               <div class="ml-4">
                 <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
@@ -150,7 +150,7 @@
             </div>
           </v-card-text>
 
-          <v-divider/>
+          <v-divider></v-divider>
 
           <v-card-actions class="pt-0">
             <v-col>

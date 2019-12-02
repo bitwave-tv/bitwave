@@ -48,7 +48,7 @@
               clearable
               :loading="loading"
               :disabled="loading"
-            />
+            ></v-text-field>
 
             <v-text-field
               id="email"
@@ -64,7 +64,7 @@
               clearable
               :loading="loading"
               :disabled="loading"
-            />
+            ></v-text-field>
 
             <v-text-field
               id="password"
@@ -85,7 +85,7 @@
               :loading="loading"
               :disabled="loading"
               @click:append="showPassword = !showPassword"
-            />
+            ></v-text-field>
 
             <v-checkbox
               v-if="signUp"
@@ -94,7 +94,7 @@
               class="pt-0 mt-0 mb-3"
               :rules="[ val => val || 'You must be 18 to use this site!' ]"
               :disabled="loading"
-            />
+            ></v-checkbox>
 
             <v-btn
               v-if="!signUp"
@@ -129,7 +129,7 @@
               color="yellow"
               class="pt-0"
               :disabled="loading"
-            />
+            ></v-checkbox>
 
             <v-alert
               v-model="alert"
@@ -144,7 +144,7 @@
 
         </v-card-text>
 
-        <v-divider/>
+        <v-divider></v-divider>
 
         <v-card-actions>
           <v-btn
@@ -154,7 +154,7 @@
             color="#2196f3"
             @click="resetPassword(user.email)"
           >Forgot Password?</v-btn>
-          <v-spacer/>
+          <v-spacer></v-spacer>
           <v-btn
             small
             color="yellow"

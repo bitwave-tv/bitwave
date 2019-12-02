@@ -40,7 +40,7 @@
           :name="stream.name"
           :viewers="stream.viewCount"
           live
-        />
+        ></stream-card>
       </v-col>
     </transition-group>
   </v-container>
