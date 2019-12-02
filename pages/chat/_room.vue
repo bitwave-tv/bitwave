@@ -4,7 +4,7 @@
       dark
       :chat-channel="channel"
       :force-global="global"
-    ></embed-chat>
+    />
   </v-layout>
 </template>
 
