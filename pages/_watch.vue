@@ -55,7 +55,7 @@
       :class="{ 'chat-desktop': !mobile }"
       :style="{ maxHeight: mobile ? '390px' : '100%' }"
     >
-      <chat :chat-channel="name"></chat>
+      <chat :chat-channel="name"/>
     </div>
 
 
@@ -92,7 +92,7 @@
             :title="title"
             :description="description"
             :nsfw="nsfw"
-          ></EditStreamData>
+          />
 
           <v-btn
             v-if="false"
@@ -105,7 +105,7 @@
             <v-icon>timeline</v-icon>
           </v-btn>
 
-          <ShareStream :user="name"></ShareStream>
+          <ShareStream :user="name"/>
         </div>
       </div>
     </v-sheet>
@@ -119,7 +119,7 @@
       <vue-markdown
         v-if="description"
         :source="description"
-      ></vue-markdown>
+      />
     </div>
 
   </div>

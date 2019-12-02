@@ -1,6 +1,6 @@
 <template>
   <v-layout style="position: fixed; top:0; bottom: 0; width: 100%; margin-top: 48px;">
-    <embed-chat dark></embed-chat>
+    <embed-chat dark/>
   </v-layout>
 </template>
 
