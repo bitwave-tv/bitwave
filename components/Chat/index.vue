@@ -171,6 +171,8 @@
         },
 
         sound: process.server ? null : new Audio(),
+
+        willBeDestroyed: false,
       }
     },
 
@@ -274,13 +276,19 @@
       },
 
       async connectChat ( tokenUser ) {
-        if ( this.socket) this.socket.disconnect();
+        // Remove event listeners and disconnect
+        if ( this.socket ) {
+          this.socket.off();
+          this.socket.disconnect();
+        }
 
         if ( !tokenUser ) {
           await this.socketError( `Invalid User Token` );
           console.warn( `Failed to connect to chat. No user defined.` );
           return;
         }
+
+        if ( this.willBeDestroyed ) return;
 
         const socketOptions = { transports: [ 'websocket' ] };
 
@@ -300,6 +308,7 @@
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
+        console.log('Bind Socket Events');
       },
 
       async socketConnect ( tokenUser ) {
@@ -308,6 +317,12 @@
         // Attempt to connect...
         this.socket.emit( 'new user', tokenUser );
         this.loading = false;
+
+        if ( this.willBeDestroyed ) {
+          console.log('Component Destroyed, remove & disconnect');
+          this.socket.off();
+          this.socket.disconnect();
+        }
       },
 
       async socketError ( error, reason ) {
@@ -766,6 +781,7 @@
     },
 
     async mounted () {
+      console.log('Chat Mounted');
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 
       await this.setupTrollData();
@@ -833,12 +849,33 @@
       this.sound.volume = .25;
     },
 
+    activated () {
+      console.log('Chat Activated');
+    },
+
+    deactivated() {
+      console.log('Chat Deactivated');
+    },
+
     beforeDestroy () {
+      console.log('Chat to be Destroyed');
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeUser )  this.unsubscribeUser();
       if ( this.unsubscribePoll )  this.unsubscribePoll();
-      if ( this.socket ) this.socket.disconnect();
+      if ( this.socket ) {
+        this.socket.off();
+        this.socket.disconnect();
+      }
+      this.willBeDestroyed = true;
     },
+
+    destroyed() {
+      console.log('Chat Destroyed');
+      if ( this.socket ) {
+        this.socket.off();
+        this.socket.disconnect();
+      }
+    }
   }
 </script>
 
@@ -846,6 +883,7 @@
   #sidechat {
     border-top: 3px yellow;
     background-color: #000;
+    max-width: 100%;
 
     p {
       margin-bottom: 0;
