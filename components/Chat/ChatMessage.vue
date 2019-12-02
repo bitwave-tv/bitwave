@@ -11,7 +11,7 @@
     </div>
 
     <!-- Chat Content -->
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 content">
 
       <!-- Message Header -->
       <div class="d-flex align-center">
@@ -99,6 +99,10 @@
 
     .v-list-item__avatar {
       min-width: 42px;
+    }
+
+    .content {
+      overflow: hidden;
     }
 
     .time {

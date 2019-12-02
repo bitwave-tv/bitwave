@@ -4,7 +4,7 @@
       dark
       :chat-channel="channel"
       :force-global="global"
-    ></embed-chat>
+    />
   </v-layout>
 </template>
 
@@ -35,7 +35,7 @@
     },
 
     mounted() {
-      console.log( 'mounted chatroom.' );
+      console.debug( 'mounted chatroom.' );
     }
   }
 </script>
