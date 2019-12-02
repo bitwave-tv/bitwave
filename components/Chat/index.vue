@@ -133,7 +133,6 @@
 
         loading: true,
         token: null,
-        recaptcha: null,
         trollId: null,
         socket: null,
         chatLimit: 50,
@@ -275,9 +274,7 @@
       },
 
       async connectChat ( tokenUser ) {
-        if ( this.socket) {
-          this.socket.disconnect();
-        }
+        if ( this.socket) this.socket.disconnect();
 
         if ( !tokenUser ) {
           await this.socketError( `Invalid User Token` );
@@ -290,26 +287,11 @@
         this.socket = socketio( 'chat.bitwave.tv', socketOptions );
         // this.socket = socketio( 'localhost:5000', socketOptions );
 
-        this.socket.on( 'error', async error => await this.socketError( `Connection Failed!`, error ));
+        this.socket.on( 'connect',      async ()      => await this.socketConnect( tokenUser ) );
+        this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed!`, error ));
         this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${attempt})` ));
-        this.socket.on( 'disconnect', async data => await this.socketError( `Connection Lost!`, data ));
+        this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost!`, data ));
 
-        this.socket.on( 'connect', async () => {
-
-          // Set reCAPTCHA token
-          if ( !this.recaptcha ) {
-            // If we need a token...
-            await this.insertMessage( `Verifying user...`, '#ffeb3b' );
-            tokenUser.recaptcha = await this.$recaptcha.execute( 'connect' );
-          } else {
-            tokenUser.recaptcha = this.recaptcha;
-          }
-
-          // Attempt to connect...
-          this.socket.emit( 'new user', tokenUser );
-          this.recaptcha = null;
-          this.loading = false;
-        });
 
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
@@ -318,6 +300,14 @@
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
+      },
+
+      async socketConnect ( tokenUser ) {
+        // Get RECAPTCHA v3 Token
+        tokenUser.recaptcha = await this.getRecaptchaToken( 'connect' );
+        // Attempt to connect...
+        this.socket.emit( 'new user', tokenUser );
+        this.loading = false;
       },
 
       async socketError ( error, reason ) {
@@ -486,13 +476,13 @@
         ]);
       },
 
-      async setupRECAPTCHA () {
+      async getRecaptchaToken ( action ) {
         try {
           await this.$recaptcha.init();
-          this.recaptcha = await this.$recaptcha.execute( 'connect' );
+          return await this.$recaptcha.execute( action );
         } catch ( error ) {
           console.error(`reCAPTCHA failed to load!`, error);
-          this.recaptcha = null;
+          return null;
         }
       },
 
@@ -841,8 +831,6 @@
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
-
-      await this.setupRECAPTCHA();
     },
 
     beforeDestroy () {
