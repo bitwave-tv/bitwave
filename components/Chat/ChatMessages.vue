@@ -64,6 +64,7 @@
       return {
         chatContainer: null,
         scrollTimeout: null,
+        onScrollTimer: null,
         showFAB: false,
       }
     },
@@ -117,14 +118,37 @@
       },
 
       onScroll ( event ) {
-        console.log( `At Bottom: ${this.checkIfBottom()}` );
+        if ( !this.onScrollTimer ) {
+          const scrollStart = this.chatContainer.scrollTop;
+          this.onScrollTimer = setTimeout( () => {
+            const scrollPosition = this.chatContainer.scrollTop;
+
+            // Scrolled up
+            if ( scrollStart > scrollPosition ) {
+              this.showFAB = true;
+            }
+
+            // Scrolled down
+            else if ( scrollStart < scrollPosition ) {
+              if ( scrollPosition + this.chatContainer.clientHeight > this.chatContainer.scrollHeight - 250 ) {
+                this.showFAB = false;
+              }
+            }
+
+            this.onScrollTimer = null;
+          }, 200 );
+        }
       },
     },
 
     async mounted () {
       this.chatContainer = this.$refs.scroller;
-      // this.chatContainer.addEventListener( 'scroll', e => this.onScroll(e), { passive: true } );
+      this.chatContainer.addEventListener( 'scroll', this.onScroll, { passive: true } );
     },
+
+    beforeDestroy() {
+      this.chatContainer.removeEventListener( 'scroll', this.onScroll );
+    }
   }
 </script>
 

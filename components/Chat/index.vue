@@ -781,7 +781,6 @@
     },
 
     async mounted () {
-      console.log('Chat Mounted');
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 
       await this.setupTrollData();
@@ -849,16 +848,7 @@
       this.sound.volume = .25;
     },
 
-    activated () {
-      console.log('Chat Activated');
-    },
-
-    deactivated() {
-      console.log('Chat Deactivated');
-    },
-
     beforeDestroy () {
-      console.log('Chat to be Destroyed');
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeUser )  this.unsubscribeUser();
       if ( this.unsubscribePoll )  this.unsubscribePoll();
@@ -870,7 +860,6 @@
     },
 
     destroyed() {
-      console.log('Chat Destroyed');
       if ( this.socket ) {
         this.socket.off();
         this.socket.disconnect();
