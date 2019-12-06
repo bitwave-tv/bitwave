@@ -118,6 +118,7 @@
     if ( trollDataError ) reject( trollDataError );
     trollDataWaiters.push({ resolve, reject });
   });
+
   export default {
     name: 'Chat',
 
