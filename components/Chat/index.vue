@@ -136,6 +136,7 @@
         trollId: null,
         socket: null,
         chatLimit: 50,
+        userToken: null,
 
         messages: [
           {
@@ -286,6 +287,8 @@
           return;
         }
 
+        this.userToken = tokenUser;
+
         if ( this.willBeDestroyed ) return;
 
         const socketOptions = { transports: [ 'websocket' ] };
@@ -293,7 +296,7 @@
         this.socket = socketio( 'chat.bitwave.tv', socketOptions );
         // this.socket = socketio( 'localhost:5000', socketOptions );
 
-        this.socket.on( 'connect',      async ()      => await this.socketConnect( tokenUser ) );
+        this.socket.on( 'connect',      async ()      => await this.socketConnect() );
         this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed!`, error ));
         this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${attempt})` ));
         this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost!`, data ));
@@ -309,11 +312,12 @@
         console.log('Bind Socket Events');
       },
 
-      async socketConnect ( tokenUser ) {
+      async socketConnect () {
         // Get RECAPTCHA v3 Token
-        tokenUser.recaptcha = await this.getRecaptchaToken( 'connect' );
+        this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
+
         // Attempt to connect...
-        this.socket.emit( 'new user', tokenUser );
+        this.socket.emit( 'new user', this.userToken );
         this.loading = false;
 
         if ( this.willBeDestroyed ) {
@@ -324,6 +328,7 @@
       },
 
       async socketError ( error, reason ) {
+        this.loading = true;
         const errorWrapper = content => `<p><img src="https://cdn.bitwave.tv/static/emotes/SadBlobby.png" alt=":("> ${content}</p>`;
         const styledReason = msg => msg ? `<br>Reason: <span style="color: #F44336; font-weight: bold;">${msg}</span>` : '';
         const message = errorWrapper( `${error}${styledReason( reason )}` );
