@@ -75,6 +75,7 @@
       },
 
       checkIfBottom () {
+        if ( this.messages.length === 0 ) return true;
         const scrollTop    = this.chatContainer.scrollTop;
         const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
         const scrollHeight = this.chatContainer.scrollHeight;
