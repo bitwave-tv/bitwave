@@ -1,4 +1,4 @@
-<template>
+<template functional>
   <div>
     <v-lazy
       :options="{ threshhold: 0.75 }"
@@ -6,16 +6,16 @@
       min-height="150px"
     >
       <v-card
-        :to="to"
-        style="postion: relative;"
+        :to="props.to"
         class="stream-card"
       >
+        <!-- Thumbnail -->
         <v-img
-          :src="image"
-          :key="image"
+          :src="props.image"
+          :key="props.image"
           lazy-src="https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg"
           :aspect-ratio="16/9"
-          :class="{ 'blur': (live && nsfw) }"
+          :class="{ 'blur': props.live && props.nsfw }"
         >
           <!--<div class="fill-height bottom-gradient"></div>-->
         </v-img>
@@ -27,9 +27,9 @@
             small
             tile
           >
-            <div v-if="live" class="d-flex align-center">
-              <div class="white--text">{{ viewers < 2 ? '🐜🐜' : viewers }}</div>
-              <v-icon v-show="viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
+            <div v-if="props.live" class="d-flex align-center">
+              <div class="white--text">{{ props.viewers < 2 ? '🐜🐜' : props.viewers }}</div>
+              <v-icon v-show="props.viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
             </div>
             <div v-else class="d-flex align-center">
               <div class="grey--text mr-2">OFFLINE</div>
@@ -42,14 +42,14 @@
         <div class="pa-2">
           <!-- Stream Data -->
           <div class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0">
-            {{ title }}
+            {{ props.title }}
           </div>
           <div class="caption d-flex align-center">
 
-            <div>{{ name }}</div>
+            <div>{{ props.name }}</div>
 
-            <template v-if="nsfw">
-              <v-divider vertical class="mx-2"></v-divider>
+            <template v-if="props.nsfw">
+              <v-divider vertical class="mx-2"/>
               <div class="d-flex align-center">
                 <div class="red--text">NSFW</div>
               </div>
@@ -74,10 +74,6 @@
       title   : { type: String },
       name    : { type: String },
       viewers : { type: Number },
-    },
-
-    data() {
-      return {}
     },
   }
 </script>

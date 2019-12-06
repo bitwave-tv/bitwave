@@ -182,9 +182,14 @@ export const actions = {
   },
 
   async exchangeIdTokenChatToken ({ store, commit }, idToken) {
-    const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
-    commit('setChatToken', data.chatToken);
-    console.log(`%cSTORE:%c Got ChatToken! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken);
+    try {
+      const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
+      commit('setChatToken', data.chatToken);
+      // console.log( `%cSTORE:%c Got ChatToken! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken );
+    } catch ( error ) {
+      console.log( `%cSTORE:%c ERROR: Failed to exchange token! %o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
+    }
+
   },
 
 };

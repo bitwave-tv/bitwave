@@ -18,8 +18,6 @@
   import { mapGetters } from 'vuex'
   import { auth, db, FieldValue } from '@/plugins/firebase.js'
 
-  import 'firebase'
-
   export default {
     name: 'FollowButton',
 

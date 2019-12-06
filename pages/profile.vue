@@ -67,7 +67,7 @@
                       background-color="white"
                       truncate-length="30"
                       @change="onFilePicked"
-                    ></v-file-input>
+                    />
                   </v-flex>
                   <v-flex shrink>
                     <v-btn
@@ -88,7 +88,7 @@
                     label="UserID"
                     disabled
                     outlined
-                  ></v-text-field>
+                  />
                 </v-flex>
 
                 <v-flex>
@@ -97,7 +97,7 @@
                     label="username"
                     readonly
                     outlined
-                  ></v-text-field>
+                  />
                 </v-flex>
 
                 <v-flex>
@@ -106,7 +106,7 @@
                     label="email"
                     readonly
                     outlined
-                  ></v-text-field>
+                  />
                 </v-flex>
 
                 <v-flex>
@@ -116,7 +116,7 @@
                     value="************"
                     disabled
                     outlined
-                  ></v-text-field>
+                  />
                 </v-flex>
 
                 <v-layout>
@@ -162,7 +162,7 @@
                 hide-details
                 :loading="streamDataLoading || saveLoading"
                 @input="showSave = true"
-              ></v-text-field>
+              />
             </v-flex>
             <v-flex>
               <v-textarea
@@ -174,7 +174,7 @@
                 label="Stream Description (markdown supported)"
                 auto-grow
                 @input="showSave = true"
-              ></v-textarea>
+              />
             </v-flex>
             <v-flex shrink>
               <v-switch
@@ -183,7 +183,7 @@
                 color="yellow"
                 hide-details
                 @change="showSave = true"
-              ></v-switch>
+              />
             </v-flex>
             <v-flex shrink>
               <v-switch
@@ -192,7 +192,7 @@
                 color="yellow"
                 hide-details
                 @change="showSave = true"
-              ></v-switch>
+              />
             </v-flex>
             <v-layout>
               <v-spacer/>
@@ -232,7 +232,7 @@
                 outlined
                 hide-details
                 :loading="streamDataLoading"
-              ></v-text-field>
+              />
             </v-flex>
             <v-flex>
               <v-text-field
@@ -249,7 +249,7 @@
                 @click:append="showKey = !showKey"
                 @click="showKey = !showKey"
                 @focus="showKey = !showKey"
-              ></v-text-field>
+              />
             </v-flex>
             <v-layout>
               <v-spacer/>
