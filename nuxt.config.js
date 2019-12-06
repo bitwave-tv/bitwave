@@ -4,6 +4,13 @@ module.exports = {
   mode: 'universal',
 
   /*
+  ** Environment variables
+  */
+  env: {
+    version: pkg.version || 'v0.0.0',
+  },
+
+  /*
   ** Headers of the page
   */
   head: {
@@ -137,7 +144,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    extend(config, ctx) {
+    extend ( config, ctx ) {
 
     },
   },
