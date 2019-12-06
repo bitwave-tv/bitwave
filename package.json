@@ -15,7 +15,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.8.0",
     "@nuxtjs/device": "^1.2.4",
-    "@nuxtjs/google-analytics": "^2.2.1",
+    "@nuxtjs/google-analytics": "^2.2.2",
     "@nuxtjs/manifest": "^3.0.0-beta.16",
     "@nuxtjs/pwa": "^3.0.0-beta.19",
     "@nuxtjs/recaptcha": "^0.6.1",
@@ -29,7 +29,7 @@
     "jwt-decode": "^2.2.0",
     "marked": "^0.7.0",
     "moment": "^2.24.0",
-    "nuxt": "^2.9.2",
+    "nuxt": "^2.10.2",
     "sass-loader": "^8.0.0",
     "socket.io-client": "^2.3.0",
     "video.js": "^7.6.6",
