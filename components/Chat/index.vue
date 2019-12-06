@@ -110,6 +110,14 @@
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
+  let trollInitialized = false;
+  let trollDataError = null;
+  let trollDataWaiters = [];
+  const trollDataLoaded = () => new Promise(( resolve, reject ) => {
+    if ( trollInitialized ) resolve();
+    if ( trollDataError ) reject( trollDataError );
+    trollDataWaiters.push({ resolve, reject });
+  });
   export default {
     name: 'Chat',
 
@@ -196,6 +204,8 @@
         if ( user ) {
           await this.subscribeToUser( user.uid );
         } else {
+          // if ( !this.token ) await this.getTrollToken();
+          await trollDataLoaded();
           const tokenTroll = {
             type  : 'troll',
             token : this.token,
@@ -309,7 +319,6 @@
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
-        console.log('Bind Socket Events');
       },
 
       async socketConnect () {
@@ -321,7 +330,6 @@
         this.loading = false;
 
         if ( this.willBeDestroyed ) {
-          console.log('Component Destroyed, remove & disconnect');
           this.socket.off();
           this.socket.disconnect();
         }
@@ -499,30 +507,46 @@
           await this.$recaptcha.init();
           return await this.$recaptcha.execute( action );
         } catch ( error ) {
-          console.error(`reCAPTCHA failed to load!`, error);
+          console.error( error );
           return null;
         }
       },
 
-      async setupTrollData () {
-        let trollToken = localStorage.getItem( 'troll' );
-
-        // Get new troll token
-        if ( !trollToken ) {
+      async getTrollToken () {
+        try {
+          // Get new troll token
           const { data } = await this.$axios.get('https://api.bitwave.tv/api/troll-token');
-          trollToken = data.chatToken;
+          const trollToken = data.chatToken;
+          // Save token to localStorage
           localStorage.setItem( 'troll', trollToken );
-          const tokenTroll = {
-            type  : 'troll',
-            token : trollToken,
-            page  : this.page,
-          };
-          this.connectChat( tokenTroll );
+          // Parse token
+          this.setChatToken( trollToken );
+          this.token = trollToken;
+          this.trollId = jwt_decode( trollToken ).user.name;
+          // Resolve our waiters
+          trollInitialized = true;
+          trollDataWaiters.forEach( v => v.resolve() );
+        } catch ( error ) {
+          console.error( `Failed to get troll token`, error );
+          // Resolve our waiters
+          trollDataError = error;
+          trollDataWaiters.forEach( v => v.reject(error) );
         }
+      },
 
-        this.setChatToken( trollToken );
-        this.token = trollToken;
-        this.trollId = jwt_decode( trollToken ).user.name;
+      async setupTrollData () {
+        try {
+          const trollToken = localStorage.getItem( 'troll' );
+          if ( trollToken ) {
+            this.setChatToken( trollToken );
+            this.token = trollToken;
+            this.trollId = jwt_decode( trollToken ).user.name;
+          } else {
+            await this.getTrollToken();
+          }
+        } catch ( error ) {
+          console.log( `Failed to access localstorage`, error );
+        }
       },
 
       speak ( message, username ) {
@@ -773,7 +797,7 @@
       },
 
       username () {
-        return this._username || this.trollId;
+        return this._username || this.trollId || 'troll';
       },
 
       page () {
