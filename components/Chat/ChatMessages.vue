@@ -28,16 +28,19 @@
     </div>
 
     <!-- FAB for Scroll Down -->
-    <div class="stb-fab d-flex justify-center" :class="{ show: showFAB }">
-      <v-btn
-        fab
-        small
-        color="yellow"
-        @click="scrollToBottom( true )"
-        class="black--text mt-3"
-      >
-        <v-icon>keyboard_arrow_down</v-icon>
-      </v-btn>
+    <div class="stb-fab d-flex justify-center">
+      <v-slide-y-transition>
+        <v-btn
+          v-show="showFAB"
+          fab
+          small
+          color="yellow"
+          @click="scrollToBottom( true )"
+          class="black--text mt-3"
+        >
+          <v-icon>keyboard_arrow_down</v-icon>
+        </v-btn>
+      </v-slide-y-transition>
     </div>
 
   </v-flex>
@@ -85,7 +88,6 @@
       async scrollToBottom ( force ) {
         // If we are NOT at the bottom && NOT forcing scroll, bail early
         if ( !this.checkIfBottom() && !force ) {
-          this.showFAB = true;
           return;
         }
 
@@ -145,6 +147,7 @@
     async mounted () {
       this.chatContainer = this.$refs.scroller;
       this.chatContainer.addEventListener( 'scroll', this.onScroll, { passive: true } );
+      this.$nextTick( () => this.jumpToBottom() );
     },
 
     beforeDestroy() {
@@ -168,12 +171,13 @@
       left: 0;
       top: 0;
 
-      transform: translateY(-150%);
+      /* Old animation for FAB
+      transform: translateY(0);
       transition: .5s transform;
 
-      &.show {
-        transform: translateY(0);
-      }
+      &.hide {
+        transform: translateY(-150%);
+      }*/
     }
   }
 
