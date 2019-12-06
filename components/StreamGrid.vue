@@ -40,7 +40,7 @@
           :name="stream.name"
           :viewers="stream.viewCount"
           live
-        ></stream-card>
+        />
       </v-col>
     </transition-group>
   </v-container>
@@ -96,7 +96,7 @@
 
       updateThumbnails () {
         if ( this.imageIndex < this.streams.length ) this.imageIndex++;
-        else this.imageIndex = 0;
+        if ( this.imageIndex === this.streams.length ) this.imageIndex = 0;
 
         const coeff = 1000 * 60; // ms * sec
         const timestamp = Math.round( Date.now() / coeff ) * coeff;

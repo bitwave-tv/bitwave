@@ -191,10 +191,10 @@
       },
 
       async authenticated ( user ) {
+        if ( this.unsubscribeUser ) this.unsubscribeUser();
         if ( user ) {
           await this.subscribeToUser( user.uid );
         } else {
-          if ( this.unsubscribeUser ) this.unsubscribeUser();
           const tokenTroll = {
             type  : 'troll',
             token : this.token,
@@ -211,10 +211,8 @@
 
           // Swap ID token for Chat Token
           const idToken = await auth.currentUser.getIdToken();
-          // console.log( `ID Token Generated in chat:`, idToken );
-          const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
-          const chatToken = data.chatToken;
-          // console.log( 'Chat Token Exchanged:', chatToken );
+          await this.exchangeIdTokenChatToken( idToken );
+          const chatToken = this.getChatToken;
 
           const user = doc.data();
           user.page  = this.page;
@@ -517,6 +515,7 @@
           this.connectChat( tokenTroll );
         }
 
+        this.setChatToken( trollToken );
         this.token = trollToken;
         this.trollId = jwt_decode( trollToken ).user.name;
       },
@@ -709,6 +708,10 @@
         }
       },
 
+      ...mapMutations({
+        setChatToken: 'setChatToken',
+      }),
+
       ...mapMutations ('chat', {
         setModeGlobal: 'SET_MODE_GLOBAL',
         setModeTimestamps: 'SET_TIMESTAMPS',
@@ -717,6 +720,10 @@
         appendChatMessage: 'APPEND_CHAT_MESSAGE',
         setNotify: 'SET_NOTIFY',
         setUseIgnore: 'SET_USE_IGNORE',
+      }),
+
+      ...mapActions({
+        exchangeIdTokenChatToken: 'exchangeIdTokenChatToken',
       }),
 
       ...mapActions ('chat', {
@@ -729,6 +736,7 @@
         isAuth: 'isAuth',
         user: 'user',
         _username: 'username',
+        getChatToken: 'getChatToken',
       }),
 
       ...mapState ('chat', {

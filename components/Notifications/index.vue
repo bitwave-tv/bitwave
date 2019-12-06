@@ -110,6 +110,7 @@
 
     methods: {
       onAuthChanged ( user ) {
+        if ( this.unsubscribeNotifications ) this.unsubscribeNotifications();
         if ( user ) {
           this.getNotifications( user.uid );
         } else {

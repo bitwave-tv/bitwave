@@ -4,6 +4,13 @@ module.exports = {
   mode: 'universal',
 
   /*
+  ** Environment variables
+  */
+  env: {
+    version: pkg.version || 'v0.0.0',
+  },
+
+  /*
   ** Headers of the page
   */
   head: {
@@ -51,8 +58,21 @@ module.exports = {
             maxEntries: 200,
             maxAgeSeconds: 600
           }*/
-        }
-      }
+        },
+      },
+      // Cache fonts
+      {
+        urlPattern: 'https://fonts.googleapis.com/.*',
+        handler: 'cacheFirst',
+        method: 'GET',
+        strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
+      },
+      {
+        urlPattern: 'https://fonts.gstatic.com/.*',
+        handler: 'cacheFirst',
+        method: 'GET',
+        strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
+      },
     ]
   },
 
@@ -62,12 +82,13 @@ module.exports = {
   manifest: {
     name: '[bitwave.tv]',
     short_name: '[bitwave.tv]',
+    description: 'An open platform live streaming service for creators to freely express themselves.',
+    categories: [ 'entertainment', 'social' ],
     lang: 'en',
     display: 'standalone',
-    description: 'An open platform live streaming service for creators to freely express themselves.',
-    background_color: '#000',
-    orientation: 'any',
+    background_color: '#000000',
     theme_color: '#ffff00',
+    // orientation: 'any', // Removed to force PWA to respect OS settings
   },
 
   /*
@@ -123,7 +144,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    extend(config, ctx) {
+    extend ( config, ctx ) {
 
     },
   },
