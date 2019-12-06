@@ -62,12 +62,13 @@ module.exports = {
   manifest: {
     name: '[bitwave.tv]',
     short_name: '[bitwave.tv]',
+    description: 'An open platform live streaming service for creators to freely express themselves.',
+    categories: [ 'entertainment', 'social' ],
     lang: 'en',
     display: 'standalone',
-    description: 'An open platform live streaming service for creators to freely express themselves.',
-    background_color: '#000',
-    orientation: 'any',
+    background_color: '#000000',
     theme_color: '#ffff00',
+    // orientation: 'any', // Removed to force PWA to respect OS settings
   },
 
   /*
