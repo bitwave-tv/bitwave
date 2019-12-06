@@ -542,6 +542,9 @@
             this.setChatToken( trollToken );
             this.token = trollToken;
             this.trollId = jwt_decode( trollToken ).user.name;
+            // Resolve our waiters
+            trollInitialized = true;
+            trollDataWaiters.forEach( v => v.resolve() );
           } else {
             await this.getTrollToken();
           }
