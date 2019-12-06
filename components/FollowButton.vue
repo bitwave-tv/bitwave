@@ -55,7 +55,6 @@
       },
 
       async checkIfFollowing (uid) {
-        console.log( `${uid}_${this.streamerId}` );
         const followerRef = db.collection( 'followers' ).doc( `${uid}_${this.streamerId}` );
         const doc = await followerRef.get();
         this.following = doc.exists;
