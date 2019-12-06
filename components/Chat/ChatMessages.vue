@@ -82,7 +82,9 @@
         const scrollTop    = this.chatContainer.scrollTop;
         const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
         const scrollHeight = this.chatContainer.scrollHeight;
-        return scrollTop + clientHeight >= scrollHeight - document.querySelector("#chat-scroll > div:last-child").clientHeight;
+        const lastMessageHeight = this.chatContainer.lastElementChild.clientHeight;
+        // const lastMessageHeight = document.querySelector("#chat-scroll > div:last-child").clientHeight;
+        return scrollTop + clientHeight >= scrollHeight - lastMessageHeight;
       },
 
       async scrollToBottom ( force ) {
