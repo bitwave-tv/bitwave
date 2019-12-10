@@ -438,10 +438,12 @@
         const initialState = this.showKey;
         this.$copyText( this.streamData.key ).then( () => {
           this.keyMessage = ['Copied to clipboard'];
+          this.$toast.success( 'Copied to clipboard', { icon: 'done', duration: 5000 } );
           this.$refs['streamkeyinput'].focus();
         }, ( error ) => {
           console.log( error );
           this.keyMessage = 'Failed to copy to clipboard';
+          this.$toast.error( 'Failed to copy to clipboard', { icon: 'error', duration: 5000 } );
         });
 
         setTimeout ( () => {
