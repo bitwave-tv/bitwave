@@ -35,7 +35,7 @@
 
       <notifications />
 
-      <user />
+      <user class="ml-4" />
 
     </v-app-bar>
 

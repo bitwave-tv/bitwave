@@ -3,6 +3,7 @@ import Vuetify from 'vuetify/lib'
 import colors from 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify, {
+  defaultAssets: false,
   theme: {
     primary: colors.yellow,
     accent: colors.grey.darken3,

@@ -55,11 +55,10 @@
       },
 
       async checkIfFollowing (uid) {
-        console.log( `${uid}_${this.streamerId}` );
         const followerRef = db.collection( 'followers' ).doc( `${uid}_${this.streamerId}` );
         const doc = await followerRef.get();
-        console.log(doc.data());
         this.following = doc.exists;
+        return doc.exists;
       },
 
       async onFollowClick () {
@@ -72,6 +71,7 @@
       },
 
       async follow () {
+
         // Analytics
         this.$ga.event({
           eventCategory : 'follow',
@@ -80,6 +80,10 @@
 
         // Update followers
         if ( this.user.uid && !this.disabled ) {
+          // Verify state
+          if ( await this.checkIfFollowing( this.user.uid ) ) return;
+
+          // Update
           this.disabled = true;
           const batch = db.batch();
 
@@ -111,6 +115,10 @@
 
         // Update followers
         if ( this.user.uid && !this.disabled ) {
+          // Verify state
+          if ( ! await this.checkIfFollowing( this.user.uid ) ) return;
+
+          // Update
           this.disabled = true;
           const batch = db.batch();
 
