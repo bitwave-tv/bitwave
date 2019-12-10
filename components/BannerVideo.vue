@@ -2,10 +2,10 @@
   <v-card
     v-if="live"
     color="black"
-    class="d-flex align-center flex-wrap elevation-8 mb-2"
+    class="d-flex flex-wrap elevation-8"
   >
     <div
-      class="flex-grow-1"
+      class="flex-grow-1 align-self-center"
       style="min-width: 40%;"
     >
       <video
