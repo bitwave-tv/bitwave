@@ -138,6 +138,7 @@
   import Chat from '~/components/Chat';
   import VueMarkdown from '~/components/VueMarkdown';
   import FollowButton from '@/components/FollowButton';
+  import { VStore } from '@/store';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = () => import ( '@/components/ShareStream' );
@@ -386,7 +387,7 @@
 
     computed: {
       ...mapGetters({
-        username: 'username',
+        username: VStore.$getters.getUsername,
       }),
 
       mobile () {

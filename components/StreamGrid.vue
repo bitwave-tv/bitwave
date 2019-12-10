@@ -50,6 +50,7 @@
   import StreamCard from '@/components/StreamCard';
   import { db } from '@/plugins/firebase';
   import { mapGetters } from 'vuex';
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'StreamGrid',
@@ -106,8 +107,8 @@
     },
 
     computed: {
-      ...mapGetters( 'chat', {
-        streamViewerList: 'GET_STREAM_VIEWERLIST',
+      ...mapGetters(Chat.namespace, {
+        streamViewerList: Chat.$getters.getStreamViewerList,
       }),
 
       streamerList () {

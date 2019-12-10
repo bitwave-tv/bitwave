@@ -175,6 +175,9 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
 
+  import { mapActions } from 'vuex'
+  import { VStore } from '@/store';
+
   export default {
     name: 'index',
 
@@ -212,7 +215,7 @@
 
     methods: {
       // Toggle Register / Login
-      switchForm() {
+      switchForm () {
         this.signUp = !this.signUp;
         this.resetValidation();
         this.hideAlert();
@@ -220,7 +223,7 @@
       },
 
       // Create User
-      async createUser( username, email, password ) {
+      async createUser ( username, email, password ) {
         if ( !this.$refs.loginForm.validate() ) return;
 
         this.$ga.event({
@@ -268,7 +271,7 @@
       },
 
       // Sign In
-      async signIn( email, password ) {
+      async signIn ( email, password ) {
         if ( !this.$refs.loginForm.validate() ) return;
 
         this.$ga.event({
@@ -292,7 +295,7 @@
         }
       },
 
-      async resetPassword( email ) {
+      async resetPassword ( email ) {
         this.$ga.event({
           eventCategory : 'login',
           eventAction   : 'reset password',
@@ -321,7 +324,7 @@
         this.hideAlert();
       },
 
-      async authenticated( user ) {
+      async authenticated ( user ) {
         if ( user ) {
           if ( process.client )
             console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
@@ -330,41 +333,45 @@
 
           if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
 
-          await this.$store.dispatch( 'login', user );
+          await this.login( user );
 
           setTimeout( () => this.show = false, 1500 );
         } else {
           if ( process.client )
-            console.log(`%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+            console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
           else
-            console.log('LoginDialog: Not logged in.');
+            console.log( 'LoginDialog: Not logged in.' );
         }
       },
 
-      showError( message ) {
+      showError ( message ) {
         this.alertType = 'error';
         this.alert = true;
         this.alertMessage = message;
       },
 
-      showSuccess( message ) {
+      showSuccess ( message ) {
         this.alertType = 'success';
         this.alert = true;
         this.alertMessage = message;
       },
 
-      hideAlert() {
+      hideAlert () {
         this.alert = false;
       },
+
+      ...mapActions({
+        login: VStore.$actions.login,
+      })
     },
 
     computed: {},
 
-    created() {
+    created () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
     },
   }

@@ -16,6 +16,8 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { VStore } from '@/store';
+
   import { auth, db, FieldValue } from '@/plugins/firebase.js'
 
   export default {
@@ -140,8 +142,8 @@
 
     computed: {
       ...mapGetters({
-        isAuth: 'isAuth',
-        user: 'user',
+        isAuth : VStore.$getters.isAuth,
+        user   : VStore.$getters.getUser,
       }),
 
     },

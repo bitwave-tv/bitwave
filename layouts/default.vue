@@ -58,8 +58,6 @@
   import Notifications from '~/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
 
-  import { mapState } from 'vuex'
-
   export default {
     components: {
       User,
@@ -80,9 +78,7 @@
     },
 
     computed: {
-      ...mapState({
-        currentUser: state => state.user.currentUser,
-      }),
+
     },
 
     created() {

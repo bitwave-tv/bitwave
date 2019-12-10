@@ -184,6 +184,7 @@
 <script>
   import { db } from '@/plugins/firebase.js';
   import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   const DEFAULT_OVERLAY = {
     id: null,
@@ -328,7 +329,7 @@
 
     computed: {
       ...mapGetters ({
-        user: 'user',
+        user: VStore.$getters.getUser,
       }),
     },
 

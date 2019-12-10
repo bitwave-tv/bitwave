@@ -110,6 +110,7 @@
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import { Chat } from '@/store/chat';
+  import { VStore } from '@/store';
 
   let trollInitialized = false;
   let trollDataError = null;
@@ -751,7 +752,7 @@
       },
 
       ...mapMutations({
-        setChatToken: 'setChatToken',
+        setChatToken: VStore.$mutations.setChatToken,
       }),
 
       ...mapMutations (Chat.namespace, {
@@ -765,7 +766,7 @@
       }),
 
       ...mapActions({
-        exchangeIdTokenChatToken: 'exchangeIdTokenChatToken',
+        exchangeIdTokenChatToken: VStore.$actions.exchangeIdTokenChatToken,
       }),
 
       ...mapActions (Chat.namespace, {
@@ -775,10 +776,10 @@
 
     computed: {
       ...mapGetters({
-        isAuth: 'isAuth',
-        user: 'user',
-        _username: 'username',
-        getChatToken: 'getChatToken',
+        isAuth       : VStore.$getters.isAuth,
+        user         : VStore.$getters.getUser,
+        _username    : VStore.$getters.getUsername,
+        getChatToken : VStore.$getters.getChatToken,
       }),
 
       ...mapState (Chat.namespace, {

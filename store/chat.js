@@ -235,4 +235,3 @@ export const Chat = {
   $mutations,
   $actions,
 };
-

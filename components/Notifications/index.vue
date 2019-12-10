@@ -93,6 +93,7 @@
   import { auth, db } from '@/plugins/firebase.js'
 
   import { mapGetters } from 'vuex'
+  import { VStore } from '@/store';
 
   export default {
     name: 'Notifications',
@@ -156,8 +157,8 @@
 
     computed: {
       ...mapGetters({
-        isAuth : 'isAuth',
-        user   : 'user',
+        isAuth : VStore.$getters.isAuth,
+        user   : VStore.$getters.getUser,
       }),
 
       notificationCount () {
