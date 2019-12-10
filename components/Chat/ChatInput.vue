@@ -71,6 +71,7 @@
 
 <script>
   import { mapState, mapMutations } from 'vuex'
+  import { Chat } from '@/store/chat';
 
   const ChatSettings = () => import( '@/components/Chat/ChatSettings' );
 
@@ -95,8 +96,8 @@
     },
 
     methods: {
-      ...mapMutations( 'chat', {
-        setMessage: 'SET_CHAT_MESSAGE',
+      ...mapMutations(Chat.namespace, {
+        setMessage: Chat.$mutations.setMessage,
       }),
 
       updateMessage ( event ) {
@@ -144,8 +145,8 @@
     },
 
     computed: {
-      ...mapState( 'chat', {
-        getMessage: 'message',
+      ...mapState(Chat.namespace, {
+        getMessage: Chat.$states.message,
       }),
     },
   }

@@ -26,13 +26,13 @@
           :label="`${ globalChat ? 'Global' : 'Local' } Chat`"
           color="yellow"
           hide-details
-        ></v-switch>
+        />
         <v-switch
           v-model="showTimestamps"
           label="Timestamps"
           color="yellow"
           hide-details
-        ></v-switch>
+        />
       </div>
 
       <v-switch
@@ -41,7 +41,7 @@
         class="mb-2"
         color="yellow"
         hide-details
-      ></v-switch>
+      />
 
       <v-switch
         v-model="notificationSound"
@@ -49,7 +49,7 @@
         class="mb-2"
         color="yellow"
         hide-details
-      ></v-switch>
+      />
     </div>
 
     <v-divider/>
@@ -66,7 +66,7 @@
             color="yellow"
             hide-details
             @change="toggleTts"
-          ></v-switch>
+          />
         </v-flex>
         <v-flex>
           <v-switch
@@ -77,7 +77,7 @@
             color="yellow"
             hide-details
             @change="toggleTrollTts"
-          ></v-switch>
+          />
         </v-flex>
       </v-layout>
 
@@ -89,7 +89,7 @@
           label="TTS Voice"
           style="font-size: 12px;"
           hide-details
-        ></v-select>
+        />
       </v-flex>
 
       <v-list-item>
@@ -111,7 +111,7 @@
               single-line
               type="number"
               style="width: 50px"
-            ></v-text-field>
+            />
           </template>
         </v-slider>
       </v-list-item>
@@ -121,6 +121,7 @@
 
 <script>
   import { mapState, mapMutations } from 'vuex'
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'ChatSettings',
@@ -137,15 +138,15 @@
     },
 
     methods: {
-      ...mapMutations ('chat', {
-        setModeGlobal: 'SET_MODE_GLOBAL',
-        setModeTimestamps: 'SET_TIMESTAMPS',
-        setUseTts: 'SET_USE_TTS',
-        setUseIgnore: 'SET_USE_IGNORE',
-        setTrollTts: 'SET_TROLL_TTS',
-        setTtsRate: 'SET_TTS_RATE',
-        setTtsVoice: 'SET_TTS_VOICE',
-        setNotify: 'SET_NOTIFY',
+      ...mapMutations (Chat.namespace, {
+        setModeGlobal     : Chat.$mutations.setGlobal,
+        setModeTimestamps : Chat.$mutations.setTimestamps,
+        setUseTts         : Chat.$mutations.setUseTts,
+        setUseIgnore      : Chat.$mutations.setUseIgnore,
+        setTrollTts       : Chat.$mutations.setTrollTts,
+        setTtsRate        : Chat.$mutations.setTtsRate,
+        setTtsVoice       : Chat.$mutations.setTtsVoice,
+        setNotify         : Chat.$mutations.setNotify,
       }),
 
       toggleTts() {
@@ -157,25 +158,25 @@
       },
 
       closeMenu() {
-        this.$emit('close');
+        this.$emit( 'close' );
       },
 
       updateSettings() {
         const settings = {};
-        this.$emit('input', settings);
+        this.$emit( 'input', settings );
       },
     },
 
     computed: {
-      ...mapState ('chat', {
-        getModeGlobal: 'global',
-        getModeTimestamps: 'timestamps',
-        getUseTts: 'useTts',
-        getUseIgnore: 'useIgnore',
-        getTrollTts: 'trollTts',
-        getTtsRate: 'ttsRate',
-        getTtsVoice: 'ttsVoice',
-        getNotify: 'notify'
+      ...mapState (Chat.namespace, {
+        getModeGlobal     : Chat.$states.global,
+        getModeTimestamps : Chat.$states.timestamps,
+        getUseTts         : Chat.$states.useTts,
+        getUseIgnore      : Chat.$states.useIgnore,
+        getTrollTts       : Chat.$states.trollTts,
+        getTtsRate        : Chat.$states.ttsRate,
+        getTtsVoice       : Chat.$states.ttsVoice,
+        getNotify         : Chat.$states.notify,
       }),
 
       globalChat: {

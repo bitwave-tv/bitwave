@@ -109,6 +109,7 @@
   import ViewerList from '@/components/Chat/ViewerList'
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+  import { Chat } from '@/store/chat';
 
   let trollInitialized = false;
   let trollDataError = null;
@@ -753,22 +754,22 @@
         setChatToken: 'setChatToken',
       }),
 
-      ...mapMutations ('chat', {
-        setModeGlobal: 'SET_MODE_GLOBAL',
-        setModeTimestamps: 'SET_TIMESTAMPS',
-        setIgnoreList: 'SET_IGNORE_LIST',
-        setMessage: 'SET_CHAT_MESSAGE',
-        appendChatMessage: 'APPEND_CHAT_MESSAGE',
-        setNotify: 'SET_NOTIFY',
-        setUseIgnore: 'SET_USE_IGNORE',
+      ...mapMutations (Chat.namespace, {
+        setModeGlobal     : Chat.$mutations.setGlobal,
+        setModeTimestamps : Chat.$mutations.setTimestamps,
+        setUseIgnore      : Chat.$mutations.setUseIgnore,
+        setNotify         : Chat.$mutations.setNotify,
+        setIgnoreList     : Chat.$mutations.setIgnoreList,
+        setMessage        : Chat.$mutations.setMessage,
+        appendChatMessage : Chat.$mutations.appendMessage,
       }),
 
       ...mapActions({
         exchangeIdTokenChatToken: 'exchangeIdTokenChatToken',
       }),
 
-      ...mapActions ('chat', {
-        updateViewerlist: 'UPDATE_VIEWERLIST',
+      ...mapActions (Chat.namespace, {
+        updateViewerlist: Chat.$actions.updateViewerList,
       }),
     },
 
@@ -780,17 +781,17 @@
         getChatToken: 'getChatToken',
       }),
 
-      ...mapState ('chat', {
-        getModeGlobal: 'global',
-        getModeTimestamps: 'timestamps',
-        getIgnoreList: 'ignoreList',
-        getUseTts: 'useTts',
-        getUseIgnore: 'useIgnore',
-        getTrollTts: 'trollTts',
-        getTtsRate: 'ttsRate',
-        getTtsVoice: 'ttsVoice',
-        getMessage: 'message',
-        notify: 'notify',
+      ...mapState (Chat.namespace, {
+        getModeGlobal     : Chat.$states.global,
+        getModeTimestamps : Chat.$states.timestamps,
+        getUseTts         : Chat.$states.useTts,
+        getUseIgnore      : Chat.$states.useIgnore,
+        getTrollTts       : Chat.$states.trollTts,
+        getTtsRate        : Chat.$states.ttsRate,
+        getTtsVoice       : Chat.$states.ttsVoice,
+        notify            : Chat.$states.notify,
+        getIgnoreList     : Chat.$states.ignoreList,
+        getMessage        : Chat.$states.message,
       }),
 
       global: {
