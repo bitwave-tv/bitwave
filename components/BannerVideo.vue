@@ -2,7 +2,7 @@
   <v-card
     v-if="live"
     color="black"
-    class="d-flex flex-wrap elevation-8"
+    class="d-flex flex-wrap justify-end elevation-8"
   >
     <div
       class="flex-grow-1 align-self-center"
