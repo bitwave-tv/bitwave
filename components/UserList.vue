@@ -50,38 +50,47 @@
           class="pt-0"
           dense
         >
-          <v-list-item
-            class="py-1"
+          <template
             v-for="( user, i ) in users"
-            :key="i"
-            :to="user.to"
-            router
-            exact
           >
-            <v-list-item-avatar
-              :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
-              class="my-1"
+            <v-lazy
+              min-height="56"
+              :key="i"
             >
-              <v-badge
-                v-model="user.live && user.nsfw"
-                :color="!!user.nsfw ? 'orange' : 'green'"
-                overlap
+              <v-list-item
+                class="py-1"
+                :to="user.to"
+                router
+                exact
               >
-                <template v-slot:badge>
-                  <v-icon small>flag</v-icon>
-                </template>
-                <v-avatar
-                  :size="user.live ? 36 : 40"
+                <v-list-item-avatar
+                  :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
+                  class="my-1"
                 >
-                  <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
-                </v-avatar>
-              </v-badge>
-            </v-list-item-avatar>
-            <v-list-item-content class="py-0">
-              <v-list-item-title>{{ user.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+                  <v-badge
+                    v-model="user.live && user.nsfw"
+                    :color="!!user.nsfw ? 'orange' : 'green'"
+                    overlap
+                  >
+                    <template v-slot:badge>
+                      <v-icon small>flag</v-icon>
+                    </template>
+                    <v-avatar
+                      :size="user.live ? 36 : 40"
+                    >
+                      <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
+                    </v-avatar>
+                  </v-badge>
+                </v-list-item-avatar>
+                <v-list-item-content class="py-0">
+                  <v-list-item-title>{{ user.title }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-lazy>
+          </template>
+
+
 
           <!-- View All Streamers -->
           <v-list-item
