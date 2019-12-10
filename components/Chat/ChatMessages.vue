@@ -28,16 +28,19 @@
     </div>
 
     <!-- FAB for Scroll Down -->
-    <div class="stb-fab d-flex justify-center" :class="{ show: showFAB }">
-      <v-btn
-        fab
-        small
-        color="yellow"
-        @click="scrollToBottom( true )"
-        class="black--text mt-3"
-      >
-        <v-icon>keyboard_arrow_down</v-icon>
-      </v-btn>
+    <div class="stb-fab d-flex justify-center">
+      <v-slide-y-transition>
+        <v-btn
+          v-show="showFAB"
+          fab
+          small
+          color="yellow"
+          @click="scrollToBottom( true )"
+          class="black--text mt-3"
+        >
+          <v-icon>keyboard_arrow_down</v-icon>
+        </v-btn>
+      </v-slide-y-transition>
     </div>
 
   </v-flex>
@@ -75,16 +78,18 @@
       },
 
       checkIfBottom () {
+        if ( this.messages.length === 0 ) return true;
         const scrollTop    = this.chatContainer.scrollTop;
         const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
         const scrollHeight = this.chatContainer.scrollHeight;
-        return scrollTop + clientHeight >= scrollHeight - document.querySelector("#chat-scroll > div:last-child").clientHeight;
+        const lastMessageHeight = this.chatContainer.lastElementChild.clientHeight;
+        // const lastMessageHeight = document.querySelector("#chat-scroll > div:last-child").clientHeight;
+        return scrollTop + clientHeight >= scrollHeight - lastMessageHeight;
       },
 
       async scrollToBottom ( force ) {
         // If we are NOT at the bottom && NOT forcing scroll, bail early
         if ( !this.checkIfBottom() && !force ) {
-          this.showFAB = true;
           return;
         }
 
@@ -144,6 +149,7 @@
     async mounted () {
       this.chatContainer = this.$refs.scroller;
       this.chatContainer.addEventListener( 'scroll', this.onScroll, { passive: true } );
+      this.$nextTick( () => this.jumpToBottom() );
     },
 
     beforeDestroy() {
@@ -167,12 +173,13 @@
       left: 0;
       top: 0;
 
-      transform: translateY(-150%);
+      /* Old animation for FAB
+      transform: translateY(0);
       transition: .5s transform;
 
-      &.show {
-        transform: translateY(0);
-      }
+      &.hide {
+        transform: translateY(-150%);
+      }*/
     }
   }
 
