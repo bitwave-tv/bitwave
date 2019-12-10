@@ -79,7 +79,7 @@
             <v-divider
               vertical
               class="mx-2"
-            ></v-divider>
+            />
             <div>
               Created: {{ formatDate( overlay.created.toDate() ) }}
             </div>
@@ -106,7 +106,7 @@
             Edit
           </v-btn>
 
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn
             color="yellow"
             text
@@ -127,7 +127,7 @@
       <chat-overlay-dialog
         v-model="showEditDialog"
         :data="overlayData"
-      ></chat-overlay-dialog>
+      />
     </v-dialog>
 
     <!-- Snackbar Notifications -->
