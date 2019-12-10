@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "private": true,
@@ -21,6 +21,7 @@
     "@nuxtjs/manifest": "^3.0.0-beta.16",
     "@nuxtjs/pwa": "^3.0.0-beta.19",
     "@nuxtjs/recaptcha": "^0.6.1",
+    "@nuxtjs/toast": "^3.3.0",
     "babel-runtime": "^6.26.0",
     "braintree-web-drop-in": "^1.21.0",
     "cookie-universal-nuxt": "^2.0.19",

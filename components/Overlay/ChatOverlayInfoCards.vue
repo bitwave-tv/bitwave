@@ -195,12 +195,14 @@
       copyToClipboard ( text ) {
         this.$copyText( text ).then( () => {
           this.alertMessage = 'Copied to clipboard';
+          this.$toast.success( 'Copied to clipboard', { icon: 'done', duration: 5000 } );
           this.alertType = 'success';
           this.alertIcon = 'check';
           this.showAlert = true;
         }, ( error ) => {
           console.log( error );
           this.alertMessage = 'Failed to copy to clipboard';
+          this.$toast.error( 'Failed to copy to clipboard', { icon: 'error', duration: 5000 } );
           this.alertType = 'error';
           this.alertIcon = 'warning';
           this.showAlert = true;

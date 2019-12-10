@@ -308,9 +308,10 @@
         // this.socket = socketio( 'localhost:5000', socketOptions );
 
         this.socket.on( 'connect',      async ()      => await this.socketConnect() );
-        this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed!`, error ));
+        this.socket.on( 'reconnect',    async ()      => await this.socketReconnect() );
+        this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed`, error ));
         this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${attempt})` ));
-        this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost!`, data ));
+        this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost`, data ));
 
 
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
@@ -336,18 +337,25 @@
         }
       },
 
+      async socketReconnect () {
+        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 5000 }  );
+      },
+
       async socketError ( error, reason ) {
         this.loading = true;
         const errorWrapper = content => `<p><img src="https://cdn.bitwave.tv/static/emotes/SadBlobby.png" alt=":("> ${content}</p>`;
         const styledReason = msg => msg ? `<br>Reason: <span style="color: #F44336; font-weight: bold;">${msg}</span>` : '';
         const message = errorWrapper( `${error}${styledReason( reason )}` );
-        await this.insertMessage( message );
+        // await this.insertMessage( message );
+
+        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 5000 } );
       },
 
       async hydrate ( data ) {
         await this.socket.emit( 'hydratepoll', this.pollData.id );
 
         if ( !data ) {
+          this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 5000 } );
           console.log( 'Failed to receive hydration data' );
           return;
         }
