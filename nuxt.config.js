@@ -43,7 +43,7 @@ module.exports = {
   ** Global CSS
   */
   css: [
-    '~/assets/style/app.styl',
+    '~/assets/style/app.scss',
     'video.js/dist/video-js.css',
   ],
 
@@ -105,9 +105,10 @@ module.exports = {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
     '@nuxtjs/device',
+    '@nuxtjs/pwa',
     '@nuxtjs/recaptcha',
+    '@nuxtjs/toast',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
     // { src: '~/plugins/nuxt-client-init', ssr: false },
@@ -122,19 +123,32 @@ module.exports = {
 
   /*
   ** Build Modules
-   */
+  */
   buildModules: [
     '@nuxtjs/vuetify',
   ],
 
+  /*
+  ** Vuetify
+  */
   vuetify: {
     optionsPath: './vuetify.options.js',
   },
 
+  /*
+  ** reCAPTCHA v3
+  */
   recaptcha: {
     hideBadge: true,
     siteKey: '6LcEX8QUAAAAADjiUPfbzkyn0KYAaEK263quzCGh',
     version: 3,
+  },
+
+  /*
+  ** Toast
+  */
+  toast: {
+    position: 'bottom-right',
   },
 
   /*

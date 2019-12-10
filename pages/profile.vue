@@ -438,10 +438,12 @@
         const initialState = this.showKey;
         this.$copyText( this.streamData.key ).then( () => {
           this.keyMessage = ['Copied to clipboard'];
+          this.$toast.success( 'Copied to clipboard', { icon: 'done', duration: 5000 } );
           this.$refs['streamkeyinput'].focus();
         }, ( error ) => {
           console.log( error );
           this.keyMessage = 'Failed to copy to clipboard';
+          this.$toast.error( 'Failed to copy to clipboard', { icon: 'error', duration: 5000 } );
         });
 
         setTimeout ( () => {
@@ -486,11 +488,13 @@
             },
           });
           console.log( `Upload successfull.` );
+          this.$toast.success( 'Upload successful', { icon: 'done', duration: 5000 } );
           console.log( data );
           this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
           this.saveUserAvatar( this.imageUrl );
         } catch ( error ) {
           console.log( `Upload failed!` );
+          this.$toast.error( 'Failed to upload image', { icon: 'error', duration: 5000 } );
           console.log( error.message );
         }
         this.uploadingAvatar = false;

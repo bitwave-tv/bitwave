@@ -33,20 +33,24 @@
       <v-row>
         <v-col
           v-for="streamer in filteredStreamers"
-          :key="streamer.name"
           lg="2"
           md="4"
           sm="6"
           cols="12"
         >
-          <stream-card
-            :to="streamer.to.toString()"
-            :image="`${streamer.live ? streamer.thumbnail : streamer.avatar}`"
-            :live="streamer.live"
-            :nsfw="streamer.nsfw"
-            :title="streamer.title"
-            :name="streamer.name"
-          ></stream-card>
+          <v-lazy
+            min-height="150px"
+            :key="streamer.name"
+          >
+            <stream-card
+              :to="streamer.to.toString()"
+              :image="`${streamer.live ? streamer.thumbnail : streamer.avatar}`"
+              :live="streamer.live"
+              :nsfw="streamer.nsfw"
+              :title="streamer.title"
+              :name="streamer.name"
+            />
+          </v-lazy>
         </v-col>
       </v-row>
     </v-container>

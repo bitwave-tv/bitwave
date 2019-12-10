@@ -42,7 +42,7 @@
           class="mt-0"
           color="yellow"
           hide-details
-        ></v-switch>
+        />
       </div>
 
       <div style="max-height: 65vh; overflow: auto; overscroll-behavior: contain; will-change: transform;">
@@ -50,23 +50,29 @@
           dense
           class="py-0"
         >
-          <template v-if="showViewers && viewerList.length > 0">
-            <v-list-item
-              v-for="viewer in viewerList"
-              :key="viewer.username"
-              :to="`${viewer.page}`"
-            >
-              <v-list-item-avatar>
-                <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
-                <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{ viewer.username }}</v-list-item-title>
-                <v-list-item-subtitle>
-                  Watching: {{ `${viewer.page} (${ getViewCount ( viewer.page) })` }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
+          <template
+            v-if="showViewers && viewerList.length > 0"
+            v-for="viewer in viewerList"
+          >
+              <v-lazy
+                min-height="56"
+                :key="viewer.username"
+              >
+                <v-list-item
+                  :to="`${viewer.page}`"
+                >
+                  <v-list-item-avatar>
+                    <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
+                    <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ viewer.username }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                      Watching: {{ `${viewer.page} (${ getViewCount ( viewer.page) })` }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-lazy>
           </template>
         </v-list>
       </div>
