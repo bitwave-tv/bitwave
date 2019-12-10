@@ -488,11 +488,13 @@
             },
           });
           console.log( `Upload successfull.` );
+          this.$toast.success( 'Upload successful', { icon: 'done', duration: 5000 } );
           console.log( data );
           this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
           this.saveUserAvatar( this.imageUrl );
         } catch ( error ) {
           console.log( `Upload failed!` );
+          this.$toast.error( 'Failed to upload image', { icon: 'error', duration: 5000 } );
           console.log( error.message );
         }
         this.uploadingAvatar = false;
