@@ -72,18 +72,6 @@
         drawer: undefined,
       }
     },
-
-    methods: {
-
-    },
-
-    computed: {
-
-    },
-
-    created() {
-
-    }
   }
 </script>
 
@@ -97,4 +85,5 @@
       opacity: 0;
     }
   }
+
 </style>

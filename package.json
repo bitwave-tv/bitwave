@@ -43,7 +43,7 @@
     "vue-virtual-scroller": "^1.0.0-rc.2"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.9.0",
+    "@nuxtjs/vuetify": "^1.9.1",
     "node-sass": "^4.13.0",
     "nodemon": "^2.0.1",
     "stylus": "^0.54.7",

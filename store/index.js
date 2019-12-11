@@ -1,4 +1,5 @@
 import { auth, db } from '@/plugins/firebase.js';
+import axios from 'axios';
 
 let unsubscribeUser = null;
 
@@ -10,6 +11,8 @@ const $states = {
 
   channel   : 'CHANNEL',
   chatToken : 'CHAT_TOKEN',
+
+  sidebarData : 'SIDEBAR_DATA',
 };
 
 const $getters = {
@@ -21,6 +24,8 @@ const $getters = {
   getChatToken : 'GET_CHAT_TOKEN',
   getStreamKey : 'GET_STREAM_KEY',
   getChannel   : 'GET_CHANNEL',
+
+  getSidebarData : 'GET_SIDEBAR_DATA',
 };
 
 const $mutations = {
@@ -28,6 +33,8 @@ const $mutations = {
   setUser : 'SET_USER',
 
   setChatToken : 'SET_CHAT_TOKEN',
+
+  setSidebarData : 'SET_SIDEBAR_DATA',
 };
 
 const $actions = {
@@ -37,15 +44,18 @@ const $actions = {
   loginUser    : 'LOGIN_USER',
   login        : 'LOGIN',
   logout       : 'LOGOUT',
+
+  fetchSidebarData : 'FETCH_SIDEBARE',
 };
 
 
 // Create Store
 export const state = () => ({
-  [$states.auth]      : null,
-  [$states.user]      : null,
-  [$states.channel]   : null,
-  [$states.chatToken] : null,
+  [$states.auth]        : null,
+  [$states.user]        : null,
+  [$states.channel]     : null,
+  [$states.chatToken]   : null,
+  [$states.sidebarData] : [],
 });
 
 
@@ -87,6 +97,10 @@ export const getters = {
     }
     return null;
   },
+
+  [$getters.getSidebarData] ( state ) {
+    return state[$states.sidebarData].slice( 0, 25 );
+  },
 };
 
 
@@ -108,6 +122,10 @@ export const mutations = {
     state[$states.chatToken] = token;
   },
 
+  [$mutations.setSidebarData] ( state, data ) {
+    state[$states.sidebarData] = data;
+  },
+
   setAvatar( state, url ) {
     state[$states.user] = {
 
@@ -122,7 +140,7 @@ export const mutations = {
 
 // Actions
 export const actions = {
-  nuxtServerInit ({ commit }, { req, params }) {
+  async nuxtServerInit ({ dispatch, commit }, { req, params }) {
     let authUser = null, user = null;
     const cookies = this.$cookies.getAll();
     if ( cookies ) {
@@ -140,6 +158,8 @@ export const actions = {
     }
     commit( $mutations.setAuth, authUser );
     commit( $mutations.setUser, user );
+
+    await dispatch( $actions.fetchSidebarData );
   },
 
   async nuxtClientInit ({ dispatch }, { req, params }) {
@@ -239,6 +259,16 @@ export const actions = {
       // console.log( `%cSTORE:%c Got ChatToken! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken );
     } catch ( error ) {
       console.log( `%cSTORE:%c ERROR: Failed to exchange token! %o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
+    }
+  },
+
+  async [$actions.fetchSidebarData] ({ commit }) {
+    try {
+      const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
+      commit ( $mutations.setSidebarData, data.users );
+    } catch ( error ) {
+      console.error( `ERROR: Failed to update user list.` );
+      console.log( error.message );
     }
   },
 };

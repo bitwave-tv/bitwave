@@ -152,10 +152,17 @@
         messages: [
           {
             timestamp : Date.now(),
-            username  : 'Dispatch',
-            avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
+            username  : 'MarkPugner',
+            avatar    : 'https://cdn.bitwave.tv/uploads/avatar/94b06c45-af56-4d49-8d42-62853eac66d8-md',
             message   : `<p>Connecting to chat server... <img src="https://cdn.bitwave.tv/static/emotes/catspin.gif" alt=":catspin:"></p>`,
-            channel   : 'bitwave',
+            channel   : 'litechat',
+          },
+          {
+            timestamp : Date.now(),
+            username  : 'Dispatch',
+            avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave-100.gif',
+            message   : `<img src="https://cdn.bitwave.tv/static/emotes/xmas.gif" alt=":xmas:">`,
+            channel   : 'litechat',
           },
         ],
 

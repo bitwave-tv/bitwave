@@ -44,6 +44,7 @@ module.exports = {
   css: [
     '~/assets/style/app.scss',
     'video.js/dist/video-js.css',
+    'vuetify/dist/vuetify.css',
   ],
 
   workbox: {
@@ -157,6 +158,9 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+
+    extractCSS: true,
+
     extend ( config, ctx ) {
 
     },

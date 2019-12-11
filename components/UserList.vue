@@ -51,7 +51,7 @@
           dense
         >
           <template
-            v-for="( user, i ) in users"
+            v-for="( user, i ) in sidebarData"
           >
             <v-lazy
               min-height="56"
@@ -89,9 +89,7 @@
               </v-list-item>
             </v-lazy>
           </template>
-
-
-
+          
           <!-- View All Streamers -->
           <v-list-item
             class="py-0"
@@ -123,7 +121,7 @@
           color="yellow"
           block
           outlined
-          @click.stop="toggleMini"
+          @click.stop="miniVariant = !miniVariant"
         >
           <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
         </v-btn>
@@ -133,7 +131,8 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import { mapGetters, mapActions } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     name: 'UserList',
@@ -144,7 +143,6 @@
 
     data() {
       return {
-        drawer: true,
         miniVariant: true,
 
         items: [
@@ -155,37 +153,28 @@
             to     : '/',
           },
         ],
-        users: [],
         userUpdateRate: 10,
         userListTimer: null,
       }
     },
 
     methods: {
-      toggleMini() {
-        this.miniVariant = !this.miniVariant;
-      },
-
-      async updateList() {
-        try {
-          const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
-          this.users = data.users.slice( 0, 25 );
-        } catch ( error ) {
-          console.error( `ERROR: Failed to update user list.` );
-          console.log( error.message );
-        }
-      },
+      ...mapActions({
+        fetchData : VStore.$actions.fetchSidebarData,
+      }),
     },
 
-    async created() {
-      await this.updateList();
+    computed: {
+      ...mapGetters({
+        sidebarData: VStore.$getters.getSidebarData,
+      }),
     },
 
-    async mounted() {
-      this.userListTimer = setInterval( async () => await this.updateList(), this.userUpdateRate * 1000 );
+    async mounted () {
+      this.userListTimer = setInterval( async () => await this.fetchData(), this.userUpdateRate * 1000 );
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       if ( this.userListTimer ) clearInterval( this.userListTimer );
     },
   }
