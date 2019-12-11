@@ -312,9 +312,7 @@
         this.socket.on( 'connect',      async ()      => await this.socketConnect() );
         this.socket.on( 'reconnect',    async ()      => await this.socketReconnect() );
         this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed`, error ));
-        this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${attempt})` ));
         this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost`, data ));
-
 
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
@@ -323,6 +321,10 @@
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
+
+        if ( process.env.APP_DEBUG ) {
+          this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${ attempt })` ) );
+        }
       },
 
       async socketConnect () {
@@ -340,24 +342,25 @@
       },
 
       async socketReconnect () {
-        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 5000 }  );
+        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 2000 }  );
       },
 
       async socketError ( error, reason ) {
         this.loading = true;
+        /* Replace with toast message
         const errorWrapper = content => `<p><img src="https://cdn.bitwave.tv/static/emotes/SadBlobby.png" alt=":("> ${content}</p>`;
         const styledReason = msg => msg ? `<br>Reason: <span style="color: #F44336; font-weight: bold;">${msg}</span>` : '';
         const message = errorWrapper( `${error}${styledReason( reason )}` );
-        // await this.insertMessage( message );
+        await this.insertMessage( message ); //*/
 
-        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 5000 } );
+        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000 } );
       },
 
       async hydrate ( data ) {
         await this.socket.emit( 'hydratepoll', this.pollData.id );
 
         if ( !data ) {
-          this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 5000 } );
+          this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000 } );
           console.log( 'Failed to receive hydration data' );
           return;
         }
@@ -412,7 +415,7 @@
         messages.forEach( el => {
           // Notification Sounds
           if ( this.notify ) {
-            if ( pattern.test(el.message) ) this.playSound();
+            if ( pattern.test( el.message ) ) this.playSound();
           }
 
           // Highlight username tags in new messages
@@ -426,12 +429,6 @@
           // Add message to list
           this.messages.push( el );
         });
-
-        // Trim chat history
-        /*if ( this.messages.length > 1.25 * this.chatLimit ) {
-          this.messages = this.messages.splice( -this.chatLimit );
-          console.log('Trimmed History');
-        }*/
 
         if ( this.$refs['chatmessages'] ) {
           if ( !this.$refs['chatmessages'].showFAB ) {
@@ -453,30 +450,36 @@
           global  : this.global,
         };
 
-        const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
-        const parts = this.getMessage.split( ' ' );
+        const pattern = /(?:^\/)(\w+)(?:\s+(\S+))?(?:\s+(.*))?/;
+        const params = this.getMessage.match( pattern );
 
-        if ( match ) {
-          const command  = match[1].toLowerCase();
-          const argument = parts[1]; //match[2];
+        // const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
+        // const parts = this.getMessage.split( ' ' );
+
+        if ( params ) {
+          // const command  = match[1].toLowerCase();
+          // const argument = parts[1]; //match[2];
+
+          const command  = params[1].toLowerCase();
+          const argument = params[2] ? params[2].toLowerCase() : '';
 
           switch ( command ) {
             case 'ignore':
             case 'i':
-              await this.ignoreUser( argument.toLowerCase() );
+              await this.ignoreUser( argument );
               break;
             case 'unignore':
             case 'u':
-              await this.unignoreUser( argument.toLowerCase() );
+              await this.unignoreUser( argument );
               break;
             case 'ignorechannel':
             case 'ic':
-              await this.ignoreChannel( argument.toLowerCase() );
+              await this.ignoreChannel( argument );
               break;
             case 'unignorechannel':
             case 'uic':
             case 'uc':
-              await this.unignoreChannel( argument.toLowerCase() );
+              await this.unignoreChannel( argument );
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
@@ -488,7 +491,7 @@
               break;
             case 'skip':
             case 's':
-              speechSynthesis.cancel();
+              speechSynthesis.cancel(); // Skip TTS
               break;
             case 'w':
             case 'whisper':
@@ -525,38 +528,31 @@
 
       async getTrollToken () {
         try {
-          // Get new troll token
-          const { data } = await this.$axios.get('https://api.bitwave.tv/api/troll-token');
-          const trollToken = data.chatToken;
-          // Save token to localStorage
-          localStorage.setItem( 'troll', trollToken );
-          // Parse token
+          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token' );
+          const trollToken = data.chatToken;                   // Get new troll token and
+          localStorage.setItem( 'troll', trollToken );         // Save token to localStorage
           this.setChatToken( trollToken );
           this.token = trollToken;
-          this.trollId = jwt_decode( trollToken ).user.name;
-          // Resolve our waiters
+          this.trollId = jwt_decode( trollToken ).user.name;   // Then parse the token
           trollInitialized = true;
-          trollDataWaiters.forEach( v => v.resolve() );
+          trollDataWaiters.forEach( v => v.resolve() );        // Finally, Resolve our waiters
         } catch ( error ) {
-          console.error( `Failed to get troll token`, error );
-          // Resolve our waiters
+          console.error( `Failed to get troll token`, error ); // Error getting troll token
           trollDataError = error;
-          trollDataWaiters.forEach( v => v.reject(error) );
+          trollDataWaiters.forEach( v => v.reject(error) );    // Reject our waiters
         }
       },
 
       async setupTrollData () {
         try {
-          const trollToken = localStorage.getItem( 'troll' );
-          if ( trollToken ) {
-            this.setChatToken( trollToken );
+          const trollToken = localStorage.getItem( 'troll' );  // Check for an existing token
+          if ( !trollToken ) await this.getTrollToken();           // No token found, go get one
+          if ( trollToken ) {                 // We have a token
+            this.setChatToken( trollToken );  // use the token
             this.token = trollToken;
-            this.trollId = jwt_decode( trollToken ).user.name;
-            // Resolve our waiters
+            this.trollId = jwt_decode( trollToken ).user.name;  // Decode the token
             trollInitialized = true;
-            trollDataWaiters.forEach( v => v.resolve() );
-          } else {
-            await this.getTrollToken();
+            trollDataWaiters.forEach( v => v.resolve() );       // Resolve our waiters
           }
         } catch ( error ) {
           console.log( `Failed to access localstorage`, error );
@@ -564,26 +560,21 @@
       },
 
       speak ( message, username ) {
-        if ( !this.getUseTts ) return;
-        if ( this.ignoreList.find( user => user === username ) ) return;
-        if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return; // disables troll TTS
+        if ( !this.getUseTts ) return;  // Check that TTS is enabled
+        if ( this.ignoreList.find( user => user === username ) ) return; // Don't read ignored users
+        if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return;         // disables troll TTS
 
-        function unescapeHtml(unsafe) {
+        const unescapeHtml = unsafe => {
           return unsafe
             .replace( /&amp;/g,  `&` )
             .replace( /&lt;/g,   `<` )
             .replace( /&gt;/g,   `>` )
             .replace( /&quot;/g, `"` )
             .replace( /&#39;/g,  `'` )
-        }
-
+        };
         message = unescapeHtml( message ); // Fixes escaped characters
-
-        // Remove html tags
-        message = message.replace( /<\/?[^>]*>/g, '' );
-
-        // Remove Links
-        message = message.replace( /((https?:\/\/)|(www\.))[^\s]+/gi, '' );
+        message = message.replace( /<\/?[^>]*>/g, '' );  // Remove html tags
+        message = message.replace( /((https?:\/\/)|(www\.))[^\s]+/gi, '' );  // Remove Links
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
@@ -634,7 +625,6 @@
       // Change end time to now to end poll instantly
       async endPoll ( pollId ) {
         // this.socket.emit('endpoll', pollId)
-
         const pollDocRef = db.collection( 'polls' ).doc( this.pollData.id );
         await pollDocRef.update( 'endsAt', new Date( Date.now() ) );
       },
@@ -816,7 +806,7 @@
 
       page () {
         let channel = this.chatChannel;
-        if (channel) {
+        if ( channel ) {
           if ( channel.match( /^[a-zA-Z0-9._-]+$/ ) )
             return channel;
           else
