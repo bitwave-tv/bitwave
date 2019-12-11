@@ -54,6 +54,7 @@
             v-for="( user, i ) in sidebarData"
           >
             <v-lazy
+              :value="i < 15"
               min-height="56"
               :key="i"
             >
@@ -89,7 +90,7 @@
               </v-list-item>
             </v-lazy>
           </template>
-          
+
           <!-- View All Streamers -->
           <v-list-item
             class="py-0"
