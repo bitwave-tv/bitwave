@@ -102,7 +102,7 @@
 
         errorOverlay: true,
 
-        loadingData: null,
+        loadingData: true,
         showKey: false,
 
         streamServer: maskedAddr,
@@ -147,7 +147,6 @@
         const key        = Math.random().toString( 16 ).substr( 2, 9 );
         const profileRef = db.collection( 'users' ).doc( this.uid );
         await profileRef.update({ streamkey: key });
-        await this.kickStream ();
         this.loadingData = false;
       },
 
