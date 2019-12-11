@@ -92,7 +92,7 @@
             :title="title"
             :description="description"
             :nsfw="nsfw"
-          ></EditStreamData>
+          />
 
           <v-btn
             v-if="false"
@@ -105,7 +105,7 @@
             <v-icon>timeline</v-icon>
           </v-btn>
 
-          <ShareStream :user="name"></ShareStream>
+          <ShareStream :user="name" />
         </div>
       </div>
     </v-sheet>
@@ -119,7 +119,7 @@
       <vue-markdown
         v-if="description"
         :source="description"
-      ></vue-markdown>
+      />
     </div>
 
   </div>
@@ -138,6 +138,7 @@
   import Chat from '~/components/Chat';
   import VueMarkdown from '~/components/VueMarkdown';
   import FollowButton from '@/components/FollowButton';
+  import { VStore } from '@/store';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = () => import ( '@/components/ShareStream' );
@@ -386,7 +387,7 @@
 
     computed: {
       ...mapGetters({
-        username: 'username',
+        username: VStore.$getters.getUsername,
       }),
 
       mobile () {
