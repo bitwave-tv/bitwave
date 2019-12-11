@@ -41,6 +41,7 @@
             <v-lazy
               min-height="150px"
               :key="streamer.name"
+              :options="{ threshold: 0.9 }"
             >
               <stream-card
                 :to="streamer.to.toString()"

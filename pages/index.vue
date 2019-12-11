@@ -150,12 +150,10 @@
             </div>
           </v-card-text>
 
-          <v-divider></v-divider>
+          <v-divider class="mb-2" />
 
           <v-card-actions class="pt-0">
-            <v-col>
-              <span>Bitwave Media &copy; {{ new Date().getFullYear() }}</span>
-            </v-col>
+            <div>Bitwave Media &copy; {{ new Date().getFullYear() }}</div>
             <v-spacer/>
             <v-btn
               small

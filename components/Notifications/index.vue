@@ -3,9 +3,8 @@
     <v-menu
       v-model="notificationMenu"
       :close-on-content-click="true"
-      max-width="80%"
+      left
       offset-y
-      origin="top right"
       transition="slide-y-transition"
     >
       <template #activator="{ on }">
@@ -32,10 +31,9 @@
 
       <v-card>
         <v-sheet color="yellow" class="pl-2 d-flex justify-space-between align-center">
-          <h4 class="black--text body-2">
-            <v-icon color="black" class="mx-1" small>notifications</v-icon>
+          <h5 class="black--text body-2">
             Notifications
-          </h4>
+          </h5>
           <v-btn
             color="black"
             text
@@ -43,7 +41,7 @@
             pa-0
             @click="notificationMenu = !notificationMenu"
           >
-            <v-icon color="black" small>close</v-icon>
+            <v-icon color="black">close</v-icon>
           </v-btn>
         </v-sheet>
 
@@ -78,9 +76,11 @@
               <v-list-item-content>
                 <v-list-item-title class="d-flex justify-space-between">
                   <div>{{ notification.title }}</div>
-                  <div class="grey--text">{{ timestamp( notification.timestamp.toDate()) }}</div>
                 </v-list-item-title>
-                <v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>
+                <!--<v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>-->
+                <v-list-item-subtitle>
+                  <div class="grey--text">{{ timestamp( notification.timestamp.toDate()) }}</div>
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -95,6 +95,39 @@
 
   import { mapGetters } from 'vuex'
   import { VStore } from '@/store';
+
+  // Epochs
+  const epochs = [
+    ['year', 31536000],
+    ['month', 2592000],
+    ['day', 86400],
+    ['hour', 3600],
+    ['minute', 60],
+    ['second', 1]
+  ];
+
+  // Get duration
+  const getDuration = (timeAgoInSeconds) => {
+    for (let [name, seconds] of epochs) {
+      const interval = Math.floor(timeAgoInSeconds / seconds);
+
+      if (interval >= 1) {
+        return {
+          interval: interval,
+          epoch: name
+        };
+      }
+    }
+  };
+
+  // Calculate
+  const timeAgo = (date) => {
+    const timeAgoInSeconds = Math.floor((new Date() - new Date(date)) / 1000);
+    const {interval, epoch} = getDuration(timeAgoInSeconds);
+    const suffix = interval === 1 ? '' : 's';
+
+    return `${interval} ${epoch}${suffix} ago`;
+  };
 
   export default {
     name: 'Notifications',
@@ -147,10 +180,8 @@
         }
       },
 
-      timestamp ( srcTime ) {
-        const date = new Intl.DateTimeFormat('en', { month: 'numeric', day: 'numeric' }).format(srcTime);
-        const time = new Intl.DateTimeFormat('en', { hour: 'numeric', minute: 'numeric' }).format(srcTime);
-        return `[${date} ${time}]`;
+      timestamp ( time ) {
+        return timeAgo( time );
       },
     },
 
