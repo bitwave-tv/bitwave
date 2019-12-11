@@ -189,7 +189,8 @@ export const actions = {
 
   async [$actions.loginUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
     await auth.setPersistence( stayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
-    const userCredential = await auth.signInWithEmailAndPassword( credential.email, credential.password );
+    await auth.signInWithEmailAndPassword( credential.email, credential.password );
+    // const userCredential = await auth.signInWithEmailAndPassword( credential.email, credential.password );
     // await dispatch ( $actions.storeUserData, userCredential );
   },
 
