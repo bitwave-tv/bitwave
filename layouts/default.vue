@@ -58,8 +58,6 @@
   import Notifications from '~/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
 
-  import { mapState } from 'vuex'
-
   export default {
     components: {
       User,
@@ -74,20 +72,6 @@
         drawer: undefined,
       }
     },
-
-    methods: {
-
-    },
-
-    computed: {
-      ...mapState({
-        currentUser: state => state.user.currentUser,
-      }),
-    },
-
-    created() {
-
-    }
   }
 </script>
 
@@ -101,4 +85,5 @@
       opacity: 0;
     }
   }
+
 </style>

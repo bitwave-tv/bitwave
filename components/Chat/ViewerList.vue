@@ -82,6 +82,7 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex'
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'ViewerList',
@@ -109,14 +110,14 @@
     },
 
     computed: {
-      ...mapState ('chat', {
-        viewers: 'viewerList',
-        channelViews: 'roomViewerList',
+      ...mapState (Chat.namespace, {
+        viewers: Chat.$states.viewerList,
+        channelViews: Chat.$states.roomViewerList,
       }),
 
-      ...mapGetters('chat', {
-        viewerCount: 'viewerCount',
-        streamViewerList: 'GET_STREAM_VIEWERLIST',
+      ...mapGetters(Chat.namespace, {
+        viewerCount: Chat.$getters.viewerCount,
+        streamViewerList: Chat.$getters.getStreamViewerList,
       }),
 
       channelViewCount () {

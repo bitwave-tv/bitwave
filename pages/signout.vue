@@ -19,6 +19,9 @@
 </template>
 
 <script>
+    import { mapActions } from 'vuex'
+    import { VStore } from '@/store'
+
     export default {
         name: 'signout',
 
@@ -32,9 +35,13 @@
             eventCategory : 'signout',
             eventAction   : 'signout',
           });
-          await this.$store.dispatch('logout');
+          await this.logoutStore();
           setTimeout( () => this.$router.push('/login'), 1500 );
         },
+
+        ...mapActions({
+          logoutStore: VStore.$actions.logout,
+        })
       },
 
       computed: {},

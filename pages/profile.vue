@@ -278,7 +278,8 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
 
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
+  import { VStore } from '@/store';
 
   export default {
 
@@ -286,7 +287,7 @@
 
     middleware: 'auth',
 
-    data() {
+    data () {
       return {
         unsubAuthChanged: null,
         currentTab: 0,
@@ -332,15 +333,18 @@
     },
 
     methods: {
+      ...mapActions({
+        logoutStore: VStore.$actions.logout,
+      }),
+
       async logout () {
-        await auth.signOut();
+        await this.logoutStore();
         this.$router.push( '/signout' );
       },
 
-      async authenticated( user ) {
+      async authenticated ( user ) {
         if ( user ) {
           console.log( `[profile] User:`, user );
-          if ( !this.user ) await this.$store.dispatch( 'login', user );
         } else {
           this.$router.push( '/login' );
         }
@@ -349,7 +353,7 @@
       getStreamData () {
         this.streamDataLoading = true;
         // const userId = this.user.uid;
-        const stream = this.user.username.toLowerCase();
+        const stream = this.username.toLowerCase();
         const streamRef = db.collection( 'streams' ).doc( stream );
         return streamRef.onSnapshot( async doc => {
           this.showStreamInfo = doc.exists;
@@ -359,7 +363,7 @@
 
       getProfileData () {
         this.profileDataLoading = true;
-        const userId = this.user.uid;
+        const userId = this.uid;
         const profileRef = db.collection( 'users' ).doc( userId );
         return profileRef.onSnapshot( async doc => {
           await this.profileDataChanged( doc.data() );
@@ -369,11 +373,7 @@
       async profileDataChanged ( data ) {
         if (data.avatar) this.imageUrl = data.avatar;
         this.streamkey = data.streamkey;
-        this.streamData.key = `${this.user.username}?key=${this.streamkey}`;
-
-        // rest of profile is managed by store
-        this.$store.commit( 'setUser', data );
-        this.$store.commit( 'setUserCookie', data );
+        this.streamData.key = `${this.username}?key=${this.streamkey}`;
         this.profileDataLoading = false;
       },
 
@@ -389,14 +389,14 @@
         this.$ga.event({
           eventCategory : 'profile',
           eventAction   : 'update stream',
-          eventLabel    : this.user.username.toLowerCase(),
+          eventLabel    : this.username.toLowerCase(),
         });
         this.saveLoading  = true;
         const archive     = this.streamData.archive;
         const title       = this.streamData.title;
         const nsfw        = this.streamData.nsfw;
         const description = this.description;
-        const stream      = this.user.username.toLowerCase();
+        const stream      = this.username.toLowerCase();
         const streamRef   = db.collection( 'streams' ).doc( stream );
         await streamRef.update({
           archive,
@@ -412,11 +412,11 @@
         this.$ga.event({
           eventCategory : 'profile',
           eventAction   : 'reset key',
-          eventLabel    : this.user.username.toLowerCase(),
+          eventLabel    : this.username.toLowerCase(),
         });
         this.keyLoading = true;
         const key    = Math.random().toString( 16 ).substr( 2, 9 );
-        const userId = this.user.uid;
+        const userId = this.uid;
         const docRef = db.collection( 'users' ).doc( userId );
         await docRef.update({
           streamkey: key,
@@ -428,7 +428,7 @@
       async kickStream () {
         const mode   = 'drop';
         const app    = 'live';
-        const user   = this.user.username;
+        const user   = this.username;
         const server = 'stream.bitwave.tv';
         const url    = `https://${server}/control/${mode}/publisher?app=${app}&name=${user}`;
         await this.$axios.$get( url );
@@ -470,9 +470,9 @@
             this.imageFile = file; // this is an image file that can be sent to server...
           });
         } else {
-          this.imageName = '';
+          this.imageName =   '';
           this.imageFile = null;
-          this.imageUrl  = '';
+          this.imageUrl  =   '';
         }
       },
 
@@ -504,17 +504,17 @@
         this.$ga.event({
           eventCategory : 'profile',
           eventAction   : 'update avatar',
-          eventLabel    : this.user.username.toLowerCase(),
+          eventLabel    : this.username.toLowerCase(),
         });
 
-        const userId = this.user.uid;
+        const userId = this.uid;
         const docRef = db.collection( 'users' ).doc( userId );
         await docRef.update({
           avatar: url,
         });
 
         if ( this.showStreamInfo ) {
-          const stream = this.user.username.toLowerCase();
+          const stream = this.username.toLowerCase();
           const streamRef = db.collection( 'streams' ).doc( stream );
           await streamRef.update({
             'user.avatar': url,
@@ -528,32 +528,22 @@
 
     computed: {
       ...mapGetters({
-        user: 'user'
+        uid      : VStore.$getters.getUID,
+        user     : VStore.$getters.getUser,
+        username : VStore.$getters.getUsername,
       }),
-
-      username () {
-        return this.user.username || 'null';
-      },
-
-      uid () {
-        if ( this.$store.state.auth ) {
-          return this.$store.state.auth.uid;
-        } else {
-          return null;
-        }
-      },
     },
 
     mounted () {
-      this.unsubAuthChanged = auth.onAuthStateChanged( user => this.authenticated( user ) );
-      this.streamDocListener = this.getStreamData();
+      this.unsubAuthChanged   = auth.onAuthStateChanged( user => this.authenticated( user ) );
+      this.streamDocListener  = this.getStreamData();
       this.profileDocListener = this.getProfileData();
     },
 
     beforeDestroy () {
       if ( this.unsubAuthChanged ) {
         this.unsubAuthChanged();
-        console.log(`%cProfile.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+        console.log( `%cProfile.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
       }
       if ( this.streamDocListener ) this.streamDocListener();
       if ( this.profileDocListener ) this.profileDocListener();

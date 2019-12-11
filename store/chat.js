@@ -1,114 +1,179 @@
+// Define Store states, getters, mutations & actions
+
+const $states = {
+  room       : 'ROOM',
+  global     : 'GLOBAL',
+  timestamps : 'TIMESTAMPS',
+  useTts     : 'USE_TTS',
+  useIgnore  : 'USE_IGNORE',
+  trollTts   : 'TROLL_TTS',
+  ttsRate    : 'TTS_RATE',
+  ttsVoice   : 'TTS_VOICE',
+  notify     : 'NOTIFY',
+  ignoreList : 'IGNORE_LIST',
+
+  message    : 'MESSAGE',
+
+  viewerList       : 'VIEWER_LIST',
+  roomViewerList   : 'ROOM_VIEWER_LIST',
+  streamViewerList : 'STREAM_VIEWER_LIST',
+};
+
+const $getters = {
+  viewerCount         : 'VIEWER_COUNT',
+  getStreamViewerList : 'GET_STREAM_VIEWERLIST',
+};
+
+const $mutations = {
+  setRoom       : 'SET_ROOM',
+  setGlobal     : 'SET_GLOBAL',
+  setTimestamps : 'SET_TIMESTAMPS',
+  setUseTts     : 'SET_USE_TTS',
+  setUseIgnore  : 'SET_USE_IGNORE',
+  setTrollTts   : 'SET_TROLL_TTS',
+  setTtsRate    : 'SET_TTS_RATE',
+  setTtsVoice   : 'SET_TTS_VOICE',
+  setNotify     : 'SET_NOTIFY',
+  setIgnoreList : 'SET_IGNORE_LIST',
+
+  setMessage    : 'SET_MESSAGE',
+  appendMessage : 'APPEND_MESSAGE',
+
+  setViewerList       : 'SET_VIEWERLIST',
+  setRoomViewerList   : 'SET_ROOM_VIEWERLIST',
+  setStreamViewerList : 'SET_STREAM_VIEWERLIST',
+};
+
+const $actions = {
+  updateViewerList : 'UPDATE_VIEWERLIST',
+};
 
 
+// Create Store State
 export const state = () => ({
-  room : '',
-  global : false,
-  timestamps : true,
-  useTts: false,
-  trollTts: true,
-  ttsRate: 10,
-  ttsVoice: 1,
+  [$states.room]       : '',
+  [$states.global]     : false,
+  [$states.timestamps] : true,
+  [$states.useTts]     : false,
+  [$states.useIgnore]  : true,
+  [$states.trollTts]   : true,
+  [$states.ttsRate]    : 10,
+  [$states.ttsVoice]   : 1,
+  [$states.notify]     : false,
+  [$states.ignoreList] : [],
 
-  roomViewerList : {},
-  viewerList : [],
-  streamViewerList: [],
+  [$states.message]: '',
 
-  ignoreList : [],
-  useIgnore: true,
-
-  message: '',
-
-  notify: false,
+  [$states.viewerList]       : [],
+  [$states.roomViewerList]   : {},
+  [$states.streamViewerList] : [],
 });
 
 
+// Create Store Getters
 export const getters = {
-  viewerCount ( state ) {
-    return state.viewerList.length;
+  // Get total viewer count
+  [$getters.viewerCount] ( state ) {
+    return state[$states.viewerList].length;
   },
 
-  GET_STREAM_VIEWERLIST ( state ) {
-    return state.streamViewerList;
+  // Get stream viewer list
+  [$getters.getStreamViewerList] ( state ) {
+    return state[$states.streamViewerList];
   },
 };
 
 
+// Create Store Mutations
 export const mutations = {
-  SET_ROOM ( state, data ) {
-    state.room = data;
+  // Set room
+  [$mutations.setRoom] ( state, data ) {
+    state[$states.room] = data;
   },
 
-  SET_TIMESTAMPS ( state, data ) {
-    state.timestamps = JSON.parse( data );
+  // Set show timestamps
+  [$mutations.setTimestamps] ( state, data ) {
+    state[$states.timestamps] = JSON.parse( data );
     localStorage.setItem( 'showtimestamps', data );
   },
 
-  SET_MODE_GLOBAL ( state, data ) {
-    state.global = JSON.parse( data );
+  // Set global chat
+  [$mutations.setGlobal] ( state, data ) {
+    state[$states.global] = JSON.parse( data );
     localStorage.setItem( 'globalchat', data );
   },
 
-  SET_USE_TTS ( state, data ) {
-    state.useTts = JSON.parse(data);
+  // Set use TTS
+  [$mutations.setUseTts] ( state, data ) {
+    state[$states.useTts] = JSON.parse( data );
     localStorage.setItem( 'tts', data );
     if ( !data ) speechSynthesis.cancel();
   },
 
-  SET_USE_IGNORE ( state, data ) {
-    state.useIgnore = JSON.parse(data);
+  // Set use ignore
+  [$mutations.setUseIgnore] ( state, data ) {
+    state[$states.useIgnore] = JSON.parse( data );
     localStorage.setItem( 'useignore', data );
   },
 
-  SET_TROLL_TTS ( state, data ) {
-    state.tollTts = data;
+  // Set TTS enabled for trolls
+  [$mutations.setTrollTts] ( state, data ) {
+    state[$states.trollTts] = data;
   },
 
-  SET_TTS_RATE ( state, data ) {
-    state.ttsRate = JSON.parse(data);
+  // Set TTS Rate
+  [$mutations.setTtsRate] ( state, data ) {
+    state[$states.ttsRate] = JSON.parse( data );
   },
 
-  SET_TTS_VOICE ( state, data ) {
-    state.ttsVoice = data;
+  // Set TTS voice Id (index)
+  [$mutations.setTtsVoice] ( state, data ) {
+    state[$states.ttsVoice] = data;
   },
 
-  SET_ROOM_VIEWERLIST ( state, data ) {
-    state.roomViewerList = { ...data };
-  },
-
-  SET_VIEWERLIST ( state, data ) {
-    state.viewerList = [ ...data ];
-  },
-
-  SET_STREAM_VIEWERLIST ( state, data ) {
-    state.streamViewerList = data;
-  },
-
-  SET_IGNORE_LIST ( state, data ) {
-    state.ignoreList = data;
-  },
-
-  SET_CHAT_MESSAGE ( state, data ) {
-    if ( data === null ) state.message = '';
-    else state.message = data;
-  },
-
-  APPEND_CHAT_MESSAGE ( state, data ) {
-    state.message += data;
-  },
-
-  SET_NOTIFY ( state, data ) {
-    state.notify = JSON.parse(data);
+  // Set notification sounds
+  [$mutations.setNotify] ( state, data ) {
+    state[$states.notify] = JSON.parse( data );
     localStorage.setItem( 'notify', data );
+  },
+
+  // Set ignore list
+  [$mutations.setIgnoreList] ( state, data ) {
+    state[$states.ignoreList] = data;
+  },
+
+  // Set current input message
+  [$mutations.setMessage] ( state, data ) {
+    if ( data === null ) state[$states.message] = '';
+    else state[$states.message] = data;
+  },
+
+  // Append to current input message
+  [$mutations.appendMessage] ( state, data ) {
+    state[$states.message] += data;
+  },
+
+  [$mutations.setRoomViewerList] ( state, data ) {
+    state[$states.roomViewerList] = { ...data };
+  },
+
+  [$mutations.setViewerList] ( state, data ) {
+    state[$states.viewerList] = [ ...data ];
+  },
+
+  [$mutations.setStreamViewerList] ( state, data ) {
+    state[$states.streamViewerList] = data;
   },
 };
 
 
+// Create Store Actions
 export const actions = {
   CONNECT ( { dispatch, commit, state }, data ) {
     commit( 'SET_ROOM', data );
   },
 
-  UPDATE_VIEWERLIST ( { dispatch, commit, state }, data ) {
+  [$actions.updateViewerList] ( { dispatch, commit, state }, data ) {
 
     // Create list of unique viewers in each channel
     const roomViewerList = data.reduce( ( accumulator, user ) => {
@@ -116,7 +181,7 @@ export const actions = {
       let channel  = user.page ? user.page.watch || user.page : 'global' ;
 
       if ( !channel ) return accumulator;
-      if ( typeof(channel) === 'string' ) channel = channel.toLowerCase();
+      if ( typeof( channel ) === 'string' ) channel = channel.toLowerCase();
 
       if ( username ) username = username.toLowerCase();
 
@@ -136,8 +201,8 @@ export const actions = {
         accumulator[channel].total = 1;
       }
       return accumulator;
-    }, {});
-    commit( 'SET_ROOM_VIEWERLIST', roomViewerList );
+    }, {} );
+    commit( $mutations.setRoomViewerList, roomViewerList );
 
 
     // Create unique list of users globally
@@ -145,11 +210,11 @@ export const actions = {
     const viewerList = data.reduce( ( accumulator, current ) => {
       if ( !accumulator.find( obj => obj[key] === current[key] ) ) accumulator.push( current );
       return accumulator;
-    }, []);
-    commit( 'SET_VIEWERLIST', viewerList );
+    }, [] );
+    commit( $mutations.setViewerList, viewerList );
 
     // Create list of viewers in each stream
-    const streamViewers = Object.entries(roomViewerList).map( streamer => {
+    const streamViewers = Object.entries( roomViewerList ).map( streamer => {
       const streamViewers = Object.entries( streamer[1].viewers );
       return {
         streamer: streamer[0],
@@ -157,7 +222,16 @@ export const actions = {
         streamViewers,
       }
     });
-    commit( 'SET_STREAM_VIEWERLIST', streamViewers );
-
+    commit( $mutations.setStreamViewerList, streamViewers );
   },
+};
+
+
+// Export Store Structure
+export const Chat = {
+  namespace : 'chat',
+  $states,
+  $getters,
+  $mutations,
+  $actions,
 };

@@ -3,10 +3,8 @@
     <v-menu
       v-model="notificationMenu"
       :close-on-content-click="true"
-      :nudge-width="200"
-      :max-width="400"
+      max-width="80%"
       offset-y
-      left
       origin="top right"
       transition="slide-y-transition"
     >
@@ -78,8 +76,11 @@
                 <v-icon>{{ notification.icon }}</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>{{ notification.title }}</v-list-item-title>
-                <v-list-item-subtitle>{{ `${timestamp( notification.timestamp.toDate() )} ${notification.message}` }}</v-list-item-subtitle>
+                <v-list-item-title class="d-flex justify-space-between">
+                  <div>{{ notification.title }}</div>
+                  <div class="grey--text">{{ timestamp( notification.timestamp.toDate()) }}</div>
+                </v-list-item-title>
+                <v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -93,6 +94,7 @@
   import { auth, db } from '@/plugins/firebase.js'
 
   import { mapGetters } from 'vuex'
+  import { VStore } from '@/store';
 
   export default {
     name: 'Notifications',
@@ -145,19 +147,17 @@
         }
       },
 
-      timestamp ( time ) {
-        const month = time.getMonth() + 1;
-        const day = time.getDate();
-        const hours = time.getHours().toString().padStart(2, '0');
-        const minutes = time.getMinutes().toString().padStart(2, '0');
-        return `[${month}/${day} ${hours}:${minutes}]`;
+      timestamp ( srcTime ) {
+        const date = new Intl.DateTimeFormat('en', { month: 'numeric', day: 'numeric' }).format(srcTime);
+        const time = new Intl.DateTimeFormat('en', { hour: 'numeric', minute: 'numeric' }).format(srcTime);
+        return `[${date} ${time}]`;
       },
     },
 
     computed: {
       ...mapGetters({
-        isAuth : 'isAuth',
-        user   : 'user',
+        isAuth : VStore.$getters.isAuth,
+        user   : VStore.$getters.getUser,
       }),
 
       notificationCount () {

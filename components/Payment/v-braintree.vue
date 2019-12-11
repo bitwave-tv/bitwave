@@ -28,7 +28,7 @@
       width="100%"
       hide-canvas
       light
-    ></v-color-picker>
+    />
 
     <!-- Purchase Color UI -->
     <div ref="dropin"></div>
@@ -48,7 +48,7 @@
     </v-alert>
 
     <v-layout>
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-btn
         ref="submit"
         :class="btnClass"
@@ -65,8 +65,10 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
   import dropIn from 'braintree-web-drop-in';
+
+  import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     props: {
@@ -151,16 +153,16 @@
       };
 
       // If Paypal is available
-      if (this.paypal) {
+      if ( this.paypal ) {
         config.paypal = {
           flow: 'vault'
         }
       }
 
       // Create dropin
-      dropIn.create(config, ( createErr, instance ) => {
+      dropIn.create( config, ( createErr, instance ) => {
         this.instance = instance;
-        console.log(instance);
+        console.log( instance );
       });
     },
 
@@ -168,31 +170,31 @@
       async requestPaymentMethod () {
         if ( this.loading || this.disabled ) return;
 
-        this.instance.requestPaymentMethod( async (error, payload) => {
-          if (error) {
+        this.instance.requestPaymentMethod( async ( error, payload ) => {
+          if ( error ) {
             // No payment method is available.
             // An appropriate error will be shown in the UI.
-            console.error(error);
+            console.error( error );
             this.error = true;
             this.errorMessage = error.message;
             setTimeout( () => this.error = false, 5000 );
             return
           }
           this.loading = true;
-          await this.pay(payload.nonce);
+          await this.pay( payload.nonce );
         });
       },
 
-      async pay (nonce) {
+      async pay ( nonce ) {
         try {
           const response = await this.$axios.post( this.url, {
             nonce: nonce,
-            username: this.$store.getters.username,
+            username: this.username,
             color: this.color,
           });
-          console.log(response);
+          console.log( response );
           if ( response.data.success ) {
-            console.log('Success');
+            console.log( 'Success' );
             this.loading = false;
             this.disabled = true;
             this.success = true;
@@ -207,7 +209,7 @@
             this.errorMessage = response.data.message;
           }
 
-        } catch (error) {
+        } catch ( error ) {
           this.error = true;
           this.errorMessage = error.response.data.message;
           this.loading = false
@@ -217,7 +219,8 @@
 
     computed: {
       ...mapGetters({
-        user: 'user',
+        user: VStore.$getters.getUser,
+        username: VStore.$getters.getUsername,
       }),
 
       color () {

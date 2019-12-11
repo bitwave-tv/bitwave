@@ -8,6 +8,7 @@ module.exports = {
   */
   env: {
     version: pkg.version || 'v0.0.0',
+    APP_DEBUG: false,
   },
 
   /*
@@ -22,9 +23,7 @@ module.exports = {
       { name: 'og:site_name', content: '[bitwave.tv]' },
       { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
     ],
-    script: [
-      // { src: 'https://tlk.io/embed.js' }
-    ],
+    script: [],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
@@ -45,6 +44,7 @@ module.exports = {
   css: [
     '~/assets/style/app.scss',
     'video.js/dist/video-js.css',
+    'vuetify/dist/vuetify.css',
   ],
 
   workbox: {
@@ -61,6 +61,7 @@ module.exports = {
         },
       },
       // Cache fonts
+      // urlPattern: 'https://fonts.(?:googleapis|gstatic).com/(.*)',
       {
         urlPattern: 'https://fonts.googleapis.com/.*',
         handler: 'cacheFirst',
@@ -88,7 +89,6 @@ module.exports = {
     display: 'standalone',
     background_color: '#000000',
     theme_color: '#ffff00',
-    // orientation: 'any', // Removed to force PWA to respect OS settings
   },
 
   /*
@@ -158,6 +158,9 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+
+    extractCSS: true,
+
     extend ( config, ctx ) {
 
     },

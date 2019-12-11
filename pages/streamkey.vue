@@ -86,6 +86,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     name: 'streamkey',
@@ -135,8 +136,8 @@
 
     computed: {
       ...mapGetters({
-        isAuth : 'isAuth',
-        user   : 'user',
+        isAuth : VStore.$getters.isAuth,
+        user   : VStore.$getters.getUser,
       }),
 
       userType () {

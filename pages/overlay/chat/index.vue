@@ -59,6 +59,7 @@
   import { mapGetters } from 'vuex';
 
   import ChatOverlayInfoCards from '@/components/Overlay/ChatOverlayInfoCards';
+  import { VStore } from '@/store';
   const ChatOverlayDialog = () => import ( '@/components/Overlay/ChatOverlayDialog' );
 
   export default {
@@ -105,7 +106,7 @@
 
     computed: {
       ...mapGetters ({
-        user: 'user',
+        user: VStore.$getters.getUser,
       }),
     },
 

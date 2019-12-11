@@ -122,7 +122,8 @@
   import LoginDialog from '~/components/LoginDialog';
   const BraintreeDropIn = () => import ( '~/components/Payment/braintree-drop-in' );
 
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
 
@@ -142,6 +143,10 @@
     },
 
     methods: {
+      ...mapActions({
+        logoutStore: VStore.$actions.logout,
+      }),
+
       async authenticated( user ) {
         if ( user ) { /* user logged in */ }
         this.loading = false;
@@ -152,15 +157,15 @@
           eventCategory : 'user',
           eventAction   : 'signout',
         });
-        await this.$store.dispatch( 'logout' );
+        await this.logoutStore();
       },
     },
 
     computed: {
       ...mapGetters({
-        isAuth   : 'isAuth',
-        username : 'username',
-        user     : 'user',
+        isAuth   : VStore.$getters.isAuth,
+        username : VStore.$getters.getUsername,
+        user     : VStore.$getters.getUser,
       }),
 
       avatar () {
@@ -168,29 +173,19 @@
       },
 
       userType () {
-        if ( !this.user )
-          return 'Troll';
-
-        if ( this.user.hasOwnProperty( 'streamkey' ) )
-          return 'Streamer';
-
-        else
-          return 'Viewer'
+        if ( !this.user ) return 'Troll';
+        if ( this.user.hasOwnProperty( 'streamkey' ) ) return 'Streamer';
+        else return 'Viewer'
       },
 
       userRank () {
-        if ( !this.user )
-          return 'Troll';
-
-        if ( this.user.hasOwnProperty( 'rank' ) )
-          return this.user.rank;
-
-        else
-          return 'Basic';
+        if ( !this.user ) return 'Troll';
+        if ( this.user.hasOwnProperty( 'rank' ) ) return this.user.rank;
+        else return 'Basic';
       },
     },
 
-    created () {
+    mounted() {
       if ( !this.isAuth ) this.loading = true;
       this.unsubAuthChanged = auth.onAuthStateChanged ( async user => await this.authenticated( user ) );
     },
