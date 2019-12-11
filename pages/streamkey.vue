@@ -1,23 +1,42 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
-        <v-card v-if="userType === 'Streamer'">
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <v-card class="pa-1" v-if="userType === 'Streamer'">
           <v-card-title>
-            Stream Server & Key
+            <v-icon class="mx-2">policy</v-icon>
+            You're Still Here?
           </v-card-title>
           <v-card-text>
             <div class="title">
-              Scroll down, It's at the bottom
+              Maybe you'd like to setup your profile and add a stream title
+              and a stream description.
             </div>
+            <div>Or maybe to edit your profile photo?</div>
+            <br>
+            <div>That's about all the options...</div>
+          </v-card-text>
+          <v-card-actions>
             <v-btn
               color="yellow"
               to="/profile"
               light
             >
-              View on Profile
+              <v-icon class="mr-2">account_box</v-icon>
+              Edit Profile
             </v-btn>
-          </v-card-text>
+            <v-btn
+              color="yellow"
+              to="/profile"
+              outlined
+            >
+              <v-icon class="mr-2">live_tv</v-icon>
+              My Channel
+            </v-btn>
+          </v-card-actions>
         </v-card>
 
         <v-card v-else>
@@ -48,18 +67,25 @@
               >
                 Request Key
               </v-btn>
-
               <v-btn
                 color="yellow"
                 to="/profile"
                 light
               >
-                View Profile
+                {{ buttonText }}
               </v-btn>
             </v-card-actions>
           </v-card-text>
         </v-card>
       </v-col>
+
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <ShowStreamKey />
+      </v-col>
+
     </v-row>
 
     <v-row class="mb-2">
@@ -177,8 +203,8 @@
             <div>3. What's a good bitrate?</div>
             <div>
               Generally <span class="body-1 yellow--text">1mb/s</span>(720p30) up to <span class="body-1 green--text">4mb/s</span> (1080p30).
-              <span class="blue--text">2.5mb/s</span> tends to be a common bitrate that performas well for all viewers.
-              <br>We have viewer Australian viewer(s) and if you exceed <span class="red--text">5mb/s</span> they'll start complaining.
+              <span class="body-1 blue--text">2.5mb/s</span> tends to be a common bitrate that performas well for all viewers.
+              <br>We have Australian viewer(s) and if you exceed <span class="red--text">5mb/s</span> they'll start complaining.
 
             </div>
             <br>
@@ -237,7 +263,6 @@
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
@@ -245,11 +270,18 @@
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
+  import ShowStreamKey from '~/components/profile/ShowStreamKey';
+
   export default {
     name: 'streamkey',
 
+    components: {
+      ShowStreamKey,
+    },
+
     data() {
       return {
+        buttonText: 'Login',
         loading: false,
         requestError: {
           show: false,
@@ -262,7 +294,7 @@
     methods: {
       async requestKey () {
         const endpoint = 'https://api.bitwave.tv/api/stream/create';
-        const cover = 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg';
+        const cover    = 'https://cdn.bitwave.tv/static/img/bitwave_cover_sm.jpg';
         const username = this.user.username.toLowerCase();
 
 
@@ -315,24 +347,28 @@
         const valid = this.user && this.user.hasOwnProperty( 'avatar' );
 
         if ( this.isAuth && valid ) {
+          this.buttonText= 'View Profile';
           return {
             type: 'success',
             message: 'You meet all requirements to request a streamkey.',
             show: true,
           }
         } else if ( !this.isAuth ) {
+          this.buttonText= 'Login / Register';
           return {
             type: 'error',
             message: 'You must be logged in to request a streamkey.',
             show: true,
           }
         } else if ( !valid ) {
+          this.buttonText= 'Edit Profile';
           return {
             type: 'error',
             message: 'You must set an avatar to request a streamkey.',
             show: true,
           }
         } else {
+          this.buttonText= 'This Should not happen';
           return {
             type: 'error',
             message: 'Unknown Error: unable to verifyaccount requirements.',

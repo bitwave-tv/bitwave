@@ -70,7 +70,9 @@ export const getters = {
   },
 
   [$getters.getUID] : state => {
-    return state[$states.auth].uid;
+    return state[$states.auth]
+      ?  state[$states.auth].uid
+      : null;
   },
 
   [$getters.getUser] : state => {
