@@ -11,16 +11,18 @@
             You're Still Here?
           </v-card-title>
           <v-card-text>
+            <div class="subtitle">Go start streaming!</div>
             <div class="title">
-              Maybe you'd like to setup your profile and add a stream title
-              and a stream description.
+              Or maybe you'd like to setup your profile first?
+              <br>
+              Add a stream title and a stream description... just a suggestion.
             </div>
             <div>Or maybe to edit your profile photo?</div>
-            <br>
             <div>That's about all the options...</div>
           </v-card-text>
           <v-card-actions>
             <v-btn
+              class="mr-2"
               color="yellow"
               to="/profile"
               light
@@ -39,44 +41,47 @@
           </v-card-actions>
         </v-card>
 
-        <v-card v-else>
-          <v-card-title>
-            Request Streamkey
-          </v-card-title>
-          <v-card-text>
-            <v-alert
-              v-model="alert.show"
-              :type="alert.type"
-            >
-              {{ alert.message }}
-            </v-alert>
-
-            <v-alert
-              v-model="requestError.show"
-              :type="requestError.type"
-            >
-              {{ requestError.message }}
-            </v-alert>
-
-            <v-card-actions>
-              <v-btn
-                color="yellow"
-                :disabled="alert.type === 'error'"
-                :light="!alert.type === 'error'"
-                @click="requestKey"
+        <template v-else>
+          <div class="display-1 ml-5 mb-2 font-weight-thin yellow--text">Get a Streamkey</div>
+          <v-card>
+            <v-card-title>
+              Checking Account Eligibility...
+            </v-card-title>
+            <v-card-text>
+              <v-alert
+                v-model="alert.show"
+                :type="alert.type"
               >
-                Request Key
-              </v-btn>
-              <v-btn
-                color="yellow"
-                to="/profile"
-                light
+                {{ alert.message }}
+              </v-alert>
+
+              <v-alert
+                v-model="requestError.show"
+                :type="requestError.type"
               >
-                {{ buttonText }}
-              </v-btn>
-            </v-card-actions>
-          </v-card-text>
-        </v-card>
+                {{ requestError.message }}
+              </v-alert>
+
+              <v-card-actions>
+                <v-btn
+                  color="yellow"
+                  :disabled="alert.type === 'error'"
+                  :light="!alert.type === 'error'"
+                  @click="requestKey"
+                >
+                  Request Key
+                </v-btn>
+                <v-btn
+                  color="yellow"
+                  to="/profile"
+                  light
+                >
+                  {{ buttonText }}
+                </v-btn>
+              </v-card-actions>
+            </v-card-text>
+          </v-card>
+        </template>
       </v-col>
 
       <v-col
@@ -193,24 +198,34 @@
             <br>
 
             <br>
-            <div>2. How do I ban here?</div>
+            <div class="mb-2">2. How do I ban here?</div>
             <div>
               <span class="body-1 white--text font-weight-bold">You don't.</span>
-              But you can do <code>/ignore SomeUsername</code> to ignore a user. (or <code>/i user</code> to save keystrokes & also try <code>/u</code> for unignore).
+              <div class="mb-1">But you can do <code>/ignore SomeUsername</code> to ignore a user.</div>
+            </div>
+            <div>
+              <div class="mb-1">
+                <span class="font-italic font-weight-light mr-2">Tip:</span>
+                <code>/i user</code> to save keystrokes &
+                also try<code>/u</code> for unignore.
+              </div>
             </div>
 
             <br>
             <div>3. What's a good bitrate?</div>
             <div>
-              Generally <span class="body-1 yellow--text">1mb/s</span>(720p30) up to <span class="body-1 green--text">4mb/s</span> (1080p30).
-              <span class="body-1 blue--text">2.5mb/s</span> tends to be a common bitrate that performas well for all viewers.
-              <br>We have Australian viewer(s) and if you exceed <span class="red--text">5mb/s</span> they'll start complaining.
-
+              Generally <span class="body-1 yellow--text">1mb/s</span> (720p30) up to <span class="body-1 green--text">4mb/s</span> (1080p30).
+              <br>
+              <span class="body-1 blue--text">2.5mb/s</span> tends to do the best for most users.
+              <br>
+              <span class="font-italic font-weight-light">Please Note:</span>
+              We have Australian viewer(s) and if you exceed <span class="red--text">5mb/s</span> they'll start complaining.
             </div>
             <br>
             <div>4. How do I emote?</div>
             <div>
-              try <code>:blobby:</code>
+              <span class="font-italic font-weight-light mr-2">Try:</span>
+              <code>:blobby:</code>
               <br>You're own your own for the rest.
             </div>
 
