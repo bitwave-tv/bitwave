@@ -8,8 +8,6 @@ const $states = {
   auth : 'AUTH',
   user : 'USER',
 
-  metaUser  : 'META_USER', // TODO: Get rid of this
-
   channel   : 'CHANNEL',
   chatToken : 'CHAT_TOKEN',
 };
@@ -29,16 +27,16 @@ const $mutations = {
   setAuth : 'SET_AUTH',
   setUser : 'SET_USER',
 
-  setMetaUser : 'SET_META_USER', // TODO: Get rid of this
-
   setChatToken : 'SET_CHAT_TOKEN',
 };
 
 const $actions = {
   exchangeIdTokenChatToken : 'exchangeIdTokenChatToken',
 
-  login  : 'LOGIN',
-  logout : 'LOGOUT',
+  registerUser : 'REGISTER_USER',
+  loginUser    : 'LOGIN_USER',
+  login        : 'LOGIN',
+  logout       : 'LOGOUT',
 };
 
 
@@ -46,7 +44,6 @@ const $actions = {
 export const state = () => ({
   [$states.auth]      : null,
   [$states.user]      : null,
-  [$states.metaUser]  : null,
   [$states.channel]   : null,
   [$states.chatToken] : null,
 });
@@ -126,17 +123,12 @@ export const mutations = {
 // Actions
 export const actions = {
   nuxtServerInit ({ commit }, { req, params }) {
-    let authUser = null;
-    let metaUser = null;
-    let user     = null;
-
+    let authUser = null, user = null;
     const cookies = this.$cookies.getAll();
-
-    if ( !!cookies ) {
+    if ( cookies ) {
       try {
-        if ( !!cookies.auth && !!cookies.user ) {
+        if ( cookies.auth && cookies.user ) {
           authUser = cookies.auth;
-          metaUser = cookies.metaUser;
           user     = cookies.user;
           console.log( `${user.username} logged in via nuxtServerInit: `, params );
         } else {
@@ -144,46 +136,62 @@ export const actions = {
         }
       } catch ( error ) {
         console.log( `ERROR: No valid cookie found.`, error );
-        console.log( `Cookies:`, cookies );
       }
     }
-
     commit( $mutations.setAuth, authUser );
-    commit( $mutations.setMetaUser, metaUser );
     commit( $mutations.setUser, user );
   },
 
   async nuxtClientInit ({ dispatch }, { req, params }) {
     console.log( `Client Init: ${params}` );
     console.log( `${req}` );
-
     await dispatch( 'nuxtServerInit', { req, params } );
+  },
+
+  async [$actions.registerUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
+    // Verify Username is valid & not taken
+    const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: credential.username });
+    if ( !checkUsername.valid ) return await Promise.reject( checkUsername.error );
+
+    // Create user & update credential
+    const userCredential = await auth.createUserWithEmailAndPassword( credential.email, credential.password );
+    await userCredential.user.updateProfile({ displayName: credential.username });
+
+    // Create user document
+    const userId = userCredential.user.uid;
+    await db.collection( 'users' ).doc( userId ).set({
+      _username: credential.username.toLowerCase(),
+      uid: userId,
+      username: credential.username,
+      email: credential.email,
+    });
+  },
+
+  async [$actions.loginUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
+    await auth.setPersistence( stayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
+    const userCredential = await auth.signInWithEmailAndPassword( credential.email, credential.password );
+    // await dispatch ( $actions.storeUserData, userCredential );
   },
 
   async [$actions.login] ({ dispatch, commit }, user) {
     const token = await user.getIdToken();
-    const refreshToken = user.refreshToken;
     const uid = user.uid;
 
-    const _auth = {
+    const auth = {
       accessToken: token,
-      refreshToken: refreshToken,
       uid: uid,
     };
 
-    commit( $mutations.setAuth, _auth );
-    this.$cookies.set( 'auth', _auth );
+    commit( $mutations.setAuth, auth );
+    this.$cookies.set( 'auth',  auth );
 
     user =  JSON.parse( JSON.stringify( user ) );
-
-    commit( $mutations.setMetaUser, user );
-    this.$cookies.set( 'metaUser', user );
 
     const userdocRef = db.collection( 'users' ).doc( uid );
     unsubscribeUser = userdocRef.onSnapshot( doc => {
       const data = doc.data();
       commit( $mutations.setUser, data );
-      this.$cookies.set( 'user', data );
+      this.$cookies.set( 'user',  data );
     });
 
     if ( process.client )
@@ -198,13 +206,10 @@ export const actions = {
       await auth.signOut();
 
       commit( $mutations.setUser, null );
-      this.$cookies.remove( 'user' );
-
       commit( $mutations.setAuth, null );
-      this.$cookies.remove( 'auth' );
 
-      commit( $mutations.setMetaUser, null );
-      this.$cookies.remove( 'metaUser' );
+      this.$cookies.remove( 'user' );
+      this.$cookies.remove( 'auth' );
 
       console.log( 'Logged Out' );
     } catch ( error ) {

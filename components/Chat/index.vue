@@ -827,10 +827,6 @@
       },
     },
 
-    created () {
-      // this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
-    },
-
     async mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 

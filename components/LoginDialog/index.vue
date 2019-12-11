@@ -48,7 +48,7 @@
               clearable
               :loading="loading"
               :disabled="loading"
-            ></v-text-field>
+            />
 
             <v-text-field
               id="email"
@@ -64,7 +64,7 @@
               clearable
               :loading="loading"
               :disabled="loading"
-            ></v-text-field>
+            />
 
             <v-text-field
               id="password"
@@ -85,7 +85,7 @@
               :loading="loading"
               :disabled="loading"
               @click:append="showPassword = !showPassword"
-            ></v-text-field>
+            />
 
             <v-checkbox
               v-if="signUp"
@@ -94,7 +94,7 @@
               class="pt-0 mt-0 mb-3"
               :rules="[ val => val || 'You must be 18 to use this site!' ]"
               :disabled="loading"
-            ></v-checkbox>
+            />
 
             <v-btn
               v-if="!signUp"
@@ -129,7 +129,7 @@
               color="yellow"
               class="pt-0"
               :disabled="loading"
-            ></v-checkbox>
+            />
 
             <v-alert
               v-model="alert"
@@ -154,7 +154,7 @@
             color="#2196f3"
             @click="resetPassword(user.email)"
           >Forgot Password?</v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn
             small
             color="yellow"
@@ -173,7 +173,7 @@
 </template>
 
 <script>
-  import { auth, db } from '@/plugins/firebase.js'
+  import { auth } from '@/plugins/firebase.js'
 
   import { mapActions } from 'vuex'
   import { VStore } from '@/store';
@@ -214,6 +214,12 @@
     },
 
     methods: {
+      ...mapActions({
+        registerUser : VStore.$actions.registerUser,
+        loginUser    : VStore.$actions.loginUser,
+        login        : VStore.$actions.login,
+      }),
+
       // Toggle Register / Login
       switchForm () {
         this.signUp = !this.signUp;
@@ -232,42 +238,17 @@
         });
 
         this.loading = true;
-
-        // Verify Username is valid and not taken
         try {
-          const checkUsername = await this.$axios.$post( 'https://api.bitwave.tv/api/check-username', { username: username } );
-          if ( !checkUsername.valid ) {
-            this.showError( checkUsername.error );
-            this.loading = false;
-            return;
-          }
+          this.registerUser({
+            credential: { username, email, password },
+            stayLoggedIn: this.shouldStayLoggedIn,
+          });
+          this.showSuccess( 'User Created!' );
         } catch ( error ) {
           console.log( error );
           this.showError( error );
-          this.loading = false;
-          return;
         }
-
-        try {
-          const userCredential = await auth.createUserWithEmailAndPassword( email, password );
-          await userCredential.user.updateProfile({
-            displayName: username,
-          });
-          console.log( `[LOGIN] User Cred: ${userCredential}` );
-          const userId = userCredential.user.uid;
-          const docRef = await db.collection( 'users' ).doc( userId ).set({
-            _username: username.toLowerCase(),
-            uid: userId,
-            username: username,
-            email: email,
-          });
-          console.log( docRef );
-          this.showSuccess( 'User Created!' );
-        } catch ( error ) {
-          this.showError( error.message );
-          console.log( error.message );
-          this.loading = false;
-        }
+        this.loading = false;
       },
 
       // Sign In
@@ -281,18 +262,15 @@
 
         this.loading = true;
         try {
-          await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
-          const userCredential = await auth.signInWithEmailAndPassword( email, password );
-
-          if ( process.client )
-            console.log( `%cLoginDialog.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user );
-          else
-            console.log( 'LoginDialog.vue: Signing in...', userCredential.user );
+          this.loginUser({
+            credential: { email, password },
+            stayLoggedIn: this.shouldStayLoggedIn,
+          });
         } catch ( error ) {
           this.showError( error.message );
           console.log( error.message );
-          this.loading = false;
         }
+        this.loading = false;
       },
 
       async resetPassword ( email ) {
@@ -328,8 +306,6 @@
         if ( user ) {
           if ( process.client )
             console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
-          else
-            console.log( 'LoginDialog: Logged in!', user );
 
           if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
 
@@ -339,8 +315,6 @@
         } else {
           if ( process.client )
             console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-          else
-            console.log( 'LoginDialog: Not logged in.' );
         }
       },
 
@@ -359,15 +333,9 @@
       hideAlert () {
         this.alert = false;
       },
-
-      ...mapActions({
-        login: VStore.$actions.login,
-      })
     },
 
-    computed: {},
-
-    created () {
+    mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 

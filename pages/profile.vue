@@ -278,7 +278,7 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
 
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
   import { VStore } from '@/store';
 
   export default {
@@ -333,8 +333,12 @@
     },
 
     methods: {
+      ...mapActions({
+        logoutStore: VStore.$actions.logout,
+      }),
+
       async logout () {
-        await auth.signOut();
+        await this.logoutStore();
         this.$router.push( '/signout' );
       },
 

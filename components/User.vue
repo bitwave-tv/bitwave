@@ -173,29 +173,19 @@
       },
 
       userType () {
-        if ( !this.user )
-          return 'Troll';
-
-        if ( this.user.hasOwnProperty( 'streamkey' ) )
-          return 'Streamer';
-
-        else
-          return 'Viewer'
+        if ( !this.user ) return 'Troll';
+        if ( this.user.hasOwnProperty( 'streamkey' ) ) return 'Streamer';
+        else return 'Viewer'
       },
 
       userRank () {
-        if ( !this.user )
-          return 'Troll';
-
-        if ( this.user.hasOwnProperty( 'rank' ) )
-          return this.user.rank;
-
-        else
-          return 'Basic';
+        if ( !this.user ) return 'Troll';
+        if ( this.user.hasOwnProperty( 'rank' ) ) return this.user.rank;
+        else return 'Basic';
       },
     },
 
-    created () {
+    mounted() {
       if ( !this.isAuth ) this.loading = true;
       this.unsubAuthChanged = auth.onAuthStateChanged ( async user => await this.authenticated( user ) );
     },

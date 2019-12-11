@@ -169,7 +169,7 @@
 </template>
 
 <script>
-  import { auth, db } from '@/plugins/firebase.js'
+  import { auth } from '@/plugins/firebase.js'
 
   import { mapActions } from 'vuex'
   import { VStore } from '@/store'
@@ -210,6 +210,12 @@
     },
 
     methods: {
+      ...mapActions({
+        registerUser : VStore.$actions.registerUser,
+        loginUser    : VStore.$actions.loginUser,
+        login        : VStore.$actions.login,
+      }),
+
       switchForm () {
         this.signUp = !this.signUp;
         this.resetValidation();
@@ -227,42 +233,17 @@
         });
 
         this.loading = true;
-
-        // Verify Username is valid and not taken
         try {
-          const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: username });
-          if (!checkUsername.valid) {
-            this.showError(checkUsername.error);
-            this.loading = false;
-            return;
-          }
+          this.registerUser({
+            credential: { username, email, password },
+            stayLoggedIn: this.shouldStayLoggedIn,
+          });
+          this.showSuccess( 'User Created!' );
         } catch ( error ) {
           console.log( error );
           this.showError( error );
-          this.loading = false;
-          return;
         }
-
-        try {
-          const userCredential = await auth.createUserWithEmailAndPassword( email, password );
-          await userCredential.user.updateProfile({
-            displayName: username,
-          });
-          console.log( `[LOGIN] User Cred: ${userCredential}` );
-          const userId = userCredential.user.uid;
-          const docRef = await db.collection( 'users' ).doc( userId ).set({
-            _username: username.toLowerCase(),
-            uid: userId,
-            username: username,
-            email: email,
-          });
-          console.log( docRef );
-          this.showSuccess( 'User Created!' );
-        } catch ( error ) {
-          this.showError( error.message );
-          console.log( error.message );
-          this.loading = false;
-        }
+        this.loading = false;
       },
 
       // Sign In
@@ -276,14 +257,15 @@
 
         this.loading = true;
         try {
-          await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
-          const userCredential = await auth.signInWithEmailAndPassword( email, password );
-          console.log( `%cLogin.vue:%c Signing in... %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', userCredential.user );
+          this.loginUser({
+            credential: { email, password },
+            stayLoggedIn: this.shouldStayLoggedIn,
+          });
         } catch ( error ) {
           this.showError( error.message );
           console.log( error.message );
-          this.loading = false;
         }
+        this.loading = false;
       },
 
       async resetPassword ( email ) {
@@ -318,8 +300,6 @@
         if ( user ) {
           if ( process.client )
             console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
-          else
-            console.log('Login: Logged in!', user);
 
           if ( user.displayName ) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
 
@@ -329,8 +309,6 @@
         } else {
           if ( process.client )
             console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
-          else
-            console.log('Login: Not logged in.');
         }
       },
 
@@ -349,15 +327,9 @@
       hideAlert () {
         this.alert = false;
       },
-
-      ...mapActions({
-        login: VStore.$actions.login,
-      })
     },
 
-    computed: {},
-
-    created () {
+    mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
