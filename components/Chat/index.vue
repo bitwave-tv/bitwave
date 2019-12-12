@@ -313,8 +313,8 @@
 
         const socketOptions = { transports: [ 'websocket' ] };
 
-        // this.socket = socketio( 'chat.bitwave.tv', socketOptions );
-        this.socket = socketio( 'localhost:5000', socketOptions );
+        this.socket = socketio( 'chat.bitwave.tv', socketOptions );
+        // this.socket = socketio( 'localhost:5000', socketOptions );
 
         this.socket.on( 'connect',      async ()      => await this.socketConnect() );
         this.socket.on( 'reconnect',    async ()      => await this.socketReconnect() );
