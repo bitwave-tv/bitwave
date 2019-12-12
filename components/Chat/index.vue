@@ -313,8 +313,8 @@
 
         const socketOptions = { transports: [ 'websocket' ] };
 
-        this.socket = socketio( 'chat.bitwave.tv', socketOptions );
-        // this.socket = socketio( 'localhost:5000', socketOptions );
+        // this.socket = socketio( 'chat.bitwave.tv', socketOptions );
+        this.socket = socketio( 'localhost:5000', socketOptions );
 
         this.socket.on( 'connect',      async ()      => await this.socketConnect() );
         this.socket.on( 'reconnect',    async ()      => await this.socketReconnect() );
@@ -349,7 +349,7 @@
       },
 
       async socketReconnect () {
-        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 2000 }  );
+        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 1000 }  );
       },
 
       async socketError ( error, reason ) {
@@ -360,7 +360,7 @@
         const message = errorWrapper( `${error}${styledReason( reason )}` );
         await this.insertMessage( message ); //*/
 
-        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000 } );
+        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 1000 } );
       },
 
       async hydrate ( data ) {
@@ -606,15 +606,17 @@
           const data = {
             display: true,
             endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
+            trollVotes: poll.allowTrollVotes,
             options: poll.options,
             title: poll.title,
           };
-          await pollDocRef.update(data);
+          await pollDocRef.update( data );
         } else {
           const data = {
             channel: this.page.toLowerCase(),
             display: true,
             endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
+            trollVotes: poll.allowTrollVotes,
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
@@ -631,11 +633,18 @@
 
       // Change end time to now to end poll instantly
       async endPoll ( pollId ) {
-        // this.socket.emit('endpoll', pollId)
+        // this.socket.emit('endpoll', this.pollData);
+        // tell server to update poll and transfer data to client
+
         const pollDocRef = db.collection( 'polls' ).doc( this.pollData.id );
-        await pollDocRef.update( 'endsAt', new Date( Date.now() ) );
+        await pollDocRef.update( {
+          'endsAt':  new Date( Date.now() ),
+          options: this.pollData.options,
+        });
       },
 
+
+      // Delete and hide poll
       async destroyPoll ( pollId ) {
         const pollRef = db.collection( 'polls' ).doc( pollId );
         await pollRef.update( { 'display': false, 'options': null } );

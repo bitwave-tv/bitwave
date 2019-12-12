@@ -17,21 +17,30 @@
                   :value="timeLeft"
                   :indeterminate="timeLeft > 100"
                   color="yellow"
-                ></v-progress-circular>
+                />
               </v-flex>
               <v-flex
-                class="ml-2"
+                class="mx-2"
                 grow
+                style="width: 0"
               >
-                <h3>{{ pollData.title }}</h3>
+                <!--<h3 :style="{ maxHeight: showOptions ? '50vh' : '3rem', overflow: 'hidden', textOverflow: 'ellipsis' }">{{ pollData.title }}</h3>-->
+                <h3 :style="{ display: '-webkit-box', '-webkit-line-clamp': showOptions ? '10' : '1', '-webkit-box-orient': 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }">
+                  {{ pollData.title }}
+                </h3>
+
               </v-flex>
-              <v-flex shrink>
+              <v-flex
+                class="align-self-start"
+                shrink
+              >
                 <v-btn
                   small
                   style="min-width: 0"
                   color="yellow"
-                  class="black--text"
+                  class=""
                   outlined
+                  light
                   @click="showOptions = !showOptions"
                 >
                   <v-icon>{{ `keyboard_arrow_${showOptions ? 'up' : 'down' }` }}</v-icon>
@@ -48,7 +57,8 @@
               <v-btn
                 small
                 block
-                class="black--text text-left text-truncate"
+                class="v-btn-ellipsis"
+                light
                 color="yellow"
                 :disabled="voted"
                 @click="vote(index)"
@@ -57,27 +67,59 @@
               </v-btn>
             </v-flex>
 
-            <v-flex
-              v-if="( ( showResults || isOwner ) && showOptions )"
-              v-for="(val, index) in options"
-              :key="index"
-              mb-3
-            >
-              {{ `${val.votes} (${Math.round( val.votes / ( pollData.voters || 1 ) * 100 )}%) ${val.label}` }}
-              <v-progress-linear
-                :value="val.votes / (pollData.voters || 1) * 100"
-                :buffer-value="(pollData.voters || 1)"
-                color="yellow"
-              ></v-progress-linear>
-            </v-flex>
+            <div class="poll-results my-3">
+              <div
+                v-if="( ( showResults || isOwner ) && showOptions )"
+                v-for="(val, index) in options"
+                :key="index"
+                class="d-flex align-center mb-2"
+              >
+                <!-- Vote Count chip -->
+                <v-chip
+                  class="flex-shrink-0 mr-1"
+                  color="yellow"
+                  outlined
+                  label
+                  small
+                >{{ val.votes.toString().padStart(3, '0') }}</v-chip>
 
-            <v-layout justify-end v-if="isOwner">
+
+                <div class="flex-grow-1 mb-2 mx-1">
+
+                  <!-- Labels -->
+                  <div class="caption d-flex mx-2 mb-1">
+
+
+                    <div class="flex-grow-1 text-truncate" style="width: 0;">{{ val.label }}</div>
+                    <!--<div class="d-inline-block text-truncate">{{ val.label }}</div>-->
+
+                    <!--<v-spacer/>-->
+
+                    <div class="flex-shrink-0 mr-2">
+                      {{ Math.round( val.votes / ( pollData.voters || 1 ) * 100 ) }}%
+                    </div>
+
+                  </div>
+
+                  <!-- Progress bar -->
+                  <v-progress-linear
+                    :value="val.votes / (pollData.voters || 1) * 100"
+                    color="yellow"
+                  />
+
+                </div>
+              </div>
+            </div>
+
+            <v-layout
+              v-if="isOwner"
+              justify-end
+            >
               <v-flex shrink>
                 <v-btn
                   small
-                  text
-                  color="yellow"
-                  class="black--text"
+                  color="red"
+                  outlined
                   @click="$emit('destroy', pollData.id)"
                 >
                   Delete
@@ -85,13 +127,14 @@
               </v-flex>
               <v-flex shrink ml-2>
                 <v-btn
+                  :disabled="showResults"
                   small
                   outlined
                   color="yellow"
                   class="black--text"
-                  @click="$emit('end', pollData.id)"
+                  @click="endPoll"
                 >
-                  End Poll
+                  Finish
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -127,6 +170,11 @@
             this.$emit( 'vote', option );
             this.voted = true;
           },
+
+          endPoll () {
+            if ( this.showResults ) return;
+            this.$emit( 'end', this.pollData.id );
+          },
         },
 
         computed: {
@@ -144,6 +192,12 @@
             return (seconds / 1.8);
           },
 
+          formattedResults () {
+            this.options().map( option => {
+              return `${val.votes} (${Math.round( val.votes / ( pollData.voters || 1 ) * 100 )}%)`
+            });
+          },
+
         },
 
         created() {
@@ -151,3 +205,14 @@
         }
     }
 </script>
+
+<style lang="scss">
+  .v-btn-ellipsis {
+    span {
+      display: block;
+      text-overflow: ellipsis;
+      width: 0;
+      overflow: hidden;
+    }
+  }
+</style>

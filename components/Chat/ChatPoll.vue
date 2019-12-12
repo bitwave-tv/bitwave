@@ -21,7 +21,7 @@
         color="yellow"
         hide-details
         clearable
-      ></v-text-field>
+      />
 
       <!-- Poll Options -->
       <div
@@ -53,7 +53,7 @@
             <v-btn
               v-else
               small
-              class="black--text"
+              light
               outlined
               tabindex="-1"
               color="yellow"
@@ -63,6 +63,16 @@
             </v-btn>
           </template>
         </v-text-field>
+      </div>
+
+      <div class="">
+        <v-switch
+          v-model="allowTrollVotes"
+          class="my-2"
+          color="yellow"
+          label="Allow Troll Votes"
+          hide-details
+        />
       </div>
 
       <!-- Poll Time, Cancel, Submit -->
@@ -75,7 +85,7 @@
           type="number"
           step="0.25"
           append-icon="access_time"
-        ></v-text-field>
+        />
         <v-btn
           small
           color="red"
@@ -102,6 +112,7 @@
             return {
               title: '',
               time: 1.50,
+              allowTrollVotes: false,
               options: [
                 { label: '', votes: 0 },
                 { label: '', votes: 0 },
@@ -112,6 +123,7 @@
         methods: {
           cancelPoll () {
             this.title = '';
+            this.allowTrollVotes = false;
             this.options = [
               { label: '', votes: 0 },
               { label: '', votes: 0 },
@@ -122,6 +134,7 @@
           createPoll () {
             const pollOptions = {
               title: this.title,
+              allowTrollVotes: this.allowTrollVotes,
               // options: this.createOptions(),
               options: this.options,
               time: this.time,
