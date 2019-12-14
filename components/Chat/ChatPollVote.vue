@@ -24,7 +24,6 @@
                 grow
                 style="width: 0"
               >
-                <!--<h3 :style="{ maxHeight: showOptions ? '50vh' : '3rem', overflow: 'hidden', textOverflow: 'ellipsis' }">{{ pollData.title }}</h3>-->
                 <h3 :style="{ display: '-webkit-box', '-webkit-line-clamp': showOptions ? '10' : '1', '-webkit-box-orient': 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }">
                   {{ pollData.title }}
                 </h3>

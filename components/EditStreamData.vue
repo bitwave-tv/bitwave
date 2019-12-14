@@ -8,12 +8,11 @@
     <template #activator="{ on }">
       <v-btn
         v-on="on"
-        color="yellow"
-        class="mr-2"
-        outlined
+        class="mr-3"
+        icon
         small
       >
-        <v-icon small>settings</v-icon>
+        <v-icon>settings</v-icon>
       </v-btn>
     </template>
 
