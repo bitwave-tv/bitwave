@@ -8,9 +8,8 @@
     <template #activator="{ on }">
       <v-btn
         v-on="on"
-        color="yellow"
-        class="mr-2"
-        outlined
+        class="mr-3"
+        icon
         small
       >
         <v-icon>settings</v-icon>
@@ -53,7 +52,7 @@
             :loading="saveLoading"
             :disabled="saveLoading"
             @change="enableSave = true"
-          ></v-switch>
+          />
           <div v-else>
             {{ this.streamData.title }}
           </div>
@@ -84,7 +83,7 @@
             :loading="saveLoading"
             :disabled="saveLoading"
             @change="enableSave = true"
-          ></v-text-field>
+          />
 
           <div class="body-1 mb-1">
             Stream Description
@@ -100,7 +99,7 @@
             :loading="saveLoading"
             :disabled="saveLoading"
             @change="enableSave = true"
-          ></v-textarea>
+          />
 
         </div>
 
@@ -113,7 +112,7 @@
             style="overflow-y: auto; max-height: 60vh;"
             class="pa-3"
             :source="streamData.description"
-          ></vue-markdown>
+          />
         </v-sheet>
 
         <div class="d-flex justify-end mt-3 px-3">
