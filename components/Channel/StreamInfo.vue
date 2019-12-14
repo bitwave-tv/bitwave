@@ -2,7 +2,7 @@
   <div>
     <!-- Stream Title, Status -->
     <v-toolbar
-      class="elevation-2"
+      class="elevation-2 mb-3"
       color="grey darken-4"
       dense
     >
@@ -64,8 +64,10 @@
 
 
     <!-- Stream Data -->
-    <v-tabs-items v-model="tabData">
-
+    <v-tabs-items
+      v-model="tabData"
+      style="background: transparent"
+    >
       <!-- Description -->
       <v-tab-item>
         <div
@@ -103,14 +105,17 @@
           </v-alert>
         </div>
       </v-tab-item>
-
     </v-tabs-items>
 
 
     <!-- Footer -->
-    <div class="pa-2">
+    <v-sheet
+      class="pa-2"
+      color="grey darken-4"
+      tile
+    >
       <div class="overline">Powered by Bitwave Media</div>
-    </div>
+    </v-sheet>
 
   </div>
 </template>
