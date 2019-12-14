@@ -68,6 +68,7 @@
         streamDataListener: null,
         thumbnailInterval: null,
         streams: [],
+        thumbnails: [],
         loading: true,
         imageIndex: 0,
       }
@@ -92,6 +93,7 @@
             name      : stream.user.name,
           }
         });
+        this.thumbnails = this.streams.map( stream => stream.thumbnail );
         this.loading = false;
       },
 
@@ -102,7 +104,7 @@
         const coeff = 1000 * 60; // ms * sec
         const timestamp = Math.round( Date.now() / coeff ) * coeff;
 
-        this.streams[this.imageIndex].thumbnail = `${this.streams[this.imageIndex].thumbnail}?${timestamp}`;
+        this.streams[this.imageIndex].thumbnail = `${this.thumbnails[this.imageIndex]}?${timestamp}`;
       },
     },
 
