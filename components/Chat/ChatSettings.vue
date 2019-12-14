@@ -1,26 +1,24 @@
 <template>
   <v-card>
     <!-- Title Bar -->
-    <v-sheet tile color="yellow">
-      <v-layout class="pl-2" align-center>
-        <v-flex>
-          <h5 class="black--text body-2">Chat Settings</h5>
-        </v-flex>
-        <v-flex shrink>
-          <v-btn
-            color="black"
-            text
-            icon
-            pa-0
-            @click="closeMenu"
-          >
-            <v-icon color="black">close</v-icon>
-          </v-btn>
-        </v-flex>
-      </v-layout>
+    <v-sheet
+      tile
+      color="yellow"
+      class="d-flex align-center justify-space-between pl-2"
+    >
+      <h5 class="black--text body-2">Chat Settings</h5>
+      <v-btn
+        color="black"
+        text
+        icon
+        pa-0
+        @click="closeMenu"
+      >
+        <v-icon color="black">close</v-icon>
+      </v-btn>
     </v-sheet>
 
-    <div class="px-2">
+    <div class="px-3">
       <div class="d-flex">
         <div class="flex-grow-1">
           <v-switch
@@ -35,6 +33,7 @@
         <div class="flex-grow-1">
           <v-switch
             v-model="showTimestamps"
+            class="ml-3"
             label="Timestamps"
             color="yellow"
             hide-details
@@ -79,7 +78,7 @@
             color="yellow"
             hide-details
             dense
-            flat
+            inset
             @change="toggleTts"
           />
         </v-flex>
@@ -92,7 +91,7 @@
             color="yellow"
             hide-details
             dense
-            flat
+            inset
             @change="toggleTrollTts"
           />
         </v-flex>
