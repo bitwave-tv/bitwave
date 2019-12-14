@@ -55,60 +55,59 @@
       :class="{ 'chat-desktop': !mobile }"
       :style="{ maxHeight: mobile ? '390px' : '100%' }"
     >
-      <chat :chat-channel="name"></chat>
+      <chat :chat-channel="name" />
     </div>
 
 
     <!-- Stream Title, Status -->
-    <v-sheet
-      class="elevation-2 pa-3 mb-4"
+    <v-toolbar
+      class="elevation-2 mb-4"
       color="grey darken-4"
+      dense
     >
+      <!-- Live Indicator -->
+      <v-chip
+        class="flex-shrink-0"
+        :class="{ blink: live }"
+        :color="live ? 'red' : 'grey'"
+        label
+        outlined
+        small
+      >
+        <v-icon v-show="live" left size="10" class="mr-2">lens</v-icon>
+        {{ live ? 'LIVE' : 'offline' }}
+      </v-chip>
 
-      <div class="d-flex align-center">
-        <!-- Live Indicator -->
-        <v-chip
-          class="flex-shrink-0"
-          :class="{ blink: live }"
-          :color="live ? 'red' : 'grey'"
-          label
+      <!-- Stream Title -->
+      <h3 class="mx-2 flex-grow-1 subtitle-1">
+        {{ title }}
+      </h3>
+
+      <!-- Stream Actions -->
+      <div class="d-flex flex-shrink-0">
+        <EditStreamData
+          v-if="showEditStream"
+          :username="username"
+          :title="title"
+          :description="description"
+          :nsfw="nsfw"
+        />
+
+        <v-btn
+          v-if="false"
+          color="yellow"
+          class="mr-2"
           outlined
           small
+          @click="showStreamStats = !showStreamStats"
         >
-          <v-icon v-show="live" left size="10" class="mr-2">lens</v-icon>
-          {{ live ? 'LIVE' : 'offline' }}
-        </v-chip>
+          <v-icon>timeline</v-icon>
+        </v-btn>
 
-        <!-- Stream Title -->
-        <h3 class="mx-2 flex-grow-1 subtitle-1">
-          {{ title }}
-        </h3>
-
-        <!-- Stream Actions -->
-        <div class="d-flex flex-shrink-0">
-          <EditStreamData
-            v-if="showEditStream"
-            :username="username"
-            :title="title"
-            :description="description"
-            :nsfw="nsfw"
-          />
-
-          <v-btn
-            v-if="false"
-            color="yellow"
-            class="mr-2"
-            outlined
-            small
-            @click="showStreamStats = !showStreamStats"
-          >
-            <v-icon>timeline</v-icon>
-          </v-btn>
-
-          <ShareStream :user="name" />
-        </div>
+        <ShareStream :user="name" />
       </div>
-    </v-sheet>
+    </v-toolbar>
+
 
     <!-- Description -->
     <div
