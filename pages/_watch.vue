@@ -68,15 +68,15 @@
       <div class="d-flex align-center">
         <!-- Live Indicator -->
         <v-chip
-          v-show="live"
-          class="blink flex-shrink-0"
+          class="flex-shrink-0"
+          :class="{ blink: live }"
+          :color="live ? 'red' : 'grey'"
           label
           outlined
-          color="red"
           small
         >
-          <v-icon left size="10" class="mr-2">lens</v-icon>
-          LIVE
+          <v-icon v-show="live" left size="10" class="mr-2">lens</v-icon>
+          {{ live ? 'LIVE' : 'offline' }}
         </v-chip>
 
         <!-- Stream Title -->
