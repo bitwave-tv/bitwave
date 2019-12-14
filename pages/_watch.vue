@@ -1,6 +1,7 @@
 <template>
   <div :style="{ paddingRight: mobile ? '0' : '450px' }">
 
+
     <!-- Streamer Top Bar -->
     <v-sheet
       class="py-2 px-3"
@@ -26,6 +27,7 @@
         </div>
       </div>
     </v-sheet>
+
 
     <!-- Video JS -->
     <v-responsive :aspect-ratio="16/9">
@@ -59,67 +61,14 @@
     </div>
 
 
-    <!-- Stream Title, Status -->
-    <v-toolbar
-      class="elevation-2 mb-4"
-      color="grey darken-4"
-      dense
-    >
-      <!-- Live Indicator -->
-      <v-chip
-        class="flex-shrink-0"
-        :class="{ blink: live }"
-        :color="live ? 'red' : 'grey'"
-        label
-        outlined
-        small
-      >
-        <v-icon v-show="live" left size="10" class="mr-2">lens</v-icon>
-        {{ live ? 'LIVE' : 'offline' }}
-      </v-chip>
-
-      <!-- Stream Title -->
-      <h3 class="mx-2 flex-grow-1 subtitle-1">
-        {{ title }}
-      </h3>
-
-      <!-- Stream Actions -->
-      <div class="d-flex flex-shrink-0">
-        <EditStreamData
-          v-if="showEditStream"
-          :username="username"
-          :title="title"
-          :description="description"
-          :nsfw="nsfw"
-        />
-
-        <v-btn
-          v-if="false"
-          color="yellow"
-          class="mr-2"
-          outlined
-          small
-          @click="showStreamStats = !showStreamStats"
-        >
-          <v-icon>timeline</v-icon>
-        </v-btn>
-
-        <ShareStream :user="name" />
-      </div>
-    </v-toolbar>
-
-
-    <!-- Description -->
-    <div
-      id="description"
-      ref="description"
-      class="px-3 my-2"
-    >
-      <vue-markdown
-        v-if="description"
-        :source="description"
-      />
-    </div>
+    <!-- Stream Info -->
+    <stream-info
+      :name="name"
+      :live="live"
+      :title="title"
+      :nsfw="nsfw"
+      :description="description"
+    />
 
   </div>
 </template>
@@ -135,13 +84,9 @@
   import { db } from '@/plugins/firebase.js';
 
   import Chat from '~/components/Chat';
-  import VueMarkdown from '~/components/VueMarkdown';
   import FollowButton from '@/components/FollowButton';
   import { VStore } from '@/store';
-
-  // Async Components - We don't expect these components to be required frequently
-  const ShareStream    = () => import ( '@/components/ShareStream' );
-  const EditStreamData = () => import ( '@/components/EditStreamData' );
+  import StreamInfo from '@/components/Channel/StreamInfo';
 
   export default {
     head () {
@@ -164,10 +109,8 @@
     },
 
     components: {
-      EditStreamData,
-      ShareStream,
+      StreamInfo,
       FollowButton,
-      VueMarkdown,
       Chat,
     },
 
@@ -181,9 +124,9 @@
         watchInterval: 60,
         lastWatch: null,
         watchTimer: null,
+        showStreamStats: false,
         streamDataListener: null,
         description: null,
-        showStreamStats: false,
       }
     },
 
@@ -394,11 +337,6 @@
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
       },
-
-      showEditStream () {
-        if ( !this.username ) return false;
-        return this.name.toLowerCase() === this.username.toLowerCase();
-      },
     },
 
     async validate ( { params, query, store, $axios } ) {
@@ -417,9 +355,7 @@
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
-
       this.playerInitialize();
-
       this.mounted = true;
     },
 
