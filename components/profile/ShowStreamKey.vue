@@ -31,7 +31,7 @@
       </v-flex>
       <v-flex>
         <v-text-field
-          :value="streamkey"
+          :value="fullStreamkey"
           ref="streamkeyinput"
           label="Stream Key"
           color="yellow"
@@ -59,7 +59,7 @@
           :color="color"
           class="black--text"
           :loading="loadingData"
-          @click="copyToClipboard"
+          @click="copyToClipboard( fullStreamkey )"
         >
           Copy Key
         </v-btn>
@@ -163,7 +163,7 @@
         if ( data && data.streamkey ) {
           // Successfully got key
           this.streamServer = endpoint;
-          this.streamkey    = `${this.username}?key=${data.streamkey}`;
+          this.streamkey    = data.streamkey;
           this.errorOverlay = false;
 
           // Change colors
@@ -231,6 +231,10 @@
         uid: VStore.$getters.getUID,
         username : VStore.$getters.getUsername,
       }),
+
+      fullStreamkey () {
+        return `${this.username}?key=${this.streamkey}`;
+      },
     },
 
     async created () {
