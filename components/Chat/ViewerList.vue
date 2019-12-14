@@ -22,7 +22,11 @@
       class="mt-1"
     >
       <!-- Header -->
-      <v-sheet color="yellow" class="d-flex align-center justify-space-between pl-2">
+      <v-sheet
+        tile
+        color="yellow"
+        class="d-flex align-center justify-space-between pl-2"
+      >
         <h5 class="black--text body-2">Live Viewers ({{ viewerCount }})</h5>
         <v-btn
           color="black"
@@ -42,6 +46,8 @@
           class="mt-0"
           color="yellow"
           hide-details
+          dense
+          flat
         />
       </div>
 

@@ -1,6 +1,7 @@
 <template>
   <v-card>
-    <v-sheet color="yellow">
+    <!-- Title Bar -->
+    <v-sheet tile color="yellow">
       <v-layout class="pl-2" align-center>
         <v-flex>
           <h5 class="black--text body-2">Chat Settings</h5>
@@ -20,19 +21,27 @@
     </v-sheet>
 
     <div class="px-2">
-      <div class="d-flex justify-space-between">
-        <v-switch
-          v-model="globalChat"
-          :label="`${ globalChat ? 'Global' : 'Local' } Chat`"
-          color="yellow"
-          hide-details
-        />
-        <v-switch
-          v-model="showTimestamps"
-          label="Timestamps"
-          color="yellow"
-          hide-details
-        />
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          <v-switch
+            v-model="globalChat"
+            :label="`${ globalChat ? 'Global' : 'Local' } Chat`"
+            color="yellow"
+            hide-details
+            dense
+            flat
+          />
+        </div>
+        <div class="flex-grow-1">
+          <v-switch
+            v-model="showTimestamps"
+            label="Timestamps"
+            color="yellow"
+            hide-details
+            dense
+            flat
+          />
+        </div>
       </div>
 
       <v-switch
@@ -41,6 +50,8 @@
         class="mb-2"
         color="yellow"
         hide-details
+        dense
+        flat
       />
 
       <v-switch
@@ -49,15 +60,17 @@
         class="mb-2"
         color="yellow"
         hide-details
+        dense
+        flat
       />
     </div>
 
     <v-divider/>
 
-    <v-list subheader pb-2>
-      <v-subheader class="mb-0">Text To Speech Options</v-subheader>
+    <div class="pb-2">
+      <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
 
-      <v-layout mb-3>
+      <div class="d-flex mb-3">
         <v-flex>
           <v-switch
             v-model="useTts"
@@ -65,6 +78,8 @@
             class="ml-3 mt-0 pt-0"
             color="yellow"
             hide-details
+            dense
+            flat
             @change="toggleTts"
           />
         </v-flex>
@@ -76,10 +91,12 @@
             class="ml-0 mt-0 pt-0"
             color="yellow"
             hide-details
+            dense
+            flat
             @change="toggleTrollTts"
           />
         </v-flex>
-      </v-layout>
+      </div>
 
       <v-flex mx-3>
         <v-select
@@ -115,7 +132,7 @@
           </template>
         </v-slider>
       </v-list-item>
-    </v-list>
+    </div>
   </v-card>
 </template>
 

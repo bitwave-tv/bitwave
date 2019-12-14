@@ -21,7 +21,11 @@
 
     <v-card>
 
-      <v-sheet color="yellow" class="pa-2 d-flex justify-space-between align-center">
+      <v-sheet
+        tile
+        color="yellow"
+        class="pa-2 d-flex justify-space-between align-center"
+      >
         <h4 class="black--text body-1">
           Share Stream
         </h4>

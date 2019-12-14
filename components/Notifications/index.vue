@@ -30,7 +30,11 @@
       </template>
 
       <v-card>
-        <v-sheet color="yellow" class="pl-2 d-flex justify-space-between align-center">
+        <v-sheet
+          tile
+          color="yellow"
+          class="pl-2 d-flex justify-space-between align-center"
+        >
           <h5 class="black--text body-2">
             Notifications
           </h5>

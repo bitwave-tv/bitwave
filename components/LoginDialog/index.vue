@@ -12,13 +12,16 @@
           small
         >
           Login
-          <!--<v-icon class="ml-1">input</v-icon>-->
         </v-btn>
       </template>
 
       <v-card class="my-3" color="grey darken-4">
 
-        <v-sheet color="yellow" class="d-flex align-center pa-3 black--text">
+        <v-sheet
+          tile
+          color="yellow"
+          class="d-flex align-center pa-3 black--text"
+        >
           <v-icon class="mr-2" color="black">ondemand_video</v-icon>
           <h2 class="title">
             [bitwave.tv] {{ signUp ? 'Create Account' : 'Login' }}
@@ -144,7 +147,7 @@
 
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider/>
 
         <v-card-actions>
           <v-btn
