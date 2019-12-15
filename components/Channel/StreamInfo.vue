@@ -29,8 +29,6 @@
         {{ title }}
       </h3>
 
-
-
       <!-- Bottom Tabs -->
       <template #extension>
         <v-tabs
