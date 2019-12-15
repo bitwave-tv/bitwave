@@ -12,10 +12,12 @@
       <v-btn
         v-on="on"
         small
-        icon
+        color="blue"
+        outlined
         @click="openShare"
       >
-        <v-icon>share</v-icon>
+        share
+        <v-icon small class="ml-1">share</v-icon>
       </v-btn>
     </template>
 
