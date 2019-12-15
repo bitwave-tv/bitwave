@@ -66,7 +66,7 @@
                 <v-btn
                   color="yellow"
                   :disabled="alert.type === 'error'"
-                  :light="!alert.type === 'error'"
+                  :light="alert.type !== 'error'"
                   @click="requestKey"
                 >
                   Request Key
@@ -74,7 +74,7 @@
                 <v-btn
                   color="yellow"
                   to="/profile"
-                  light
+                  outlined
                 >
                   {{ buttonText }}
                 </v-btn>
