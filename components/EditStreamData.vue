@@ -21,6 +21,7 @@
       :loading="saveLoading || showExitConfirm"
     >
       <v-sheet
+        tile
         color="yellow"
         class="pa-2 d-flex justify-space-between align-center"
       >
