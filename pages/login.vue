@@ -264,10 +264,8 @@
 
         this.loading = true;
         try {
-          this.loginUser({
-            credential: { email, password },
-            stayLoggedIn: this.shouldStayLoggedIn,
-          });
+          await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
+          await auth.signInWithEmailAndPassword( email, password );
         } catch ( error ) {
           this.showError( error.message );
           console.log( error.message );

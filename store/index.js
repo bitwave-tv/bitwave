@@ -170,6 +170,7 @@ export const actions = {
     await dispatch( 'nuxtServerInit', { req, params } );
   },
 
+  // not used due since we couldn't catch errors well here
   async [$actions.registerUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
     // Create user & update credential
     const userCredential = await auth.createUserWithEmailAndPassword( credential.email, credential.password );
@@ -186,6 +187,7 @@ export const actions = {
     return true;
   },
 
+  // not used due since we couldn't catch errors well here
   async [$actions.loginUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
     await auth.setPersistence( stayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
     await auth.signInWithEmailAndPassword( credential.email, credential.password );
