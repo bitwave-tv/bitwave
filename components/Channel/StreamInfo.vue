@@ -12,7 +12,7 @@
           background-color="transparent"
         >
           <v-tab>Description</v-tab>
-          <v-tab v-if="false">Archives</v-tab>
+          <v-tab>Archives</v-tab>
         </v-tabs>
       </template>
 
@@ -35,7 +35,7 @@
       </v-chip>
 
       <!-- Stream Title -->
-      <h3 class="mx-2 flex-grow-1 subtitle-1 font-weight-medium">
+      <h3 class="mx-2 flex-grow-1 subtitle-1 font-weight-medium text-truncate">
         {{ title }}
       </h3>
 
@@ -89,20 +89,7 @@
           class="pa-3"
           style="min-height: 500px"
         >
-          <div
-            v-if="false"
-            class="subtitle mb-3"
-          >
-            Replays of streams will appear here if available.
-          </div>
-          <v-alert
-            outlined
-            type="warning"
-            prominent
-            border="left"
-          >
-            Feature not available yet.
-          </v-alert>
+          <stream-archives :streamer="name" />
         </div>
       </v-tab-item>
     </v-tabs-items>
@@ -129,11 +116,13 @@
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = () => import ( '@/components/ShareStream' );
   const EditStreamData = () => import ( '@/components/EditStreamData' );
+  const StreamArchives = () => import ( '@/components/Channel/StreamArchives' );
 
   export default {
     name: 'StreamInfo',
 
     components: {
+      StreamArchives,
       VueMarkdown,
       ShareStream,
       EditStreamData,
