@@ -89,6 +89,8 @@
   import StreamInfo from '@/components/Channel/StreamInfo';
 
   export default {
+    scrollToTop: true,
+
     head () {
       return {
         title: `${this.name} - [bitwave.tv]`,

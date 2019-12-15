@@ -181,6 +181,8 @@
   import BannerVideo from '@/components/BannerVideo';
 
   export default {
+    scrollToTop: true,
+
     head () {
       return {
         title: `Homepage - [bitwave.tv]`,
