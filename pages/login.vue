@@ -234,11 +234,18 @@
 
         this.loading = true;
         try {
-          this.registerUser({
-            credential: { username, email, password },
-            stayLoggedIn: this.shouldStayLoggedIn,
-          });
-          this.showSuccess( 'User Created!' );
+          // Verify Username is valid & not taken
+          const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: username });
+          if ( !checkUsername.valid ) {
+            console.log( checkUsername.error );
+            this.showError( checkUsername.error );
+          } else {
+            await this.registerUser({
+              credential: { username, email, password },
+              stayLoggedIn: this.shouldStayLoggedIn,
+            });
+            this.showSuccess( 'User Created!' );
+          }
         } catch ( error ) {
           console.log( error );
           this.showError( error );
