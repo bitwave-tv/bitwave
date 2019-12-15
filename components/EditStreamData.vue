@@ -9,10 +9,12 @@
       <v-btn
         v-on="on"
         class="mr-3"
-        icon
+        outlined
         small
+        color="yellow"
       >
-        <v-icon>settings</v-icon>
+        edit
+        <v-icon small class="ml-1">edit</v-icon>
       </v-btn>
     </template>
 

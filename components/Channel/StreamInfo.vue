@@ -2,20 +2,10 @@
   <div>
     <!-- Stream Title, Status -->
     <v-toolbar
-      class="elevation-2 mb-3"
+      class="elevation-2"
       color="grey darken-4"
       dense
     >
-      <template #extension>
-        <v-tabs
-          v-model="tabData"
-          background-color="transparent"
-        >
-          <v-tab>Description</v-tab>
-          <v-tab>Archives</v-tab>
-        </v-tabs>
-      </template>
-
       <!-- Live Indicator -->
       <v-chip
         class="flex-shrink-0"
@@ -39,27 +29,21 @@
         {{ title }}
       </h3>
 
-      <!-- Stream Actions -->
-      <div class="d-flex flex-shrink-0">
-        <EditStreamData
-          v-if="showEditStream"
-          :username="username"
-          :title="title"
-          :description="description"
-          :nsfw="nsfw"
-        />
-        <v-btn
-          v-if="false"
-          color="yellow"
-          class="mr-2"
-          outlined
-          small
-          @click="showStreamStats = !showStreamStats"
+
+
+      <!-- Bottom Tabs -->
+      <template #extension>
+        <v-tabs
+          v-model="tabData"
+          background-color="transparent"
+          class="no-focus"
+          fixed-tabs
+
         >
-          <v-icon>timeline</v-icon>
-        </v-btn>
-        <ShareStream :user="name" />
-      </div>
+          <v-tab>Description</v-tab>
+          <v-tab>Archives</v-tab>
+        </v-tabs>
+      </template>
     </v-toolbar>
 
 
@@ -76,6 +60,29 @@
           class="pa-3"
           style="min-height: 500px"
         >
+          <!-- Stream Actions -->
+          <div class="d-flex flex-shrink-0 mb-3 justify-end">
+            <EditStreamData
+              v-if="showEditStream"
+              :username="username"
+              :title="title"
+              :description="description"
+              :nsfw="nsfw"
+            />
+            <v-btn
+              v-if="false"
+              color="yellow"
+              class="mr-2"
+              outlined
+              small
+              @click="showStreamStats = !showStreamStats"
+            >
+              <v-icon>timeline</v-icon>
+            </v-btn>
+            <ShareStream :user="name" />
+          </div>
+
+          <!-- Stream Description -->
           <vue-markdown
             v-if="description"
             :source="description"
@@ -158,3 +165,10 @@
     },
   };
 </script>
+
+<style lang="scss">
+  .v-tabs.no-focus .v-tab--active:hover::before,
+  .v-tabs.no-focus .v-tab--active::before {
+    opacity: 0;
+  }
+</style>
