@@ -171,10 +171,6 @@ export const actions = {
   },
 
   async [$actions.registerUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
-    // Verify Username is valid & not taken
-    const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: credential.username });
-    if ( !checkUsername.valid ) return await Promise.reject( checkUsername.error );
-
     // Create user & update credential
     const userCredential = await auth.createUserWithEmailAndPassword( credential.email, credential.password );
     await userCredential.user.updateProfile({ displayName: credential.username });
@@ -187,6 +183,7 @@ export const actions = {
       username: credential.username,
       email: credential.email,
     });
+    return true;
   },
 
   async [$actions.loginUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
