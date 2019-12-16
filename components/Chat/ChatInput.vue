@@ -40,7 +40,6 @@
           <v-btn
             v-on="on"
             small
-            text
             icon
           >
             <v-icon>settings</v-icon>
