@@ -133,7 +133,7 @@
                 </div>
 
                 <div class="mb-3">
-                  Ensuring keyframes are set properly will be teh best chance you have at having a somewhat decent stream.
+                  Ensuring keyframes are set properly will be the best chance you have at having a somewhat decent stream.
                   By default it is set to 0 or automatic, which, on average, causes at at least an additional 10 second stream delay
                   and in extreme cases, has causes delays up to an additioanal 45 seconds. Which is pretty bad.
                 </div>
