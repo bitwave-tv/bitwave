@@ -1,50 +1,58 @@
 <template>
   <v-card :class="bgColor.split(' ')" class="mb-4 pa-3">
-    <v-layout column>
-      <v-flex class="mb-5">
-        <h2><v-icon class="mx-2">verified_user</v-icon> Stream Server & Key</h2>
-      </v-flex>
-      <v-flex>
+    <div>
+      <h2 class="mb-4"><v-icon class="mx-2">verified_user</v-icon> Stream Server & Key</h2>
+
+      <!-- Stream server & key -->
+      <div class="mb-4">
         <v-text-field
           :value="streamServer"
           class="mb-3"
           label="Stream URL"
-          color="yellow"
           readonly
-          outlined
+          solo
+          light
           hide-details
           :loading="loadingData"
         >
           <template slot="append">
-            <div class="v-flex">
-              <v-btn
-                color="color"
-                text
-                small
-                @click="copyToClipboard( streamServer )"
-              >
-                copy server
-              </v-btn>
-            </div>
+            <v-btn
+              color="blue"
+              depressed
+              dark
+              @click="copyToClipboard( streamServer )"
+            >
+              copy server
+            </v-btn>
           </template>
         </v-text-field>
-      </v-flex>
-      <v-flex>
+
         <v-text-field
           :value="fullStreamkey"
           ref="streamkeyinput"
+          class="mb-3"
           label="Stream Key"
-          color="yellow"
           readonly
-          outlined
+          solo
+          light
+          hide-details
           :messages="streamkeyMessage"
           :loading="loadingData"
           :type="showKey ? 'text' : 'password'"
-          :append-icon="showKey ? 'visibility' : 'visibility_off'"
-          @click:append="showStreamKey"
-        />
-      </v-flex>
-      <v-layout>
+        >
+          <template slot="append">
+            <v-btn
+
+              icon
+              @click="showStreamKey"
+            >
+              <v-icon>{{ showKey ? 'visibility' : 'visibility_off' }}</v-icon>
+            </v-btn>
+          </template>
+        </v-text-field>
+      </div>
+
+      <div class="d-flex">
         <v-spacer/>
         <v-btn
           :color="color"
@@ -59,15 +67,17 @@
           :color="color"
           class="black--text"
           :loading="loadingData"
+          depressed
           @click="copyToClipboard( fullStreamkey )"
         >
           Copy Key
         </v-btn>
-      </v-layout>
-    </v-layout>
+      </div>
+    </div>
 
     <v-overlay
       absolute
+      :opacity=".75"
       :value="errorOverlay"
     >
       <v-alert
@@ -176,7 +186,7 @@
           // Show warning
           this.errorOverlay  = true;
           this.alert.type    = 'warning';
-          this.alert.message = 'NO KEY AVAILABLE';
+          this.alert.message = 'NO KEY FOUND';
         }
 
         this.loadingData = false;
@@ -193,6 +203,7 @@
       },
 
       async authenticated ( user ) {
+        this.streamkey = '';
         this.errorOverlay  = !user;
         this.alert.type    = 'error';
         this.alert.message = 'PLEASE LOGIN';
