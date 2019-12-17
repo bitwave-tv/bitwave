@@ -667,6 +667,9 @@
             await userDoc.update( 'ignoreList', this.ignoreList );
           }
 
+          // Remove messages
+          this.messages = this.messages.filter( message => username.toLowerCase() !==  message.username.toLowerCase() );
+
           // Confirmation Message
           await this.insertMessage( `Ignored User: ${username}` );
 
@@ -717,6 +720,9 @@
             const userDoc = db.collection( 'users' ).doc( this.user.uid );
             await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
           }
+
+          // Remove messages
+          this.messages = this.messages.filter( message => channel.toLowerCase() !==  message.channel.toLowerCase() );
 
           // Confirmation Message
           await this.insertMessage( `Ignored Channel: ${channel}` );
