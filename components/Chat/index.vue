@@ -846,7 +846,7 @@
           this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
         } else {
           // Reconnect chat to force hydration when going into global chat
-          await this.connectChat( this.userToken );
+          if ( this.userToken ) await this.connectChat( this.userToken );
         }
       },
     },
