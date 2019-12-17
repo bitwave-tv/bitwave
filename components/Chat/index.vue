@@ -668,7 +668,8 @@
           }
 
           // Remove messages
-          this.messages = this.messages.filter( message => username.toLowerCase() !==  message.username.toLowerCase() );
+          if ( this.useIgnore )
+            this.messages = this.messages.filter( message => username.toLowerCase() !==  message.username.toLowerCase() );
 
           // Confirmation Message
           await this.insertMessage( `Ignored User: ${username}` );
