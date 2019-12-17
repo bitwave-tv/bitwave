@@ -39,7 +39,7 @@
           controls
           autoplay
           preload="auto"
-          :poster="poster"
+          :poster="posterCacheBusted"
           :style="{ width: '100%' }"
         >
           <source
@@ -333,6 +333,16 @@
       ...mapGetters({
         username: VStore.$getters.getUsername,
       }),
+
+      posterCacheBusted () {
+        if ( this.live ) {
+          const coeff = 1000 * 60; // Cache bust poster every minute
+          const timestamp = Math.round( Date.now() / coeff ) * coeff;
+          return `${this.poster}?${timestamp}`;
+        } else {
+          return this.poster;
+        }
+      },
 
       mobile () {
         return this.mounted

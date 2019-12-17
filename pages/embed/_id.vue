@@ -61,7 +61,7 @@
         } else {
           return this.poster;
         }
-      }
+      },
     },
 
     async asyncData ( { $axios, params } ) {
