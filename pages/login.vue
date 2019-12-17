@@ -213,7 +213,6 @@
       ...mapActions({
         registerUser : VStore.$actions.registerUser,
         loginUser    : VStore.$actions.loginUser,
-        login        : VStore.$actions.login,
       }),
 
       switchForm () {
@@ -307,8 +306,6 @@
             console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
 
           if ( user.displayName ) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
-
-          await this.login( user );
 
           setTimeout( () => this.$router.push( '/profile' ), 1500 );
         } else {
