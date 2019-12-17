@@ -34,7 +34,3 @@
     computed: {},
   };
 </script>
-
-<style lang='scss'>
-
-</style>
