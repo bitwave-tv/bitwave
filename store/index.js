@@ -94,10 +94,11 @@ export const getters = {
   },
 
   [$getters.getStreamKey] ( state ) {
-    if ( state[$states.user].hasOwnProperty( 'streamkey' ) ) {
-      return state[$states.user].streamkey;
-    }
-    return null;
+    return state[$states.user]
+      ? state[$states.user].hasOwnProperty( 'streamkey' )
+        ? state[$states.user].streamkey
+        : null
+      : null;
   },
 
   [$getters.getSidebarData] ( state ) {
@@ -209,9 +210,15 @@ export const actions = {
 
     user =  JSON.parse( JSON.stringify( user ) );
 
+    if ( unsubscribeUser ) {
+      console.warn( 'Already had firebase listener!' );
+      unsubscribeUser();
+    }
+
     const userdocRef = db.collection( 'users' ).doc( uid );
-    unsubscribeUser = userdocRef.onSnapshot( doc => {
+    unsubscribeUser = userdocRef.onSnapshot( async doc => {
       const data = doc.data();
+      if ( process.env.APP_DEBUG )  console.log( 'User updated', data );
       commit( $mutations.setUser, data );
       this.$cookies.set( 'user',  data );
     });
@@ -224,7 +231,11 @@ export const actions = {
 
   async [$actions.logout] ({ commit }) {
     try {
-      if ( unsubscribeUser ) unsubscribeUser();
+      if ( unsubscribeUser ) {
+        unsubscribeUser();
+        unsubscribeUser = null;
+      }
+
       await auth.signOut();
 
       commit( $mutations.setUser, null );

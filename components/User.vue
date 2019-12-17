@@ -96,6 +96,17 @@
                 <v-list-item-title>Report</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item
+              v-if="userRole === 'admin'"
+              to="/admin"
+            >
+              <v-list-item-action>
+                <v-icon>verified_user</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Admin Panel</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
 
             <braintree-drop-in class="my-1" />
 
@@ -182,6 +193,12 @@
         if ( !this.user ) return 'Troll';
         if ( this.user.hasOwnProperty( 'rank' ) ) return this.user.rank;
         else return 'Basic';
+      },
+
+      userRole () {
+        if ( !this.user ) return 'Troll';
+        if ( this.user.hasOwnProperty( 'role' ) ) return this.user.role;
+        return 'user';
       },
     },
 
