@@ -35,6 +35,7 @@
   import Reports from '@/components/Admin/Reports';
   import StreamManager from '@/components/Admin/StreamManager';
   import ArchiveManager from '@/components/Admin/ArchiveManager';
+  import { auth } from '@/plugins/firebase';
 
   export default {
     name: 'admin',
@@ -47,8 +48,26 @@
       return {};
     },
 
-    methods: {},
+    methods: {
+      async authenticated ( user ) {
+        if ( !user ) {
+          // User logged out, redirect back to login page.
+          this.$router.push( '/login' );
+        }
+      },
+    },
 
     computed: {},
+
+    mounted () {
+      this.unsubAuthChanged = auth.onAuthStateChanged( user => this.authenticated( user ) );
+    },
+
+    beforeDestroy () {
+      if ( this.unsubAuthChanged ) {
+        this.unsubAuthChanged();
+        console.log( `%cAdmin:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+      }
+    },
   };
 </script>
