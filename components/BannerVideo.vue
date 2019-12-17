@@ -20,8 +20,8 @@
         :poster="poster"
       >
         <source
-          :src="src"
-          :type="type"
+          :src="prerollVideo.source"
+          :type="prerollVideo.type"
         >
       </video>
     </div>
@@ -40,6 +40,8 @@
   // import 'videojs-contrib-dash'
 
   import Chat from '@/components/Chat'
+
+  const preroll = 'https://cdn.bitwave.tv/static/rewind-trailer.mp4';
 
   export default {
     name: 'BannerVideo',
@@ -70,19 +72,39 @@
             // liveui: true,
             // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
           } );
+          this.player.on( 'ended', async () => {
+            this.reloadPlayer();
+            this.player.play();
+          });
           this.initialized = true;
         } catch ( error ) {
           console.error( error );
           this.initialized = false;
         }
+
       },
 
       playerDispose () {
         if ( this.player ) this.player.dispose();
       },
 
+      reloadPlayer () {
+        if ( !this.initialized ) return;
+        this.player.poster = this.poster;
+        this.player.src( { src: this.src, type: this.type } );
+      },
+
       updatePlayerSrc () {
         this.player.src({ type: 'video/mp4', src: 'https://cdn.bitwave.tv/static/bumps/Bump33-sm.mp4' });
+      },
+    },
+
+    computed: {
+      prerollVideo () {
+        return {
+          source: preroll,
+          type: 'video/mp4',
+        }
       },
     },
 
