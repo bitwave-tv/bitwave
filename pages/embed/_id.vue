@@ -30,7 +30,6 @@
 
     data () {
       return {
-        autoplay: false,
         name: null,
         avatar: null,
         title: null,
@@ -49,6 +48,11 @@
     },
 
     computed: {
+      autoplay () {
+        if ( !this.live ) return false;
+        return this.$route.query.autoplay || false;
+      },
+
       overlayId () {
         return this.$route.params.id;
       },
