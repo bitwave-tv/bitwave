@@ -307,7 +307,7 @@
 
           if ( user.displayName ) this.showSuccess(`Logged in! Welcome back, ${user.displayName}.`);
 
-          setTimeout( () => this.$router.push( '/profile' ), 1500 );
+          setTimeout( () => this.$router.push( this.redirect ), 750 );
         } else {
           if ( process.client )
             console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
@@ -328,6 +328,14 @@
 
       hideAlert () {
         this.alert = false;
+      },
+    },
+
+    computed: {
+      redirect () {
+        return this.$route.query.redirect
+          ? this.$route.query.redirect
+          : '/profile';
       },
     },
 

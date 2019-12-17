@@ -76,7 +76,7 @@
                 </v-btn>
                 <v-btn
                   color="yellow"
-                  to="/profile"
+                  :to="buttonLink"
                   outlined
                 >
                   {{ buttonText }}
@@ -301,6 +301,7 @@
     data() {
       return {
         buttonText: 'Login',
+        buttonLink: '/login?redirect=/streamkey',
         loading: false,
         requestError: {
           show: false,
@@ -367,27 +368,31 @@
 
         if ( this.isAuth && valid ) {
           this.buttonText= 'View Profile';
+          this.buttonLink = '/profile';
           return {
             type: 'success',
             message: 'You meet all requirements to request a streamkey.',
             show: true,
           }
         } else if ( !this.isAuth ) {
-          this.buttonText= 'Login / Register';
+          this.buttonText = 'Login / Register';
+          this.buttonLink = '/login?redirect=/streamkey';
           return {
             type: 'error',
             message: 'You must be logged in to request a streamkey.',
             show: true,
           }
         } else if ( !valid ) {
-          this.buttonText= 'Edit Profile';
+          this.buttonText = 'Edit Profile';
+          this.buttonLink = '/profile';
           return {
             type: 'error',
             message: 'You must set an avatar to request a streamkey.',
             show: true,
           }
         } else {
-          this.buttonText= 'This Should not happen';
+          this.buttonText = 'This Should not happen';
+          this.buttonLink = '/login?redirect=/streamkey';
           return {
             type: 'error',
             message: 'Unknown Error: unable to verifyaccount requirements.',

@@ -667,6 +667,9 @@
             await userDoc.update( 'ignoreList', this.ignoreList );
           }
 
+          // Remove messages
+          this.messages = this.messages.filter( message => username.toLowerCase() !==  message.username.toLowerCase() );
+
           // Confirmation Message
           await this.insertMessage( `Ignored User: ${username}` );
 
@@ -717,6 +720,9 @@
             const userDoc = db.collection( 'users' ).doc( this.user.uid );
             await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
           }
+
+          // Remove messages
+          this.messages = this.messages.filter( message => channel.toLowerCase() !==  message.channel.toLowerCase() );
 
           // Confirmation Message
           await this.insertMessage( `Ignored Channel: ${channel}` );
@@ -829,6 +835,18 @@
             return '404';
         } else {
           return 'Global';
+        }
+      },
+    },
+
+    watch: {
+      global: async function ( val, old ) {
+        if ( !val ) {
+          // Remove global messages when going into local chat
+          this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
+        } else {
+          // Reconnect chat to force hydration when going into global chat
+          await this.connectChat( this.userToken );
         }
       },
     },
