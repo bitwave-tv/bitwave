@@ -19,3 +19,28 @@ const db = firebase.firestore();
 const FieldValue = firebase.firestore.FieldValue;
 
 export { auth, db, FieldValue }
+
+
+/**
+ * Manage firebase authentication
+ */
+import { VStore } from '@/store';
+
+export default ( { app } ) => {
+  if ( process.client ) {
+    if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
+
+    // Listen for authentication changes
+    auth.onAuthStateChanged( async user => {
+      // Handle login
+      if ( user ) {
+        console.log( '[Firebase] Authenticated', user );
+        app.store.dispatch( VStore.$actions.login, user );
+      } else {
+        console.log( '[Firebase] Not Authenticated' );
+      }
+    }, async error => {
+      console.error( '[Firebase] Auth Error:', error )
+    });
+  }
+}
