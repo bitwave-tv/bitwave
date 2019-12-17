@@ -59,7 +59,12 @@
           style="min-height: 500px"
         >
           <!-- Stream Actions -->
-          <div class="d-flex flex-shrink-0 mb-3 justify-end">
+          <div class="d-flex flex-shrink-0 align-center mb-3">
+            <div class="caption grey--text">
+              <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
+              <div class="d-inline-block">{{ lastStreamed }}</div>
+            </div>
+            <v-spacer />
             <EditStreamData
               v-if="showEditStream"
               :username="username"
@@ -117,6 +122,7 @@
   import { VStore } from '@/store';
 
   import VueMarkdown from '@/components/VueMarkdown';
+  import { timeAgo } from '@/assets/js/time-ago';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = () => import ( '@/components/ShareStream' );
@@ -139,6 +145,7 @@
       title: { type: String },
       nsfw:  { type: Boolean },
       description: { type: String },
+      timestamp: { type: Number },
     },
 
     data () {
@@ -159,6 +166,14 @@
       showEditStream () {
         if ( !this.username ) return false;
         return this.name.toLowerCase() === this.username.toLowerCase();
+      },
+
+      lastStreamed () {
+        if ( this.timestamp ) {
+          return timeAgo( this.timestamp );
+        } else {
+          return 'Unknown';
+        }
       },
     },
   };

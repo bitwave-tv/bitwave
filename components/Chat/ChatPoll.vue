@@ -2,8 +2,8 @@
   <div class="d-flex">
 
     <!-- Yellow Sidebar -->
-    <v-sheet color="yellow">
-      <div style="width:24px;"></div>
+    <v-sheet color="yellow" tile>
+      <div style="width:8px;"></div>
     </v-sheet>
 
     <!-- Poll Body -->
@@ -72,6 +72,8 @@
           color="yellow"
           label="Allow Troll Votes"
           hide-details
+          dense
+          inset
         />
       </div>
 
@@ -90,12 +92,14 @@
           small
           color="red"
           class="body-2 ml-2"
+          depressed
           @click="cancelPoll"
         >cancel</v-btn>
         <v-btn
           small
           color="yellow"
           class="black--text body-2 ml-2"
+          depressed
           @click="createPoll"
         >Submit</v-btn>
       </div>

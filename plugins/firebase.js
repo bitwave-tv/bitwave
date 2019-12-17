@@ -34,13 +34,13 @@ export default ( { app } ) => {
     auth.onAuthStateChanged( async user => {
       // Handle login
       if ( user ) {
-        console.log( '[Firebase] Authenticated', user );
+        if ( process.env.APP_DEBUG ) console.log( '[Firebase] Authenticated', user );
         app.store.dispatch( VStore.$actions.login, user );
       } else {
-        console.log( '[Firebase] Not Authenticated' );
+        if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
       }
     }, async error => {
-      console.error( '[Firebase] Auth Error:', error )
+      console.error( 'Auth Error:', error )
     });
   }
 }
