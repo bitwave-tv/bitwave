@@ -36,6 +36,7 @@
     data () {
       return {
         initialized: false,
+        recentBumps: [],
       };
     },
 
@@ -99,6 +100,7 @@
         if ( !this.initialized ) return;
         this.player.poster = this.poster;
         this.player.src( { src: this.url, type: this.type } );
+        this.player.play();
       },
 
       onVolumeChange () {
@@ -122,6 +124,19 @@
 
       playerDispose (){
         if ( this.player ) this.player.dispose();
+      },
+
+      async getRandomBump () {
+        const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
+        // limit to checking 5 most recent bumps
+        if ( this.recentBumps.length >= 10 ) this.recentBumps = this.recentBumps.splice( -10 );
+        // Recurse until we get a fresh bump
+        if ( this.recentBumps.includes( data.url ) ){
+          console.log(`Recently seen ${data.url}, getting a new bump`);
+          return this.getRandomBump();
+        }
+        this.recentBumps.push( data.url );
+        return data.url;
       },
     },
 

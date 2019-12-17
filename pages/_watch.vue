@@ -129,6 +129,7 @@
         showStreamStats: false,
         streamDataListener: null,
         description: null,
+        recentBumps: [],
       }
     },
 
@@ -220,6 +221,14 @@
 
       async getRandomBump () {
         const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
+        // limit to checking 5 most recent bumps
+        if ( this.recentBumps.length >= 10 ) this.recentBumps = this.recentBumps.splice( -10 );
+        // Recurse until we get a fresh bump
+        if ( this.recentBumps.includes( data.url ) ){
+          console.log(`Recently seen ${data.url}, getting a new bump`);
+          return this.getRandomBump();
+        }
+        this.recentBumps.push( data.url );
         return data.url;
       },
 
