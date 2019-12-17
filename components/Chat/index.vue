@@ -16,7 +16,7 @@
       <ViewerList :page="page" />
 
       <!-- Chat Label -->
-      <h4 @click="addUserTag(page)">{{ page }}</h4>
+      <h4 @click="addUserTag(page)" class="mx-2 text-truncate">{{ page }}</h4>
 
       <div class="d-flex">
 

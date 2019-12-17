@@ -45,38 +45,31 @@
       <div class="pa-3">
         <div class="mb-3">
           This is probably a bad idea, but I'm not going to stop you.
+          <!-- Info about cache busting:
+          <br>
+          Note: When sharing to social media sites, if you want the thumbnail and description to be updated
+          you have to use a 'new' URL. In order to do this, a timestamp is added to the URL when copying and sharing. -->
         </div>
 
         <v-text-field
           class="mb-3"
           :value="streamlink"
-          solo-inverted
-          flat
+          solo
           readonly
-          disabled
           hide-details
-          color="yellow"
+          light
           style="font-size: 14px;"
-          @click="copyToClipboard(streamlink)"
         >
           <template #append>
             <v-btn
+              color="blue"
+              depressed
               small
-              color="yellow"
-              class="black--text"
-              @click="copyToClipboard(streamlink)"
-            >COPY</v-btn>
+              dark
+              @click="copyShareLink"
+            >Copy</v-btn>
           </template>
         </v-text-field>
-
-        <v-snackbar
-          v-model="showAlert"
-          :color="alertType"
-          :timeout="5000"
-          bottom
-          right
-          @click="showAlert = false"
-        >{{ alertMessage }}</v-snackbar>
 
         <v-btn
           color="#1dcaff"
@@ -105,10 +98,6 @@
     data() {
       return {
         showShare: false,
-        showAlert: false,
-        alertType: 'info',
-        alertMessage: '',
-        alertTimeout: 0,
       };
     },
 
@@ -129,36 +118,46 @@
         });
       },
 
-      copyToClipboard ( text ) {
-        clearTimeout(this.alertTimeout);
+      async copyShareLink () {
+        await this.copyToClipboard( this.shareLink );
+      },
+
+      async copyToClipboard ( text ) {
+        try {
+          await navigator.clipboard.writeText( text );
+          // await this.$copyText( text );
+          this.$toast.success( 'Copied to clipboard', { icon: 'done', duration: 5000 } );
+        } catch ( error ) {
+          console.log( error );
+          this.$toast.error( `Copy Failed: ${error}`, { icon: 'error', duration: 5000 } );
+        }
 
         this.$ga.event({
           eventCategory : 'share',
           eventAction   : 'copy link',
           eventLabel    : this.user,
         });
-
-        this.$copyText( text ).then( () => {
-          this.alertMessage = 'Copied to clipboard';
-          this.alertType = 'success';
-          this.showAlert = true;
-        }, ( error ) => {
-          console.log( error );
-          this.alertMessage = 'Failed to copy to clipboard';
-          this.alertType = 'error';
-          this.showAlert = true;
-        });
       },
     },
 
     computed: {
+      cacheBust () {
+        const coeff = 1000 * 60 * 10; // Ten minute cache buster
+        const timestamp = Math.round( Date.now() / coeff ) * coeff;
+        return `?shareid=${timestamp}`;
+      },
+
       streamlink () {
         return `https://bitwave.tv/${this.user}`;
       },
 
+      shareLink () {
+        return `${this.streamlink}${this.cacheBust}`;
+      },
+
       twitterLink () {
         const text = `Come watch ${this.user}'s stream!\n`;
-        const url = this.streamlink;
+        const url = this.shareLink;
         const hashtags = 'freespeech';
         const via = 'bitwavetv';
         const related = 'bitwavetv,dispatchcommit';

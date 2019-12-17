@@ -11,6 +11,7 @@
         v-on="on"
         color="yellow"
         text-color="black"
+        class="flex-shrink-0"
       >
         {{ channelViewCount }}
         <v-icon right>account_circle</v-icon>

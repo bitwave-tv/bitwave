@@ -5,29 +5,32 @@
         cols="12"
         md="6"
       >
-        <v-card class="pa-1" v-if="userType === 'Streamer'">
-          <v-card-title>
-            <v-icon class="mx-2">policy</v-icon>
+        <v-card class="pa-3" v-if="userType === 'Streamer'">
+          <h2 class="mb-2">
+            <v-icon class="mr-2">policy</v-icon>
             You're Still Here?
-          </v-card-title>
-          <v-card-text>
+          </h2>
+
+          <v-card-text class="pa-0 mb-3">
             <div class="subtitle">Go start streaming!</div>
             <div class="title">
               Or maybe you'd like to setup your profile first?
               <br>
-              Add a stream title and a stream description... just a suggestion.
+              Add a stream title and a stream description...
             </div>
             <div>Or maybe to edit your profile photo?</div>
             <div>That's about all the options...</div>
           </v-card-text>
-          <v-card-actions>
+
+          <div class="d-flex">
             <v-btn
               class="mr-2"
               color="yellow"
               to="/profile"
+              depressed
               light
             >
-              <v-icon class="mr-2">account_box</v-icon>
+              <v-icon class="mr-2">account_circle</v-icon>
               Edit Profile
             </v-btn>
             <v-btn
@@ -35,10 +38,10 @@
               to="/profile"
               outlined
             >
-              <v-icon class="mr-2">live_tv</v-icon>
+              <v-icon class="mr-2" small>live_tv</v-icon>
               My Channel
             </v-btn>
-          </v-card-actions>
+          </div>
         </v-card>
 
         <template v-else>
@@ -133,9 +136,9 @@
                 </div>
 
                 <div class="mb-3">
-                  Ensuring keyframes are set properly will be teh best chance you have at having a somewhat decent stream.
-                  By default it is set to 0 or automatic, which, on average, causes at at least an additional 10 second stream delay
-                  and in extreme cases, has causes delays up to an additioanal 45 seconds. Which is pretty bad.
+                  Ensuring keyframes are set properly will be the best chance you have at having a somewhat decent stream.
+                  By default it is set to 0 or automatic, which, on average, causes at least an additional 30 second stream delay
+                  and in extreme cases, may be up to an additioanal 45 seconds. Which is pretty bad.
                 </div>
 
               </v-card-text>
@@ -145,6 +148,7 @@
                   href="https://obsproject.com/download"
                   target="_blank"
                   color="yellow"
+                  outlined
                   light
                   :block="$vuetify.breakpoint.smAndDown"
                 >
