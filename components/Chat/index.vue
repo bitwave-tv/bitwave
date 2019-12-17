@@ -839,6 +839,18 @@
       },
     },
 
+    watch: {
+      global: async function ( val, old ) {
+        if ( !val ) {
+          // Remove global messages when going into local chat
+          this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
+        } else {
+          // Reconnect chat to force hydration when going into global chat
+          await this.connectChat( this.userToken );
+        }
+      },
+    },
+
     async mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 
