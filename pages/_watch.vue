@@ -39,7 +39,7 @@
           controls
           autoplay
           preload="auto"
-          :poster="poster"
+          :poster="posterCacheBusted"
           :style="{ width: '100%' }"
         >
           <source
@@ -129,6 +129,7 @@
         showStreamStats: false,
         streamDataListener: null,
         description: null,
+        recentBumps: [],
       }
     },
 
@@ -220,6 +221,14 @@
 
       async getRandomBump () {
         const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
+        // limit to checking 5 most recent bumps
+        if ( this.recentBumps.length >= 10 ) this.recentBumps = this.recentBumps.splice( -10 );
+        // Recurse until we get a fresh bump
+        if ( this.recentBumps.includes( data.url ) ){
+          console.log(`Recently seen ${data.url}, getting a new bump`);
+          return this.getRandomBump();
+        }
+        this.recentBumps.push( data.url );
         return data.url;
       },
 
@@ -334,6 +343,16 @@
         username: VStore.$getters.getUsername,
       }),
 
+      posterCacheBusted () {
+        if ( this.live ) {
+          const coeff = 1000 * 60; // Cache bust poster every minute
+          const timestamp = Math.round( Date.now() / coeff ) * coeff;
+          return `${this.poster}?${timestamp}`;
+        } else {
+          return this.poster;
+        }
+      },
+
       mobile () {
         return this.mounted
           ? this.$vuetify.breakpoint.smAndDown
@@ -370,141 +389,5 @@
 </script>
 
 <style lang='scss'>
-  .video-js {
-    font-size: 11px;
-    overflow: hidden;
-
-    // Control Bar (container)
-    .vjs-control-bar {
-      background-color: rgba(20, 20, 20, 0.45);
-    }
-
-    // Progress Bar
-    .vjs-progress-control.vjs-control {
-      position: absolute;
-      display: block;
-      width: 100%;
-      height: 50%;
-      transform: translateY(-75%);
-
-      // Circle play head
-      .vjs-play-progress::before {
-        transform: scale(0);
-        transition: transform .3s;
-      }
-
-      &:hover {
-        .vjs-play-progress::before {
-          transform: scale(1);
-        }
-      }
-
-      // Progress Slider
-      .vjs-slider {
-        margin: 0 5px;
-        top: 50%;
-      }
-    }
-
-    // Load progress color
-    .vjs-load-progress,
-    .vjs-load-progress div {
-      background-color: rgba(60, 60, 60, 0.5);
-    }
-
-    // Progress Bar Background
-    .vjs-slider {
-      background-color: rgba(60, 60, 60, 0.5);
-    }
-
-    // Primary Color Progress
-    .vjs-slider-bar {
-      background-color: #ffeb3b;
-    }
-
-    // Inner Progress Bar
-    .vjs-play-progress {
-      background-color: #ffeb3b;
-      color: #ffeb3b;
-    }
-
-    // Spacer
-    .vjs-custom-control-spacer {
-      display: flex;
-      flex: auto;
-    }
-
-    // Transcoding menu
-    .vjs-tech {
-      height: auto !important;
-      position: absolute !important;
-    }
-
-    // Menu size
-    .vjs-playback-rate .vjs-menu .vjs-menu-content {
-      width: 125%;
-      font-size: 10px;
-    }
-  }
-
-  // Tooltips
-  .vjs-mouse-display .vjs-time-tooltip {
-    color: #ffeb3b;
-  }
-
-  .vjs-has-started {
-    .vjs-control-bar {
-      transform: translateY(0);
-      transition: .3s;
-    }
-
-    &.vjs-user-inactive.vjs-playing {
-      .vjs-control-bar {
-        transform: translateY(127%);
-        transition: .5s;
-      }
-    }
-  }
-
-
-  .chat-desktop {
-    position : fixed;
-    top      : 48px;
-    right    : 0;
-    height   : calc(100vh - 48px);
-    width    : 450px;
-  }
-
-  a {
-    color: yellow;
-    text-decoration: none;
-  }
-
-  #description {
-    text-overflow: ellipsis;
-    word-break: break-word;
-    max-width: 100%;
-
-    img {
-      max-width: 100%;
-    }
-  }
-
-  .bottom-gradient {
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
-  }
-
-  .blink{
-    text-decoration: blink;
-    -webkit-animation-name: blinker;
-    -webkit-animation-duration: 0.6s;
-    -webkit-animation-iteration-count:infinite;
-    -webkit-animation-timing-function:ease-in-out;
-    -webkit-animation-direction: alternate;
-  }
-
-  @-webkit-keyframes blinker {
-    from {opacity: 1.0;}
-    to {opacity: 0.0;}
-  }
+  @import "~assets/style/stream-player.scss";
 </style>
