@@ -6,6 +6,7 @@
     <v-sheet
       class="py-2 px-3"
       color="#212121"
+      tile
       style="border-right: solid 1px #ffeb3b"
     >
       <div class="d-flex align-center justify-space-between">
