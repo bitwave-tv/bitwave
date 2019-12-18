@@ -26,7 +26,7 @@
       />
     </div>
 
-    <div class="d-flex">
+    <div class="d-flex align-center">
       <v-menu
         v-model="showChatSettings"
         :close-on-content-click="false"
@@ -49,6 +49,15 @@
           @close="showChatSettings = false"
         />
       </v-menu>
+
+      <v-btn
+        v-if="false"
+        class="ml-1"
+        small
+        icon
+      >
+        <v-icon>monetization_on</v-icon>
+      </v-btn>
 
       <v-spacer/>
 

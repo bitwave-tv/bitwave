@@ -59,7 +59,7 @@ export const state = () => ({
   [$states.trollTts]   : true,
   [$states.ttsRate]    : 10,
   [$states.ttsVoice]   : 1,
-  [$states.notify]     : false,
+  [$states.notify]     : true,
   [$states.ignoreList] : [],
 
   [$states.message]: '',

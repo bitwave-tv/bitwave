@@ -59,7 +59,14 @@
           style="min-height: 500px"
         >
           <!-- Stream Actions -->
-          <div class="d-flex flex-shrink-0 mb-3 justify-end">
+          <div class="d-flex flex-shrink-0 align-center mb-3">
+            <div class="caption grey--text">
+              <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
+              <v-fade-transition mode="out-in">
+                <div class="d-inline-block" :key="lastStreamed">{{ lastStreamed }}</div>
+              </v-fade-transition>
+            </div>
+            <v-spacer />
             <EditStreamData
               v-if="showEditStream"
               :username="username"
@@ -117,6 +124,7 @@
   import { VStore } from '@/store';
 
   import VueMarkdown from '@/components/VueMarkdown';
+  import { timeAgo } from '@/assets/js/time-ago';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = () => import ( '@/components/ShareStream' );
@@ -139,16 +147,29 @@
       title: { type: String },
       nsfw:  { type: Boolean },
       description: { type: String },
+      timestamp: { type: Date },
     },
 
     data () {
       return {
         tabData: null,
+        lastStreamed: 'Unknown',
+        updateInterval: null,
       };
     },
 
     methods: {
-
+      updateLasteStreamed () {
+        if ( this.timestamp ) {
+          try {
+            this.lastStreamed = timeAgo( this.timestamp );
+          } catch {
+            this.lastStreamed = 'now';
+          }
+        } else {
+          this.lastStreamed = 'Unknown';
+        }
+      },
     },
 
     computed: {
@@ -161,6 +182,21 @@
         return this.name.toLowerCase() === this.username.toLowerCase();
       },
     },
+
+    watch: {
+      timestamp: function ( val, oldVal ) {
+        this.updateLasteStreamed();
+      }
+    },
+
+    mounted () {
+      this.updateLasteStreamed();
+      this.updateInterval = setInterval( this.updateLasteStreamed, 60 * 1000 );
+    },
+
+    beforeDestroy() {
+      if ( this.updateInterval ) clearInterval( this.updateInterval );
+    }
   };
 </script>
 

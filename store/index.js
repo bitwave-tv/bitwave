@@ -45,7 +45,7 @@ const $actions = {
   login        : 'LOGIN',
   logout       : 'LOGOUT',
 
-  fetchSidebarData : 'FETCH_SIDEBARE',
+  fetchSidebarData : 'FETCH_SIDEBAR',
 };
 
 

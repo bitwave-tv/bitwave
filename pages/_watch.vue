@@ -69,6 +69,7 @@
       :title="title"
       :nsfw="nsfw"
       :description="description"
+      :timestamp="timestamp"
     />
 
   </div>
@@ -130,6 +131,7 @@
         showStreamStats: false,
         streamDataListener: null,
         description: null,
+        timestamp: null,
         recentBumps: [],
       }
     },
@@ -252,6 +254,7 @@
         this.description = data.description;
         this.nsfw  = data.nsfw;
         this.owner = data.owner;
+        this.timestamp = data.timestamp ? data.timestamp.toDate() : null;
 
         const live = data.live;
         const url  = data.url;

@@ -16,7 +16,7 @@
       <ViewerList :page="page" />
 
       <!-- Chat Label -->
-      <h4 @click="addUserTag(page)" class="mx-2 text-truncate">{{ page }}</h4>
+      <h4 @click="addUserTag(page)" class="mx-2 text-truncate" style="cursor: pointer;">{{ page }}</h4>
 
       <div class="d-flex">
 
@@ -196,10 +196,6 @@
     },
 
     methods: {
-      async playSound () {
-        await this.sound.play();
-      },
-
       async onResize () {
         await this.$nextTick( async () => await this.scrollToBottom( false ) );
       },
@@ -282,8 +278,7 @@
 
           this.showPollClient = this.pollData.display;
 
-          // Scroll to bottom when showing / hiding polls
-          this.onResize();
+          this.onResize(); // Scroll to bottom when showing / hiding polls
         });
       },
 
@@ -354,12 +349,6 @@
 
       async socketError ( error, reason ) {
         this.loading = true;
-        /* Replace with toast message
-        const errorWrapper = content => `<p><img src="https://cdn.bitwave.tv/static/emotes/SadBlobby.png" alt=":("> ${content}</p>`;
-        const styledReason = msg => msg ? `<br>Reason: <span style="color: #F44336; font-weight: bold;">${msg}</span>` : '';
-        const message = errorWrapper( `${error}${styledReason( reason )}` );
-        await this.insertMessage( message ); //*/
-
         this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 1000 } );
       },
 
@@ -422,7 +411,9 @@
         messages.forEach( el => {
           // Notification Sounds
           if ( this.notify ) {
-            if ( pattern.test( el.message ) ) this.playSound();
+            if ( pattern.test( el.message ) ) {
+              this.sound.play().then();
+            }
           }
 
           // Highlight username tags in new messages
@@ -460,13 +451,7 @@
         const pattern = /(?:^\/)(\w+)(?:\s+(\S+))?(?:\s+(.*))?/;
         const params = this.getMessage.match( pattern );
 
-        // const match = /^\/(\w+)\s?(\w+)?/g.exec( this.getMessage );
-        // const parts = this.getMessage.split( ' ' );
-
         if ( params ) {
-          // const command  = match[1].toLowerCase();
-          // const argument = parts[1]; //match[2];
-
           const command  = params[1].toLowerCase();
           const argument = params[2] ? params[2].toLowerCase() : '';
 
@@ -590,9 +575,7 @@
         voice.pitch = pitch;
         voice.text  = message;
 
-        voice.onend = function(e) {
-          console.log( `Finished in ${e.elapsedTime} seconds.`, e );
-        };
+        voice.onend = e => console.log( `TTS Finished in ${e.elapsedTime} seconds.`, e );
 
         speechSynthesis.speak(voice);
       },
@@ -658,30 +641,31 @@
       async ignoreUser ( username ) {
         username = username.replace('@', '');
         const exists = this.ignoreList.find( el => el.toLowerCase() === username.toLowerCase() );
-        if ( !exists ) {
-          this.ignoreList.push( username );
-          localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
-          // Save ignore list to profile
-          if ( this.isAuth ) {
-            const userDoc = db.collection( 'users' ).doc( this.user.uid );
-            await userDoc.update( 'ignoreList', this.ignoreList );
-          }
+        if ( exists ) {
+          console.log( `User not found: '${username}'` );
+          return;
+        }
+        this.ignoreList.push( username );
+        localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+        // Save ignore list to profile
+        if ( this.isAuth ) {
+          const userDoc = db.collection( 'users' ).doc( this.user.uid );
+          await userDoc.update( 'ignoreList', this.ignoreList );
+        }
 
-          // Remove messages
+        // Remove messages
+        if ( this.useIgnore )
           this.messages = this.messages.filter( message => username.toLowerCase() !==  message.username.toLowerCase() );
 
-          // Confirmation Message
-          await this.insertMessage( `Ignored User: ${username}` );
+        // Confirmation Message
+        await this.insertMessage( `Ignored User: ${username}` );
 
-          // Analytics
-          this.$ga.event({
-            eventCategory : 'chat',
-            eventAction   : 'ignore',
-            eventLabel    : username,
-          });
-        } else {
-          console.log( `User not found: '${username}'` );
-        }
+        // Analytics
+        this.$ga.event({
+          eventCategory : 'chat',
+          eventAction   : 'ignore',
+          eventLabel    : username,
+        });
       },
 
       async unignoreUser ( username ) {
@@ -712,30 +696,30 @@
 
       async ignoreChannel ( channel ) {
         const exists = this.ignoreChannelList.find( el => el.toLowerCase() === channel.toLowerCase() );
-        if ( !exists ) {
-          this.ignoreChannelList.push( channel );
-          localStorage.setItem( 'ignoreChannelList', JSON.stringify( this.ignoreChannelList ) );
-          // Save ignore list to profile
-          if ( this.isAuth ) {
-            const userDoc = db.collection( 'users' ).doc( this.user.uid );
-            await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
-          }
-
-          // Remove messages
-          this.messages = this.messages.filter( message => channel.toLowerCase() !==  message.channel.toLowerCase() );
-
-          // Confirmation Message
-          await this.insertMessage( `Ignored Channel: ${channel}` );
-
-          // Analytics
-          this.$ga.event({
-            eventCategory : 'chat',
-            eventAction   : 'ignore-channel',
-            eventLabel    : channel,
-          });
-        } else {
+        if ( exists ) {
           console.log ( `Channel already ignored ${channel}` );
+          return;
         }
+        this.ignoreChannelList.push( channel );
+        localStorage.setItem( 'ignoreChannelList', JSON.stringify( this.ignoreChannelList ) );
+        // Save ignore list to profile
+        if ( this.isAuth ) {
+          const userDoc = db.collection( 'users' ).doc( this.user.uid );
+          await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
+        }
+
+        // Remove messages
+        this.messages = this.messages.filter( message => channel.toLowerCase() !==  message.channel.toLowerCase() );
+
+        // Confirmation Message
+        await this.insertMessage( `Ignored Channel: ${channel}` );
+
+        // Analytics
+        this.$ga.event({
+          eventCategory : 'chat',
+          eventAction   : 'ignore-channel',
+          eventLabel    : channel,
+        });
       },
 
       async unignoreChannel ( channel ) {
