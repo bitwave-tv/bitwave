@@ -62,7 +62,9 @@
           <div class="d-flex flex-shrink-0 align-center mb-3">
             <div class="caption grey--text">
               <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
-              <div class="d-inline-block">{{ lastStreamed }}</div>
+              <v-fade-transition mode="out-in">
+                <div class="d-inline-block" :key="lastStreamed">{{ lastStreamed }}</div>
+              </v-fade-transition>
             </div>
             <v-spacer />
             <EditStreamData
@@ -145,17 +147,29 @@
       title: { type: String },
       nsfw:  { type: Boolean },
       description: { type: String },
-      timestamp: { type: Number },
+      timestamp: { type: Date },
     },
 
     data () {
       return {
         tabData: null,
+        lastStreamed: 'Unknown',
+        updateInterval: null,
       };
     },
 
     methods: {
-
+      updateLasteStreamed () {
+        if ( this.timestamp ) {
+          try {
+            this.lastStreamed = timeAgo( this.timestamp );
+          } catch {
+            this.lastStreamed = 'now';
+          }
+        } else {
+          this.lastStreamed = 'Unknown';
+        }
+      },
     },
 
     computed: {
@@ -167,15 +181,22 @@
         if ( !this.username ) return false;
         return this.name.toLowerCase() === this.username.toLowerCase();
       },
-
-      lastStreamed () {
-        if ( this.timestamp ) {
-          return timeAgo( this.timestamp );
-        } else {
-          return 'Unknown';
-        }
-      },
     },
+
+    watch: {
+      timestamp: function ( val, oldVal ) {
+        this.updateLasteStreamed();
+      }
+    },
+
+    mounted () {
+      this.updateLasteStreamed();
+      this.updateInterval = setInterval( this.updateLasteStreamed, 60 * 1000 );
+    },
+
+    beforeDestroy() {
+      if ( this.updateInterval ) clearInterval( this.updateInterval );
+    }
   };
 </script>
 
