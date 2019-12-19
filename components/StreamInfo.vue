@@ -7,6 +7,7 @@
             text
             icon
             to="/streamkey"
+            exact-active-class="app-title-active"
           >
             <v-icon>video_call</v-icon>
           </v-btn>

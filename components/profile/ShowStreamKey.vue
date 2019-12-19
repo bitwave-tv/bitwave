@@ -22,7 +22,7 @@
               dark
               @click="copyToClipboard( streamServer )"
             >
-              copy server
+              copy
             </v-btn>
           </template>
         </v-text-field>

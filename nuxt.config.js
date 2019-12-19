@@ -74,7 +74,7 @@ module.exports = {
         method: 'GET',
         strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
       },
-    ]
+    ],
   },
 
   /*
@@ -115,18 +115,19 @@ module.exports = {
   ],
 
   /*
+  ** Build Modules
+  */
+  buildModules: [
+    '@nuxtjs/vuetify',
+    '@nuxtjs/dotenv',
+  ],
+
+  /*
   ** Axios module configuration
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
   },
-
-  /*
-  ** Build Modules
-  */
-  buildModules: [
-    '@nuxtjs/vuetify',
-  ],
 
   /*
   ** Vuetify

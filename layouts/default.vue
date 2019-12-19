@@ -76,7 +76,7 @@
 </script>
 
 <style lang="scss">
-  #logo.app-title-active {
+  #app .app-title-active {
     &:hover::before {
       opacity: 0.24;
     }
