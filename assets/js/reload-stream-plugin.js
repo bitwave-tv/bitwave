@@ -5,7 +5,7 @@ import videojs from 'video.js';
 
 const VideoJsButton = videojs.getComponent('Button');
 const defaults = {}; // Default options for the plugin.
-const placeAfter = 'CustomControlSpacer'; // CustomControlSpacer - PictureInPictureToggle
+const placeAfter = 'CustomControlSpacer'; // PictureInPictureToggle
 
 /**
  * Extend vjs button class for reload button.
@@ -65,14 +65,13 @@ class ReloadStreamPlugin {
     this._reloadButton.onClick( event => this.onClick( event ) );
 
     const controlBar = player.controlBar;
-    const placementIndex = controlBar.children().findIndex( button => button.name() === placeAfter ) + 1;
+    const placementIndex = this.config.placementIndex || controlBar.children().findIndex( button => button.name() === placeAfter ) + 1;
     const concreteButtonInstance = controlBar.addChild( this._reloadButton, { componentClass: 'reloadPlayer' }, placementIndex );
   }
 
   onClick ( event ) {
     const player = this.player;
     const { src, type } = player.currentSource();
-    console.log( `Resetting player: ${src} - ${type}` );
     player.src({ src, type });
   }
 }
