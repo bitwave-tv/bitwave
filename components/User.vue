@@ -66,7 +66,7 @@
                 <v-icon>live_tv</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Channel</v-list-item-title>
+                <v-list-item-title>My Channel</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item :to="`/chat/${username}`">
