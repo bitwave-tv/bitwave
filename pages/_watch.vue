@@ -81,6 +81,7 @@
   // import 'videojs-contrib-dash'
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
+  import '@/assets/js/reload-stream-plugin'
 
   import { mapGetters } from 'vuex';
   import { db } from '@/plugins/firebase.js';
@@ -146,7 +147,10 @@
           fill: true,
           // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
-          plugins: { qualityLevels: {} },
+          plugins: {
+            qualityLevels: {},
+            bitwaveReloader: {},
+          },
           poster: this.poster,
           html5: {
             hls: {
@@ -235,7 +239,7 @@
         return data.url;
       },
 
-      playerDispose (){
+      playerDispose () {
         if ( this.player ) this.player.dispose();
       },
 
