@@ -1,5 +1,21 @@
 <template>
   <v-container fluid>
+
+    <!-- Christmas Banner -->
+    <v-row class="justify-center">
+      <div class="d-flex align-center">
+        <v-img
+          src="https://cdn.bitwave.tv/static/img/santahat-100.png"
+          alt="santa troll"
+          height="34"
+          width="34"
+          contain
+        />
+        <span class="font-weight-light display-1 green--text mx-2">Merry</span>
+        <span class="font-weight-light display-1 red--text">Christmas!</span>
+      </div>
+    </v-row>
+
     <v-row class="justify-center">
       <v-col
         cols="12"
@@ -20,24 +36,20 @@
 
         <!-- Homepage Content -->
         <v-card class="mb-3" color="grey darken-4">
-          <v-card-title class="headline pb-0">
+          <v-card-title class="headline pb-2">
             <div class="d-flex align-center">
-              <div class="mx-3">
-                <v-img
-                  class="d-block"
-                  contain
-                  max-height="2rem"
-                  max-width="2rem"
-                  src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif"
-                  alt="Cool blobby with sunglasses"
-                />
-              </div>
-              <div class="ml-4">
-                <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
-                <div class="subheading grey--text" style="word-break: break-word;">
-                  An open platform live streaming service for creators to freely express themselves.
-                </div>
-              </div>
+              <v-img
+                class="d-block mx-3"
+                contain
+                max-height="2rem"
+                max-width="2rem"
+                src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif"
+                alt="Cool blobby with sunglasses"
+              />
+              <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
+            </div>
+            <div class="subheading font-weight-light grey--text" style="word-break: break-word;">
+              An open platform live streaming service for creators to freely express themselves.
             </div>
           </v-card-title>
 
@@ -45,7 +57,7 @@
             <div class="d-flex mb-2 align-center">
               <v-btn
                 small
-                text
+                outlined
                 color="yellow"
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
                 target="_blank"
@@ -142,8 +154,16 @@
               Our terms of service.
             </div>
 
-            <div class="mb-1">Thank you for helping <v-chip color="red" outlined small class="mx-1">ALPHA</v-chip> test [bitwave.tv] and I look forward to bringing more exciting features in the future.</div>
-            <div class="mb-0">We have not been served any secret court orders and are not under any gag orders.</div>
+            <div class="mb-1">
+              Thank you for helping
+              <v-chip color="red" outlined small class="mx-1">ALPHA</v-chip>
+              test [bitwave.tv] and I look forward to bringing more exciting features in the future.
+            </div>
+
+            <!-- Warrant canary -->
+            <div class="mb-0">
+              We have not been served any secret court orders and are not under any gag orders.
+            </div>
 
             <div class="text-xs-right">
               <em><small>&mdash; Dispatch</small></em>
@@ -153,7 +173,9 @@
           <v-divider class="mb-2" />
 
           <v-card-actions class="pt-0">
-            <div>Bitwave Media &copy; {{ new Date().getFullYear() }}</div>
+            <div class="grey--text">
+              Bitwave Media &copy; {{ new Date().getFullYear() }}
+            </div>
             <v-spacer/>
             <v-btn
               small

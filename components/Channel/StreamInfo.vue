@@ -113,7 +113,10 @@
       color="grey darken-4"
       tile
     >
-      <div class="overline">Powered by Bitwave Media</div>
+      <div class="overline">
+        Powered by Bitwave Media
+        <span class="grey--text">{{ version }}</span>
+      </div>
     </v-sheet>
 
   </div>
@@ -180,6 +183,10 @@
       showEditStream () {
         if ( !this.username ) return false;
         return this.name.toLowerCase() === this.username.toLowerCase();
+      },
+
+      version () {
+        return `v${process.env.version}`;
       },
     },
 

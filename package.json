@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.7.13",
+  "version": "1.7.14",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "private": true,
@@ -43,6 +43,7 @@
     "vue-virtual-scroller": "^1.0.0-rc.2"
   },
   "devDependencies": {
+    "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/vuetify": "^1.9.1",
     "node-sass": "^4.13.0",
     "nodemon": "^2.0.1",
