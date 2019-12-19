@@ -26,7 +26,6 @@ const getDuration = ( timeAgoInSeconds ) => {
 
 // Calculate
 const timeAgo = ( date ) => {
-  if ( typeof( date ) !== 'number' ) return 'Unknown';
   const timeAgoInSeconds = Math.floor( ( new Date() - new Date( date ) ) / 1000 );
   if ( !timeAgoInSeconds && timeAgoInSeconds > 0 ) return 'Unknown';
   const { interval, epoch } = getDuration( timeAgoInSeconds );

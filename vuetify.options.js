@@ -3,6 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 // vuetify.options.js
 export default {
   breakpoint: {},
+  defaultAssets: false,
   icons: {},
   lang: {},
   rtl: false,
