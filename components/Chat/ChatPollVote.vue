@@ -87,9 +87,6 @@
 
 
               <div class="flex-grow-1 text-truncate" style="width: 0;">{{ val.label }}</div>
-              <!--<div class="d-inline-block text-truncate">{{ val.label }}</div>-->
-
-              <!--<v-spacer/>-->
 
               <div class="flex-shrink-0 mr-2">
                 {{ Math.round( val.votes / ( pollData.voters || 1 ) * 100 ) }}%
