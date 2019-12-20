@@ -24,6 +24,7 @@
             small
             outlined
           >NSFW</v-chip>
+          <KickStreamButton :streamer="name" v-if="isAdmin" />
           <FollowButton :streamer-id="owner" />
         </div>
       </div>
@@ -88,6 +89,8 @@
   import { VStore } from '@/store';
   import StreamInfo from '@/components/Channel/StreamInfo';
 
+  const KickStreamButton = () => import( '@/components/Admin/KickStreamButton' );
+
   export default {
     scrollToTop: true,
 
@@ -111,6 +114,7 @@
     },
 
     components: {
+      KickStreamButton,
       StreamInfo,
       FollowButton,
       Chat,
@@ -358,6 +362,7 @@
     computed: {
       ...mapGetters({
         username: VStore.$getters.getUsername,
+        user: VStore.$getters.getUser,
       }),
 
       posterCacheBusted () {
@@ -375,6 +380,11 @@
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
       },
+
+      isAdmin () {
+        const user = this.user;
+        return user && user.hasOwnProperty( 'role' ) && user.role === 'admin';
+      }
     },
 
     /*async validate ( { params, query, store, $axios } ) {
