@@ -203,6 +203,7 @@
 
         this.player.on( 'error', error =>{
           // Brush player errors under the rug
+          if ( this.live ) console.log( 'streamer offline and got an error' );
           console.warn( error );
         });
 

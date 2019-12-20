@@ -421,7 +421,7 @@
         await docRef.update({
           streamkey: key,
         });
-        await this.kickStream ();
+        // await this.kickStream ();
         this.keyLoading = false;
       },
 
