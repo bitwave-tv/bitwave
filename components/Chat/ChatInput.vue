@@ -1,12 +1,16 @@
 <template>
   <!-- Chat Input -->
-  <v-sheet class="px-2 py-2" color="black">
+  <v-sheet
+    class="px-2 py-2"
+    color="black"
+  >
     <div class="d-flex">
       <v-text-field
         ref="chatmessageinput"
         :value="getMessage"
         :label="`Chat as ${username}...`"
         :loading="loading"
+        :disabled="loading"
         color="yellow"
         autocomplete="new-chat-message"
         autocorrect="off"
@@ -59,7 +63,7 @@
         <v-icon>monetization_on</v-icon>
       </v-btn>
 
-      <v-spacer/>
+      <v-spacer />
 
       <v-btn
         :disabled="loading"
@@ -73,7 +77,6 @@
         <v-icon small>send</v-icon>
       </v-btn>
     </div>
-
   </v-sheet>
 </template>
 

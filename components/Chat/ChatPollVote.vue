@@ -43,7 +43,7 @@
 
       <v-flex
         v-if="!showResults && showOptions"
-        v-for="(val, index) in options"
+        v-for="( val, index ) in options"
         :key="`options-${index}`"
         mt-4
         mb-2
@@ -55,7 +55,7 @@
           light
           color="yellow"
           :disabled="voted"
-          @click="vote(index)"
+          @click="vote( index )"
         >
           {{ `${index}. ${val.label}` }}
         </v-btn>
@@ -77,14 +77,13 @@
             outlined
             label
             small
-          >{{ val.votes.toString().padStart(3, '0') }}</v-chip>
+          >{{ val.votes.toString().padStart( 3, '0' ) }}</v-chip>
 
 
           <div class="flex-grow-1 mb-2 mx-1">
 
             <!-- Labels -->
             <div class="caption d-flex mx-2 mb-1">
-
 
               <div class="flex-grow-1 text-truncate" style="width: 0;">{{ val.label }}</div>
 
@@ -96,7 +95,7 @@
 
             <!-- Progress bar -->
             <v-progress-linear
-              :value="val.votes / (pollData.voters || 1) * 100"
+              :value="val.votes / ( pollData.voters || 1 ) * 100"
               color="yellow"
             />
 
@@ -176,7 +175,7 @@
       timeLeft () {
         let seconds = ( this.pollData.endsAt.toDate() - this.now.getTime() ) / 1000;
         // if (seconds < 0) { seconds = 0; }
-        return (seconds / 1.8);
+        return ( seconds / 1.8 ); // Why is this 1.8?
       },
 
       formattedResults () {
@@ -188,8 +187,12 @@
     },
 
     created() {
-      setInterval( () => this.now = new Date, 1000 * 0.5 )
-    }
+      this.pollInterval = setInterval( () => this.now = new Date, 1000 * 0.5 );
+    },
+
+    beforeDestroy () {
+      if ( this.pollInterval ) clearInterval( this.pollInterval );
+    },
   }
 </script>
 

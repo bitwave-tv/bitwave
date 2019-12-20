@@ -230,14 +230,14 @@
             <div>
               <span class="font-italic font-weight-light mr-2">Try:</span>
               <code>:blobby:</code>
-              <br>You're own your own for the rest.
+              <br>You're on your own for the rest.
             </div>
 
             <br>
             <div>5. What is Global 🌎 Chat?</div>
             <div>
-              It's in chat settings, turning it on lets you read read and respond to users in any chat streamn
-              not just the strema you are watching.
+              It's in chat settings, turning it on lets you read and respond to users in any chat streamn
+              not just the stream you are watching.
             </div>
 
             <br>
