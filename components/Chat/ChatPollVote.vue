@@ -85,7 +85,6 @@
             <!-- Labels -->
             <div class="caption d-flex mx-2 mb-1">
 
-
               <div class="flex-grow-1 text-truncate" style="width: 0;">{{ val.label }}</div>
 
               <div class="flex-shrink-0 mr-2">
