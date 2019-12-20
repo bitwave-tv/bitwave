@@ -77,8 +77,6 @@
 
 <script>
   import videojs from 'video.js'
-  // import 'dashjs'
-  // import 'videojs-contrib-dash'
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
@@ -138,6 +136,7 @@
 
     methods: {
       playerInitialize () {
+        this.initialized = false;
 
         // Create video.js player
         this.player = videojs( 'streamplayer', {
@@ -159,19 +158,15 @@
 
         // Video Player Ready
         this.player.ready( () => {
-          // Restore Volume
+          // Restore Volume & mute
           try {
-            /*console.log(`Volume: ${this.player.volume()}, Muted: ${this.player.muted()}`);
-            let muted = localStorage.getItem( 'muted' );
-            console.log(`Muted: ${muted}`);
-            if ( muted !== null ) {
-              this.player.muted( muted );
-            }*/
+            console.log( `Volume: ${this.player.volume()}, Muted: ${this.player.muted()}` );
+            let muted = JSON.parse( localStorage.getItem( 'muted' ) );
+            if ( muted !== null ) this.player.muted( muted );
             let volume = localStorage.getItem( 'volume' );
             if ( volume !== null ) this.player.volume( volume );
           } catch ( error ) {
-            // No volume value in memory
-            console.warn( 'Failed to find prior volume level' );
+            console.warn( 'Failed to find prior volume level' ); // No volume value in memory
           }
         });
 
@@ -183,12 +178,18 @@
 
         // Save volume on change
         this.player.on( 'volumechange', () => {
-          localStorage.setItem( 'volume', this.player.volume() );
-          localStorage.setItem( 'muted',  this.player.muted() );
+          if ( !this.initialized ) return;
+          const volume = this.player.volume();
+          const muted  = this.player.muted();
+          if ( typeof volume === 'undefined' || typeof muted === 'undefined' ) return;
+          localStorage.setItem( 'volume', volume );
+          localStorage.setItem( 'muted',  muted );
         });
 
         // Begin playing when new media is loaded
-        this.player.on( 'loadeddata', () => this.player.play() );
+        this.player.on( 'loadeddata', () => {
+          // this.player.play()
+        });
 
         this.player.on( 'ended', async () => {
           this.url = await this.getRandomBump();
@@ -198,7 +199,7 @@
 
         this.player.on( 'error', error =>{
           // Brush player errors under the rug
-          console.warn(error);
+          console.warn( error );
         });
 
         this.initialized = true;
@@ -249,20 +250,30 @@
       },
 
       async streamDataChanged ( data ) {
+        // Streamer user properties
+        this.name   = data.user.name;
+        this.avatar = data.user.avatar;
+        this.owner  = data.owner;
+
         // Grab Stream Data
-        this.title = data.title;
+        this.title       = data.title;
         this.description = data.description;
+
+        // Stream properties
         this.nsfw  = data.nsfw;
-        this.owner = data.owner;
-        this.timestamp = data.timestamp ? data.timestamp.toDate() : null;
-
         const live = data.live;
+
+        // Process timestamp
+        this.timestamp = data.timestamp
+          ? data.timestamp.toDate()
+          : null;
+
+        // Stream media
         const url  = data.url;
-        const type = data.type || `application/x-mpegURL`; // application/x-mpegURL | application/dash+xml
+        const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
 
-        const thumbnail = data.thumbnail;
-
-        if ( live ) this.poster = thumbnail;
+        // Cover image
+        if ( live ) this.poster = data.thumbnail;
 
         // Detect offline stream
         if ( !this.live && !live ) console.debug( 'User is offline' );
@@ -285,13 +296,12 @@
           this.type = type;
           this.reloadPlayer();
         }
+
         this.live = live;
       },
 
       reloadPlayer () {
-        // this.player.reset();
-        // this.player.load();
-
+        // this.player.reset(); this.player.load();
         if ( !this.initialized ) return;
         this.player.poster = this.poster;
         this.player.src( { src: this.url, type: this.type } );
@@ -303,42 +313,45 @@
       try {
         const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
 
+        // Streamer user properties
         const name   = data.name;
         const avatar = data.avatar;
-        let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
-        const title  = data.title  || 'No Title';
-        const description = data.description || 'No Description';
-        const live   = data.live;
-        const nsfw   = data.nsfw;
         const owner  = data.owner;
-        let   type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
-        let   url    = data.url;
 
-        const thumb  = data.thumbnail;
-        if ( data.thumbnail ) poster = live ? thumb : poster;
+        // Stream data
+        const title       = data.title;
+        const description = data.description;
 
+        // Stream properties
+        const nsfw = data.nsfw;
+        const live = data.live;
+
+        // Stream media
+        let type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+        let url  = data.url;
+
+        // Process timestamp
+        const timestamp = data.timestamp
+          ? new Date( data.timestamp )
+          : null;
+
+        // Process cover image
+        const poster = live
+          ? data.thumbnail
+          : data.poster;
+
+        // Fallback to bump if offline
         if ( !live ) {
           const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump' );
           url = data.url;
           type = 'video/mp4';
         }
 
-        return { name, avatar, title, description, poster, live, nsfw, owner, url, type };
+        return { name, avatar, title, description, poster, live, nsfw, owner, url, type, timestamp };
 
-      } catch ( error ) {
-        console.log( `ERROR: Failed to find user ${user}: ${error.message}` );
-
-        return {
-          name   : '404 Error',
-          avatar : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-          poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
-          title  : 'Streamer not found',
-          description : 'Invalid Stream',
-          live   : false,
-          nsfw   : false,
-          url    : null,
-          type   : null,
-        }
+      } catch ( err ) {
+        console.log( `ERROR: Failed to find user ${user}: ${err.message}` );
+        error( { statusCode: 404, message: err.message } );
       }
     },
 
@@ -364,19 +377,19 @@
       },
     },
 
-    async validate ( { params, query, store, $axios } ) {
+    /*async validate ( { params, query, store, $axios } ) {
       const user = params.watch;
       if ( !user.match( /^[a-zA-Z0-9._-]+$/ ) ) {
         return false;
       }
       const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
       return !!data.name;
-    },
+    },*/
 
-    beforeRouteUpdate ( to, from, next ) {
+    /*beforeRouteUpdate ( to, from, next ) {
       const params = to.params;
       next();
-    },
+    },*/
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
