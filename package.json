@@ -8,8 +8,8 @@
     "dev": "title [DEV] bitwave.tv && cross-env NODE_ENV=development nuxt",
     "dev:express": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "dev:nuxt": "nuxt",
-    "build": "title [BUILD] bitwave.tv && nuxt build",
-    "start": "title [bitwave.tv] && cross-env NODE_ENV=production nuxt start",
+    "build": "nuxt build",
+    "start": "cross-env NODE_ENV=production nuxt start",
     "start:express": "cross-env NODE_ENV=production node server/index.js",
     "start:nuxt": "cross-env NODE_ENV=production nuxt start",
     "generate": "nuxt generate"

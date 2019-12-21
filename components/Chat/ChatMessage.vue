@@ -6,8 +6,19 @@
       class="v-avatar mr-2 mt-2"
       @click="listeners.reply(props.username)"
     >
-      <img v-if="!!props.avatar" :src="props.avatar" :alt="props.username">
-      <img v-else src="https://cdn.bitwave.tv/static/img/santahat-100.png" alt="santa troll" :style="{ background: props.color }" class="pa-1">
+      <!-- Todo: add crossorigin -->
+      <img
+        v-if="!!props.avatar"
+        :src="props.avatar"
+        :alt="props.username"
+      >
+      <img
+        v-else
+        src="https://cdn.bitwave.tv/static/img/santahat-100.png"
+        alt="santa troll"
+        :style="{ background: props.color }"
+        class="pa-1"
+      >
       <!--<div v-else class="v-icon notranslate material-icons" :style="{ background: props.color }">person</div>-->
     </div>
 
