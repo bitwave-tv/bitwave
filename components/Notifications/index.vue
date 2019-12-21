@@ -83,7 +83,7 @@
                 </v-list-item-title>
                 <!--<v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>-->
                 <v-list-item-subtitle>
-                  <div class="grey--text">{{ timestamp( notification.timestamp.toDate()) }}</div>
+                  <div class="grey--text">{{ timestamp( notification.timestamp.toDate() ) }}</div>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -154,7 +154,15 @@
       },
 
       timestamp ( time ) {
-        return timeAgo( time );
+        if ( time ) {
+          try {
+            return timeAgo( time );
+          } catch {
+            return 'now';
+          }
+        } else {
+          return 'Unknown';
+        }
       },
     },
 

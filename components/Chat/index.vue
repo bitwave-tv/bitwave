@@ -16,7 +16,13 @@
       <ViewerList :page="page" />
 
       <!-- Chat Label -->
-      <h4 @click="addUserTag(page)" class="mx-2 text-truncate" style="cursor: pointer;">{{ page }}</h4>
+      <h4
+        @click="addUserTag(page)"
+        class="mx-2 text-truncate"
+        style="cursor: pointer;"
+      >
+        {{ page }}
+      </h4>
 
       <div class="d-flex">
 
@@ -69,7 +75,7 @@
       <chat-poll-vote
         v-if="showPollClient"
         :poll-data="pollData"
-        :is-owner="pollData.owner === (user ? user.uid : null)"
+        :is-owner="pollData.owner === ( user ? user.uid : null )"
         @vote="votePoll"
         @end="endPoll"
         @destroy="destroyPoll"
@@ -82,6 +88,7 @@
       ref="chatmessages"
       :messages="messages"
       :show-timestamps="showTimestamps"
+      :global="global"
       @reply="addUserTag"
     />
 
@@ -118,8 +125,14 @@
   const trollDataLoaded = () => new Promise(( resolve, reject ) => {
     if ( trollInitialized ) resolve();
     if ( trollDataError ) reject( trollDataError );
-    trollDataWaiters.push({ resolve, reject });
+    trollDataWaiters.push( { resolve, reject } );
   });
+
+  // Creates server map for switching chat servers
+  const chatServers = new Map([
+    [ 'DEV',  'localhost:5000'  ],
+    [ 'PROD', 'chat.bitwave.tv' ],
+  ]);
 
   export default {
     name: 'Chat',
@@ -139,6 +152,8 @@
 
     data() {
       return {
+        chatServer: chatServers.get( 'PROD' ),
+
         unsubscribeUser: null,
         unsubscribePoll: null,
 
@@ -308,8 +323,7 @@
 
         const socketOptions = { transports: [ 'websocket' ] };
 
-        this.socket = socketio( 'chat.bitwave.tv', socketOptions );
-        // this.socket = socketio( 'localhost:5000', socketOptions );
+        this.socket = socketio( this.chatServer, socketOptions );
 
         this.socket.on( 'connect',      async ()      => await this.socketConnect() );
         this.socket.on( 'reconnect',    async ()      => await this.socketReconnect() );
@@ -344,19 +358,19 @@
       },
 
       async socketReconnect () {
-        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 1000 }  );
+        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
       },
 
       async socketError ( error, reason ) {
         this.loading = true;
-        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 1000 } );
+        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration:21000, position: 'top-right' } );
       },
 
       async hydrate ( data ) {
         await this.socket.emit( 'hydratepoll', this.pollData.id );
 
         if ( !data ) {
-          this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000 } );
+          this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000, position: 'top-right' } );
           console.log( 'Failed to receive hydration data' );
           return;
         }
@@ -456,6 +470,23 @@
           const argument = params[2] ? params[2].toLowerCase() : '';
 
           switch ( command ) {
+            case 'dev':
+              this.chatServer = chatServers.get( 'DEV' );
+              if ( this.userToken ) await this.connectChat( this.userToken );
+              await this.insertMessage( 'Enabled developer mode.\nAttempting to connect to local dev server.' );
+              break;
+            case 'prod':
+            case 'production':
+              this.chatServer = chatServers.get( 'PROD' );
+              if ( this.userToken ) await this.connectChat( this.userToken );
+              await this.insertMessage( 'Disabled developer mode.\nAttempting to connect to production chat server.' );
+              break;
+            case 'local':
+              this.global = false;
+              break;
+            case 'global':
+              this.global = true;
+              break;
             case 'ignore':
             case 'i':
               await this.ignoreUser( argument );

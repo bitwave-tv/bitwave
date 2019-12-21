@@ -183,7 +183,6 @@
 
 <style lang='scss'>
   .hide-scrollbar {
-    overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE 10+ */
 
