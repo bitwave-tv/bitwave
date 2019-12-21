@@ -421,17 +421,18 @@
         await docRef.update({
           streamkey: key,
         });
-        // await this.kickStream ();
         this.keyLoading = false;
+        await this.kickStream ();
       },
 
       async kickStream () {
-        const mode   = 'drop';
-        const app    = 'live';
-        const user   = this.username;
-        const server = 'stream.bitwave.tv';
-        const url    = `https://${server}/control/${mode}/publisher?app=${app}&name=${user}`;
-        await this.$axios.$get( url );
+        const token    = await auth.currentUser.getIdToken( true );
+        const user     = this.username;
+        const server   = 'api.bitwave.tv';
+        const apiVer   = 'v1';
+        const endpoint = '/streamer/stream/kick';
+        const url      = `https://${server}/${apiVer}${endpoint}?token=${token}&reset=${false}`;
+        await this.$axios.$post( url, { streamer: user } );
       },
 
       copyToClipboard () {

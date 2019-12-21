@@ -36,7 +36,7 @@
             color="yellow"
             text
             small
-            @click="testKickStreamer"
+            @click="kickStreamer( false )"
           >
             Test
           </v-btn>
@@ -52,7 +52,7 @@
             color="yellow"
             small
             light
-            @click="kickStreamer"
+            @click="kickStreamer( true )"
           >
             Confirm
           </v-btn>
@@ -65,7 +65,7 @@
 <script>
   import { auth } from '@/plugins/firebase.js';
 
-  const endpoint = 'https://api.bitwave.tv/v1/admin/stream/kick/';
+  const endpoint = 'https://api.bitwave.tv/v1/admin/stream/kick';
 
   export default {
     name: 'KickStreamButton',
@@ -82,40 +82,43 @@
 
     methods: {
       async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken(true);
-        console.log( `Fresh ID token: ${token}` );
+        const token = await auth.currentUser.getIdToken( true );
+        console.log( `Fresh ID token:\n${token}` );
         return token;
       },
 
-      async testKickStreamer () {
+      async kickStreamer ( resetKey ) {
         try {
           const token = await this.getFreshIdToken();
-          const result = await this.$axios( `${this.kickEndpoint }?reset=false&token=${token}` );
-          this.$toast.success( result.data, { duration: 2000 } );
+          const { data } = await this.$axios.post(
+            this.createEndpoint( endpoint, token, !!resetKey ),
+            {
+              streamer: this.streamer,
+            }
+          );
+          console.log( data );
+          if ( data.success )
+            this.success( 'Successfully kicked stream' );
+          else
+            this.error( 'Failed to kick stream' );
         } catch ( error ) {
           console.error( error );
-          this.$toast.error( error.message, { duration: 2000 } );
+          this.error( error.message );
         }
         this.dialog = false;
       },
 
-      async kickStreamer () {
-        try {
-          const token = await this.getFreshIdToken();
-          const result = await this.$axios( `${this.kickEndpoint }?reset=true&token=${token}` );
-          this.$toast.success( result.data, { duration: 2000 } );
-        } catch ( error ) {
-          console.error( error );
-          this.$toast.error( error.message, { duration: 2000 } );
-        }
-        this.dialog = false;
+      success ( data ) {
+        this.$toast.success( data, { icon: 'done', duration: 2000 } );
       },
-    },
 
-    computed: {
-      kickEndpoint () {
-        return `${endpoint}${this.streamer}`;
-      }
+      error ( error ) {
+        this.$toast.error( error, { icon: 'error', duration: 2000 } );
+      },
+
+      createEndpoint ( base, token, reset ) {
+        return `${base}?token=${token}&reset=${!!reset}`;
+      },
     },
   };
 </script>
