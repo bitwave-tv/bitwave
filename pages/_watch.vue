@@ -4,10 +4,10 @@
 
     <!-- Streamer Top Bar -->
     <v-sheet
-      class="py-2 px-3"
+      class="py-2 px-3 hide-scrollbar"
       color="#212121"
       tile
-      style="border-right: solid 1px #ffeb3b"
+      style="border-right: solid 1px #ffeb3b; overflow: auto"
     >
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center grey--text">
@@ -18,7 +18,7 @@
         </div>
         <div class="d-flex align-center">
           <v-chip
-            v-if="nsfw"
+            v-show="nsfw"
             color="red"
             class="mr-2"
             small

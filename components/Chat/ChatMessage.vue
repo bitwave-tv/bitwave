@@ -18,9 +18,10 @@
       <div class="d-flex align-center">
 
         <!-- Timestamp & Username -->
-        <div class="flex-grow-1 subtitle-2">
+        <div class="flex-grow-1 subtitle-2 align-center">
           <span class="time">{{ props.timestamp }}</span>
-          <span class="username" :style="props.userStyling" v-html="props.displayName"></span>
+          <div class="d-inline-block global">{{ props.global }}</div>
+          <span class="username" :style="props.userStyling" v-html="props.displayName" />
         </div>
 
         <!-- Room Label -->
@@ -60,6 +61,10 @@
       timestamp: {
         type: String,
       },
+      global: {
+        type: Boolean|undefined,
+        required: false,
+      }
     },
   }
 </script>
@@ -106,7 +111,8 @@
       overflow: hidden;
     }
 
-    .time {
+    .time,
+    .global {
       user-select: none;
       color: #757575;
     }

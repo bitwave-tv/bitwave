@@ -79,7 +79,6 @@
             hide-details
             dense
             inset
-            @change="toggleTts"
           />
         </v-flex>
         <v-flex>
@@ -92,7 +91,6 @@
             hide-details
             dense
             inset
-            @change="toggleTrollTts"
           />
         </v-flex>
       </div>
@@ -164,14 +162,6 @@
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
       }),
-
-      toggleTts() {
-
-      },
-
-      toggleTrollTts() {
-
-      },
 
       closeMenu() {
         this.$emit( 'close' );

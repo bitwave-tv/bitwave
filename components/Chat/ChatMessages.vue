@@ -8,21 +8,22 @@
       ref="scroller"
     >
       <chat-message
-        v-for="(item, index) in messages"
+        v-for="(msg, index) in messages"
         :key="index"
-        :kkey="item.timestamp"
-        :username="item.username"
-        :display-name="item.username"
-        :user-styling="{ color: item.userColor ? item.userColor : '#9e9e9e' }"
-        :channel="item.channel"
-        :timestamp="getTime(item.timestamp)"
-        :avatar="item.avatar"
-        :color="item.color"
+        :kkey="msg.timestamp"
+        :username="msg.username"
+        :display-name="msg.username"
+        :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
+        :channel="msg.channel"
+        :timestamp="getTime(msg.timestamp)"
+        :avatar="msg.avatar"
+        :color="msg.color"
+        :global="getGlobalTag( msg.global )"
         @reply="addUserTag"
       >
         <div
           class="body-2 msg"
-          v-html="item.message"
+          v-html="msg.message"
         ></div>
       </chat-message>
     </div>
@@ -61,6 +62,7 @@
     props: {
       messages: { type: Array },
       showTimestamps: { type: Boolean },
+      global: { type: Boolean },
     },
 
     data () {
@@ -74,7 +76,7 @@
 
     methods: {
       addUserTag ( user ) {
-        this.$emit('reply', user);
+        this.$emit( 'reply', user );
       },
 
       checkIfBottom () {
@@ -106,9 +108,11 @@
           clearTimeout( this.scrollTimeout );
 
           this.scrollTimeout = setTimeout( () => {
-            this.chatContainer.scroll({
-              top: this.chatContainer.scrollHeight + 500,
-              behavior: 'smooth',
+            this.$nextTick( () => {
+              this.chatContainer.scroll({
+                top: this.chatContainer.scrollHeight + 500,
+                behavior: 'smooth',
+              });
             });
           }, 500 );
         });
@@ -122,6 +126,20 @@
         return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : '';
       },
 
+      getGlobalTag ( global ) {
+        return this.global ? `[${global ? 'G' : global === false ? 'L' : 'U'}]` : '';
+      },
+
+      onScrollUp ( scrollPosition ) {
+        this.showFAB = true;
+      },
+
+      onScrollDown ( scrollPosition ) {
+        if ( scrollPosition + this.chatContainer.clientHeight > this.chatContainer.scrollHeight - 250 ) {
+          this.showFAB = false;
+        }
+      },
+
       onScroll ( event ) {
         if ( !this.onScrollTimer ) {
           const scrollStart = this.chatContainer.scrollTop;
@@ -130,14 +148,12 @@
 
             // Scrolled up
             if ( scrollStart > scrollPosition ) {
-              this.showFAB = true;
+              this.onScrollUp();
             }
 
             // Scrolled down
             else if ( scrollStart < scrollPosition ) {
-              if ( scrollPosition + this.chatContainer.clientHeight > this.chatContainer.scrollHeight - 250 ) {
-                this.showFAB = false;
-              }
+              this.onScrollDown( scrollPosition );
             }
 
             this.onScrollTimer = null;
@@ -152,7 +168,7 @@
       this.$nextTick( () => this.jumpToBottom() );
     },
 
-    beforeDestroy() {
+    beforeDestroy () {
       this.chatContainer.removeEventListener( 'scroll', this.onScroll );
     }
   }
@@ -172,14 +188,6 @@
       right: 0;
       left: 0;
       top: 0;
-
-      /* Old animation for FAB
-      transform: translateY(0);
-      transition: .5s transform;
-
-      &.hide {
-        transform: translateY(-150%);
-      }*/
     }
   }
 
