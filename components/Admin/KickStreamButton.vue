@@ -90,20 +90,20 @@
       async kickStreamer ( resetKey ) {
         try {
           const token = await this.getFreshIdToken();
-          const result = await this.$axios.post(
+          const { data } = await this.$axios.post(
             this.createEndpoint( endpoint, token, !!resetKey ),
             {
               streamer: this.streamer,
             }
           );
-          console.log( result.data );
-          if ( result.data.success )
-            this.success( result.data.success );
+          console.log( data );
+          if ( data.success )
+            this.success( 'Successfully kicked stream' );
           else
-            this.error( result.data.success );
+            this.error( 'Failed to kick stream' );
         } catch ( error ) {
           console.error( error );
-          this.error( error );
+          this.error( error.message );
         }
         this.dialog = false;
       },
@@ -113,7 +113,7 @@
       },
 
       error ( error ) {
-        this.$toast.error( error.message, { icon: 'error', duration: 2000 } );
+        this.$toast.error( error, { icon: 'error', duration: 2000 } );
       },
 
       createEndpoint ( base, token, reset ) {
