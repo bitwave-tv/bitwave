@@ -60,20 +60,40 @@ module.exports = {
           }*/
         },
       },
+
       // Cache fonts
-      // urlPattern: 'https://fonts.(?:googleapis|gstatic).com/(.*)',
       {
-        urlPattern: 'https://fonts.googleapis.com/.*',
-        handler: 'cacheFirst',
+        urlPattern: 'https://fonts.googleapis.com',
+        handler: 'StaleWhileRevalidate',
         method: 'GET',
-        strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
+        strategyOptions: {
+          cacheName: 'assets',
+        },
       },
       {
-        urlPattern: 'https://fonts.gstatic.com/.*',
-        handler: 'cacheFirst',
+        urlPattern: 'https://fonts.gstatic.com',
+        handler: 'CacheFirst',
         method: 'GET',
-        strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
+        strategyOptions: {
+          cacheName: 'assets',
+          cacheExpiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+          }
+        },
       },
+
+      // Cache basic API responses
+      {
+        urlPattern: 'https://api.bitwave.tv/api/(?:channels/list|bump)$',
+        handler: 'NetworkFirst',
+        method: 'GET',
+        strategyOptions: {
+          cacheName: 'bitwave-api',
+        },
+      },
+
+      // more workbox cache settings...
     ],
   },
 

@@ -29,6 +29,7 @@
           :poster="poster"
           :name="live[0].name"
           :mobile="mobile"
+          :offline="offline"
         />
 
         <!-- Live Grid -->
@@ -232,6 +233,7 @@
         mounted: false,
         player: null,
         poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
+        offline: true,
       }
     },
 
@@ -240,11 +242,28 @@
     },
 
     async asyncData ({ $axios }) {
-      const   live   = ( await $axios.get( `https://api.bitwave.tv/api/sources/list`) ).data.live;
-      const { data } =   await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
-      return {
-        streamers: data.users.filter( s => s.live ),
-        live: live,
+      try {
+        const live = (await $axios.get( `https://api.bitwave.tv/api/sources/list` )).data.live;
+        const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
+        return {
+          streamers: data.users.filter( s => s.live ),
+          live: live,
+          offline: false,
+        }
+      } catch ( error ) {
+        console.error( error );
+        const defaultLive = [
+          {
+            "src": 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
+            "name": "offline",
+            "type": "video/mp4",
+          },
+        ];
+        return {
+          streamers: [],
+          live: defaultLive,
+          offline: true,
+        }
       }
     },
 
@@ -258,6 +277,7 @@
 
     mounted () {
       this.mounted = true;
+      if ( this.offline ) this.$toast.error( error.message, { duration: 5000, icon: 'error', position: 'top-center' } );
     },
   }
 </script>

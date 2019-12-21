@@ -271,7 +271,7 @@ export const actions = {
       commit( $mutations.setChatToken, data.chatToken );
       // console.log( `%cSTORE:%c Got ChatToken! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken );
     } catch ( error ) {
-      console.log( `%cSTORE:%c ERROR: Failed to exchange token! %o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
+      console.log( `%cSTORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
     }
   },
 
@@ -280,8 +280,7 @@ export const actions = {
       const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
       commit ( $mutations.setSidebarData, data.users );
     } catch ( error ) {
-      console.error( `ERROR: Failed to update user list.` );
-      console.log( error.message );
+      console.error( `${error.message}: Failed to update user list.`, error );
     }
   },
 };
