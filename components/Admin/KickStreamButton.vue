@@ -82,7 +82,7 @@
 
     methods: {
       async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken(true);
+        const token = await auth.currentUser.getIdToken( true );
         console.log( `Fresh ID token:\n${token}` );
         return token;
       },
@@ -119,10 +119,6 @@
       createEndpoint ( base, token, reset ) {
         return `${base}?token=${token}&reset=${!!reset}`;
       },
-    },
-
-    computed: {
-
     },
   };
 </script>
