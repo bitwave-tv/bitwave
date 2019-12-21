@@ -4,7 +4,7 @@
     <!-- Chat Avatar -->
     <div
       class="v-avatar mr-2 mt-2"
-      @click="listeners.reply(props.username)"
+      @click="listeners.reply( props.username )"
     >
       <!-- Todo: add crossorigin -->
       <img

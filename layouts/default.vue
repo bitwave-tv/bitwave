@@ -58,6 +58,9 @@
   import Notifications from '~/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
 
+  import { mapActions } from 'vuex';
+  import { VStore } from '@/store';
+
   export default {
     components: {
       User,
@@ -66,11 +69,28 @@
       StreamInfo,
     },
 
-    data() {
+    data () {
       return {
         title: '[bitwave.tv]',
         drawer: undefined,
       }
+    },
+
+    methods: {
+      ...mapActions({
+        checkForNewVersion: VStore.$actions.checkForNewVersion,
+      }),
+    },
+
+    async mounted () {
+      const workbox = await $workbox;
+      if ( workbox ) {
+        workbox.addEventListener('waiting', (event) => {
+          console.log( event );
+          this.$toast.global.update( { message: '[SW] A new version of bitwave is available' } );
+        });
+      }
+      await this.checkForNewVersion();
     },
   }
 </script>
@@ -86,4 +106,5 @@
     }
   }
 
+  @import "../assets/style/bitwave-toast";
 </style>

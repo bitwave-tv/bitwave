@@ -251,7 +251,7 @@
           offline: false,
         }
       } catch ( error ) {
-        console.error( error );
+        console.log( error );
         const defaultLive = [
           {
             "src": 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
