@@ -363,7 +363,7 @@
 
       async socketError ( error, reason ) {
         this.loading = true;
-        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration:21000, position: 'top-right' } );
+        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
       },
 
       async hydrate ( data ) {
