@@ -35,13 +35,20 @@ const listenToAuthState = ( callback ) => {
   });
 };
 
-const checkForUpdate = async () => {
+export const checkForUpdate = async () => {
   const currentVersion = process.env.VERSION;
   const versions = ( await db.collection( 'configurations' ).doc( 'bitwave.tv' ).get() ).data().version; // add ? chaining
   console.log( `[bitwave.tv] - ${process.env.BITWAVE_ENV}\nCurrent version: ${currentVersion}\nLatest versions:`, versions );
   return currentVersion < versions[process.env.BITWAVE_ENV]
     ? versions[process.env.BITWAVE_ENV]
     : false ;
+};
+
+export const listenForUpdate = ( callback ) => {
+  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( doc => {
+    const versions = doc.data().version;
+    callback( versions );
+  })
 };
 
 
@@ -56,9 +63,8 @@ export default async ( { app, store } ) => {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
 
     // Listen for authentication changes
-    const stopListener = listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
+    listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
 
-    const newVersion = await checkForUpdate();
-    if ( newVersion ) await store.dispatch( VStore.$actions.newVersionAvailable, newVersion );
+    listenForUpdate( versions => store.dispatch( VStore.$actions.newVersionAvailable, versions ) );
   }
 }

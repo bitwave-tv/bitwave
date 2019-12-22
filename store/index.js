@@ -13,6 +13,7 @@ const $states = {
   chatToken : 'CHAT_TOKEN',
 
   sidebarData : 'SIDEBAR_DATA',
+  newVersion : 'LATEST_VERSION',
 };
 
 const $getters = {
@@ -26,6 +27,7 @@ const $getters = {
   getChannel   : 'GET_CHANNEL',
 
   getSidebarData : 'GET_SIDEBAR_DATA',
+  isUpdateAvailable : 'IS_UPDATE_AVAILABLE',
 };
 
 const $mutations = {
@@ -35,6 +37,7 @@ const $mutations = {
   setChatToken : 'SET_CHAT_TOKEN',
 
   setSidebarData : 'SET_SIDEBAR_DATA',
+  setNewVersion : 'SET_LATEST_VERSION',
 };
 
 const $actions = {
@@ -57,6 +60,7 @@ export const state = () => ({
   [$states.channel]     : null,
   [$states.chatToken]   : null,
   [$states.sidebarData] : [],
+  [$states.newVersion]  : null,
 });
 
 
@@ -105,6 +109,10 @@ export const getters = {
   [$getters.getSidebarData] ( state ) {
     return state[$states.sidebarData].slice( 0, 25 );
   },
+
+  [$getters.isUpdateAvailable] ( state ) {
+    return state[$states.newVersion];
+  }
 };
 
 
@@ -128,6 +136,10 @@ export const mutations = {
 
   [$mutations.setSidebarData] ( state, data ) {
     state[$states.sidebarData] = data;
+  },
+
+  [$mutations.setNewVersion] ( state, data ) {
+    state[$states.newVersion] = data;
   },
 
   setAvatar( state, url ) {
@@ -285,9 +297,20 @@ export const actions = {
     }
   },
 
-  async [$actions.newVersionAvailable] ( {}, latestVersion ) {
-    console.log( 'An update is available!' );
-    this.$toast.global.update( { message: `[ v${latestVersion} ] A new version of bitwave is available` } );
+  async [$actions.newVersionAvailable] ( { commit }, latestVersions ) {
+    const currentVersion = process.env.VERSION;
+    const newVersion = currentVersion < latestVersions[process.env.BITWAVE_ENV]
+      ? latestVersions[process.env.BITWAVE_ENV]
+      : false;
+    if ( newVersion ) {
+      console.log( `An update is available! [${newVersion}]` );
+      setTimeout( () => {
+        commit( $mutations.setNewVersion, newVersion );
+        this.$toast.global.update( { message: `[ v${newVersion} ] A new version of bitwave is available` } );
+      }, 5000);
+    } else {
+      this.$toast.clear();
+    }
   },
 };
 
