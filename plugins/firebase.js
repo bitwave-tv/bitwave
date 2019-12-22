@@ -21,26 +21,50 @@ const FieldValue = firebase.firestore.FieldValue;
 export { auth, db, FieldValue }
 
 
+const listenToAuthState = ( callback ) => {
+  return auth.onAuthStateChanged( async user => {
+    // Handle login
+    if ( user ) {
+      if ( process.env.APP_DEBUG ) console.log( '[Firebase] Authenticated', user );
+      await callback( user );
+    } else {
+      if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
+    }
+  }, async error => {
+    console.error( 'Auth Error:', error )
+  });
+};
+
+export const checkForUpdate = async () => {
+  const currentVersion = process.env.VERSION;
+  const versions = ( await db.collection( 'configurations' ).doc( 'bitwave.tv' ).get() ).data().version; // add ? chaining
+  console.log( `[bitwave.tv] - ${process.env.BITWAVE_ENV}\nCurrent version: ${currentVersion}\nLatest versions:`, versions );
+  return currentVersion < versions[process.env.BITWAVE_ENV]
+    ? versions[process.env.BITWAVE_ENV]
+    : false ;
+};
+
+export const listenForUpdate = ( callback ) => {
+  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( doc => {
+    const versions = doc.data().version;
+    callback( versions );
+  })
+};
+
+
 /**
  * Manage firebase authentication
  */
 import { VStore } from '@/store';
 
-export default ( { app } ) => {
+export default async ( { app, store } ) => {
+  // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
 
     // Listen for authentication changes
-    auth.onAuthStateChanged( async user => {
-      // Handle login
-      if ( user ) {
-        if ( process.env.APP_DEBUG ) console.log( '[Firebase] Authenticated', user );
-        app.store.dispatch( VStore.$actions.login, user );
-      } else {
-        if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
-      }
-    }, async error => {
-      console.error( 'Auth Error:', error )
-    });
+    listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
+
+    listenForUpdate( versions => store.dispatch( VStore.$actions.newVersionAvailable, versions ) );
   }
 }

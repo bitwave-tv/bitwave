@@ -1,3 +1,4 @@
+require('dotenv').config();
 const pkg = require('./package');
 
 module.exports = {
@@ -7,8 +8,10 @@ module.exports = {
   ** Environment variables
   */
   env: {
-    version: pkg.version || 'v0.0.0',
-    APP_DEBUG: false,
+    version: pkg.version || '0.0.0',
+    VERSION: pkg.version || '0.0.0',
+    APP_DEBUG: process.env.APP_DEBUG || false,
+    BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
   },
 
   /*
@@ -60,20 +63,58 @@ module.exports = {
           }*/
         },
       },
+
       // Cache fonts
-      // urlPattern: 'https://fonts.(?:googleapis|gstatic).com/(.*)',
       {
-        urlPattern: 'https://fonts.googleapis.com/.*',
-        handler: 'cacheFirst',
+        urlPattern: 'https://fonts.googleapis.com',
+        handler: 'StaleWhileRevalidate',
         method: 'GET',
-        strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
+        strategyOptions: {
+          cacheName: 'assets',
+        },
       },
       {
-        urlPattern: 'https://fonts.gstatic.com/.*',
-        handler: 'cacheFirst',
+        urlPattern: 'https://fonts.gstatic.com',
+        handler: 'CacheFirst',
         method: 'GET',
-        strategyOptions: { cacheableResponse: { statuses: [ 0, 200 ] } },
+        strategyOptions: {
+          cacheName: 'assets',
+          cacheExpiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+          }
+        },
       },
+
+      // Cache basic API responses
+      {
+        urlPattern: 'https://api.bitwave.tv/api/(?:channels/list|bump)$',
+        handler: 'NetworkFirst',
+        method: 'GET',
+        strategyOptions: {
+          cacheName: 'bitwave-api',
+        },
+      },
+
+      // Cache emotes
+      /*{
+        urlPattern: 'https://cdn.bitwave.tv/static/emotes/.*',
+        handler: 'StaleWhileRevalidate',
+        method: 'GET',
+        strategyOptions: {
+          cacheName: 'bitwave-emotes',
+          cacheableResponse: {
+            statuses: [ 200 ],
+          },
+          cacheExpiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+            purgeOnQuotaError: true,
+          },
+        },
+      },*/
+
+      // more workbox cache settings...
     ],
   },
 
@@ -150,6 +191,28 @@ module.exports = {
   */
   toast: {
     position: 'bottom-right',
+    register: [
+      {
+        name: 'update',
+        message: payload => payload.message,
+        options: {
+          position: 'top-center',
+          icon: 'autorenew',
+          theme: 'bitwave',
+          className: '',
+          type: 'update-toast',
+          action: {
+            text: 'update',
+            class: 'update-toast',
+            onClick: ( e, toast ) => {
+              console.log( 'Reloading the page to update to latest version of bitwave.' );
+              toast.goAway(0);
+              window.location.reload();
+            }
+          },
+        },
+      },
+    ],
   },
 
   /*

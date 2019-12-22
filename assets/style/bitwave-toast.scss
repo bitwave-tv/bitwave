@@ -1,0 +1,17 @@
+.toasted {
+
+  // bitwave theme
+  &.bitwave {
+
+    // update-toast type
+    &.update-toast {
+      border-radius: 24px;
+      background-color: #ffeb3b;
+      color: #212121;
+
+      .action.update-toast {
+        color: black;
+      }
+    }
+  }
+}

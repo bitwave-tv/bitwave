@@ -65,20 +65,26 @@
   export default {
     name: 'streamers',
 
+    scrollToTop: true,
+
     components: {
       StreamCard,
     },
 
     async asyncData ({ $axios }) {
-      let { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
+      try {
+        let { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
 
-      return {
-        streamers: data.users,
-        filteredStreamers: data.users,
+        return {
+          streamers: data.users,
+          filteredStreamers: data.users,
+        }
+      } catch ( error ) {
+        console.log( `ERROR: Failed to hydrate page:\n`, error );
       }
     },
 
-    data() {
+    data () {
       return {
         model: null,
         search: '',
@@ -103,9 +109,9 @@
       streamerNames () {
         return this.streamers.map( s => {
           return {
-            text: s.name,
-            value: s.name,
-            avatar: s.avatar,
+            text   : s.name,
+            value  : s.name,
+            avatar : s.avatar,
           }
         });
       },

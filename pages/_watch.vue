@@ -92,6 +92,8 @@
   const KickStreamButton = () => import( '@/components/Admin/KickStreamButton' );
 
   export default {
+    name: 'watch',
+
     scrollToTop: true,
 
     head () {
@@ -355,8 +357,13 @@
         return { name, avatar, title, description, poster, live, nsfw, owner, url, type, timestamp };
 
       } catch ( err ) {
-        console.log( `ERROR: Failed to find user ${user}: ${err.message}` );
-        error( { statusCode: 404, message: err.message } );
+        console.log( `ERROR: Failed to hydrate channel '${user}':\n`, err );
+        return {
+          name: 'Error',
+          title: 'Failed to preload data',
+          url: 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
+          type: 'video/mp4',
+        }
       }
     },
 

@@ -47,11 +47,12 @@
     name: 'BannerVideo',
 
     props: {
-      src    : { type: String },
-      type   : { type: String },
-      poster : { type: String },
-      name   : { type: String },
-      mobile : { type: Boolean, default: false },
+      src     : { type: String },
+      type    : { type: String },
+      poster  : { type: String },
+      name    : { type: String },
+      mobile  : { type: Boolean, default: false },
+      offline : { type: Boolean, default: false },
     },
 
     components: {
@@ -102,7 +103,7 @@
     computed: {
       prerollVideo () {
         return {
-          source: preroll,
+          source: this.offline ? this.src : preroll, // do not show pre-roll if offline
           type: 'video/mp4',
         }
       },
@@ -119,7 +120,5 @@
 </script>
 
 <style lang='scss'>
-  /*.video-js .vjs-live-control {
-    margin-left: 1rem;
-  }*/
+  @import "~assets/style/stream-player.scss";
 </style>

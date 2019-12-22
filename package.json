@@ -1,11 +1,11 @@
 {
   "name": "bitwave.tv",
-  "version": "1.7.20",
+  "version": "1.7.22",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nuxt",
+    "dev": "title [DEV] bitwave.tv && cross-env NODE_ENV=development nuxt",
     "dev:express": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "dev:nuxt": "nuxt",
     "build": "nuxt build",
