@@ -14,6 +14,8 @@ const $states = {
 
   sidebarData : 'SIDEBAR_DATA',
   newVersion : 'LATEST_VERSION',
+
+  alerts: 'SYSTEM_ALERT',
 };
 
 const $getters = {
@@ -28,6 +30,8 @@ const $getters = {
 
   getSidebarData : 'GET_SIDEBAR_DATA',
   isUpdateAvailable : 'IS_UPDATE_AVAILABLE',
+
+  getAlerts: 'GET_SYSTEM_ALERT',
 };
 
 const $mutations = {
@@ -38,6 +42,8 @@ const $mutations = {
 
   setSidebarData : 'SET_SIDEBAR_DATA',
   setNewVersion : 'SET_LATEST_VERSION',
+
+  setAlerts: 'SET_SYSTEM_ALERT',
 };
 
 const $actions = {
@@ -50,6 +56,8 @@ const $actions = {
 
   fetchSidebarData : 'FETCH_SIDEBAR',
   newVersionAvailable : 'NEW_VERSION_AVAILABLE',
+
+  updateAlerts : 'CHECK_FOR_ALERTS',
 };
 
 
@@ -61,6 +69,7 @@ export const state = () => ({
   [$states.chatToken]   : null,
   [$states.sidebarData] : [],
   [$states.newVersion]  : null,
+  [$states.alerts]      : {},
 });
 
 
@@ -112,6 +121,10 @@ export const getters = {
 
   [$getters.isUpdateAvailable] ( state ) {
     return state[$states.newVersion];
+  },
+
+  [$getters.getAlerts] ( state ) {
+    return state[$states.alerts];
   }
 };
 
@@ -140,6 +153,10 @@ export const mutations = {
 
   [$mutations.setNewVersion] ( state, data ) {
     state[$states.newVersion] = data;
+  },
+
+  [$mutations.setAlerts] ( state, data ) {
+    state[$states.alerts] = data;
   },
 
   setAvatar( state, url ) {
@@ -311,6 +328,13 @@ export const actions = {
     } else {
       this.$toast.clear();
     }
+  },
+
+  async [$actions.updateAlerts] ( { commit }, alerts ) {
+    console.log( 'Alerts updated!', alerts );
+    setTimeout( () => {
+      commit( $mutations.setAlerts, alerts );
+    }, 5000);
   },
 };
 

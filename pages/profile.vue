@@ -346,7 +346,7 @@
         if ( user ) {
           console.log( `[profile] User:`, user );
         } else {
-          this.$router.push( '/login' );
+          await this.$router.push( '/login' );
         }
       },
 

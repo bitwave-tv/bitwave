@@ -1,5 +1,18 @@
 <template>
-  <v-app>
+  <v-app :class="{ ssr: ssr, systemAlert: !!systemAlert }">
+    <!-- System Bar -->
+    <v-slide-y-transition>
+      <system-alert
+        v-if="showSystemAlert"
+        :id="systemAlert.id"
+        :scroll="systemAlert.scroll"
+        :message="systemAlert.message"
+        :icon="systemAlert.icon"
+        :color="systemAlert.color"
+        :text-color="systemAlert.textColor"
+        @hide="hideSystemAlert"
+      />
+    </v-slide-y-transition>
 
     <!-- Toolbar -->
     <v-app-bar
@@ -57,13 +70,14 @@
   import UserList from '~/components/UserList'
   import Notifications from '~/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
+  import SystemAlert from '@/components/Alerts/SystemAlert';
 
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
-  import { checkForUpdate } from '@/plugins/firebase';
 
   export default {
     components: {
+      SystemAlert,
       User,
       UserList,
       Notifications,
@@ -74,28 +88,42 @@
       return {
         title: '[bitwave.tv]',
         drawer: undefined,
+        ssr: true,
+        systemAlertHidden: null,
+      }
+    },
+
+    methods: {
+      hideSystemAlert () {
+        this.systemAlertHidden = this.systemAlert.id;
+        localStorage.setItem( 'hide-system-alert', this.systemAlert.id );
       }
     },
 
     computed: {
       ...mapGetters({
         isUpdateAvailable: VStore.$getters.isUpdateAvailable,
+        getAlerts: VStore.$getters.getAlerts,
       }),
+
+      systemAlert () {
+        return this.getAlerts.hasOwnProperty( 'systemAlert' )
+          ? this.getAlerts.systemAlert
+          : false;
+      },
+
+      showSystemAlert () {
+        return this.systemAlert
+          && this.systemAlert.display
+          && this.systemAlertHidden !== this.systemAlert.id
+      },
     },
 
-    /*watch: {
-      isUpdateAvailable: {
-        immediate: false,
-        handler( newVal, oldVal ) {
-          console.log( newVal );
-          if ( newVal ) this.$toast.global.update( { message: `[ v${newVal} ] A new version of bitwave is available` } );
-          else this.$toast.clear();
-        }
-      },
-    },*/
-
     async mounted () {
+      this.ssr = false;
       console.log( 'mounted layout' );
+
+      this.systemAlertHidden = localStorage.getItem( 'hide-system-alert' );
 
       const workbox = await $workbox;
       if ( workbox ) {
@@ -104,13 +132,6 @@
           await this.newVersionAvailable({ version: 'SW' });
         });
       }
-
-      /*
-      const newVersion = await checkForUpdate();
-      if ( newVersion ) {
-        console.log( `New version available: ${newVersion}` );
-        await this.$store.dispatch( VStore.$actions.newVersionAvailable, newVersion );
-      }//*/
     },
   }
 </script>
@@ -126,7 +147,7 @@
     }
   }
 
-  #app {
+  #app .ssr {
     .v-menu,
     .v-tooltip, {
       display: block !important;

@@ -1010,4 +1010,18 @@
       background-color: #555;
     }
   }
+
+  .systemAlert .chat-desktop {
+    $offset: 24px + 48px;
+    top: $offset;
+    height: calc(100vh - #{$offset});
+  }
+
+  .chat-desktop {
+     position : fixed;
+     top      : 48px;
+     right    : 0;
+     height   : calc(100vh - 48px);
+     width    : 450px;
+   }
 </style>

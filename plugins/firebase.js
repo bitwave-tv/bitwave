@@ -44,11 +44,25 @@ export const checkForUpdate = async () => {
     : false ;
 };
 
-export const listenForUpdate = ( callback ) => {
-  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( doc => {
-    const versions = doc.data().version;
-    callback( versions );
+export const listenToConfiguationUpdates = callbacks => {
+  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
+    const data = doc.data();
+    await Promise.all( callbacks.map( async cb => await cb( data ) ) );
   })
+};
+
+export const listenForUpdate = ( callback ) => {
+  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
+    const version = doc.data().version;
+    await callback( version );
+  });
+};
+
+export const listenForAlerts = callback  => {
+  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
+    const data = doc.data();
+    await callback( data.alerts )
+  });
 };
 
 
@@ -65,6 +79,11 @@ export default async ( { app, store } ) => {
     // Listen for authentication changes
     listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
 
-    listenForUpdate( versions => store.dispatch( VStore.$actions.newVersionAvailable, versions ) );
+    // Listen to the configuration, and dispatch updates
+    listenToConfiguationUpdates([
+      async ({ version }) => await store.dispatch( VStore.$actions.newVersionAvailable, version ),
+      async ({ alerts }) => await store.dispatch( VStore.$actions.updateAlerts, alerts ),
+    ]);
+
   }
 }
