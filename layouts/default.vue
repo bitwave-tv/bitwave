@@ -78,19 +78,18 @@
 
     methods: {
       ...mapActions({
-        checkForNewVersion: VStore.$actions.newVersionAvailable,
+        newVersionAvailable: VStore.$actions.newVersionAvailable,
       }),
     },
 
     async mounted () {
       const workbox = await $workbox;
       if ( workbox ) {
-        workbox.addEventListener('waiting', (event) => {
+        workbox.addEventListener( 'waiting', async (event) => {
           console.log( event );
-          this.$toast.global.update( { message: '[SW] A new version of bitwave is available' } );
+          await this.newVersionAvailable({ version: 'SW' });
         });
       }
-      await this.checkForNewVersion();
     },
   }
 </script>

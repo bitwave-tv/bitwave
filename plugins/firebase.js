@@ -39,7 +39,9 @@ const checkForUpdate = async () => {
   const currentVersion = process.env.VERSION;
   const versions = ( await db.collection( 'configurations' ).doc( 'bitwave.tv' ).get() ).data().version; // add ? chaining
   console.log( `[bitwave.tv] - ${process.env.BITWAVE_ENV}\nCurrent version: ${currentVersion}\nLatest versions:`, versions );
-  return versions[process.env.BITWAVE_ENV] && currentVersion < versions[process.env.BITWAVE_ENV];
+  return currentVersion < versions[process.env.BITWAVE_ENV]
+    ? versions[process.env.BITWAVE_ENV]
+    : false ;
 };
 
 
@@ -48,7 +50,7 @@ const checkForUpdate = async () => {
  */
 import { VStore } from '@/store';
 
-export default async ( { store } ) => {
+export default async ( { app, store } ) => {
   // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
@@ -57,8 +59,6 @@ export default async ( { store } ) => {
     const stopListener = listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
 
     const newVersion = await checkForUpdate();
-    if ( newVersion ) store.dispatch( VStore.$actions.newVersionAvailable, newVersion );
-
-
+    if ( newVersion ) await store.dispatch( VStore.$actions.newVersionAvailable, newVersion );
   }
 }
