@@ -207,6 +207,7 @@
         sound: process.server ? null : new Audio(),
 
         willBeDestroyed: false,
+        hideTrolls: false,
       }
     },
 
@@ -409,6 +410,8 @@
           messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
         }
 
+        if ( this.hideTrolls ) messages = messages.filter( el => !el.username.startsWith( 'troll:' ) );
+
         // Ignore channel messages
         messages = messages.filter ( el => {
           // Do not ignore a channel we are in
@@ -503,6 +506,12 @@
             case 'uic':
             case 'uc':
               await this.unignoreChannel( argument );
+              break;
+            case 'susi':
+            case 'trolls':
+              this.hideTrolls = !this.hideTrolls;
+              if ( this.hideTrolls ) this.messages = this.messages.filter( el => !el.username.startsWith( 'troll:' ) );
+              else if ( this.socket ) await this.socket.emit( 'hydrate' );
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
@@ -861,7 +870,7 @@
           this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
         } else {
           // Reconnect chat to force hydration when going into global chat
-          if ( this.userToken ) await this.connectChat( this.userToken );
+          if ( this.socket ) await this.socket.emit( 'hydrate' );
         }
       },
     },
