@@ -78,7 +78,7 @@
 
     methods: {
       ...mapActions({
-        checkForNewVersion: VStore.$actions.checkForNewVersion,
+        checkForNewVersion: VStore.$actions.newVersionAvailable,
       }),
     },
 
@@ -103,6 +103,13 @@
 
     &::before {
       opacity: 0;
+    }
+  }
+
+  #app {
+    .v-menu,
+    .v-tooltip, {
+      display: block !important;
     }
   }
 

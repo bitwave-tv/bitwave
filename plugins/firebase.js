@@ -21,26 +21,44 @@ const FieldValue = firebase.firestore.FieldValue;
 export { auth, db, FieldValue }
 
 
+const listenToAuthState = ( callback ) => {
+  return auth.onAuthStateChanged( async user => {
+    // Handle login
+    if ( user ) {
+      if ( process.env.APP_DEBUG ) console.log( '[Firebase] Authenticated', user );
+      await callback( user );
+    } else {
+      if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
+    }
+  }, async error => {
+    console.error( 'Auth Error:', error )
+  });
+};
+
+const checkForUpdate = async () => {
+  const currentVersion = process.env.VERSION;
+  const versions = ( await db.collection( 'configurations' ).doc( 'bitwave.tv' ).get() ).data().version; // add ? chaining
+  console.log( `[bitwave.tv] - ${process.env.BITWAVE_ENV}\nCurrent version: ${currentVersion}\nLatest versions:`, versions );
+  return versions[process.env.BITWAVE_ENV] && currentVersion < versions[process.env.BITWAVE_ENV];
+};
+
+
 /**
  * Manage firebase authentication
  */
 import { VStore } from '@/store';
 
-export default ( { app } ) => {
+export default async ( { store } ) => {
+  // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
 
     // Listen for authentication changes
-    auth.onAuthStateChanged( async user => {
-      // Handle login
-      if ( user ) {
-        if ( process.env.APP_DEBUG ) console.log( '[Firebase] Authenticated', user );
-        app.store.dispatch( VStore.$actions.login, user );
-      } else {
-        if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
-      }
-    }, async error => {
-      console.error( 'Auth Error:', error )
-    });
+    const stopListener = listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
+
+    const newVersion = await checkForUpdate();
+    if ( newVersion ) store.dispatch( VStore.$actions.newVersionAvailable, newVersion );
+
+
   }
 }

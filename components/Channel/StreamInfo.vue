@@ -208,8 +208,10 @@
 </script>
 
 <style lang="scss">
-  .v-tabs.no-focus .v-tab--active:hover::before,
-  .v-tabs.no-focus .v-tab--active::before {
-    opacity: 0;
+  .v-tabs.no-focus {
+    .v-tab--active:hover::before,
+    .v-tab--active::before {
+      opacity: 0;
+    }
   }
 </style>

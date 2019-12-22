@@ -46,7 +46,7 @@ const $actions = {
   logout       : 'LOGOUT',
 
   fetchSidebarData : 'FETCH_SIDEBAR',
-  checkForNewVersion : 'CHECK_FOR_NEW_VERSION',
+  newVersionAvailable : 'NEW_VERSION_AVAILABLE',
 };
 
 
@@ -285,19 +285,9 @@ export const actions = {
     }
   },
 
-  async [$actions.checkForNewVersion] () {
-    const currentVersion = process.env.VERSION;
-
-    const versions = (await db.collection( 'configurations' ).doc( 'bitwave.tv' ).get()).data().version;
-    console.log( `Current version: ${currentVersion}\nLatest versions:`, versions );
-
-    const latestVersion = versions[process.env.BITWAVE_ENV];
-
-    const needsUpdate = latestVersion > currentVersion;
-    if ( needsUpdate ) {
-      console.log( 'An update is available!' );
-      this.$toast.global.update( { message: `[ v${latestVersion} ] A new version of bitwave is available` } );
-    }
+  async [$actions.newVersionAvailable] ( {}, latestVersion ) {
+    console.log( 'An update is available!' );
+    this.$toast.global.update( { message: `[ v${latestVersion} ] A new version of bitwave is available` } );
   },
 };
 
