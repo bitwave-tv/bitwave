@@ -1,5 +1,5 @@
 <template>
-  <v-app :class="{ ssr: ssr, systemAlert: !!systemAlert }">
+  <v-app :class="{ ssr: ssr, systemAlert: !!showSystemAlert }">
     <!-- System Bar -->
     <v-slide-y-transition>
       <system-alert
