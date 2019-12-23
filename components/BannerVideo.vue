@@ -41,7 +41,7 @@
 
   import Chat from '@/components/Chat'
 
-  const preroll = 'https://cdn.bitwave.tv/static/rewind-trailer.mp4';
+  const preroll = 'https://cdn.bitwave.tv/static/REWIND.mp4';
 
   export default {
     name: 'BannerVideo',

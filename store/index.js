@@ -230,6 +230,8 @@ export const actions = {
     const token = await user.getIdToken();
     const uid = user.uid;
 
+    this.$axios.setToken( token, 'Bearer' );
+
     const auth = {
       accessToken: token,
       uid: uid,

@@ -92,9 +92,7 @@
           const token = await this.getFreshIdToken();
           const { data } = await this.$axios.post(
             this.createEndpoint( endpoint, token, !!resetKey ),
-            {
-              streamer: this.streamer,
-            }
+            { streamer: this.streamer },
           );
           console.log( data );
           if ( data.success )
@@ -109,15 +107,15 @@
       },
 
       success ( data ) {
-        this.$toast.success( data, { icon: 'done', duration: 2000 } );
+        this.$toast.success( data, { icon: 'done', duration: 5000, position: 'top-center' } );
       },
 
       error ( error ) {
-        this.$toast.error( error, { icon: 'error', duration: 2000 } );
+        this.$toast.error( error, { icon: 'error', duration: 5000, position: 'top-center' } );
       },
 
       createEndpoint ( base, token, reset ) {
-        return `${base}?token=${token}&reset=${!!reset}`;
+        return `${base}?reset=${!!reset}`;
       },
     },
   };

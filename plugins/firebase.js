@@ -71,13 +71,15 @@ export const listenForAlerts = callback  => {
  */
 import { VStore } from '@/store';
 
-export default async ( { app, store } ) => {
+export default async ( { app: { $axios }, store } ) => {
   // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
 
     // Listen for authentication changes
-    listenToAuthState( user => store.dispatch( VStore.$actions.login, user ) );
+    listenToAuthState( user => {
+      store.dispatch( VStore.$actions.login, user );
+    });
 
     // Listen to the configuration, and dispatch updates
     listenToConfiguationUpdates([

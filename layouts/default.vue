@@ -66,9 +66,9 @@
 </template>
 
 <script>
-  import User from '~/components/User'
-  import UserList from '~/components/UserList'
-  import Notifications from '~/components/Notifications'
+  import User from '@/components/User'
+  import UserList from '@/components/UserList'
+  import Notifications from '@/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
   import SystemAlert from '@/components/Alerts/SystemAlert';
 
@@ -76,6 +76,7 @@
   import { VStore } from '@/store';
 
   export default {
+
     components: {
       SystemAlert,
       User,
@@ -121,6 +122,7 @@
 
     async mounted () {
       this.ssr = false;
+
       console.log( 'mounted layout' );
 
       this.systemAlertHidden = localStorage.getItem( 'hide-system-alert' );
@@ -135,6 +137,7 @@
     },
   }
 </script>
+@import "~assets/style/bitwave-toast";
 
 <style lang="scss">
   #app .app-title-active {
@@ -147,12 +150,11 @@
     }
   }
 
-  #app .ssr {
+  #app.ssr {
     .v-menu,
     .v-tooltip, {
       display: block !important;
     }
   }
 
-  @import "../assets/style/bitwave-toast";
 </style>

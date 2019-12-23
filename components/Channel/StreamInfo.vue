@@ -67,7 +67,7 @@
               </v-fade-transition>
             </div>
             <v-spacer />
-            <EditStreamData
+            <edit-stream-data
               v-if="showEditStream"
               :username="username"
               :title="title"
