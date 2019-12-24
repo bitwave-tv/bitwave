@@ -67,6 +67,12 @@
               </v-fade-transition>
             </div>
             <v-spacer />
+            <restream-dialog
+              v-if="showEditStream"
+              :username="name"
+              :owner="uid"
+              :live="live"
+            />
             <edit-stream-data
               v-if="showEditStream"
               :username="username"
@@ -133,6 +139,7 @@
   const ShareStream    = () => import ( '@/components/ShareStream' );
   const EditStreamData = () => import ( '@/components/EditStreamData' );
   const StreamArchives = () => import ( '@/components/Channel/StreamArchives' );
+  const RestreamDialog = () => import ( '@/components/Restream/RestreamDialog' );
 
   export default {
     name: 'StreamInfo',
@@ -142,6 +149,7 @@
       VueMarkdown,
       ShareStream,
       EditStreamData,
+      RestreamDialog,
     },
 
     props: {
@@ -178,6 +186,7 @@
     computed: {
       ...mapGetters({
         username: VStore.$getters.getUsername,
+        uid: VStore.$getters.getUID,
       }),
 
       showEditStream () {
