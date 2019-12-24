@@ -59,37 +59,39 @@
           style="min-height: 500px"
         >
           <!-- Stream Actions -->
-          <div class="d-flex flex-shrink-0 align-center mb-3">
-            <div class="caption grey--text">
+          <div class="d-flex flex-shrink-0 align-center mb-3 flex-wrap">
+            <div class="caption grey--text my-2">
               <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
               <v-fade-transition mode="out-in">
                 <div class="d-inline-block" :key="lastStreamed">{{ lastStreamed }}</div>
               </v-fade-transition>
             </div>
             <v-spacer />
-            <restream-dialog
-              v-if="showEditStream"
-              :username="name"
-              :owner="uid"
-              :live="live"
-            />
-            <edit-stream-data
-              v-if="showEditStream"
-              :username="username"
-              :title="title"
-              :description="description"
-              :nsfw="nsfw"
-            />
-            <v-btn
-              v-if="false"
-              color="yellow"
-              class="mr-2"
-              outlined
-              small
-              @click="showStreamStats = !showStreamStats"
-            >
-              <v-icon>timeline</v-icon>
-            </v-btn>
+            <div class="d-flex">
+              <restream-dialog
+                v-if="showEditStream"
+                :username="name"
+                :owner="uid"
+                :live="live"
+              />
+              <edit-stream-data
+                v-if="showEditStream"
+                :username="username"
+                :title="title"
+                :description="description"
+                :nsfw="nsfw"
+              />
+              <v-btn
+                v-if="false"
+                color="yellow"
+                class="mr-2"
+                outlined
+                small
+                @click="showStreamStats = !showStreamStats"
+              >
+                <v-icon>timeline</v-icon>
+              </v-btn>
+            </div>
             <ShareStream :user="name" />
           </div>
 

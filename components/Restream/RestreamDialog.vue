@@ -6,11 +6,12 @@
           v-on="on"
           class="mr-3"
           small
-          icon
+          outlined
           color="yellow"
           @click="showRestreamDialog = true"
         >
-          <v-icon>call_split</v-icon>
+          restream
+          <v-icon class="ml-1">call_split</v-icon>
         </v-btn>
       </template>
       <span>Restream</span>

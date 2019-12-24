@@ -140,7 +140,7 @@
 
 <style lang="scss">
   @import "~assets/style/bitwave-toast";
-  
+
   #app .app-title-active {
     &:hover::before {
       opacity: 0.24;
