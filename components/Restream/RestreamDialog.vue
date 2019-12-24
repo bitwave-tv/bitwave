@@ -99,7 +99,7 @@
                   class="mr-2"
                   color="green"
                   small
-                  :disabled="live"
+                  :disabled="!live"
                   @click="startRestreamer"
                 >
                   Start
@@ -107,7 +107,7 @@
                 <v-btn
                   color="red"
                   small
-                  :disabled="live"
+                  :disabled="!live"
                   @click="stopRestreamer"
                 >
                   Stop
