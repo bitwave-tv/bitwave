@@ -134,6 +134,12 @@
     [ 'PROD', 'chat.bitwave.tv' ],
   ]);
 
+  const sanitizer = [
+    { pattern: /n+[ei]+g+[e|a]+r*/i, clean: 'funny word' },
+    { pattern: /f+[aeiou]+g+o+t+/i, clean: 'fay go' },
+    { pattern: /f+[ae]+g+/i, clean: 'fay go' },
+  ];
+
   export default {
     name: 'Chat',
 
@@ -208,6 +214,7 @@
 
         willBeDestroyed: false,
         hideTrolls: false,
+        cleanTTS: false,
       }
     },
 
@@ -513,6 +520,11 @@
               if ( this.hideTrolls ) this.messages = this.messages.filter( el => !el.username.startsWith( 'troll:' ) );
               else if ( this.socket ) await this.socket.emit( 'hydrate' );
               break;
+            case 'crc':
+            case 'cuckrockchris':
+            case 'cleantts':
+              this.cleanTTS = !this.cleanTTS;
+              break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
               await this.insertMessage( `Ignored Channels: ${this.ignoreChannelList.join(', ')}` );
@@ -607,6 +619,13 @@
         message = unescapeHtml( message ); // Fixes escaped characters
         message = message.replace( /<\/?[^>]*>/g, '' );  // Remove html tags
         message = message.replace( /((https?:\/\/)|(www\.))[^\s]+/gi, '' );  // Remove Links
+
+        if ( this.cleanTTS ) {
+          sanitizer.forEach( filter => {
+            message = message.replace( filter.pattern, filter.clean );
+          });
+          console.log( message );
+        }
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
