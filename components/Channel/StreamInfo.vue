@@ -35,20 +35,70 @@
           v-model="tabData"
           background-color="transparent"
           class="no-focus"
-          fixed-tabs
-
         >
-          <v-tab>Description</v-tab>
-          <v-tab>Archives</v-tab>
+          <v-tab>
+            <div>
+              Description
+            </div>
+          </v-tab>
+          <v-tab>
+            <div>
+              Archives
+            </div>
+          </v-tab>
         </v-tabs>
       </template>
     </v-toolbar>
 
+    <!-- Stream Actions -->
+    <div class="d-flex flex-shrink-0 align-center flex-wrap px-3 py-2">
+      <div class="caption grey--text my-2">
+        <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
+        <v-fade-transition mode="out-in">
+          <div
+            class="d-inline-block"
+            :key="lastStreamed"
+          >
+            {{ lastStreamed }}
+          </div>
+        </v-fade-transition>
+      </div>
+      <v-spacer />
+      <div class="d-flex">
+        <restream-dialog
+          v-if="channelOwner"
+          :username="name"
+          :owner="uid"
+          :live="live"
+        />
+        <edit-stream-data
+          v-if="channelOwner"
+          :username="username"
+          :title="title"
+          :description="description"
+          :nsfw="nsfw"
+        />
+        <v-btn
+          v-if="false"
+          color="yellow"
+          class="mr-2"
+          outlined
+          small
+          @click="showStreamStats = !showStreamStats"
+        >
+          <v-icon>timeline</v-icon>
+        </v-btn>
+      </div>
+      <ShareStream :user="name" />
+    </div>
+
+    <v-divider />
 
     <!-- Stream Data -->
     <v-tabs-items
       v-model="tabData"
       style="background: transparent"
+      touchless
     >
       <!-- Description -->
       <v-tab-item>
@@ -56,45 +106,8 @@
           id="description"
           ref="description"
           class="pa-3"
-          style="min-height: 500px"
+          style="min-height: 750px"
         >
-          <!-- Stream Actions -->
-          <div class="d-flex flex-shrink-0 align-center mb-3 flex-wrap">
-            <div class="caption grey--text my-2">
-              <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
-              <v-fade-transition mode="out-in">
-                <div class="d-inline-block" :key="lastStreamed">{{ lastStreamed }}</div>
-              </v-fade-transition>
-            </div>
-            <v-spacer />
-            <div class="d-flex">
-              <restream-dialog
-                v-if="showEditStream"
-                :username="name"
-                :owner="uid"
-                :live="live"
-              />
-              <edit-stream-data
-                v-if="showEditStream"
-                :username="username"
-                :title="title"
-                :description="description"
-                :nsfw="nsfw"
-              />
-              <v-btn
-                v-if="false"
-                color="yellow"
-                class="mr-2"
-                outlined
-                small
-                @click="showStreamStats = !showStreamStats"
-              >
-                <v-icon>timeline</v-icon>
-              </v-btn>
-            </div>
-            <ShareStream :user="name" />
-          </div>
-
           <!-- Stream Description -->
           <vue-markdown
             v-if="description"
@@ -106,10 +119,11 @@
       <!-- Archives -->
       <v-tab-item>
         <div
-          class="pa-3"
           style="min-height: 500px"
         >
-          <stream-archives :streamer="name" />
+          <stream-archives
+            :streamer="name"
+          />
         </div>
       </v-tab-item>
     </v-tabs-items>
@@ -191,7 +205,7 @@
         uid: VStore.$getters.getUID,
       }),
 
-      showEditStream () {
+      channelOwner () {
         if ( !this.username ) return false;
         return this.name.toLowerCase() === this.username.toLowerCase();
       },
