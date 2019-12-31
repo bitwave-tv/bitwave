@@ -5,14 +5,15 @@
     <v-row class="justify-center">
       <div class="d-flex align-center">
         <v-img
-          src="https://cdn.bitwave.tv/static/img/santahat-100.png"
+          src="https://cdn.bitwave.tv/static/img/firework-banner.gif"
           alt="santa troll"
-          height="34"
-          width="34"
+          height="80"
+          width="80"
           contain
         />
-        <span class="font-weight-light display-1 green--text mx-2">Merry</span>
-        <span class="font-weight-light display-1 red--text">Christmas!</span>
+        <span class="font-weight-light display-1 white--text mx-2">Happy</span>
+        <span class="font-weight-light display-1" style="color: #EEE8AA;">New Year</span>
+        <span class="font-weight-light display-1 white--text mx-2">!</span>
       </div>
     </v-row>
 

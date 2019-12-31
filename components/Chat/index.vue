@@ -176,7 +176,7 @@
             timestamp : Date.now(),
             username  : 'Dispatch',
             avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave-100.gif',
-            message   : `<img src="https://cdn.bitwave.tv/static/emotes/xmas.gif" alt=":xmas:">`,
+            message   : `<img src="https://cdn.bitwave.tv/static/emotes/happy-ny2.gif?2" alt=":ny:">`,
             channel   : 'litechat',
           },
         ],
