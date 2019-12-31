@@ -18,6 +18,7 @@
           :items="archives"
           :loading="processing && !loaded"
           loading-text="Loading... Please wait"
+          no-data-text="No archives found"
           :footer-props="footerProps"
           :page.sync="page"
           @pagination="onPaginate"
@@ -55,7 +56,10 @@
           </template>
 
           <!-- Edit Stream Title -->
-          <template v-slot:item.title="{ item }">
+          <template
+            v-if="channelOwner"
+            v-slot:item.title="{ item }"
+          >
             <v-edit-dialog
               :return-value.sync="item.title"
               @save="saveArchiveEdit( item )"
@@ -75,29 +79,6 @@
 
           <!-- Action Items -->
           <template v-slot:item.action="{ item }">
-
-            <!--<v-tooltip
-              open-delay="1000"
-              left
-              transition="slide-x-reverse-transition"
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  class="mr-3"
-                  icon
-                  color="grey"
-                  dark
-                  :loading="item.updating"
-                  :disabled="item.deleted"
-                  @click="editArchive( item )"
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
-              </template>
-              <span>Edit Archive</span>
-            </v-tooltip>-->
-
             <v-tooltip
               open-delay="1000"
               left
@@ -118,7 +99,6 @@
               </template>
               <span>Delete Archive</span>
             </v-tooltip>
-
           </template>
 
           <!-- Switch Visibility of Deleted Archives -->
@@ -221,10 +201,6 @@
       return {
         processing: true,
         loaded: false,
-        error: false,
-        errorType: 'info',
-        errorColor: 'blue',
-        errorMessage: 'Loading data...',
 
         page: 0,
         pagination: null,
@@ -233,7 +209,7 @@
         showDeletedArchives: false,
 
         footerProps: {
-          itemsPerPageOptions: [ 2, 5, 10 ],
+          itemsPerPageOptions: [ 5, 10 ],
         },
 
         showConfirmDelete: false,
@@ -335,10 +311,7 @@
           if ( results.empty ) {
             this.processing = false;
             this.loaded = true;
-            this.error = true;
-            this.errorMessage = 'No recent archives found.';
-            this.errorType = 'warning';
-            this.errorColor = 'yellow';
+            this.archives = [];
             return;
           }
 
@@ -359,15 +332,10 @@
           });
           this.processing = false;
           this.loaded = true;
-          this.error = false;
         } catch ( error ) {
           console.log( error );
           this.processing = false;
           this.loaded = true;
-          this.error = true;
-          this.errorMessage = 'Failed to load database data!';
-          this.errorType = 'error';
-          this.errorColor = 'red';
         }
       },
 
@@ -404,7 +372,16 @@
           if ( data.success ) this.$toast.success( data.message, { duration: 2500, icon: 'done', position: 'bottom-center' } );
           else this.$toast.error( data.message, { duration: 2500, icon: 'error', position: 'bottom-center' } );
 
-          await this.loadArchives(); // Refresh archive list
+          // Remove archive from UI
+          if ( this.showDeletedArchives ) {
+            archive.deleted = true;
+          } else {
+            this.archives = this.archives.filter( a => a.id !== archive.id );
+            // Refresh archive list
+            if ( this.archives.length <= 10 ) await this.loadArchives();
+          }
+
+          // await this.loadArchives(); // Refresh archive list
 
           this.processing = false;
           archive.loading = false;
@@ -497,6 +474,7 @@
 
     async mounted () {
       console.log( 'StreamArchives loading...' );
+      this.showDeletedArchives = this.channelOwner;
       setTimeout( async () => await this.loadArchives(), 2500 );
       await this.updateToken();
       try {
