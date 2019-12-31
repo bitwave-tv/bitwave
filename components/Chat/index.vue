@@ -134,6 +134,67 @@
     [ 'PROD', 'chat.bitwave.tv' ],
   ]);
 
+  // simple word filters for TTS
+  const sanitizer = [
+    { pattern: /n+[ei]+g+[e|a]+r*/i, clean: 'funny word' },
+    { pattern: /f+[aeiou]+g+o+t+/i, clean: 'muddah' },
+    { pattern: /f+[ae]+g+/i, clean: 'faddah' },
+  ];
+
+  // Spam reduction for TTS
+  const editDistance = ( s1, s2 ) => {
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
+    let costs = [];
+    for (let i = 0; i <= s1.length; i++) {
+      let lastValue = i;
+      for (let j = 0; j <= s2.length; j++) {
+        if (i === 0) costs[j] = j;
+        else {
+          if (j > 0) {
+            let newValue = costs[j - 1];
+            if (s1.charAt(i - 1) !== s2.charAt(j - 1))
+              newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+            costs[j - 1] = lastValue;
+            lastValue = newValue;
+          }
+        }
+      }
+      if (i > 0) costs[s2.length] = lastValue;
+    }
+    return costs[s2.length];
+  };
+  const similarity = ( s1, s2 ) => {
+    let longer = s1, shorter = s2;
+    if ( s1.length < s2.length ) {
+      longer = s2;
+      shorter = s1;
+    }
+    const lg = longer.length;
+    if ( lg === 0 ) return 1.0;
+    return ( lg - editDistance( longer, shorter ) ) / parseFloat( lg  );
+  };
+  let history = ['','','','',''];
+  const spamCheck = message => {
+    if ( message.length < 20 ) return false;
+    if ( message.length > 200 ) message = message.substring( 0, 150 );
+    message = message.replace(/\W/g, '');
+    let similar = false;
+    for ( let i = 0; i < 5; i++ ) {
+      const s = similarity( message, history[i] );
+      if ( s > threshold ) {
+        similar = true;
+        break;
+      }
+    }
+    history.push( message );
+    history = history.splice( -5 );
+    return similar;
+  };
+
+  // Spam detection threshold
+  const threshold = 0.85;
+
   export default {
     name: 'Chat',
 
@@ -208,6 +269,7 @@
 
         willBeDestroyed: false,
         hideTrolls: false,
+        cleanTTS: false,
       }
     },
 
@@ -513,6 +575,12 @@
               if ( this.hideTrolls ) this.messages = this.messages.filter( el => !el.username.startsWith( 'troll:' ) );
               else if ( this.socket ) await this.socket.emit( 'hydrate' );
               break;
+            case 'crc':
+            case 'cuckrockchris':
+            case 'cleantts':
+              this.cleanTTS = !this.cleanTTS;
+              await this.insertMessage( `Clean TTS: ${this.cleanTTS}` );
+              break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
               await this.insertMessage( `Ignored Channels: ${this.ignoreChannelList.join(', ')}` );
@@ -607,6 +675,16 @@
         message = unescapeHtml( message ); // Fixes escaped characters
         message = message.replace( /<\/?[^>]*>/g, '' );  // Remove html tags
         message = message.replace( /((https?:\/\/)|(www\.))[^\s]+/gi, '' );  // Remove Links
+
+        if ( this.cleanTTS ) {
+          if ( spamCheck( message ) ) {
+            console.log( 'Spam detected, auto skipping' );
+            return;
+          }
+          sanitizer.forEach( filter => message = message.replace( filter.pattern, filter.clean ) );
+          message = message.replace(/[\ud800-\udfff]/g, "");
+          console.log( message );
+        }
 
         const voice = new SpeechSynthesisUtterance();
         const pitch = 1;
