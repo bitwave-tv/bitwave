@@ -1,5 +1,7 @@
 <template>
     <div class="px-3 mb-4 mt-3">
+
+      <!-- Banner Message -->
       <div class="d-flex flex-shrink-0 align-center flex-wrap mb-5 mt-0 ml-5">
         <div class="d-inline-block subtitle">
           Replays will be available for up to <strong class="title">7</strong> days.
@@ -8,6 +10,7 @@
         <v-spacer/>
       </div>
 
+      <!-- Stream Archives Data Table -->
       <v-card>
         <v-data-table
           light
@@ -19,12 +22,15 @@
           :page.sync="page"
           @pagination="onPaginate"
         >
+
           <!-- Progress Bar -->
           <template v-slot:progress>
-            <v-progress-linear
-              color="blue"
-              indeterminate
-            />
+            <v-expand-transition>
+              <v-progress-linear
+                color="blue"
+                indeterminate
+              />
+            </v-expand-transition>
           </template>
 
           <!-- Action Buttons header -->
@@ -115,6 +121,7 @@
 
           </template>
 
+          <!-- Switch Visibility of Deleted Archives -->
           <template v-slot:body.append>
             <v-switch
               v-model="showDeletedArchives"
@@ -264,6 +271,9 @@
       },
 
       async paginate () {
+        this.processing = true;
+        this.loaded     = false;
+
         const offset = this.archives[ this.archives.length - 1 ].timestamp;
 
         const archiveRef = db
@@ -302,6 +312,10 @@
           console.log( error );
         }
 
+        setTimeout(() => {
+          this.processing = false;
+          this.loaded     = true;
+        }, 2000 );
       },
 
       async loadArchives () {
@@ -359,7 +373,7 @@
 
       async deleteArchive ( archive ) {
         if ( this.processing ) return;
-        
+
         this.processing = true;
         archive.loading = true;
         this.showConfirmDelete = true;
@@ -395,6 +409,11 @@
           this.processing = false;
           archive.loading = false;
 
+          this.$ga.event({
+            eventCategory : 'archives',
+            eventAction   : 'delete',
+          });
+
         } catch ( error ) {
           console.log( error );
           this.$toast.error( error.message, { duration: 2500, icon: 'error', position: 'bottom-center' } );
@@ -412,11 +431,18 @@
       },
 
       async saveArchiveEdit ( archive ) {
-        const saveToast = this.$toast.success( `Saving title...`, { icon: 'done', position: 'bottom-center' } );
+        let saveToast = this.$toast.success( `Saving title...`, { icon: 'done', position: 'bottom-center' } );
         await archive.ref.update({ title: archive.title });
-        console.log( saveToast );
-        saveToast.text('Title updated');
-        saveToast.goAway(1000);
+        saveToast.goAway( 1000 );
+        saveToast = this.$toast.success( `Archive updated`, { duration: 2500, icon: 'done', position: 'bottom-center' } );
+        try {
+          this.$ga.event({
+            eventCategory : 'archives',
+            eventAction   : 'renamee',
+          });
+        } catch ( error ) {
+          console.log( error );
+        }
       },
 
       cancelArchiveEdit () {
@@ -427,8 +453,18 @@
         this.page = 1;
         this.$nextTick( async () => {
           this.processing = true;
+          this.loaded     = false;
           await this.loadArchives();
           this.processing = false;
+          this.loaded     = true;
+          try {
+            this.$ga.event({
+              eventCategory : 'archives',
+              eventAction   : this.showDeletedArchives ? 'show deleted' : 'hide deleted',
+            });
+          } catch ( error ) {
+            console.log( error );
+          }
         });
       },
 
@@ -463,6 +499,14 @@
       console.log( 'StreamArchives loading...' );
       setTimeout( async () => await this.loadArchives(), 2500 );
       await this.updateToken();
+      try {
+        this.$ga.event({
+          eventCategory : 'archives',
+          eventAction   : 'view',
+        });
+      } catch ( error ) {
+        console.log( error );
+      }
     },
   };
 </script>

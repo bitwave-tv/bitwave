@@ -191,6 +191,7 @@ module.exports = {
   */
   toast: {
     position: 'bottom-right',
+    keepOnHover: true,
     register: [
       {
         name: 'update',
