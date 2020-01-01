@@ -441,8 +441,10 @@
         this.create();
 
         this.$nextTick( () => {
-          this.darken = true;
-          setTimeout( () => this.beginLoop() , 1500 );
+          setTimeout( () => this.beginLoop() , 1000 );
+          this.$nextTick( () => {
+            this.darken = true;
+          });
         });
       },
 
@@ -484,12 +486,11 @@
     right: 0;
     bottom: 0;
 
-    background: rgba( 0, 0, 0, 0 );
+    background: rgba( 0, 0, 0, 0.75 );
     opacity: 0;
     transition: 2.5s;
 
     &.darken {
-      background: rgba( 0, 0, 0, 0.75 );
       opacity: 1;
     }
 
