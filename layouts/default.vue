@@ -62,6 +62,9 @@
       </v-fade-transition>
     </v-content>
 
+    <!-- Fireworks overlay -->
+    <Fireworks ref="fireworks" />
+
   </v-app>
 </template>
 
@@ -71,6 +74,8 @@
   import Notifications from '@/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
   import SystemAlert from '@/components/Alerts/SystemAlert';
+
+  const Fireworks = async () => await import( '@/components/effects/fireworks' );
 
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
@@ -83,6 +88,7 @@
       UserList,
       Notifications,
       StreamInfo,
+      Fireworks,
     },
 
     data () {
@@ -113,11 +119,23 @@
           : false;
       },
 
+      fireworks () {
+        return this.getAlerts.hasOwnProperty( 'fireworks' )
+          ? this.getAlerts.fireworks
+          : false;
+      },
+
       showSystemAlert () {
         return this.systemAlert
           && this.systemAlert.display
           && this.systemAlertHidden !== this.systemAlert.id
       },
+    },
+
+    watch: {
+      fireworks( val ) {
+        if ( val ) this.$refs['fireworks'].start();
+      }
     },
 
     async mounted () {
@@ -135,6 +153,7 @@
         });
       }
     },
+
   }
 </script>
 

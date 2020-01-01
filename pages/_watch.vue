@@ -89,7 +89,7 @@
   import { VStore } from '@/store';
   import StreamInfo from '@/components/Channel/StreamInfo';
 
-  const KickStreamButton = () => import( '@/components/Admin/KickStreamButton' );
+  const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
 
   export default {
     name: 'watch',
