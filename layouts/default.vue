@@ -140,9 +140,6 @@
 
     async mounted () {
       this.ssr = false;
-
-      console.log( 'mounted layout' );
-
       this.systemAlertHidden = localStorage.getItem( 'hide-system-alert' );
 
       const workbox = await $workbox;

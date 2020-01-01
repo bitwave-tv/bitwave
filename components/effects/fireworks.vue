@@ -84,10 +84,10 @@
 
     // === LOCAL VARS ===
 
-    let canvas = document.getElementById( 'canvas' );
-    // Set canvas dimensions.
-    canvas.width = window.innerWidth;
+    let canvas    = document.getElementById( 'canvas' );
+    canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
+
     // Set the context, 2d in this case.
     let context = canvas.getContext( '2d' );
     // Firework and particles collections.
@@ -377,8 +377,8 @@
 
     // === END APP HELPERS ===
 
-    let stop = false;
-    const timer = 30;
+    let   stop  = false;
+    const timer = 15;
 
     // Primary loop.
     const loop = ( completed ) => {
@@ -448,7 +448,7 @@
 
       beginLoop () {
         loop( () => this.onEnd() );
-        setTimeout( () => this.showHero = true, 15 * 1000 );
+        setTimeout( () => this.showHero = true, 5 * 1000 );
       },
 
       onEnd () {
@@ -489,7 +489,7 @@
     transition: 2.5s;
 
     &.darken {
-      background: rgba( 0, 0, 0, 0.55 );
+      background: rgba( 0, 0, 0, 0.75 );
       opacity: 1;
     }
 
@@ -505,7 +505,7 @@
       width: 100%;
       opacity: 0;
       transition: 2.5s;
-      text-shadow: 0 2px 7px rgba(0,0,0,0.55);
+      text-shadow: 0 2px 7px rgba( 0, 0, 0, 0.75 );
 
       &.show {
         opacity: 1;

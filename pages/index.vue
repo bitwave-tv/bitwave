@@ -12,8 +12,7 @@
           contain
         />
         <span class="font-weight-light display-1 white--text mx-2">Happy</span>
-        <span class="font-weight-light display-1" style="color: #EEE8AA;">New Year</span>
-        <span class="font-weight-light display-1 white--text mx-2">!</span>
+        <span class="font-weight-light display-1" style="color: #EEE8AA;">New Year!</span>
       </div>
     </v-row>
 
