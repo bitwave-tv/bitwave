@@ -542,7 +542,9 @@
               break;
             case 'w':
             case 'whisper':
-              this.socket.emit( 'whisper', msg );
+              // this.socket.emit( 'whisper', msg );
+              msg.message = msg.message.replace( '/w', '!w' );
+              this.socket.emit( 'message', msg );
               break;
           }
         } else {
