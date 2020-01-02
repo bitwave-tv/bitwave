@@ -82,12 +82,6 @@
         this.showHero = false;
       },
     },
-
-    computed: {},
-
-    mounted() {
-      this.start();
-    },
   };
 </script>
 
