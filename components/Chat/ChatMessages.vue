@@ -7,25 +7,38 @@
       id="chat-scroll"
       ref="scroller"
     >
-      <chat-message
-        v-for="(msg, index) in messages"
-        :key="index"
-        :kkey="msg.timestamp"
-        :username="msg.username"
-        :display-name="msg.username"
-        :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
-        :channel="msg.channel"
-        :timestamp="getTime(msg.timestamp)"
-        :avatar="msg.avatar"
-        :color="msg.color"
-        :global="getGlobalTag( msg.global )"
-        @reply="addUserTag"
-      >
+      <template v-for="(msg, index) in messages">
+        <chat-message
+          v-if="msg.username !== ( index && messages[ index - 1 ].username )"
+          :key="index"
+          :kkey="msg.timestamp"
+          :username="msg.username"
+          :display-name="msg.username"
+          :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
+          :channel="msg.channel"
+          :timestamp="getTime( msg.timestamp )"
+          :avatar="msg.avatar"
+          :color="msg.color"
+          :global="getGlobalTag( msg.global )"
+          @reply="addUserTag"
+        >
+          <div
+            class="body-2 msg"
+            v-html="msg.message"
+          ></div>
+        </chat-message>
+
+        <!-- Append messages -->
         <div
-          class="body-2 msg"
-          v-html="msg.message"
-        ></div>
-      </chat-message>
+          v-else
+          class="msg append pt-1 ml-3 mr-1"
+        >
+          <div
+            class="body-2 msg"
+            v-html="msg.message"
+          ></div>
+        </div>
+      </template>
     </div>
 
     <!-- FAB for Scroll Down -->
@@ -181,6 +194,10 @@
 
     .msg {
       line-height: 1.5;
+
+      &.append {
+        padding-left: 40px;
+      }
     }
 
     .stb-fab {

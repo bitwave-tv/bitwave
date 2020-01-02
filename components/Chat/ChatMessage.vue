@@ -1,5 +1,5 @@
 <template functional>
-  <div class="msg d-flex py-1 ml-3 mr-1">
+  <div class="msg d-flex pt-1 ml-3 mr-1">
 
     <!-- Chat Avatar -->
     <div
