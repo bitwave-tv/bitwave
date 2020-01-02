@@ -119,6 +119,13 @@
   import { Chat } from '@/store/chat';
   import { VStore } from '@/store';
 
+  import { spamDetection } from '@/assets/js/ChatHelpers';
+
+  import {
+    sanitize,
+    stripHTML
+  } from '@/assets/js/ChatHelpers';
+
   let trollInitialized = false;
   let trollDataError = null;
   let trollDataWaiters = [];
@@ -134,66 +141,6 @@
     [ 'PROD', 'chat.bitwave.tv' ],
   ]);
 
-  // simple word filters for TTS
-  const sanitizer = [
-    { pattern: /n+[ei]+g+[e|a]+r*/i, clean: 'funny word' },
-    { pattern: /f+[aeiou]+g+o+t+/i, clean: 'muddah' },
-    { pattern: /f+[ae]+g+/i, clean: 'faddah' },
-  ];
-
-  // Spam reduction for TTS
-  const editDistance = ( s1, s2 ) => {
-    s1 = s1.toLowerCase();
-    s2 = s2.toLowerCase();
-    let costs = [];
-    for (let i = 0; i <= s1.length; i++) {
-      let lastValue = i;
-      for (let j = 0; j <= s2.length; j++) {
-        if (i === 0) costs[j] = j;
-        else {
-          if (j > 0) {
-            let newValue = costs[j - 1];
-            if (s1.charAt(i - 1) !== s2.charAt(j - 1))
-              newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-            costs[j - 1] = lastValue;
-            lastValue = newValue;
-          }
-        }
-      }
-      if (i > 0) costs[s2.length] = lastValue;
-    }
-    return costs[s2.length];
-  };
-  const similarity = ( s1, s2 ) => {
-    let longer = s1, shorter = s2;
-    if ( s1.length < s2.length ) {
-      longer = s2;
-      shorter = s1;
-    }
-    const lg = longer.length;
-    if ( lg === 0 ) return 1.0;
-    return ( lg - editDistance( longer, shorter ) ) / parseFloat( lg  );
-  };
-  let history = ['','','','',''];
-  const spamCheck = message => {
-    if ( message.length < 20 ) return false;
-    if ( message.length > 200 ) message = message.substring( 0, 150 );
-    message = message.replace(/\W/g, '');
-    let similar = false;
-    for ( let i = 0; i < 5; i++ ) {
-      const s = similarity( message, history[i] );
-      if ( s > threshold ) {
-        similar = true;
-        break;
-      }
-    }
-    history.push( message );
-    history = history.splice( -5 );
-    return similar;
-  };
-
-  // Spam detection threshold
-  const threshold = 0.85;
 
   export default {
     name: 'Chat',
@@ -664,26 +611,16 @@
         if ( this.ignoreList.find( user => user === username ) ) return; // Don't read ignored users
         if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return;         // disables troll TTS
 
-        const unescapeHtml = unsafe => {
-          return unsafe
-            .replace( /&amp;/g,  `&` )
-            .replace( /&lt;/g,   `<` )
-            .replace( /&gt;/g,   `>` )
-            .replace( /&quot;/g, `"` )
-            .replace( /&#39;/g,  `'` )
-        };
-        message = unescapeHtml( message ); // Fixes escaped characters
-        message = message.replace( /<\/?[^>]*>/g, '' );  // Remove html tags
-        message = message.replace( /((https?:\/\/)|(www\.))[^\s]+/gi, '' );  // Remove Links
+        // Remove HTML related strings & links
+        message = stripHTML( message );
 
         if ( this.cleanTTS ) {
-          if ( spamCheck( message ) ) {
-            console.log( 'Spam detected, auto skipping' );
+          const spam = spamDetection( message );
+          if ( spam ) {
+            console.log( 'Spam detected, skipping TTS.' );
             return;
           }
-          sanitizer.forEach( filter => message = message.replace( filter.pattern, filter.clean ) );
-          message = message.replace(/[\ud800-\udfff]/g, "");
-          console.log( message );
+          message = sanitize( message );
         }
 
         const voice = new SpeechSynthesisUtterance();
@@ -693,7 +630,7 @@
         voice.pitch = pitch;
         voice.text  = message;
 
-        voice.onend = e => console.log( `TTS Finished in ${e.elapsedTime} seconds.`, e );
+        voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
 
         speechSynthesis.speak(voice);
       },
@@ -736,19 +673,22 @@
       async endPoll ( pollId ) {
         // this.socket.emit('endpoll', this.pollData);
         // tell server to update poll and transfer data to client
-
-        const pollDocRef = db.collection( 'polls' ).doc( this.pollData.id );
-        await pollDocRef.update( {
-          'endsAt':  new Date( Date.now() ),
-          options: this.pollData.options,
-        });
+        await db
+          .collection( 'polls' )
+          .doc( this.pollData.id )
+          .update( {
+            'endsAt':  new Date( Date.now() ),
+            options: this.pollData.options,
+          });
       },
 
 
       // Delete and hide poll
       async destroyPoll ( pollId ) {
-        const pollRef = db.collection( 'polls' ).doc( pollId );
-        await pollRef.update( { 'display': false, 'options': null } );
+        await db
+          .collection( 'polls' )
+          .doc( pollId )
+          .update( { 'display': false, 'options': null } );
       },
 
       async updatePoll ( data ) {
