@@ -391,59 +391,29 @@
           return;
         }
 
-        // Filter by channel
-        if ( !this.global && !this.forceGlobal ) {
-          data = data.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
-        }
+        data = size > this.chatLimit
+          ? data.splice( -this.chatLimit )
+          : data;
 
-        this.messages = size > 2 * this.chatLimit ? data.splice( -this.chatLimit ) : data;
-
-        // re-highlight username mentions on hydration
-        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
-        this.messages.forEach( msg => {
-          msg.message = msg.message.replace( pattern, `<span class="highlight">$&</span>` );
-        });
+        this.messages = data.filter( message => !this.filterMessage( message ) );
 
         // Scroll after hydration
-        await this.$nextTick( async () => {
-          if ( this.$refs['chatmessages'] )
-            this.$refs['chatmessages'].jumpToBottom();
-          else
-            console.warn('Failed to find chat container after hydration');
+        this.$nextTick( async () => {
+          if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
+          else console.warn('Failed to find chat container after hydration');
         });
       },
 
       async rcvMessageBulk ( messages ) {
-        // Remove ignored user messages
-        if ( this.useIgnore ) {
-          messages = messages.filter( el => !this.ignoreList.includes( el.username.toLowerCase() ) );
-        }
-
-        if ( this.hideTrolls ) messages = messages.filter( el => !el.username.startsWith( 'troll:' ) );
-
-        // Ignore channel messages
-        messages = messages.filter ( el => {
-          // Do not ignore a channel we are in
-          const list = this.ignoreChannelList.filter( channel => channel.toLowerCase() !== this.page.toLowerCase() );
-          return !list.includes( el.channel.toLowerCase() );
-        });
-
-        // Filter by channel
-        if ( !this.global && !this.forceGlobal ) {
-          messages = messages.filter( el => ( el.channel.toLowerCase() === this.page.toLowerCase() || el.channel.toLowerCase() === this.username.toLowerCase() ) );
-        }
-
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         messages.forEach( el => {
+          const filterMsg = this.filterMessage( el );
+          if ( filterMsg ) return;
+
           // Notification Sounds
           if ( this.notify ) {
-            if ( pattern.test( el.message ) ) {
-              this.sound.play().then();
-            }
+            if ( pattern.test( el.message ) ) this.sound.play().then();
           }
-
-          // Highlight username tags in new messages
-          el.message = el.message.replace( pattern, `<span class="highlight">$&</span>` );
 
           // For Text to Speech
           const currentChat = el.channel.toLowerCase() === this.username.toLowerCase();
@@ -463,6 +433,35 @@
         }
 
         this.scrollToBottom();
+      },
+
+      filterMessage ( message ) {
+
+        // Remove ignored user messages
+        if ( this.useIgnore && this.ignoreList.includes( message.username.toLowerCase() ) ) return true;
+
+        // Do not ignore a channel we are in
+        const ignoreChannellist = this.ignoreChannelList.filter( channel => channel.toLowerCase() !== this.page.toLowerCase() );
+
+        // Remove ignored channel messages
+        if ( ignoreChannellist.includes( message.channel.toLowerCase() ) ) return true;
+
+        // Remove trolls
+        if ( this.hideTrolls && message.username.startsWith( 'troll:' ) ) return true;
+
+        // Local / Global filter
+        if ( !this.global && !this.forceGlobal ) {
+          const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
+          const myChannel   = message.channel.toLowerCase() === this.page.toLowerCase();
+          // if the message is NOT in the current channel AND NOT in our channel
+          if ( !currChannel && !myChannel ) return true;
+        }
+
+        // Add username highlighting
+        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+        message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
+
+        return false
       },
 
       async sendMessage () {
@@ -617,8 +616,7 @@
         message = stripHTML( message );
 
         if ( this.cleanTTS ) {
-          const spam = spamDetection( message );
-          if ( spam ) {
+          if ( spamDetection( message ) ) {
             console.log( 'Spam detected, skipping TTS.' );
             return;
           }
@@ -634,7 +632,7 @@
 
         voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
 
-        speechSynthesis.speak(voice);
+        speechSynthesis.speak( voice );
       },
 
 
