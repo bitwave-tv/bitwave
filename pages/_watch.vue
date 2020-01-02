@@ -249,11 +249,13 @@
 
       getStreamData () {
         const streamer  = this.name.toLowerCase();
-        const streamRef = db.collection( 'streams' ).doc( streamer );
-        this.streamDataListener = streamRef.onSnapshot(
-          async doc => await this.streamDataChanged( doc.data() ),
-          error => console.warn( error )
-        );
+        this.streamDataListener = db
+          .collection( 'streams' )
+          .doc( streamer )
+          .onSnapshot(
+            async doc => await this.streamDataChanged( doc.data() ),
+            error => console.warn( error )
+          );
       },
 
       async streamDataChanged ( data ) {
