@@ -21,6 +21,19 @@ const validDOMElement = testObject => {
   }
 };
 
+const getCanvas = canvas => {
+  if ( !canvas )
+    return document.getElementById( 'canvas' );
+  else if ( typeof canvas === 'string' )
+    return document.getElementById( canvas );
+  else {
+    if ( validDOMElement( canvas ) ) return canvas;
+    else {
+      throw( 'invalid DOM element for Fireworks canvas' );
+    }
+  }
+};
+
 class Fireworks {
   constructor( canvas, configuration ) {
     // === CONFIGURATION ===
@@ -80,18 +93,7 @@ class Fireworks {
 
     // === END CONFIGURATION ===
 
-    this.canvas = (canvas => {
-      if ( !canvas )
-        return document.getElementById( 'canvas' );
-      else if ( typeof canvas === 'string' )
-        return document.getElementById( canvas );
-      else {
-        if ( validDOMElement( canvas ) ) return canvas;
-        else {
-          throw( 'invalid DOM element for Fireworks canvas' );
-        }
-      }
-    })(canvas);
+    this.canvas = getCanvas( canvas );
 
     // TODO: don't override the canvas size
     this.canvas.width  = window.innerWidth;

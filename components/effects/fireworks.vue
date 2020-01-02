@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { Fireworks } from '@/assets/js/Fireworks';
+  import { Fireworks } from '@/assets/js/effects/Fireworks';
 
   let fireworks = null;
 
