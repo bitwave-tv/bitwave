@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
 
-    <!-- Christmas Banner -->
+    <!-- Site Banner -->
     <v-row class="justify-center">
       <div class="d-flex align-center">
         <v-img
@@ -11,8 +11,7 @@
           width="80"
           contain
         />
-        <span class="font-weight-light display-1 white--text mx-2">Happy</span>
-        <span class="font-weight-light display-1" style="color: #EEE8AA;">New Year!</span>
+        <span class="font-weight-light display-1 white--text text-center mx-2">Freedom of Expression</span>
       </div>
     </v-row>
 
