@@ -19,8 +19,8 @@
           show: showHero
         }"
       >
-        <div class="display-4 mb-5">Happy New Year!</div>
-        <div class="display-3 font-weight-thin">from [bitwave.tv]</div>
+        <div class="display-2 mb-5">dlive is the future</div>
+        <div class="display-1 font-weight-thin">[bitwave.tv]</div>
       </div>
     </div>
 </template>
@@ -38,6 +38,7 @@
         darken: false,
         showCanvas: false,
         showHero: false,
+        heroDelay: 2.5,
         duration: 10,
         transitionDuration: 0.5,
       };
@@ -56,7 +57,7 @@
 
       async beginLoop () {
         setTimeout( () => this.fadeIn(), this.transitionDuration * 1000 );
-        setTimeout( () => this.showMessage(), this.duration / 2 * 1000 );
+        setTimeout( () => this.showMessage(), this.heroDelay * 1000 );
         setTimeout( () => this.fadeOut(), ( this.duration - this.transitionDuration ) * 1000 );
         await fireworks.start( this.duration * 1000 );
         this.onEnd();
@@ -77,9 +78,9 @@
 
       onEnd () {
         console.log( 'Ending Fireworks' );
-
         this.darken   = false;
         this.showHero = false;
+        this.showCanvas = false;
       },
     },
   };

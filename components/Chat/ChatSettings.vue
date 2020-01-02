@@ -23,7 +23,7 @@
         <div class="flex-grow-1">
           <v-switch
             v-model="globalChat"
-            :label="`${ globalChat ? 'Global' : 'Local' } Chat`"
+            label="Global Chat"
             color="yellow"
             hide-details
             dense
