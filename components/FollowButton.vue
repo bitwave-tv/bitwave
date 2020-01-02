@@ -1,16 +1,23 @@
 <template>
   <div>
     <v-btn
+      v-if="isAuth"
       small
       class="black--text"
       :outlined="following || !streamerId"
-      :loading="loading"
+      :loading="loading || disabled"
       :disabled="!isAuth"
       color="yellow"
       @click="onFollowClick"
     >
-      {{ following ? `Following (${followCount})` : `Follow (${followCount})` }}
+      {{ following ? `following (${followCount})` : `follow (${followCount})` }}
     </v-btn>
+    <div
+      v-else
+      class="body-2 yellow--text text-uppercase"
+    >
+      {{ `${followCount} Followers` }}
+    </div>
   </div>
 </template>
 
@@ -65,6 +72,10 @@
 
       async onFollowClick () {
         if ( this.disabled ) return false;
+
+        console.log( 'Button enabled' );
+        this.disabled = true;
+
         if ( !this.following ) {
           await this.follow();
         } else {
@@ -73,30 +84,34 @@
       },
 
       async follow () {
-
-        // Analytics
-        this.$ga.event({
-          eventCategory : 'follow',
-          eventAction   : 'follow',
-        });
+        console.log( 'follow' );
 
         // Update followers
-        if ( this.user.uid && !this.disabled ) {
+        if ( this.user.uid ) {
           // Verify state
-          if ( await this.checkIfFollowing( this.user.uid ) ) return;
+          if ( await this.checkIfFollowing( this.user.uid ) ) {
+            this.following = true;
+            this.disabled = false;
+            return;
+          }
 
           // Update
-          this.disabled = true;
           const batch = db.batch();
 
-          const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
+          const followerRef = db
+            .collection( 'followers' )
+            .doc( `${this.user.uid}_${this.streamerId}` );
+
           batch.set(followerRef, {
             streamerId: this.streamerId,
-            timestamp: new Date(Date .now() ),
+            timestamp: new Date(),
             viewerId: this.user.uid,
           });
 
-          const streamerRef = db.collection( 'followers' ).doc( `${this.streamerId}` );
+          const streamerRef = db
+            .collection( 'followers' )
+            .doc( `${this.streamerId}` );
+
           batch.set( streamerRef, { 'followers': FieldValue.increment(1) }, { merge: true } );
 
           await batch.commit();
@@ -104,30 +119,43 @@
           await this.getFollowCount();
         }
 
-        this.following = true;
-        setTimeout( () => this.disabled = false, 1500 );
-      },
-
-      async unfollow () {
         // Analytics
         this.$ga.event({
           eventCategory : 'follow',
-          eventAction   : 'unfollow',
+          eventAction   : 'follow',
         });
 
+        setTimeout( () => {
+          this.following = true;
+          this.disabled = false;
+        }, 500 );
+      },
+
+      async unfollow () {
+        console.log( 'unfollow' );
+
         // Update followers
-        if ( this.user.uid && !this.disabled ) {
+        if ( this.user.uid ) {
           // Verify state
-          if ( ! await this.checkIfFollowing( this.user.uid ) ) return;
+          if ( ! ( await this.checkIfFollowing( this.user.uid ) ) ) {
+            this.following = false;
+            this.disabled = false;
+            return;
+          }
 
           // Update
-          this.disabled = true;
           const batch = db.batch();
 
-          const followerRef = db.collection( 'followers' ).doc( `${this.user.uid}_${this.streamerId}` );
+          const followerRef = db
+            .collection( 'followers' )
+            .doc( `${this.user.uid}_${this.streamerId}` );
+
           batch.delete( followerRef );
 
-          const streamerRef = db.collection( 'followers' ).doc( `${this.streamerId}` );
+          const streamerRef = db
+            .collection( 'followers' )
+            .doc( `${this.streamerId}` );
+
           batch.set( streamerRef, { 'followers': FieldValue.increment(-1) }, { merge: true } );
 
           await batch.commit();
@@ -135,8 +163,16 @@
           await this.getFollowCount();
         }
 
-        this.following = false;
-        setTimeout( () => this.disabled = false, 1500 );
+        // Analytics
+        this.$ga.event({
+          eventCategory : 'follow',
+          eventAction   : 'unfollow',
+        });
+
+        setTimeout( () => {
+          this.following = false;
+          this.disabled = false;
+        }, 500 );
       },
     },
 
