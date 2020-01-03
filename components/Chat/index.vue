@@ -85,6 +85,13 @@
       </v-slide-x-reverse-transition>
     </v-flex>
 
+    <v-slide-x-reverse-transition>
+      <chat-rate
+        v-if="statInterval !== null"
+        :chat-stats="chatStats"
+      />
+    </v-slide-x-reverse-transition>
+
     <!-- Chat Messages -->
     <chat-messages
       ref="chatmessages"
@@ -116,6 +123,8 @@
   import ChatPoll from '@/components/Chat/ChatPoll'
   import ChatPollVote from '@/components/Chat/ChatPollVote'
   import ViewerList from '@/components/Chat/ViewerList'
+
+  const ChatRate = async () => await import ( '@/components/Chat/ChatRate' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import { Chat } from '@/store/chat';
@@ -158,6 +167,7 @@
       ChatPoll,
       ChatPollVote,
       ViewerList,
+      ChatRate,
     },
 
     data() {
@@ -219,6 +229,18 @@
         willBeDestroyed: false,
         hideTrolls: false,
         cleanTTS: false,
+
+        statInterval: null,
+        newMessageCount: 0,
+        messageCount: 0,
+        chatStats: {
+          value: [1,1],
+          current: 0,
+          min: 0,
+          max: 0,
+          average: 0,
+          total: 0,
+        },
       }
     },
 
@@ -409,6 +431,9 @@
 
           // Add message to list
           this.messages.push( el );
+
+          // Track message count
+          this.newMessageCount++;
         });
 
         if ( this.$refs['chatmessages'] ) {
@@ -449,6 +474,27 @@
         message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
 
         return false
+      },
+
+      onStatTick () {
+        // calc stats
+        const calcStats = ( newVal ) => {
+          if ( newVal === null ) return;
+          this.chatStats.value.push( newVal );
+          const val = this.chatStats.value.splice( -120 );
+          return {
+            value: val,
+            current: newVal,
+            min: Math.min(newVal, this.chatStats.min),
+            max: Math.max(newVal, this.chatStats.max),
+            average: val.reduce((a, b) => a + b) / val.length,
+            total: this.chatStats.total += newVal,
+          };
+        };
+
+        this.chatStats = calcStats( this.newMessageCount );
+
+        this.newMessageCount = 0;
       },
 
       async sendMessage () {
@@ -513,6 +559,15 @@
             case 'cleantts':
               this.cleanTTS = !this.cleanTTS;
               await this.insertMessage( `Clean TTS: ${this.cleanTTS}` );
+              break;
+            case 'graph':
+            case 'stats':
+              if ( !this.statInterval )
+                this.statInterval = setInterval( () => this.onStatTick(), 1 * 1000 );
+              else {
+                clearInterval( this.statInterval );
+                this.statInterval = null;
+              }
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
