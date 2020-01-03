@@ -231,8 +231,9 @@
         cleanTTS: false,
 
         statInterval: null,
+        longStatRate: 10,
+        statTickCount: 0,
         newMessageCount: 0,
-        messageCount: 0,
         chatStats: {
           value: [1,1],
           current: 0,
@@ -433,7 +434,9 @@
           this.messages.push( el );
 
           // Track message count
-          if ( this.statInterval ) this.newMessageCount++;
+          if ( this.statInterval ) {
+            this.newMessageCount++;
+          }
         });
 
         if ( this.$refs['chatmessages'] ) {
@@ -477,24 +480,36 @@
       },
 
       onStatTick () {
-        // calc stats
-        const calcStats = ( newVal ) => {
-          if ( newVal === null ) return;
-          this.chatStats.value.push( newVal );
-          const val = this.chatStats.value.splice( -120 );
-          return {
-            value: val,
-            current: newVal,
-            min: Math.min(newVal, this.chatStats.min),
-            max: Math.max(newVal, this.chatStats.max),
-            average: val.reduce((a, b) => a + b) / val.length,
-            total: this.chatStats.total += newVal,
+        this.statTickCount++;
+
+        // Long rate stat updates
+        if ( this.statTickCount > this.longStatRate ) {
+          // calc stats
+          const calcStats = ( newVal ) => {
+            if ( newVal === null ) return;
+            this.chatStats.value.push( newVal );
+            const val = this.chatStats.value.splice( -120 );
+            return {
+              value: val,
+              current: newVal,
+              min: val.reduce((a, b) => Math.min(a, b)), // find smallest
+              max: val.reduce((a, b) => Math.max(a, b)), // Math.max(newVal, this.chatStats.max),
+              average: val.reduce((a, b) => a + b) / val.length,
+              total: this.chatStats.total += newVal,
+            };
           };
-        };
 
-        this.chatStats = calcStats( this.newMessageCount );
+          this.chatStats = calcStats( this.newMessageCount );
+          this.chatStats.value.push( 0 );
 
-        this.newMessageCount = 0;
+          this.newMessageCount = 0;
+          this.statTickCount = 0;
+        }
+        // Short rate stat update
+        else {
+          this.chatStats.value.splice( this.chatStats.value.length - 1, 1, this.newMessageCount );
+          this.chatStats.current = this.newMessageCount;
+        }
       },
 
       async sendMessage () {
@@ -568,6 +583,7 @@
                 clearInterval( this.statInterval );
                 this.statInterval = null;
                 this.newMessageCount = 0;
+                this.statTickCount = 0;
               }
               break;
             case 'ignorelist':

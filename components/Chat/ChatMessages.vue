@@ -84,6 +84,7 @@
         scrollTimeout: null,
         onScrollTimer: null,
         showFAB: false,
+        scrolling: false,
       }
     },
 
@@ -109,6 +110,7 @@
         }
 
         this.showFAB = false;
+        this.scrolling = true;
 
         // Scroll to last message
         // After it's added to DOM
@@ -122,10 +124,12 @@
 
           this.scrollTimeout = setTimeout( () => {
             this.$nextTick( () => {
-              this.chatContainer.scroll({
+              /*this.chatContainer.scroll({
                 top: this.chatContainer.scrollHeight + 500,
                 behavior: 'smooth',
-              });
+              });*/
+              this.jumpToBottom();
+              this.scrolling = false;
             });
           }, 500 );
         });
@@ -144,7 +148,11 @@
       },
 
       onScrollUp ( scrollPosition ) {
-        this.showFAB = true;
+        if ( !this.scrolling ) {
+          this.showFAB = true;
+        } else {
+          // console.log( `Scroll up detected but ignored because we are currently scrolling.` );
+        }
       },
 
       onScrollDown ( scrollPosition ) {
@@ -155,22 +163,33 @@
 
       onScroll ( event ) {
         if ( !this.onScrollTimer ) {
-          const scrollStart = this.chatContainer.scrollTop;
+          const scrollStart  = this.chatContainer.scrollTop;
+          const scrollHStart = this.chatContainer.scrollHeight;
           this.onScrollTimer = setTimeout( () => {
-            const scrollPosition = this.chatContainer.scrollTop;
+            let scrollPosition  = this.chatContainer.scrollTop;
+            const scrollHPosition = this.chatContainer.scrollHeight;
+
+            const scrollHDiff = scrollHPosition - scrollHStart;
+
+            // console.log( `${scrollHStart}|${scrollHPosition} Diff: ${scrollHDiff}` );
+
+            // Account for changes in scroll height
+            scrollPosition -= scrollHDiff;
 
             // Scrolled up
             if ( scrollStart > scrollPosition ) {
+              // console.log( `UP: ${scrollStart} - ${scrollPosition} Diff: ${scrollPosition - scrollStart}` );
               this.onScrollUp();
             }
 
             // Scrolled down
-            else if ( scrollStart < scrollPosition ) {
+            else if ( scrollStart <= scrollPosition ) {
+              // console.log( `DOWN: ${scrollStart} - ${scrollPosition} Diff: ${scrollPosition - scrollStart}` );
               this.onScrollDown( scrollPosition );
             }
 
             this.onScrollTimer = null;
-          }, 200 );
+          }, 250 );
         }
       },
     },
@@ -205,6 +224,7 @@
       right: 0;
       left: 0;
       top: 0;
+      z-index: 3;
     }
   }
 

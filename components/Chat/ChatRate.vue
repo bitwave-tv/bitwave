@@ -1,6 +1,9 @@
 <template>
     <div id="chat-rate">
       <div class="graph">
+        <div class="chart-val grey--text text-weight-thin overline text-center my-2">
+          messages per 10 second interval
+        </div>
         <v-sparkline
           :value="chatStats.value"
           :gradient="gradient"
@@ -9,7 +12,6 @@
           :line-width="width"
           :stroke-linecap="lineCap"
           :gradient-direction="gradientDirection"
-          :fill="fill"
           :type="type"
           :auto-line-width="autoLineWidth"
           :auto-draw="autoDraw"
@@ -17,11 +19,6 @@
         <div class="chart-val white--text text-weight-thin body-1 text-center my-2">
           {{ this.stats }}
         </div>
-        <!--<v-sheet tile class="mt-1" color="grey darken-4">
-          <div class="chart-val white&#45;&#45;text text-weight-thin body-1 text-center">
-            {{ this.stats }}
-          </div>
-        </v-sheet>-->
       </div>
     </div>
 </template>
@@ -33,7 +30,7 @@
     ['red', 'orange', 'yellow'],
     ['purple', 'violet'],
     ['#00c6ff', '#F0F', '#FF0'],
-    ['#f72047', '#ffd200', 'blue'],
+    ['#f72047', 'orange', '#ffd200', '#03a9f4', 'blue'],
   ];
 
   export default {
@@ -47,11 +44,10 @@
     data() {
       return {
         width: 2,
-        radius: 10,
-        padding: 0,
+        radius: 5,
+        padding: 5,
         lineCap: 'round',
         gradient: gradients[5],
-        value: [],
         gradientDirection: 'top',
         gradients,
         fill: false,
@@ -79,6 +75,7 @@
 <style lang='scss'>
   #chat-rate {
     position: relative;
+    pointer-events: none;
 
     .graph {
       background: rgba(0,0,0,.85);
@@ -86,15 +83,11 @@
       top: 0;
       left: 0;
       right: 0;
-      z-index: 3;
+      z-index: 2;
     }
 
     .chart-val {
-      /*position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;*/
-      z-index: 4;
+      z-index: 2;
     }
   }
 </style>
