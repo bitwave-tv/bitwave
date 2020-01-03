@@ -433,7 +433,7 @@
           this.messages.push( el );
 
           // Track message count
-          this.newMessageCount++;
+          if ( this.statInterval ) this.newMessageCount++;
         });
 
         if ( this.$refs['chatmessages'] ) {
@@ -567,6 +567,7 @@
               else {
                 clearInterval( this.statInterval );
                 this.statInterval = null;
+                this.newMessageCount = 0;
               }
               break;
             case 'ignorelist':
