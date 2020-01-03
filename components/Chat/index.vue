@@ -31,6 +31,7 @@
           <v-menu
             v-model="showPoll"
             :close-on-content-click="false"
+            :close-on-click="false"
             bottom
             offset-y
             left
@@ -71,16 +72,17 @@
     </v-sheet>
 
     <!-- Show Poll to Users -->
-    <v-flex id="user-chat-poll">
-      <chat-poll-vote
-        v-if="showPollClient"
-        :poll-data="pollData"
-        :is-owner="pollData.owner === ( user ? user.uid : null )"
-        @vote="votePoll"
-        @end="endPoll"
-        @destroy="destroyPoll"
-      />
-
+    <v-flex id="user-chat-poll" style="position: relative;">
+      <v-slide-x-reverse-transition>
+        <chat-poll-vote
+          v-if="showPollClient"
+          :poll-data="pollData"
+          :is-owner="pollData.owner === ( user ? user.uid : null )"
+          @vote="votePoll"
+          @end="endPoll"
+          @destroy="destroyPoll"
+        />
+      </v-slide-x-reverse-transition>
     </v-flex>
 
     <!-- Chat Messages -->
@@ -202,14 +204,14 @@
           channel: '',
           display: false,
           endsAt: 0,
-          id: '',
+          id: null,
           options: [
             { label:'', votes: 0 },
             { label:'', votes: 0 },
           ],
           owner: '',
           title: '',
-          voters: 0,
+          voteCount: 0,
         },
 
         sound: process.server ? null : new Audio(),
@@ -223,6 +225,13 @@
     methods: {
       async onResize () {
         await this.$nextTick( async () => await this.scrollToBottom( false ) );
+      },
+
+      async scrollToBottom ( force ) {
+        if ( this.$refs['chatmessages'] )
+          this.$refs['chatmessages'].scrollToBottom( force );
+        else
+          console.warn('Could not find scroll container for chat.');
       },
 
       async addUserTag ( user ) {
@@ -290,30 +299,6 @@
         });
       },
 
-      subscribeToPoll ( channel ) {
-        channel = channel.toLowerCase();
-        const pollDocRef = db.collection( 'polls' ).where( 'channel', '==', channel ).limit( 1 );
-        this.unsubscribePoll = pollDocRef.onSnapshot( result => {
-          if ( result.empty ) return;
-
-          const doc = result.docs[0];
-
-          this.pollData = doc.data();
-          this.pollData.id = doc.id;
-
-          this.showPollClient = this.pollData.display;
-
-          this.onResize(); // Scroll to bottom when showing / hiding polls
-        });
-      },
-
-      async scrollToBottom ( force ) {
-        if ( this.$refs['chatmessages'] )
-          this.$refs['chatmessages'].scrollToBottom( force );
-        else
-          console.warn('Could not find scroll container for chat.');
-      },
-
       async connectChat ( tokenUser ) {
         // Remove event listeners and disconnect
         if ( this.socket ) {
@@ -377,7 +362,9 @@
       },
 
       async hydrate ( data ) {
-        await this.socket.emit( 'hydratepoll', this.pollData.id );
+        if ( this.pollData.id ) {
+          await this.socket.emit( 'hydratepoll', this.pollData.id );
+        }
 
         if ( !data ) {
           this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000, position: 'top-right' } );
@@ -638,15 +625,38 @@
 
       // POLL FUNCTIONS -> SOCKET
       //-------------------------
+      subscribeToPoll ( channel ) {
+        this.unsubscribePoll = db
+          .collection( 'polls' )
+          .where( 'channel', '==', channel.toLowerCase() )
+          .limit( 1 )
+          .onSnapshot( async result => {
+            if ( result.empty ) return;
+
+            const doc = result.docs[0];
+
+            this.pollData = doc.data();
+            this.pollData.id = doc.id;
+
+            this.showPollClient = this.pollData.display;
+
+            this.onResize(); // Scroll to bottom when showing / hiding polls
+          });
+      },
+
       async createPoll ( poll ) {
         if ( this.pollData.id ) {
-          const pollDocRef = db.collection( 'polls' ).doc( this.pollData.id );
+          const pollDocRef = db
+            .collection( 'polls' )
+            .doc( this.pollData.id );
           const data = {
             display: true,
             endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
             trollVotes: poll.allowTrollVotes,
             options: poll.options,
             title: poll.title,
+            resultsSaved: false,
+            voteCount: 0,
           };
           await pollDocRef.update( data );
         } else {
@@ -658,8 +668,12 @@
             options: poll.options,
             owner: this.user.uid,
             title: poll.title,
+            resultsSaved: false,
+            voteCount: 0,
           };
-          this.pollData.id = await db.collection( 'polls' ).add( data );
+          this.pollData.id = await db
+            .collection( 'polls' )
+            .add( data );
         }
       },
 
@@ -669,16 +683,25 @@
         this.socket.emit( 'votepoll', { id: this.pollData.id, vote: vote } )
       },
 
+      // Update poll with data from socket
+      async updatePoll ( data ) {
+        if ( this.pollData.id !== data.id ) return;
+        console.log( `Update Poll: `, data );
+        this.pollData.options = data.options;
+        this.pollData.voteCount  = data.voteCount;
+      },
+
       // Change end time to now to end poll instantly
-      async endPoll ( pollId ) {
-        // this.socket.emit('endpoll', this.pollData);
+      async endPoll () {
         // tell server to update poll and transfer data to client
         await db
           .collection( 'polls' )
           .doc( this.pollData.id )
           .update( {
-            'endsAt':  new Date( Date.now() ),
+            endsAt:  new Date( Date.now() ),
             options: this.pollData.options,
+            resultsSaved: true,
+            voteCount: this.pollData.voteCount,
           });
       },
 
@@ -689,11 +712,6 @@
           .collection( 'polls' )
           .doc( pollId )
           .update( { 'display': false, 'options': null } );
-      },
-
-      async updatePoll ( data ) {
-        this.pollData.options = data.options;
-        this.pollData.voters  = data.voters;
       },
 
       async ignoreUser ( username ) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <div class="d-flex poll-vote">
     <v-sheet
       color="yellow"
       width="8px"
@@ -88,14 +88,14 @@
               <div class="flex-grow-1 text-truncate" style="width: 0;">{{ val.label }}</div>
 
               <div class="flex-shrink-0 mr-2">
-                {{ Math.round( val.votes / ( pollData.voters || 1 ) * 100 ) }}%
+                {{ Math.round( val.votes / ( pollData.voteCount || 1 ) * 100 ) }}%
               </div>
 
             </div>
 
             <!-- Progress bar -->
             <v-progress-linear
-              :value="val.votes / ( pollData.voters || 1 ) * 100"
+              :value="val.votes / ( pollData.voteCount || 1 ) * 100"
               color="yellow"
             />
 
@@ -152,6 +152,21 @@
     },
 
     methods: {
+      onPollTick () {
+        this.now = new Date;
+
+        // Verify we are owner and the poll has finished
+        if ( !this.isOwner || !this.showResults ) return;
+        if ( !this.pollData ) return;
+
+        // Save results if not yet saved
+        if ( !this.pollData.resultsSaved ) {
+          console.log( `Saving poll results` );
+          this.$emit( 'end' );
+          // clearInterval( this.pollInterval );
+        }
+      },
+
       vote (option) {
         this.$emit( 'vote', option );
         this.voted = true;
@@ -159,7 +174,7 @@
 
       endPoll () {
         if ( this.showResults ) return;
-        this.$emit( 'end', this.pollData.id );
+        this.$emit( 'end' );
       },
     },
 
@@ -175,19 +190,22 @@
       timeLeft () {
         let seconds = ( this.pollData.endsAt.toDate() - this.now.getTime() ) / 1000;
         // if (seconds < 0) { seconds = 0; }
-        return ( seconds / 1.8 ); // Why is this 1.8?
+        // 100% = 2 minutes
+        return ( seconds / 1.2 );
       },
 
       formattedResults () {
         this.options().map( option => {
-          return `${val.votes} (${Math.round( val.votes / ( pollData.voters || 1 ) * 100 )}%)`
+          return `${val.votes} (${Math.round( val.votes / ( pollData.voteCount || 1 ) * 100 )}%)`
         });
       },
 
     },
 
-    created() {
-      this.pollInterval = setInterval( () => this.now = new Date, 1000 * 0.5 );
+    created () {
+      this.pollInterval = setInterval( () => {
+        this.onPollTick();
+      }, 1000 * 0.5 );
     },
 
     beforeDestroy () {
@@ -204,5 +222,13 @@
       width: 0;
       overflow: hidden;
     }
+  }
+
+  .poll-vote {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
   }
 </style>
