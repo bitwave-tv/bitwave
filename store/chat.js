@@ -22,6 +22,7 @@ const $states = {
 const $getters = {
   viewerCount         : 'VIEWER_COUNT',
   getStreamViewerList : 'GET_STREAM_VIEWERLIST',
+  getChannelViewCount : 'GET_CHANNEL_VIEWCOUNT',
 };
 
 const $mutations = {
@@ -80,6 +81,20 @@ export const getters = {
   // Get stream viewer list
   [$getters.getStreamViewerList] ( state ) {
     return state[$states.streamViewerList];
+  },
+
+  // Get stream viewer list
+  [$getters.getChannelViewCount] ( state ) {
+    return channel => {
+      if ( !state[$states.streamViewerList] ) return 0;
+
+      const viewers = state[$states.streamViewerList]
+        .find( svl => svl.streamer.toLowerCase() === channel.toLowerCase() );
+
+      return viewers
+        ? viewers.viewCount
+        : 0;
+    };
   },
 };
 

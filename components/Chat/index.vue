@@ -85,12 +85,19 @@
       </v-slide-x-reverse-transition>
     </v-flex>
 
-    <v-slide-x-reverse-transition>
+    <v-slide-y-transition mode="out-in">
       <chat-rate
-        v-if="statInterval !== null"
-        :chat-stats="chatStats"
+        v-if="showChatStats"
+        :stats="chatStats"
       />
-    </v-slide-x-reverse-transition>
+    </v-slide-y-transition>
+
+    <v-slide-y-transition mode="out-in">
+      <view-rate
+        v-if="showViewStats"
+        :stats="viewStats"
+      />
+    </v-slide-y-transition>
 
     <!-- Chat Messages -->
     <chat-messages
@@ -124,7 +131,8 @@
   import ChatPollVote from '@/components/Chat/ChatPollVote'
   import ViewerList from '@/components/Chat/ViewerList'
 
-  const ChatRate = async () => await import ( '@/components/Chat/ChatRate' );
+  const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
+  const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import { Chat } from '@/store/chat';
@@ -168,6 +176,7 @@
       ChatPollVote,
       ViewerList,
       ChatRate,
+      ViewRate,
     },
 
     data() {
@@ -233,9 +242,23 @@
         statInterval: null,
         longStatRate: 10,
         statTickCount: 0,
+
         newMessageCount: 0,
+        showChatStats: false,
         chatStats: {
-          value: [1,1],
+          display: false,
+          value: [ 0 ],
+          current: 0,
+          min: 0,
+          max: 0,
+          average: 0,
+          total: 0,
+        },
+
+        viewCount: 0,
+        showViewStats: false,
+        viewStats: {
+          value: [ 0 ],
           current: 0,
           min: 0,
           max: 0,
@@ -485,22 +508,28 @@
         // Long rate stat updates
         if ( this.statTickCount > this.longStatRate ) {
           // calc stats
-          const calcStats = ( newVal ) => {
+          const calcStats = ( dataArr, newVal, oldTotal, defaultValue ) => {
             if ( newVal === null ) return;
-            this.chatStats.value.push( newVal );
-            const val = this.chatStats.value.splice( -120 );
+
+            // Record length here to prevent skewing average
+            let length = dataArr.push( newVal );
+            // Place holder for data set in short tick updates
+            dataArr.push( defaultValue );
+            // Limit to 60 data snapshots
+            const val = dataArr.splice( -120 );
+
             return {
               value: val,
               current: newVal,
-              min: val.reduce((a, b) => Math.min(a, b)), // find smallest
-              max: val.reduce((a, b) => Math.max(a, b)), // Math.max(newVal, this.chatStats.max),
-              average: val.reduce((a, b) => a + b) / val.length,
-              total: this.chatStats.total += newVal,
+              min: val.reduce( ( a, b ) => Math.min( a, b ) ),
+              max: val.reduce( ( a, b ) => Math.max( a, b ) ),
+              average: val.reduce( ( a, b ) => a + b ) / length,
+              total: oldTotal + newVal,
             };
           };
 
-          this.chatStats = calcStats( this.newMessageCount );
-          this.chatStats.value.push( 0 );
+          this.chatStats = calcStats( this.chatStats.value, this.newMessageCount, this.chatStats.total, 0 );
+          this.viewStats = calcStats( this.viewStats.value, this.getChannelViewCount( this.page ), this.viewStats.total, this.getChannelViewCount( this.page ) );
 
           this.newMessageCount = 0;
           this.statTickCount = 0;
@@ -508,7 +537,9 @@
         // Short rate stat update
         else {
           this.chatStats.value.splice( this.chatStats.value.length - 1, 1, this.newMessageCount );
+          this.viewStats.value.splice( this.viewStats.value.length - 1, 1, this.getChannelViewCount( this.page ) );
           this.chatStats.current = this.newMessageCount;
+          this.viewStats.current = this.getChannelViewCount( this.page );
         }
       },
 
@@ -577,14 +608,16 @@
               break;
             case 'graph':
             case 'stats':
-              if ( !this.statInterval )
-                this.statInterval = setInterval( () => this.onStatTick(), 1 * 1000 );
-              else {
-                clearInterval( this.statInterval );
-                this.statInterval = null;
-                this.newMessageCount = 0;
-                this.statTickCount = 0;
+              if ( !this.showChatStats && this.showViewStats ) {
+                this.showViewStats = false;
               }
+              this.showChatStats = !this.showChatStats;
+              break;
+            case 'views':
+              if ( !this.showViewStats && this.showChatStats ) {
+                this.showChatStats = false;
+              }
+              this.showViewStats = !this.showViewStats;
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
@@ -926,6 +959,11 @@
         getChatToken : VStore.$getters.getChatToken,
       }),
 
+      ...mapGetters( Chat.namespace, {
+        siteViewerCount: Chat.$getters.viewerCount,
+        getChannelViewCount: Chat.$getters.getChannelViewCount,
+      }),
+
       ...mapState (Chat.namespace, {
         getModeGlobal     : Chat.$states.global,
         getModeTimestamps : Chat.$states.timestamps,
@@ -1046,6 +1084,9 @@
       // Listen for new polls
       this.subscribeToPoll( this.page );
 
+      // Stat tracking interval
+      this.statInterval = setInterval( () => this.onStatTick(), 1000 );
+
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
@@ -1055,6 +1096,7 @@
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeUser )  this.unsubscribeUser();
       if ( this.unsubscribePoll )  this.unsubscribePoll();
+      if ( this.statInterval ) clearInterval( this.statInterval );
       if ( this.socket ) {
         this.socket.off();
         this.socket.disconnect();

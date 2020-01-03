@@ -5,19 +5,27 @@
           messages per 10 second interval
         </div>
         <v-sparkline
-          :value="chatStats.value"
+          :value="stats.value"
           :gradient="gradient"
           :smooth="radius || false"
           :padding="padding"
           :line-width="width"
-          :stroke-linecap="lineCap"
-          :gradient-direction="gradientDirection"
           :type="type"
-          :auto-line-width="autoLineWidth"
-          :auto-draw="autoDraw"
+          stroke-linecap="round"
+          gradient-direction="top"
         />
-        <div class="chart-val white--text text-weight-thin body-1 text-center my-2">
-          {{ this.stats }}
+        <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
+          <template v-for="( stat, index ) in dataLabels">
+            <div>
+              <span class="grey--text mr-1">{{ stat.label }}</span>
+              <span class="body-2">{{ stat.value }}</span>
+            </div>
+            <v-divider
+              v-if="index !== dataLabels.length - 1"
+              color="orange"
+              vertical
+            />
+          </template>
         </div>
       </div>
     </div>
@@ -37,8 +45,7 @@
     name: 'ChatRate',
 
     props: {
-      messageCount: { type: Number },
-      chatStats: { type: Object },
+      stats: { type: Object },
     },
 
     data() {
@@ -60,12 +67,33 @@
     methods: {},
 
     computed: {
-      stats () {
-        const total = this.chatStats.total > 1000
-          ? `${this.chatStats.total/1000}k`
-          : this.chatStats.total;
+      dataLabels () {
+        const total = this.stats.total > 1000
+          ? `${this.stats.total/1000}k`
+          : this.stats.total;
 
-        return `Current: ${this.chatStats.current} / Min: ${this.chatStats.min} / Max: ${this.chatStats.max} / Avg: ${this.chatStats.average.toFixed(1)} / Total: ${total}`;
+        return [
+          {
+            label: 'current:',
+            value: this.stats.current,
+          },
+          {
+            label: 'min:',
+            value: this.stats.min,
+          },
+          {
+            label: 'max:',
+            value: this.stats.max,
+          },
+          {
+            label: 'avg:',
+            value: this.stats.average.toFixed(1),
+          },
+          {
+            label: 'total:',
+            value: total,
+          },
+        ];
       }
     },
 
@@ -76,6 +104,7 @@
   #chat-rate {
     position: relative;
     pointer-events: none;
+    z-index: 2;
 
     .graph {
       background: rgba(0,0,0,.85);
