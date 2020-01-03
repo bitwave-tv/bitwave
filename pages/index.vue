@@ -29,6 +29,7 @@
           :name="live[0].name"
           :mobile="mobile"
           :offline="offline"
+          :chat-messages="chatMessages"
         />
 
         <!-- Live Grid -->
@@ -244,10 +245,23 @@
       try {
         const live = (await $axios.get( `https://api.bitwave.tv/api/sources/list` )).data.live;
         const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
+
+        const getChatHydration = async () => {
+          try {
+            const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages' );
+            if ( data.success ) return data.data;
+          } catch ( error ) {
+            console.log( error );
+          }
+          return [];
+        };
+        const chatMessages = await getChatHydration();
+
         return {
           streamers: data.users.filter( s => s.live ),
           live: live,
           offline: false,
+          chatMessages,
         }
       } catch ( error ) {
         console.log( error );
@@ -262,6 +276,7 @@
           streamers: [],
           live: defaultLive,
           offline: true,
+          chatMessages: [],
         }
       }
     },

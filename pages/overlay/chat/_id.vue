@@ -17,7 +17,7 @@
           indeterminate
           :size="50"
           :width="5"
-        ></v-progress-circular>
+        />
         <div class="display-1">
           Connecting to Chat...
         </div>
@@ -65,6 +65,7 @@
             </div>
           </v-sheet>
         </transition-group>
+
         <!-- Debug Info -->
         <div v-if="debug">
           <h1 class="title">[DEBUG] OBS Chat Overlay</h1>
@@ -106,6 +107,24 @@
       };
     },
 
+    async asyncData ( { $axios } ) {
+      const getChatHydration = async () => {
+        try {
+          const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages' );
+          if ( data.success ) return data.data;
+        } catch ( error ) {
+          console.log( error );
+        }
+        return [];
+      };
+
+      const chatMessages = await getChatHydration();
+
+      return {
+        chatMessages,
+      }
+    },
+
     methods: {
       subscribeToOverlay ( id ) {
         const overlayRef = db.collection( 'overlays' ).doc( id );
@@ -132,8 +151,17 @@
         };
 
         this.socket.on( 'connect', () => this.socket.emit( 'new overlay', config ) );
-        this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
+        // this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
+      },
+
+      async httpHydrate () {
+        try {
+          const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/messages' );
+          await this.hydrate( data.data );
+        } catch ( error ) {
+          console.log( error );
+        }
       },
 
       hydrate ( data ) {
@@ -196,6 +224,11 @@
 
     computed: {
 
+    },
+
+    async created () {
+      if ( this.chatMessages ) this.hydrate( this.chatMessages );
+      else await this.httpHydrate();
     },
 
     mounted () {

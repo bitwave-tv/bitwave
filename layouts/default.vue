@@ -57,9 +57,9 @@
 
     <!-- Content -->
     <v-content>
-      <v-fade-transition>
+      <v-scroll-x-reverse-transition>
         <nuxt />
-      </v-fade-transition>
+      </v-scroll-x-reverse-transition>
     </v-content>
 
     <!-- Fireworks overlay -->

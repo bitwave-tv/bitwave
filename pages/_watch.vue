@@ -59,7 +59,10 @@
       :class="{ 'chat-desktop': !mobile }"
       :style="{ maxHeight: mobile ? '390px' : '100%' }"
     >
-      <chat :chat-channel="name" />
+      <chat
+        :chat-channel="name"
+        :hydration-data="chatMessages"
+      />
     </div>
 
 
@@ -356,7 +359,19 @@
           type = 'video/mp4';
         }
 
-        return { name, avatar, title, description, poster, live, nsfw, owner, url, type, timestamp };
+        const getChatHydration = async () => {
+          try {
+            const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages' );
+            if ( data.success ) return data.data;
+          } catch ( error ) {
+            console.log( error );
+          }
+          return [];
+        };
+
+        const chatMessages = await getChatHydration();
+
+        return { name, avatar, title, description, poster, live, nsfw, owner, url, type, timestamp, chatMessages };
 
       } catch ( err ) {
         console.log( `ERROR: Failed to hydrate channel '${user}':\n`, err );

@@ -30,7 +30,10 @@
       class="d-flex flex-shrink-1"
       :style="{ width: mobile ? '100%' : '450px', 'max-height': mobile ? '500px' : '555px' }"
     >
-      <chat :chat-channel="name"/>
+      <chat
+        :chat-channel="name"
+        :hydration-data="chatMessages"
+      />
     </div>
   </v-card>
 </template>
@@ -53,6 +56,7 @@
       name    : { type: String },
       mobile  : { type: Boolean, default: false },
       offline : { type: Boolean, default: false },
+      chatMessages: { type: Array },
     },
 
     components: {

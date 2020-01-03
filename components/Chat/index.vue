@@ -167,6 +167,7 @@
     props: {
       chatChannel : { type: String },
       forceGlobal : { type: Boolean },
+      hydrationData: { type: Array },
     },
 
     components: {
@@ -373,7 +374,7 @@
 
         this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
 
-        this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
+        // this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
@@ -405,6 +406,15 @@
       async socketError ( error, reason ) {
         this.loading = true;
         this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
+      },
+
+      async httpHydrate () {
+        try {
+          const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/messages' );
+          await this.hydrate( data.data );
+        } catch ( error ) {
+          console.log( error );
+        }
       },
 
       async hydrate ( data ) {
@@ -598,7 +608,8 @@
             case 'trolls':
               this.hideTrolls = !this.hideTrolls;
               if ( this.hideTrolls ) this.messages = this.messages.filter( el => !el.username.startsWith( 'troll:' ) );
-              else if ( this.socket ) await this.socket.emit( 'hydrate' );
+              else await this.httpHydrate();
+              // else if ( this.socket ) await this.socket.emit( 'hydrate' );
               break;
             case 'crc':
             case 'cuckrockchris':
@@ -1016,9 +1027,16 @@
           this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
         } else {
           // Reconnect chat to force hydration when going into global chat
-          if ( this.socket ) await this.socket.emit( 'hydrate' );
+          // if ( this.socket ) await this.socket.emit( 'hydrate' );
+          await this.httpHydrate();
         }
       },
+    },
+
+    async created () {
+      // Hydrate chat from SSR or API
+      if ( this.hydrationData ) await this.hydrate( this.hydrationData );
+      else await this.httpHydrate();
     },
 
     async mounted () {
