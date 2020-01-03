@@ -50,7 +50,7 @@ class Sanitizer {
       .replace( /&lt;/g,   `<` )
       .replace( /&gt;/g,   `>` )
       .replace( /&quot;/g, `"` )
-      .replace( /&_39;/g,  `'` )
+      .replace( /&#39;/g,  `'` )
   }
 
   stripHTML ( message ) {

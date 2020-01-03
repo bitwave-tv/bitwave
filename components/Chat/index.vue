@@ -157,7 +157,7 @@
   // Creates server map for switching chat servers
   const chatServers = new Map([
     [ 'DEV',  'localhost:5000'  ],
-    [ 'PROD', 'chat.bitwave.tv' ],
+    [ 'PROD', 'https://chat.bitwave.tv' ],
   ]);
 
 
