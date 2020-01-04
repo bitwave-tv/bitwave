@@ -50,7 +50,7 @@
   import StreamCard from '@/components/StreamCard';
   import { db } from '@/plugins/firebase';
   import { mapGetters } from 'vuex';
-  import { Chat } from '@/store/chat';
+  import { VStore } from '@/store';
 
   export default {
     name: 'StreamGrid',
@@ -109,14 +109,13 @@
     },
 
     computed: {
-      ...mapGetters(Chat.namespace, {
-        streamViewerList: Chat.$getters.getStreamViewerList,
+      ...mapGetters({
+        getChannelViews: VStore.$getters.getChannelViews,
       }),
 
       streamerList () {
         const streams = this.streams.map( stream => {
-          const streamViewList = this.streamViewerList.find( svl => svl.streamer.toLowerCase() === stream.name.toLowerCase() );
-          return { ...stream, viewCount: streamViewList ? streamViewList.viewCount : 0 };
+          return { ...stream, viewCount: this.getChannelViews( stream.name ) || 0 };
         });
         return streams.sort( (a, b) => b.viewCount - a.viewCount );
       },

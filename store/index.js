@@ -13,9 +13,12 @@ const $states = {
   chatToken : 'CHAT_TOKEN',
 
   sidebarData : 'SIDEBAR_DATA',
-  newVersion : 'LATEST_VERSION',
+  newVersion  : 'LATEST_VERSION',
 
   alerts: 'SYSTEM_ALERT',
+
+  channelsViewers : 'CHANNEL_VIEWERS',
+  userlist        : 'USERLIST',
 };
 
 const $getters = {
@@ -32,6 +35,10 @@ const $getters = {
   isUpdateAvailable : 'IS_UPDATE_AVAILABLE',
 
   getAlerts: 'GET_SYSTEM_ALERT',
+
+  getChannelViews : 'GET_CHANNEL_VIEWS',
+  getUserList     : 'GET_USERLIST',
+  getUserCount    : 'GET_USER_COUNT',
 };
 
 const $mutations = {
@@ -44,6 +51,9 @@ const $mutations = {
   setNewVersion : 'SET_LATEST_VERSION',
 
   setAlerts: 'SET_SYSTEM_ALERT',
+
+  setChannelViewers : 'SET_CHANNEL_VIEWERS',
+  setUserList       : 'SET_USER_LIST',
 };
 
 const $actions = {
@@ -58,6 +68,8 @@ const $actions = {
   newVersionAvailable : 'NEW_VERSION_AVAILABLE',
 
   updateAlerts : 'CHECK_FOR_ALERTS',
+
+  updateViewers : 'UPDATE_VIEWERS',
 };
 
 
@@ -70,6 +82,9 @@ export const state = () => ({
   [$states.sidebarData] : [],
   [$states.newVersion]  : null,
   [$states.alerts]      : {},
+
+  [$states.channelsViewers] : [],
+  [$states.userlist]        : [],
 });
 
 
@@ -125,7 +140,25 @@ export const getters = {
 
   [$getters.getAlerts] ( state ) {
     return state[$states.alerts];
-  }
+  },
+
+  // Get Channel Viewer Data
+  [$getters.getChannelViews] ( state ) {
+    return channel => {
+      if ( !channel ) return 0;
+      const c = state[$states.channelsViewers].find( c => c.channel.toLowerCase() === channel.toLowerCase() );
+      return  c && c.viewCount || 0;
+    }
+  },
+
+  [$getters.getUserList] ( state ) {
+    return state[$states.userlist];
+  },
+
+  [$getters.getUserCount] ( state ) {
+    return state[$states.userlist].length;
+  },
+
 };
 
 
@@ -159,10 +192,22 @@ export const mutations = {
     state[$states.alerts] = data;
   },
 
-  setAvatar( state, url ) {
-    state[$states.user] = {
+  [$mutations.setChannelViewers] ( state, data ) {
+    state[$states.channelsViewers] = data;
+  },
 
-    }
+  [$mutations.setUserList] ( state, data ) {
+    state[$states.userlist] = Object.keys( data.users ).map( key => {
+      return {
+        user: key,
+        data: data.users[key].data,
+        watching: data.users[key].watching,
+      };
+    });
+  },
+
+  setAvatar( state, url ) {
+    state[$states.user] = {}
   },
 
   setChannel ( state, channel ) {
@@ -173,6 +218,7 @@ export const mutations = {
 
 // Actions
 export const actions = {
+
   async nuxtServerInit ({ dispatch, commit }, { req, params }) {
     let authUser = null, user = null;
     const cookies = this.$cookies.getAll();
@@ -193,6 +239,10 @@ export const actions = {
     commit( $mutations.setUser, user );
 
     await dispatch( $actions.fetchSidebarData );
+
+    // Chat user hydration data
+    dispatch( $actions.updateViewers );
+
   },
 
   async nuxtClientInit ({ dispatch }, { req, params }) {
@@ -338,6 +388,25 @@ export const actions = {
       commit( $mutations.setAlerts, alerts );
     }, 5000);
   },
+
+  async [$actions.updateViewers] ( { commit } ) {
+    try {
+      const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/channels', { progress: false } );
+      commit( $mutations.setChannelViewers,  data.data );
+    } catch ( error ) {
+      console.log( `Failed to hydrate channels` );
+      console.log( error );
+    }
+
+    try {
+      const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/users', { progress: false } );
+      commit( $mutations.setUserList, data.data );
+    } catch ( error ) {
+      console.log( `Failed to hydrate userlist` );
+      console.log( error );
+    }
+  }
+
 };
 
 

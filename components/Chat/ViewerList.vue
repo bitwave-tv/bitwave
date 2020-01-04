@@ -28,7 +28,7 @@
         color="yellow"
         class="d-flex align-center justify-space-between pl-2"
       >
-        <h5 class="black--text body-2">Live Viewers ({{ viewerCount }})</h5>
+        <h5 class="black--text body-2">Live Viewers ({{ getUserList.length }})</h5>
         <v-btn
           color="black"
           text
@@ -58,24 +58,27 @@
           class="py-0"
         >
           <template
-            v-if="showViewers && viewerList.length > 0"
-            v-for="viewer in viewerList"
+            v-if="showViewers && userlist.length > 0"
+            v-for="viewer in userlist"
           >
               <v-lazy
                 min-height="56"
-                :key="viewer.username"
+                :key="viewer.data.username"
               >
                 <v-list-item
-                  :to="`${viewer.page}`"
+                  class="pl-3"
+                  :to="`${viewer.data.page}`"
                 >
-                  <v-list-item-avatar>
-                    <img v-if="!!viewer.avatar" :src="viewer.avatar" :alt="viewer.username">
-                    <v-icon v-else :style="{ background: viewer.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.color && 'black' }">person</v-icon>
+                  <v-list-item-avatar class="mr-3">
+                    <img v-if="!!viewer.data.avatar" :src="viewer.data.avatar" :alt="viewer.data.username">
+                    <v-icon v-else :style="{ background: viewer.data.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.data.color && 'black' }">person</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-content>
-                    <v-list-item-title>{{ viewer.username }}</v-list-item-title>
+                    <v-list-item-title>{{ viewer.data.username }}</v-list-item-title>
                     <v-list-item-subtitle>
-                      Watching: {{ `${viewer.page} (${ getChannelViewCount ( viewer.page) })` }}
+                      <span>Watching: {{ viewer.data.page }}</span>
+                      <span class="yellow--text">{{ getChannelViews( viewer.data.page).toString().padStart(2, '0') }}</span>
+                      <span v-if="viewer.watching.length > 1" >{{ `and ${viewer.watching.length} others` }}</span>
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
@@ -88,8 +91,8 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
-  import { Chat } from '@/store/chat';
+  import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     name: 'ViewerList',
@@ -108,27 +111,21 @@
     methods: {},
 
     computed: {
-      ...mapState ( Chat.namespace, {
-        viewers: Chat.$states.viewerList,
-        // channelViews: Chat.$states.roomViewerList,
-      }),
-
-      ...mapGetters( Chat.namespace, {
-        viewerCount: Chat.$getters.viewerCount,
-        getChannelViewCount: Chat.$getters.getChannelViewCount,
+      ...mapGetters({
+        getChannelViews: VStore.$getters.getChannelViews,
+        getUserList:     VStore.$getters.getUserList,
       }),
 
       channelViewCount () {
-        return this.getChannelViewCount( this.page );
+        return this.getChannelViews( this.page ) || 0;
       },
 
-      viewerList () {
-        if ( !this.viewers || !this.showViewers ) return [];
-        return this.viewers
-          .filter( viewer => {
-            if ( this.showAll ) return viewer;
-            const page = ( typeof( viewer.page ) === 'object' ) ? viewer.page.watch : viewer.page;
-            if ( page.toLowerCase() === this.page.toLowerCase() ) return viewer;
+      userlist () {
+        if ( this.showAll )
+          return this.getUserList;
+        else
+          return this.getUserList.filter( user => {
+            return user.data.page.toLowerCase() === this.page.toLowerCase()
           });
       },
     },

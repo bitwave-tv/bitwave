@@ -372,7 +372,8 @@
         this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed`, error ));
         this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost`, data ));
 
-        this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
+        // this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
+        this.socket.on( 'update usernames', async () => await this.updateViewers() );
 
         // this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
@@ -418,10 +419,6 @@
       },
 
       async hydrate ( data ) {
-        if ( this.pollData.id ) {
-          await this.socket.emit( 'hydratepoll', this.pollData.id );
-        }
-
         if ( !data ) {
           this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000, position: 'top-right' } );
           console.log( 'Failed to receive hydration data' );
@@ -429,12 +426,9 @@
         }
 
         const size = data.length;
-        if ( !size ) {
-          console.log( 'Hydration data was empty' );
-          return;
-        }
+        if ( !size ) return console.log( 'Hydration data was empty' );
 
-        data = size > this.chatLimit
+        this.messages = size > this.chatLimit
           ? data.splice( -this.chatLimit )
           : data;
 
@@ -445,6 +439,9 @@
           if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
           else console.warn('Failed to find chat container after hydration');
         });
+
+        // Request poll hydration
+        if ( this.pollData.id ) await this.socket.emit( 'hydratepoll', this.pollData.id );
       },
 
       async rcvMessageBulk ( messages ) {
@@ -539,7 +536,7 @@
           };
 
           this.chatStats = calcStats( this.chatStats.value, this.newMessageCount, this.chatStats.total, 0 );
-          this.viewStats = calcStats( this.viewStats.value, this.getChannelViewCount( this.page ), this.viewStats.total, this.getChannelViewCount( this.page ) );
+          this.viewStats = calcStats( this.viewStats.value, this.getChannelViews( this.page ), this.viewStats.total, this.getChannelViews( this.page ) );
 
           this.newMessageCount = 0;
           this.statTickCount = 0;
@@ -547,9 +544,9 @@
         // Short rate stat update
         else {
           this.chatStats.value.splice( this.chatStats.value.length - 1, 1, this.newMessageCount );
-          this.viewStats.value.splice( this.viewStats.value.length - 1, 1, this.getChannelViewCount( this.page ) );
+          this.viewStats.value.splice( this.viewStats.value.length - 1, 1, this.getChannelViews( this.page ) );
           this.chatStats.current = this.newMessageCount;
-          this.viewStats.current = this.getChannelViewCount( this.page );
+          this.viewStats.current = this.getChannelViews( this.page );
         }
       },
 
@@ -955,11 +952,9 @@
 
       ...mapActions({
         exchangeIdTokenChatToken: VStore.$actions.exchangeIdTokenChatToken,
+        updateViewers: VStore.$actions.updateViewers,
       }),
 
-      ...mapActions (Chat.namespace, {
-        updateViewerlist: Chat.$actions.updateViewerList,
-      }),
     },
 
     computed: {
@@ -968,11 +963,7 @@
         user         : VStore.$getters.getUser,
         _username    : VStore.$getters.getUsername,
         getChatToken : VStore.$getters.getChatToken,
-      }),
-
-      ...mapGetters( Chat.namespace, {
-        siteViewerCount: Chat.$getters.viewerCount,
-        getChannelViewCount: Chat.$getters.getChannelViewCount,
+        getChannelViews : VStore.$getters.getChannelViews,
       }),
 
       ...mapState (Chat.namespace, {
@@ -1026,8 +1017,7 @@
           // Remove global messages when going into local chat
           this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
         } else {
-          // Reconnect chat to force hydration when going into global chat
-          // if ( this.socket ) await this.socket.emit( 'hydrate' );
+          // Re-hydrate when going into global chat
           await this.httpHydrate();
         }
       },
