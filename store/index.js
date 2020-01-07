@@ -203,7 +203,7 @@ export const mutations = {
         data: data[key].data,
         watching: data[key].watching,
       };
-    });
+    }).reverse();
   },
 
   setAvatar( state, url ) {
