@@ -67,6 +67,7 @@
       return {
         live: true,
         initialized: false,
+        showPreroll: false,
       };
     },
 
@@ -107,8 +108,13 @@
     computed: {
       prerollVideo () {
         return {
-          source: this.offline ? this.src : preroll, // do not show pre-roll if offline
-          type: 'video/mp4',
+          // do not show pre-roll if offline
+          source: this.offline || !this.showPreroll
+            ? this.src
+            : preroll,
+          type: this.offline || !this.showPreroll
+            ? this.type
+            : 'video/mp4',
         }
       },
     },
