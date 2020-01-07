@@ -93,7 +93,13 @@
 
             <div class="d-flex justify-space-between align-center mt-3">
               <div>
-                Status (not working yet): {{ restreamData.state }}
+                Status:
+                <v-chip
+                  :color="statusColor"
+                  small
+                >
+                  {{ restreamData.state }}
+                </v-chip>
               </div>
               <div class="d-flex">
                 <v-btn
@@ -237,6 +243,15 @@
   import { db } from '@/plugins/firebase.js';
   import { auth } from '@/plugins/firebase';
 
+  // 'STARTING'|'ACTIVE'|'ERROR'|'STOPPING'|'STOPPED'
+
+  colormap = new Map([
+    ['STARTING', 'blue'],
+    ['ACTIVE', 'green'],
+    ['ERROR', 'red'],
+    ['STOPPED', 'grey'],
+  ]);
+
   export default {
     name: 'RestreamDialog',
 
@@ -332,6 +347,7 @@
         const payload = this.createPayload();
         console.log(payload);
         try {
+          await this.updateRestreamer();
           const { data } = await this.$axios.post(
             this.createEndpoint( 'start' ),
             payload,
@@ -346,6 +362,7 @@
       async stopRestreamer () {
         try {
           const token = await this.getFreshIdToken();
+          this.$axios.setToken( token, 'Bearer' );
           const payload = this.createPayload();
           const { data } = await this.$axios.post(
             this.createEndpoint( 'stop' ),
@@ -398,7 +415,14 @@
     computed: {
       showRestreamKey () {
         return this.showKey;
-      }
+      },
+
+      statusColor () {
+        if ( this.restreamData )
+          return colormap.get( this.restreamData.state ) || 'grey';
+        else
+          return 'grey';
+      },
     },
 
     mounted () {
