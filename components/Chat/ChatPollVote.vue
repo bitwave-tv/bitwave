@@ -202,7 +202,7 @@
 
     },
 
-    created () {
+    mounted () {
       this.pollInterval = setInterval( () => {
         this.onPollTick();
       }, 1000 * 0.5 );

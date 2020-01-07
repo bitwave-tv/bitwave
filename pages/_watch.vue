@@ -321,9 +321,9 @@
     },
 
     async asyncData ( { $axios, params } ) {
-      const user = params.watch;
+      const channel = params.watch;
       try {
-        const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
+        const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}` );
 
         // Streamer user properties
         const name   = data.name;
@@ -361,7 +361,7 @@
 
         const getChatHydration = async () => {
           try {
-            const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages' );
+            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages/${channel}` );
             if ( data.success ) return data.data;
           } catch ( error ) {
             console.log( error );
@@ -374,7 +374,7 @@
         return { name, avatar, title, description, poster, live, nsfw, owner, url, type, timestamp, chatMessages };
 
       } catch ( err ) {
-        console.log( `ERROR: Failed to hydrate channel '${user}':\n`, err );
+        console.log( `ERROR: Failed to hydrate channel '${channel}':\n`, err );
         return {
           name: 'Error',
           title: 'Failed to preload data',

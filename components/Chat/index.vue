@@ -394,6 +394,9 @@
         this.socket.emit( 'new user', this.userToken );
         this.loading = false;
 
+        // Request poll hydration
+        if ( this.showPollClient ) await this.socket.emit( 'hydratepoll', this.pollData.id );
+
         if ( this.willBeDestroyed ) {
           this.socket.off();
           this.socket.disconnect();
@@ -402,6 +405,8 @@
 
       async socketReconnect () {
         this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
+        console.log( 'Chat reconnected, requesting re-hydration' );
+        await this.httpHydrate();
       },
 
       async socketError ( error, reason ) {
@@ -411,7 +416,7 @@
 
       async httpHydrate () {
         try {
-          const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/messages' );
+          const { data } = await this.$axios.get(  `https://chat.bitwave.tv/v1/messages${ !this.global ? `/${this.page}` : '' }` );
           await this.hydrate( data.data );
         } catch ( error ) {
           console.log( error );
@@ -425,11 +430,18 @@
           return;
         }
 
-        const size = data.length;
-        if ( !size ) return console.log( 'Hydration data was empty' );
+        // Request poll hydration
+        if ( this.pollData.id ) await this.socket.emit( 'hydratepoll', this.pollData.id );
+        else console.log( 'no poll to hydrate' );
 
-        this.messages = size > this.chatLimit
-          ? data.splice( -this.chatLimit )
+        const size = data.length;
+        if ( !size ) {
+          this.messages = [];
+          return console.log( 'Hydration data was empty' );
+        }
+
+        this.messages = size > this.chatLimit + 5
+          ? data.splice( -this.chatLimit + 5 )
           : data;
 
         this.messages = data.filter( message => !this.filterMessage( message ) );
@@ -441,9 +453,6 @@
             else console.warn( 'Failed to find chat container after hydration' );
           } );
         }
-
-        // Request poll hydration
-        if ( this.pollData.id ) await this.socket.emit( 'hydratepoll', this.pollData.id );
       },
 
       async rcvMessageBulk ( messages ) {
@@ -474,6 +483,7 @@
         if ( this.$refs['chatmessages'] ) {
           if ( !this.$refs['chatmessages'].showFAB ) {
             this.messages = this.messages.splice( -this.chatLimit );
+            // if ( this.messages.length > this.chatLimit - 5 ) this.messages = this.messages.splice( -this.chatLimit );
           }
         } else {
           console.warn( `Failed to find 'chatmessages' component...` );
@@ -1015,13 +1025,15 @@
 
     watch: {
       global: async function ( val, old ) {
-        if ( !val ) {
+        if ( this.loading ) return;
+        await this.httpHydrate();
+        /*if ( !val ) {
           // Remove global messages when going into local chat
           this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
         } else {
           // Re-hydrate when going into global chat
           await this.httpHydrate();
-        }
+        }*/
       },
     },
 
@@ -1090,6 +1102,9 @@
         console.log ( 'No notification sound option found.' );
         this.setNotify ( false );
       }
+
+      // Add hydration for global
+      this.$nextTick( async () => { if ( this.global ) await this.httpHydrate(); } );
 
       // Listen for new polls
       this.subscribeToPoll( this.page );
