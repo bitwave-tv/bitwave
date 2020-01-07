@@ -245,7 +245,7 @@
 
   // 'STARTING'|'ACTIVE'|'ERROR'|'STOPPING'|'STOPPED'
 
-  colormap = new Map([
+  const colormap = new Map([
     ['STARTING', 'blue'],
     ['ACTIVE', 'green'],
     ['ERROR', 'red'],
