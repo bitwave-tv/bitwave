@@ -29,21 +29,31 @@
       <div
         v-if="loaded"
         id="overlay"
+        class="py-2"
         ref="overlay"
       >
         <!-- Chat message -->
         <transition-group name="fade-transition">
           <v-sheet
-            v-for="message in messages"
+            v-for="( message, index ) in messages"
             :key="message.timestamp"
-            class="my-1 pa-1 msg"
+            class="pt-1 mx-1 msg"
             color="transparent"
           >
-            <div class="d-flex">
+            <div class="d-flex" v-if="message.username !== ( index && messages[ index - 1 ].username )">
               <!-- Chat Avatar -->
               <div class="v-avatar mr-2 mt-2">
-                <img v-if="!!message.avatar" :src="message.avatar" :alt="message.username">
-                <div v-else class="v-icon notranslate material-icons" :style="{ background: message.color }">person</div>
+                <img
+                  v-if="!!message.avatar"
+                  :src="message.avatar"
+                  :alt="message.username"
+                  :key="message.username"
+                >
+                <div
+                  v-else
+                  class="v-icon notranslate material-icons"
+                  :style="{ background: message.color }"
+                >person</div>
               </div>
               <div class="flex-grow-1">
                 <!-- Message Header -->
@@ -62,6 +72,12 @@
                 </div>
                 <div v-html="message.message"></div>
               </div>
+            </div>
+            <div v-else class="msg append pt-1">
+              <div
+                class="body-2 msg"
+                v-html="message.message"
+              ></div>
             </div>
           </v-sheet>
         </transition-group>
@@ -151,7 +167,7 @@
         };
 
         this.socket.on( 'connect', () => this.socket.emit( 'new overlay', config ) );
-        // this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
+        this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
       },
 
@@ -165,6 +181,8 @@
       },
 
       hydrate ( data ) {
+        if ( !this.overlay ) return;
+
         // Highlight username tags in new messages
         const pattern = new RegExp( `@${this.overlay._username}\\b`, 'gi' );
         data.forEach( el => {
@@ -254,6 +272,10 @@
       word-break: break-word;
       max-height: 20rem;
       overflow: hidden;
+
+      &.append {
+        padding-left: 40px;
+      }
 
       p {
         margin: 0;

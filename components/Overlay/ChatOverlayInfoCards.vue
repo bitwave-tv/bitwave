@@ -91,7 +91,7 @@
           <v-btn
             color="yellow"
             text
-            :href="`https://bitwave.tv/overlay/chat/${overlay.id}`"
+            :href="`/overlay/chat/${overlay.id}`"
             target="_blank"
           >
             View
@@ -180,7 +180,9 @@
       },
 
       async deleteOverlay ( overlay ) {
-        const overlayRef = db.collection( 'overlays' ).doc( overlay.id );
+        const overlayRef = db
+          .collection( 'overlays' )
+          .doc( overlay.id );
         await overlayRef.delete();
       },
 

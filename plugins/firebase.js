@@ -71,7 +71,7 @@ export const listenForAlerts = callback  => {
  */
 import { VStore } from '@/store';
 
-export default async ( { app: { $axios }, store } ) => {
+export default async ( { app, store } ) => {
   // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
