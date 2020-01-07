@@ -15,7 +15,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.9.0",
+    "@nuxtjs/axios": "^5.9.2",
     "@nuxtjs/device": "^1.2.4",
     "@nuxtjs/google-analytics": "^2.2.2",
     "@nuxtjs/manifest": "^3.0.0-beta.16",

@@ -435,10 +435,12 @@
         this.messages = data.filter( message => !this.filterMessage( message ) );
 
         // Scroll after hydration
-        this.$nextTick( async () => {
-          if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
-          else console.warn('Failed to find chat container after hydration');
-        });
+        if ( process.client ) {
+          this.$nextTick( async () => {
+            if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
+            else console.warn( 'Failed to find chat container after hydration' );
+          } );
+        }
 
         // Request poll hydration
         if ( this.pollData.id ) await this.socket.emit( 'hydratepoll', this.pollData.id );

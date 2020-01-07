@@ -78,7 +78,7 @@
                     <v-list-item-subtitle>
                       <span>Watching: {{ viewer.data.page }}</span>
                       <span class="yellow--text">{{ getChannelViews( viewer.data.page).toString().padStart(2, '0') }}</span>
-                      <span v-if="viewer.watching.length > 1" >{{ `and ${viewer.watching.length} others` }}</span>
+                      <span v-if="viewer.watching.length > 1" >{{ `and ${viewer.watching.length - 1} other${viewer.watching.length - 1 > 1 ? 's' : ''}` }}</span>
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
