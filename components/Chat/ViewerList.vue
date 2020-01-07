@@ -121,12 +121,11 @@
       },
 
       userlist () {
-        if ( this.showAll )
-          return this.getUserList;
-        else
-          return this.getUserList.filter( user => {
-            return user.data.page.toLowerCase() === this.page.toLowerCase()
-          });
+        return this.getUserList.filter( viewer => {
+          return this.showAll
+            ? viewer
+            : viewer.watching.includes( this.page.toLowerCase() );
+        });
       },
     },
   }
