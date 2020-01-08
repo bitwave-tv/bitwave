@@ -3,7 +3,10 @@
   <v-sheet
     class="px-2 py-2"
     color="black"
+    :style="{ position: 'relative', }"
   >
+
+    <!-- Text Input Field -->
     <div class="d-flex">
       <v-text-field
         ref="chatmessageinput"
@@ -27,9 +30,13 @@
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
         @cut="event => lastMessageHandler(event)"
+        @keydown.tab.prevent="event => onTab(event)"
+        @keydown.down="event => onArrow(event)"
+        @keydown.up="event => onArrow(event)"
       />
     </div>
 
+    <!-- Bottom Buttons -->
     <div class="d-flex align-center">
       <v-menu
         v-model="showChatSettings"
@@ -77,6 +84,17 @@
         <v-icon small>send</v-icon>
       </v-btn>
     </div>
+
+    <!-- Popup -->
+    <autocomplete-username
+      v-if="autocomplete"
+      :filter="autocompleteFilter"
+      :index="autocompleteSelection"
+      @update:index="val => this.autocompleteSelection = val"
+      @update:value="val => this.autocompleteValue = val"
+      @click="onTab"
+    />
+
   </v-sheet>
 </template>
 
@@ -85,12 +103,14 @@
   import { Chat } from '@/store/chat';
 
   const ChatSettings = () => import( '@/components/Chat/ChatSettings' );
+  import AutocompleteUsername from '@/components/Chat/AutocompleteUsername';
 
   export default {
     name: 'ChatInput',
 
     components: {
       ChatSettings,
+      AutocompleteUsername,
     },
 
     props: {
@@ -103,6 +123,10 @@
         showChatSettings: false,
         messageBuffer: [],
         messageBufferIndex: 0,
+        showUsernameSuggestions: false,
+
+        autocompleteSelection: 0,
+        autocompleteValue: null,
       }
     },
 
@@ -117,6 +141,7 @@
 
       sendMessage() {
         if ( this.getMessage.length > 300 ) return;
+        if ( this.autocomplete ) this.onTab();
         this.$emit( 'send' );
         this.messageBuffer.push(this.getMessage);
         this.messageBuffer = this.messageBuffer.splice(-10);
@@ -145,6 +170,13 @@
           }
         }
 
+
+        // Detect keystrokes that trigger autocomplete
+        if ( event.key === '@' || this.autocomplete ) {
+          if ( event.key === '@' ) this.autocompleteSelection = 0;
+          this.setMessage( event.srcElement.value );
+        }
+
         if ( event.type === 'cut' ) {
           setTimeout( () => {
             if ( !event.srcElement.value ) {
@@ -153,12 +185,42 @@
           }, 20 );
         }
       },
+
+      onArrow ( event ) {
+        if ( !this.autocomplete ) return;
+
+        event.preventDefault();
+
+        if ( event.key === 'ArrowUp' )   this.autocompleteSelection -= 1;
+        if ( event.key === 'ArrowDown' ) this.autocompleteSelection += 1;
+      },
+
+      onTab ( event ) {
+        if ( !this.autocomplete || !this.autocompleteValue ) return;
+        if ( event ) {
+          const msg = event.srcElement.value.replace( this.autocomplete[0], `@${ this.autocompleteValue.data.username } ` );
+          this.setMessage( msg );
+        } else {
+          const msg = this.getMessage.replace( this.autocomplete[0], `@${ this.autocompleteValue.data.username } ` );
+          this.setMessage( msg );
+        }
+      },
     },
 
     computed: {
       ...mapState(Chat.namespace, {
         getMessage: Chat.$states.message,
       }),
+
+      autocomplete () {
+        return this.getMessage && this.getMessage.match( /@[\w:]*$/g );
+      },
+
+      autocompleteFilter () {
+        return this.autocomplete
+          ? this.autocomplete[0].substr(1)
+          : '';
+      },
     },
   }
 </script>

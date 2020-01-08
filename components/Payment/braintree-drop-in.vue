@@ -31,7 +31,7 @@
             :paypal="false"
             :url="url"
             :btn-class="'v-btn theme--light yellow'"
-          ></v-braintree>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
