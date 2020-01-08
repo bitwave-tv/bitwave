@@ -31,7 +31,8 @@
         <!-- Append messages -->
         <div
           v-else
-          class="msg append pt-1 ml-3 mr-1"
+          class="msg append py-1 pl-3 pr-1"
+          :key="index"
         >
           <div
             class="body-2 msg"
@@ -212,9 +213,15 @@
     overflow: hidden;
 
     .msg {
-      line-height: 1.5;
+      line-height: 1.25;
 
-      &.append {
+      /* Hover Chat Message */
+      /*&:hover {
+        !*background: #212121;
+        color: #9e9e9e;*!
+      }*/
+
+      &.append .msg {
         padding-left: 40px;
       }
     }

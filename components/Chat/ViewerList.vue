@@ -70,8 +70,15 @@
                   :to="`${viewer.data.page}`"
                 >
                   <v-list-item-avatar class="mr-3">
-                    <img v-if="!!viewer.data.avatar" :src="viewer.data.avatar" :alt="viewer.data.username">
-                    <v-icon v-else :style="{ background: viewer.data.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.data.color && 'black' }">person</v-icon>
+                    <img
+                      v-if="!!viewer.data.avatar"
+                      :src="viewer.data.avatar"
+                      :alt="viewer.data.username"
+                    >
+                    <v-icon
+                      v-else
+                      :style="{ background: viewer.data.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.data.color && 'black' }"
+                    >person</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-content>
                     <v-list-item-title>{{ viewer.data.username }}</v-list-item-title>

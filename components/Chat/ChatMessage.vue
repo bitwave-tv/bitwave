@@ -1,5 +1,5 @@
 <template functional>
-  <div class="msg d-flex pt-1 ml-3 mr-1">
+  <div class="msg d-flex pb-1 pl-3 pr-1">
 
     <!-- Chat Avatar -->
     <div
@@ -13,16 +13,9 @@
         :alt="props.username"
         :key="props.username"
       >
-      <!--<img
-        v-else
-        src="https://cdn.bitwave.tv/static/img/santahat-100.png"
-        alt="santa troll"
-        :style="{ background: props.color }"
-        class="pa-1"
-      >-->
       <div
         v-else
-        class="v-icon notranslate material-icons"
+        class="v-icon material-icons"
         :style="{ background: props.color }"
       >person</div>
     </div>
@@ -34,22 +27,21 @@
       <div class="d-flex align-center">
 
         <!-- Timestamp & Username -->
-        <div class="flex-grow-1 subtitle-2 align-center">
+        <div class="flex-grow-1 subtitle-2">
           <span class="time">{{ props.timestamp }}</span>
-          <div class="d-inline-block global">{{ props.global }}</div>
+          <span class="global">{{ props.global }}</span>
           <span class="username" :style="props.userStyling" v-html="props.displayName" />
         </div>
 
         <!-- Room Label -->
-        <div class="flex-shrink-1">
-          <nuxt-link :to="props.channel">
-            <kbd>{{ props.channel }}</kbd>
-          </nuxt-link>
-        </div>
+        <nuxt-link :to="props.channel">
+          <kbd>{{ props.channel }}</kbd>
+        </nuxt-link>
       </div>
 
       <!-- Chat Body -->
-      <slot></slot>
+      <slot/>
+
     </div>
   </div>
 </template>
@@ -148,5 +140,50 @@
       height: 28px;
       vertical-align: middle;
     }
+
+
+    /* Big / Smol Text Styling */
+
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1.00rem;
+      font-weight: 700;
+    }
+
+    h4 {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    h5 {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    h6 {
+      font-size: 0.625rem;
+      font-weight: 500;
+    }
+
+    /*
+    &.dense {
+      h1, h2, h3 {
+        font-size: 1rem;
+      }
+    }*/
+
   }
 </style>
