@@ -85,7 +85,7 @@
     methods: {
       async onAuthChanged ( user ) {
         if ( !user ) {
-          this.$router.push( '/login' );
+          await this.$router.push( '/login' );
         }
       },
 

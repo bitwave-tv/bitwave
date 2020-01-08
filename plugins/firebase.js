@@ -35,34 +35,12 @@ const listenToAuthState = ( callback ) => {
   });
 };
 
-export const checkForUpdate = async () => {
-  const currentVersion = process.env.VERSION;
-  const versions = ( await db.collection( 'configurations' ).doc( 'bitwave.tv' ).get() ).data().version; // add ? chaining
-  console.log( `[bitwave.tv] - ${process.env.BITWAVE_ENV}\nCurrent version: ${currentVersion}\nLatest versions:`, versions );
-  return currentVersion < versions[process.env.BITWAVE_ENV]
-    ? versions[process.env.BITWAVE_ENV]
-    : false ;
-};
 
 export const listenToConfiguationUpdates = callbacks => {
   return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
     const data = doc.data();
     await Promise.all( callbacks.map( async cb => await cb( data ) ) );
   })
-};
-
-export const listenForUpdate = ( callback ) => {
-  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
-    const version = doc.data().version;
-    await callback( version );
-  });
-};
-
-export const listenForAlerts = callback  => {
-  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
-    const data = doc.data();
-    await callback( data.alerts )
-  });
 };
 
 

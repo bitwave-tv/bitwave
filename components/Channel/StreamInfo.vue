@@ -152,10 +152,10 @@
   import { timeAgo } from '@/assets/js/time-ago';
 
   // Async Components - We don't expect these components to be required frequently
-  const ShareStream    = () => import ( '@/components/ShareStream' );
-  const EditStreamData = () => import ( '@/components/EditStreamData' );
-  const StreamArchives = () => import ( '@/components/Channel/StreamArchives' );
-  const RestreamDialog = () => import ( '@/components/Restream/RestreamDialog' );
+  const ShareStream    = async () => await import ( '@/components/ShareStream' );
+  const EditStreamData = async () => await import ( '@/components/EditStreamData' );
+  const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
+  const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
 
   export default {
     name: 'StreamInfo',
