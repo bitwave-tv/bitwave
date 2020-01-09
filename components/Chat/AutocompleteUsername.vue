@@ -1,33 +1,34 @@
 <template>
   <v-sheet
-    :style="{ position: 'absolute', top: 0, transform: 'translateY(-100%)', width: '75%', }"
-    class="chat-autocomplete"
+    class="chat-autocomplete body-2 py-1"
+    color="grey darken-4"
   >
 
-    <template v-for="(user, index) in filteredUsers">
+    <template v-for="(user, index) in filteredData">
       <v-lazy
-        min-height="56"
-        :key="user.user"
+        min-height="32"
+        :key="user.username"
       >
         <v-sheet
-          :color=" index === selection ? 'grey darken-4' : '' "
-          class="d-flex pa-3 align-center"
+          :color="index === selection ? 'blue darken-2' : 'transparent'"
+          class="d-flex px-3 py-1 mb-1 align-center"
           @click="onClick( index )"
         >
           <v-avatar
+            v-if="user.hasOwnProperty( 'avatar' ) || user.hasOwnProperty( 'color' )"
             class="mr-3"
-            :color="user.data.color"
-            size="32"
+            :color="user.color"
+            size="24"
           >
             <img
-              v-if="!!user.data.avatar"
-              :src="user.data.avatar"
-              :alt="user.data.username"
+              v-if="!!user.avatar"
+              :src="user.avatar"
+              :alt="user.label"
             >
             <v-icon v-else>person</v-icon>
           </v-avatar>
           <div class="">
-            {{ user.data.username }}
+            {{ user.label }}
           </div>
         </v-sheet>
       </v-lazy>
@@ -37,21 +38,19 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  import { VStore } from '@/store';
-
   export default {
     name: 'AutocompleteUsername',
 
     props: {
-      // users: { type: Array },
-      size: { type: Number, default: 5 },
-      filter: { type: String },
-      index: { type: Number, default: 0 },
+      data   : { type: Array },
+      size   : { type: Number, default: 5 },
+      filter : { type: String },
+      index  : { type: Number, default: 0 },
     },
 
     data () {
       return {
+        acData: this.data,
         selection: this.index,
       };
     },
@@ -65,35 +64,39 @@
     },
 
     computed: {
-      ...mapGetters({
-        users: VStore.$getters.getUserList,
-      }),
-
-      filteredUsers () {
+      filteredData () {
         const filter = this.filter
           ? this.filter.toLowerCase()
           : '';
-        return this.users
-          .filter( user => user.user.toLowerCase().includes( filter ) )
-          .reverse()
-          .splice( -this.size );
+
+        return this.acData
+          .filter( user => user.value.toLowerCase().includes( filter ) )
+          .splice( 0, this.size );
       },
 
       selectedValue () {
-        return this.filteredUsers[ this.selection ];
+        return this.filteredData[ this.selection ];
       },
     },
 
     watch: {
+      data: function ( newVal ) {
+        this.acData = newVal;
+      },
+
       index: function ( newVal ) {
         // Set value bounds
-        this.selection = Math.max( Math.min( newVal, this.filteredUsers.length - 1 ), 0 );
+        this.selection = Math.max( Math.min( newVal, this.filteredData.length - 1 ), 0 );
         this.$emit( 'update:index', this.selection );
       },
 
       selectedValue: function ( newVal ) {
         this.$emit( 'update:value', newVal );
       },
+    },
+
+    mounted () {
+      this.$emit( 'update:value', this.selectedValue );
     },
 
   };
@@ -103,15 +106,17 @@
   .chat-autocomplete {
     position: absolute;
     top: 0;
-    transform: translateY(-100%);
+    transform: translate( 12.5%, -100% );
     width: 75%;
     max-height: 300px;
+    overflow-y: hidden;
+    /*opacity: .9;*/
 
     .v-sheet {
       transition: .2s;
 
       &:hover {
-        background-color: #212121;
+        background-color: #0D47A1;
       }
     }
   }

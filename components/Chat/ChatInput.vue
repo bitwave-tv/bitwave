@@ -25,7 +25,7 @@
         dense
         clearable
         counter="300"
-        @change="value => this.setMessage( value )"
+        @change="value => this.setChatMessage( value )"
         @keyup.delete="updateMessage"
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
@@ -86,24 +86,98 @@
     </div>
 
     <!-- Popup -->
-    <autocomplete-username
-      v-if="autocomplete"
-      :filter="autocompleteFilter"
-      :index="autocompleteSelection"
-      @update:index="val => this.autocompleteSelection = val"
-      @update:value="val => this.autocompleteValue = val"
-      @click="onTab"
-    />
+    <v-slide-y-transition mode="out-in">
+      <autocomplete-username
+        v-if="autocomplete"
+        :data="autocompleteData"
+        :filter="autocompleteFilter"
+        :index="autocompleteSelection"
+        @update:index="val => this.autocompleteSelection = val"
+        @update:value="val => this.autocompleteValue = val"
+        @click="onTab"
+      />
+    </v-slide-y-transition>
 
   </v-sheet>
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex'
+  import { mapState, mapGetters, mapMutations } from 'vuex';
   import { Chat } from '@/store/chat';
 
   const ChatSettings = () => import( '@/components/Chat/ChatSettings' );
   import AutocompleteUsername from '@/components/Chat/AutocompleteUsername';
+  import { VStore } from '@/store';
+
+  const commands = [
+    {
+      label: 'ignore',
+      value: '/ignore @',
+    },
+    {
+      label: 'ignore channel',
+      value: '/ignorechannel ',
+    },
+    {
+      label: 'unignore',
+      value: '/unignore @',
+    },
+    {
+      label: 'unignore channel',
+      value: '/unignorechannel ',
+    },
+    {
+      label: 'whisper',
+      value: '/w @',
+    },
+    {
+      label: 'ignorelist',
+      value: '/ignorelist ',
+    },
+    {
+      label: 'local',
+      value: '/local ',
+    },
+    {
+      label: 'global',
+      value: '/global ',
+    },
+    {
+      label: 'cleantts',
+      value: '/cleantts',
+    },
+  ];
+
+  const emotes = [
+    {
+      label: 'blob',
+      value: ':blob:',
+    },
+    {
+      label: 'bitwave',
+      value: ':bitwave:',
+    },
+    {
+      label: 'car',
+      value: ':car:',
+    },
+    {
+      label: 'sadcat',
+      value: ':sadcat:',
+    },
+    {
+      label: 'clap',
+      value: ':clap:',
+    },
+    {
+      label: 'pepelaugh',
+      value: ':pepelaugh:',
+    },
+    {
+      label: 'reee',
+      value: ':reee:',
+    },
+  ];
 
   export default {
     name: 'ChatInput',
@@ -125,6 +199,8 @@
         messageBufferIndex: 0,
         showUsernameSuggestions: false,
 
+        autocomplete: null,
+        autocompleteData: [],
         autocompleteSelection: 0,
         autocompleteValue: null,
       }
@@ -136,7 +212,7 @@
       }),
 
       updateMessage ( event ) {
-        this.setMessage( event.srcElement.value );
+        this.setChatMessage( event.srcElement.value );
       },
 
       sendMessage() {
@@ -172,15 +248,15 @@
 
 
         // Detect keystrokes that trigger autocomplete
-        if ( event.key === '@' || this.autocomplete ) {
-          if ( event.key === '@' ) this.autocompleteSelection = 0;
-          this.setMessage( event.srcElement.value );
+        if ( event.key === '@' || event.key === '/' || event.key === ':' || this.autocomplete ) {
+          if ( event.key === '@' || event.key === '/' || event.key === ':' ) this.autocompleteSelection = 0;
+          this.setChatMessage( event.srcElement.value );
         }
 
         if ( event.type === 'cut' ) {
           setTimeout( () => {
             if ( !event.srcElement.value ) {
-              this.setMessage( '' );
+              this.setChatMessage( '' );
             }
           }, 20 );
         }
@@ -198,22 +274,63 @@
       onTab ( event ) {
         if ( !this.autocomplete || !this.autocompleteValue ) return;
         if ( event ) {
-          const msg = event.srcElement.value.replace( this.autocomplete[0], `@${ this.autocompleteValue.data.username } ` );
-          this.setMessage( msg );
+          const msg = event.srcElement.value.replace( this.autocomplete[0], this.autocompleteValue.value );
+          this.setChatMessage( msg );
         } else {
-          const msg = this.getMessage.replace( this.autocomplete[0], `@${ this.autocompleteValue.data.username } ` );
-          this.setMessage( msg );
+          const msg = this.getMessage.replace( this.autocomplete[0], this.autocompleteValue.value );
+          this.setChatMessage( msg );
+        }
+      },
+
+      setChatMessage ( msg ) {
+        this.setMessage( msg );
+        this.autocomplete = this.detectAutocomplete();
+      },
+
+      detectAutocomplete () {
+        if ( !this.getMessage ) return;
+
+        const usernameMatch = this.getMessage.match( /@[\w:-_]*$/g );
+        if ( usernameMatch ) {
+          this.autocompleteData = this.userlist;
+          return usernameMatch;
+        }
+
+        const commandMatch = this.getMessage.match( /^\/[\w:-_]*$/g );
+        if ( commandMatch ) {
+          this.autocompleteData = commands;
+          return commandMatch;
+        }
+
+        const emoteMatch = this.getMessage.match( /:[\w]*:?$/g );
+        if ( emoteMatch ) {
+          this.autocompleteData = emotes;
+          return emoteMatch;
         }
       },
     },
 
     computed: {
+      ...mapGetters({
+        getUserList: VStore.$getters.getUserList,
+      }),
+
       ...mapState(Chat.namespace, {
         getMessage: Chat.$states.message,
       }),
 
-      autocomplete () {
-        return this.getMessage && this.getMessage.match( /@[\w:]*$/g );
+      userlist () {
+        if ( !this.getUserList ) return [];
+        return this.getUserList
+          .map( user => {
+            return {
+              avatar: user.data.avatar,
+              color: user.data.color,
+              label: user.data.username,
+              value: `@${user.data.username} `,
+            }
+          })
+          .reverse();
       },
 
       autocompleteFilter () {
