@@ -113,10 +113,11 @@
     /*opacity: .9;*/
 
     .v-sheet {
-      transition: .2s;
+      cursor: pointer;
+      transition: .1s;
 
       &:hover {
-        background-color: #0D47A1;
+        background-color: #0D47A1 !important;
       }
     }
   }

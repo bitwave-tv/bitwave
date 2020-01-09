@@ -86,17 +86,18 @@
     </div>
 
     <!-- Popup -->
-    <v-slide-y-transition mode="out-in">
-      <autocomplete-username
+    <!--<v-slide-y-transition>-->
+      <autocomplete-chat
         v-if="autocomplete"
         :data="autocompleteData"
         :filter="autocompleteFilter"
         :index="autocompleteSelection"
+        :size="acSize"
         @update:index="val => this.autocompleteSelection = val"
         @update:value="val => this.autocompleteValue = val"
         @click="onTab"
       />
-    </v-slide-y-transition>
+    <!--</v-slide-y-transition>-->
 
   </v-sheet>
 </template>
@@ -106,7 +107,7 @@
   import { Chat } from '@/store/chat';
 
   const ChatSettings = () => import( '@/components/Chat/ChatSettings' );
-  import AutocompleteUsername from '@/components/Chat/AutocompleteUsername';
+  import AutocompleteChat from '@/components/Chat/AutocompleteChat';
   import { VStore } from '@/store';
 
   const commands = [
@@ -151,31 +152,43 @@
   const emotes = [
     {
       label: 'blob',
-      value: ':blob:',
+      value: ':blob: ',
     },
     {
       label: 'bitwave',
-      value: ':bitwave:',
+      value: ':bitwave: ',
     },
     {
       label: 'car',
-      value: ':car:',
+      value: ':car: ',
     },
     {
       label: 'sadcat',
-      value: ':sadcat:',
+      value: ':sadcat: ',
     },
     {
       label: 'clap',
-      value: ':clap:',
+      value: ':clap: ',
     },
     {
       label: 'pepelaugh',
-      value: ':pepelaugh:',
+      value: ':pepelaugh: ',
     },
     {
       label: 'reee',
-      value: ':reee:',
+      value: ':reee: ',
+    },
+    {
+      label: 'smug',
+      value: ':smug: ',
+    },
+    {
+      label: 'shrug',
+      value: ':shrug: ',
+    },
+    {
+      label: 'popcorn',
+      value: ':popcorn: ',
     },
   ];
 
@@ -184,7 +197,7 @@
 
     components: {
       ChatSettings,
-      AutocompleteUsername,
+      AutocompleteChat,
     },
 
     props: {
@@ -203,6 +216,7 @@
         autocompleteData: [],
         autocompleteSelection: 0,
         autocompleteValue: null,
+        acSize: 5,
       }
     },
 
@@ -293,18 +307,21 @@
         const usernameMatch = this.getMessage.match( /@[\w:-_]*$/g );
         if ( usernameMatch ) {
           this.autocompleteData = this.userlist;
+          this.acSize = 5;
           return usernameMatch;
         }
 
         const commandMatch = this.getMessage.match( /^\/[\w:-_]*$/g );
         if ( commandMatch ) {
           this.autocompleteData = commands;
+          this.acSize = 5;
           return commandMatch;
         }
 
         const emoteMatch = this.getMessage.match( /:[\w]*:?$/g );
         if ( emoteMatch ) {
           this.autocompleteData = emotes;
+          this.acSize = 1;
           return emoteMatch;
         }
       },
