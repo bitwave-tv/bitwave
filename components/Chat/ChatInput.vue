@@ -233,7 +233,6 @@
     data() {
       return {
         showChatSettings: false,
-        messageBuffer: [],
         messageBufferIndex: 0,
         showUsernameSuggestions: false,
 
@@ -248,6 +247,7 @@
     methods: {
       ...mapMutations(Chat.namespace, {
         setMessage: Chat.$mutations.setMessage,
+        addToMessageBuffer : Chat.$mutations.addToMessageBuffer,
       }),
 
       updateMessage ( event ) {
@@ -260,26 +260,28 @@
 
         if ( this.getMessage.length > 300 ) return;
         if ( this.autocomplete ) this.onTab();
+
         this.$emit( 'send' );
-        this.messageBuffer.push(this.getMessage);
-        this.messageBuffer = this.messageBuffer.splice(-10);
-        this.messageBufferIndex = this.messageBuffer.length;
+
+        this.addToMessageBuffer( this.getMessage );
+        this.messageBufferIndex = this.getMessageBuffer.length;
+
         this.setChatMessage( '' );
       },
 
       lastMessageHandler ( event ) {
-        if ( !event.srcElement.value || event.srcElement.value === this.messageBuffer[ this.messageBufferIndex ] ) {
+        if ( !event.srcElement.value || event.srcElement.value === this.getMessageBuffer[ this.messageBufferIndex ] ) {
           // Up Arrow (keyCode 38)
           if ( event.key === 'ArrowUp' ) {
             this.messageBufferIndex -= ( this.messageBufferIndex > 0 ) ? 1 : 0;
-            this.setMessage( this.messageBuffer[ this.messageBufferIndex ] );
+            this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
             event.preventDefault();
           }
           // Down Arrow (keyCode 40)
           else if ( event.key === 'ArrowDown' ) {
-            this.messageBufferIndex += ( this.messageBufferIndex < this.messageBuffer.length ) ? 1 : 0;
-            if ( this.messageBufferIndex === this.messageBuffer.length ) this.setMessage( '' );
-            else this.setMessage( this.messageBuffer[ this.messageBufferIndex ] );
+            this.messageBufferIndex += ( this.messageBufferIndex < this.getMessageBuffer.length ) ? 1 : 0;
+            if ( this.messageBufferIndex === this.getMessageBuffer.length ) this.setMessage( '' );
+            else this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
             event.preventDefault();
           }
           // Idk why this is needed
@@ -346,7 +348,11 @@
           return commandMatch;
         }
 
-        const emoteMatch = this.getMessage.match( /:[\w]*:?$/g );
+        // Remove all existing emotes so we can end early
+        const emoteMatch = this.getMessage
+          .replace( /:\w+:/gi, '' )
+          .match( /:[\w]*$/g );
+
         if ( emoteMatch ) {
           this.autocompleteData = emotes;
           this.acSize = 1;
@@ -363,6 +369,7 @@
       ...mapState(Chat.namespace, {
         getMessage: Chat.$states.message,
         enableAutocomplete: Chat.$states.autocomplete,
+        getMessageBuffer : Chat.$states.messageBuffer,
       }),
 
       userlist () {

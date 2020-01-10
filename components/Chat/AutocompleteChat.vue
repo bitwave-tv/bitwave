@@ -52,7 +52,7 @@
 
 <script>
   export default {
-    name: 'AutocompleteUsername',
+    name: 'AutocompleteChat',
 
     props: {
       data   : { type: Array },

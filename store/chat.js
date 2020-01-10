@@ -14,6 +14,7 @@ const $states = {
   autocomplete : 'AUTOCOMPLETE',
 
   message    : 'MESSAGE',
+  messageBuffer : 'MESSAGE_BUFFER',
 
   viewerList       : 'VIEWER_LIST',
   roomViewerList   : 'ROOM_VIEWER_LIST',
@@ -41,6 +42,8 @@ const $mutations = {
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
 
+  addToMessageBuffer : 'ADD_MESSAGE_BUFFER',
+
   setViewerList       : 'SET_VIEWERLIST',
   setRoomViewerList   : 'SET_ROOM_VIEWERLIST',
   setStreamViewerList : 'SET_STREAM_VIEWERLIST',
@@ -63,8 +66,10 @@ export const state = () => ({
   [$states.ttsVoice]   : 1,
   [$states.notify]     : true,
   [$states.ignoreList] : [],
-  [$states.message]    : '',
   [$states.autocomplete] : true,
+
+  [$states.message]          : '',
+  [$states.messageBuffer]    : [],
 
   [$states.viewerList]       : [],
   [$states.roomViewerList]   : {},
@@ -159,6 +164,16 @@ export const mutations = {
   // Append to current input message
   [$mutations.appendMessage] ( state, data ) {
     state[$states.message] += data;
+  },
+
+  // Sets message buffer (history)
+  [$mutations.addToMessageBuffer] ( state, data ) {
+    const bufferSize = state[$states.messageBuffer].length;
+    if ( bufferSize === 0 ) state[$states.messageBuffer].push( data );
+    if ( bufferSize > 0 && state[$states.messageBuffer][bufferSize - 1] !== data ) {
+      state[$states.messageBuffer].push( data );
+      state[$states.messageBuffer] = state[$states.messageBuffer].splice( -10 );
+    }
   },
 
   [$mutations.setRoomViewerList] ( state, data ) {
