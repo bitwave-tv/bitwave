@@ -4,6 +4,7 @@
     transition="fade-transition"
     :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '60%'"
     @click:outside="cancel"
+    persistent
   >
     <template #activator="{ on }">
       <v-btn
@@ -52,6 +53,7 @@
             label="Not Safe For Work (NSFW)"
             color="yellow"
             hide-details
+            inset
             :loading="saveLoading"
             :disabled="saveLoading"
             @change="enableSave = true"
@@ -73,6 +75,20 @@
           v-if="!previewData"
           class="px-3"
         >
+
+          <v-switch
+            v-if="!previewData"
+            v-model="streamData.archive"
+            class="mb-4"
+            label="Archives"
+            color="yellow"
+            hide-details
+            inset
+            :loading="saveLoading"
+            :disabled="saveLoading"
+            @change="enableSave = true"
+          />
+
           <div class="body-1 mb-1">
             Stream Title
           </div>
@@ -220,12 +236,14 @@
 
     data() {
       return {
+        archive: false,
         editStreamData: false,
         previewData: false,
         streamData : {
           title: this.title,
           description: this.description,
           nsfw: this.nsfw,
+          archive: false,
         },
         saveLoading: false,
         enableSave: false,
@@ -234,8 +252,22 @@
     },
 
     methods: {
+      async getStreamData () {
+        const stream = this.username.toLowerCase();
+        try {
+          const doc = await db.collection( 'streams' ).doc( stream ).get();
+          const data = doc.data();
+          this.archive = data.archive;
+          this.streamData.archive = data.archive;
+        } catch ( error ) {
+          this.$toast.error( error.message, { icon: 'error', duration: 5000 } );
+          this.editStreamData = false;
+        }
+      },
+
       resetValues () {
         this.streamData = {
+          archive: this.archive,
           title: this.title,
           description: this.description,
           nsfw: this.nsfw,
@@ -284,6 +316,7 @@
         const streamRef   = db.collection( 'streams' ).doc( stream );
 
         await streamRef.update({
+          archive: this.streamData.archive,
           nsfw: this.streamData.nsfw,
           title: this.streamData.title,
           description: this.streamData.description,
@@ -300,6 +333,10 @@
     },
 
     computed: {},
+
+    async mounted () {
+      await this.getStreamData();
+    },
   };
 </script>
 

@@ -12,133 +12,7 @@
       </v-flex>
     </v-layout>
 
-    <v-layout justify-center>
-      <v-flex
-        xs12
-        sm10
-        md8
-        lg6
-      >
-        <v-card class="mb-4 pa-3">
-          <v-layout column>
-            <v-flex>
-              <v-layout
-                justify-space-around
-                align-center
-                row
-              >
-                <v-flex shrink class="ma-3">
-                  <v-avatar color="white" size="100">
-                    <v-img
-                      :src="imageUrl || 'https://cdn.bitwave.tv/static/img/shield.png'"
-                      alt="avatar" />
-                  </v-avatar>
-                </v-flex>
-                <v-flex shrink class="text-xs-center my-1">
-                  <h3>THE REST OF THIS SHIT IS COMING SOON</h3>
-                  <p>send complaints for $5/issue via paypal.</p>
-                  <v-btn
-                    color="red"
-                    href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
-                    target="_blank"
-                  >COMPLAINTS</v-btn>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-            <v-flex v-if="user" class="my-2">
-              <v-layout column>
-
-                <h2 class="mb-2">Profile</h2>
-
-                <v-layout
-                  class="mb-4"
-                  align-center
-                >
-                  <v-flex>
-                    <v-file-input
-                      ref="image"
-                      label="Select new profile photo"
-                      solo
-                      light
-                      filled
-                      hide-details
-                      prepend-icon=""
-                      prepend-inner-icon="$file"
-                      background-color="white"
-                      truncate-length="30"
-                      @change="onFilePicked"
-                    />
-                  </v-flex>
-                  <v-flex shrink>
-                    <v-btn
-                      large
-                      class="ml-2"
-                      :loading="uploadingAvatar"
-                      color="yellow"
-                      outlined
-                      :disabled="!imageFile"
-                      @click="uploadFile"
-                    >SAVE</v-btn>
-                  </v-flex>
-                </v-layout>
-
-                <v-flex class="mt-4">
-                  <v-text-field
-                    v-model="user.uid"
-                    label="UserID"
-                    disabled
-                    outlined
-                  />
-                </v-flex>
-
-                <v-flex>
-                  <v-text-field
-                    v-model="username"
-                    label="username"
-                    readonly
-                    outlined
-                  />
-                </v-flex>
-
-                <v-flex>
-                  <v-text-field
-                    v-model="user.email"
-                    label="email"
-                    readonly
-                    outlined
-                  />
-                </v-flex>
-
-                <v-flex>
-                  <v-text-field
-                    label="password"
-                    type="password"
-                    value="************"
-                    disabled
-                    outlined
-                  />
-                </v-flex>
-
-                <v-layout>
-                  <v-spacer />
-                  <v-btn
-                    color="yellow"
-                    @click="logout"
-                    disabled
-                    class="mr-2 black--text"
-                  >Edit</v-btn>
-                  <v-btn
-                    color="yellow"
-                    @click="logout"
-                    class="black--text"
-                  >Logout</v-btn>
-                </v-layout>
-              </v-layout>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </v-flex>
-    </v-layout>
+    <account-details />
 
     <v-layout justify-center>
       <v-flex
@@ -278,12 +152,18 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js'
 
-  import { mapGetters, mapActions } from 'vuex'
+  import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
+
+  import AccountDetails from '@/components/profile/AccountDetails';
 
   export default {
 
     name: 'profile',
+
+    components: {
+      AccountDetails,
+    },
 
     middleware: 'auth',
 
@@ -323,24 +203,11 @@
         keyLoading: false,
         keyMessage: 'Click to reveal key',
 
-        imageName: '',
-        imageUrl: '',
-        imageFile: null,
-        uploadingAvatar: false,
-
         description: '',
       }
     },
 
     methods: {
-      ...mapActions({
-        logoutStore: VStore.$actions.logout,
-      }),
-
-      async logout () {
-        await this.logoutStore();
-        this.$router.push( '/signout' );
-      },
 
       async authenticated ( user ) {
         if ( user ) {
@@ -352,7 +219,7 @@
 
       getStreamData () {
         this.streamDataLoading = true;
-        // const userId = this.user.uid;
+
         const stream = this.username.toLowerCase();
         const streamRef = db.collection( 'streams' ).doc( stream );
         return streamRef.onSnapshot( async doc => {
@@ -371,7 +238,6 @@
       },
 
       async profileDataChanged ( data ) {
-        if (data.avatar) this.imageUrl = data.avatar;
         this.streamkey = data.streamkey;
         this.streamData.key = `${this.username}?key=${this.streamkey}`;
         this.profileDataLoading = false;
@@ -454,77 +320,6 @@
         }, 3000);
       },
 
-      pickFile () {
-        this.$refs.image.click ();
-      },
-
-      onFilePicked ( file ) {
-        if ( !!file ) {
-          this.imageName = file.name;
-          if( this.imageName.lastIndexOf('.') <= 0 ) {
-            return;
-          }
-          const fr = new FileReader ();
-          fr.readAsDataURL( file );
-          fr.addEventListener('load', () => {
-            this.imageUrl  = fr.result;
-            this.imageFile = file; // this is an image file that can be sent to server...
-          });
-        } else {
-          this.imageName =   '';
-          this.imageFile = null;
-          this.imageUrl  =   '';
-        }
-      },
-
-      async uploadFile () {
-        if ( !this.imageFile ) return false;
-        this.uploadingAvatar = true;
-        const formData = new FormData();
-        formData.append( 'upload', this.imageFile );
-        try {
-          const { data } = await this.$axios.post( 'https://api.bitwave.tv/upload', formData, {
-            headers: {
-              'content-type': 'multipart/formdata',
-            },
-          });
-          console.log( `Upload successfull.` );
-          this.$toast.success( 'Upload successful', { icon: 'done', duration: 5000 } );
-          console.log( data );
-          this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
-          this.saveUserAvatar( this.imageUrl );
-        } catch ( error ) {
-          console.log( `Upload failed!` );
-          this.$toast.error( 'Failed to upload image', { icon: 'error', duration: 5000 } );
-          console.log( error.message );
-        }
-        this.uploadingAvatar = false;
-      },
-
-      async saveUserAvatar ( url ) {
-        this.$ga.event({
-          eventCategory : 'profile',
-          eventAction   : 'update avatar',
-          eventLabel    : this.username.toLowerCase(),
-        });
-
-        const userId = this.uid;
-        const docRef = db.collection( 'users' ).doc( userId );
-        await docRef.update({
-          avatar: url,
-        });
-
-        if ( this.showStreamInfo ) {
-          const stream = this.username.toLowerCase();
-          const streamRef = db.collection( 'streams' ).doc( stream );
-          await streamRef.update({
-            'user.avatar': url,
-          });
-        }
-
-        this.imageFile = null;
-        this.imageName = '';
-      },
     },
 
     computed: {

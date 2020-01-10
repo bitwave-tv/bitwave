@@ -17,8 +17,9 @@ if ( !firebase.apps.length ) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 const FieldValue = firebase.firestore.FieldValue;
+const EmailAuthProvider = firebase.auth.EmailAuthProvider;
 
-export { auth, db, FieldValue }
+export { auth, db, FieldValue, EmailAuthProvider }
 
 
 const listenToAuthState = ( callback ) => {
