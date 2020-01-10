@@ -117,22 +117,27 @@
           : false;
       },
 
+      showSystemAlert () {
+        return this.systemAlert
+          && this.systemAlert.display
+          && this.systemAlertHidden !== this.systemAlert.id;
+      },
+
       fireworks () {
         return this.getAlerts.hasOwnProperty( 'fireworks' )
           ? this.getAlerts.fireworks
           : false;
       },
 
-      showSystemAlert () {
-        return this.systemAlert
-          && this.systemAlert.display
-          && this.systemAlertHidden !== this.systemAlert.id
+      showFireworks () {
+        return this.fireworks
+          && this.fireworks.display;
       },
     },
 
     watch: {
-      fireworks( val ) {
-        if ( val ) this.$refs['fireworks'].start();
+      showFireworks( val ) {
+        if ( val ) this.$refs['fireworks'].start( this.fireworks.message, this.fireworks.subtext );
       }
     },
 

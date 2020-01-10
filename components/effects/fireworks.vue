@@ -19,8 +19,8 @@
           show: showHero
         }"
       >
-        <div class="display-2 mb-5">dlive is the future</div>
-        <div class="display-1 font-weight-thin">[bitwave.tv]</div>
+        <div class="display-2 mb-5">{{ message }}</div>
+        <div class="display-1 font-weight-thin">{{ subtext }}</div>
       </div>
     </div>
 </template>
@@ -41,11 +41,16 @@
         heroDelay: 2.5,
         duration: 10,
         transitionDuration: 0.5,
+        message: 'dlive is the future',
+        subtext: '[bitwave.tv]',
       };
     },
 
     methods: {
-      start () {
+      start ( msg, subtxt ) {
+        this.message = msg || 'dlive is the future';
+        this.subtext = subtxt || '[bitwave.tv]';
+
         fireworks = new Fireworks();
 
         console.log( 'Starting Fireworks', fireworks );
