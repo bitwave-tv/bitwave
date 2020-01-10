@@ -254,7 +254,13 @@
         this.setChatMessage( event.srcElement.value );
       },
 
-      sendMessage() {
+      sendMessage ( event ) {
+        // Insert new line when shift-enter is pressed
+        if ( event.shiftKey ) {
+          this.setChatMessage( this.getMessage + '\\n' );
+          return;
+        }
+
         // Don't send a message if auto completing
         if ( this.autocomplete ) return this.onTab();
 
