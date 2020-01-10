@@ -960,6 +960,7 @@
         setIgnoreList     : Chat.$mutations.setIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
         appendChatMessage : Chat.$mutations.appendMessage,
+        setAutocomplete   : Chat.$mutations.setAutocomplete,
       }),
 
       ...mapActions({
@@ -1101,6 +1102,14 @@
       } catch ( error ) {
         console.log ( 'No notification sound option found.' );
         this.setNotify ( false );
+      }
+
+      try {
+        const autocomplete = localStorage.getItem( 'autocomplete' );
+        if ( !!autocomplete ) this.setAutocomplete( autocomplete );
+      } catch ( error ) {
+        console.log ( 'No autocomplete option found.' );
+        this.setAutocomplete ( true );
       }
 
       // Add hydration for global

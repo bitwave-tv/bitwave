@@ -27,7 +27,7 @@
             color="yellow"
             hide-details
             dense
-            flat
+            inset
           />
         </div>
         <div class="flex-grow-1">
@@ -38,7 +38,7 @@
             color="yellow"
             hide-details
             dense
-            flat
+            inset
           />
         </div>
       </div>
@@ -50,7 +50,7 @@
         color="yellow"
         hide-details
         dense
-        flat
+        inset
       />
 
       <v-switch
@@ -60,7 +60,17 @@
         color="yellow"
         hide-details
         dense
-        flat
+        inset
+      />
+
+      <v-switch
+        v-model="autocomplete"
+        label="Autocomplete"
+        class="mb-2"
+        color="yellow"
+        hide-details
+        dense
+        inset
       />
     </div>
 
@@ -161,6 +171,7 @@
         setTtsRate        : Chat.$mutations.setTtsRate,
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
+        setAutocomplete   : Chat.$mutations.setAutocomplete,
       }),
 
       closeMenu() {
@@ -183,6 +194,7 @@
         getTtsRate        : Chat.$states.ttsRate,
         getTtsVoice       : Chat.$states.ttsVoice,
         getNotify         : Chat.$states.notify,
+        getAutocomplete   : Chat.$states.autocomplete,
       }),
 
       globalChat: {
@@ -223,6 +235,11 @@
       notificationSound: {
         set ( val ) { this.setNotify( val ) },
         get () { return this.getNotify }
+      },
+
+      autocomplete: {
+        set ( val ) { this.setAutocomplete( val ) },
+        get () { return this.getAutocomplete }
       },
     },
 

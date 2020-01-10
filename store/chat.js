@@ -11,6 +11,7 @@ const $states = {
   ttsVoice   : 'TTS_VOICE',
   notify     : 'NOTIFY',
   ignoreList : 'IGNORE_LIST',
+  autocomplete : 'AUTOCOMPLETE',
 
   message    : 'MESSAGE',
 
@@ -35,6 +36,7 @@ const $mutations = {
   setTtsVoice   : 'SET_TTS_VOICE',
   setNotify     : 'SET_NOTIFY',
   setIgnoreList : 'SET_IGNORE_LIST',
+  setAutocomplete : 'SET_AUTOCOMPLETE',
 
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
@@ -62,6 +64,7 @@ export const state = () => ({
   [$states.notify]     : true,
   [$states.ignoreList] : [],
   [$states.message]    : '',
+  [$states.autocomplete] : true,
 
   [$states.viewerList]       : [],
   [$states.roomViewerList]   : {},
@@ -134,6 +137,12 @@ export const mutations = {
   [$mutations.setNotify] ( state, data ) {
     state[$states.notify] = JSON.parse( data );
     localStorage.setItem( 'notify', data );
+  },
+
+  // Set autocomplete
+  [$mutations.setAutocomplete] ( state, data ) {
+    state[$states.autocomplete] = JSON.parse( data );
+    localStorage.setItem( 'autocomplete', data );
   },
 
   // Set ignore list

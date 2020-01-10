@@ -44,7 +44,7 @@
       >
         <v-icon color="red">block</v-icon>
       </v-avatar>
-      <div>No results</div>
+      <div>No result</div>
     </div>
 
   </v-sheet>

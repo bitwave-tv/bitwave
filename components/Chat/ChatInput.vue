@@ -87,7 +87,7 @@
 
     <!-- Popup -->
       <autocomplete-chat
-        v-if="autocomplete"
+        v-if="autocomplete && enableAutocomplete"
         :data="autocompleteData"
         :filter="autocompleteFilter"
         :index="autocompleteSelection"
@@ -326,7 +326,7 @@
 
       setChatMessage ( msg ) {
         this.setMessage( msg );
-        this.autocomplete = this.detectAutocomplete();
+        this.autocomplete = this.enableAutocomplete && this.detectAutocomplete();
       },
 
       detectAutocomplete () {
@@ -362,6 +362,7 @@
 
       ...mapState(Chat.namespace, {
         getMessage: Chat.$states.message,
+        enableAutocomplete: Chat.$states.autocomplete,
       }),
 
       userlist () {
