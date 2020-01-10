@@ -4,7 +4,7 @@
     color="grey darken-4"
   >
 
-    <template v-for="(user, index) in filteredData">
+    <template v-for="( user, index ) in filteredData">
       <v-lazy
         min-height="32"
         :key="user.username"
@@ -33,6 +33,19 @@
         </v-sheet>
       </v-lazy>
     </template>
+
+    <div
+      v-if="!filteredData || filteredData.length === 0"
+      class="d-flex px-3 py-1 align-center"
+    >
+      <v-avatar
+        class="mr-3"
+        size="24"
+      >
+        <v-icon color="red">block</v-icon>
+      </v-avatar>
+      <div>No results</div>
+    </div>
 
   </v-sheet>
 </template>

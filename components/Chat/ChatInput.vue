@@ -86,7 +86,6 @@
     </div>
 
     <!-- Popup -->
-    <!--<v-slide-y-transition>-->
       <autocomplete-chat
         v-if="autocomplete"
         :data="autocompleteData"
@@ -97,7 +96,6 @@
         @update:value="val => this.autocompleteValue = val"
         @click="onTab"
       />
-    <!--</v-slide-y-transition>-->
 
   </v-sheet>
 </template>
@@ -145,13 +143,22 @@
     },
     {
       label: 'cleantts',
-      value: '/cleantts',
+      value: '/cleantts ',
+    },
+    {
+      label: 'Viewer Stats',
+      value: '/views ',
+    },
+    {
+      label: 'Message Stats',
+      value: '/stats ',
     },
   ];
 
   const emotes = [
     {
       label: 'blob',
+      avatar: 'https://cdn.bitwave.tv/static/emotes/blobby.gif?2',
       value: ':blob: ',
     },
     {
@@ -160,35 +167,53 @@
     },
     {
       label: 'car',
+      avatar: 'https://cdn.bitwave.tv/static/img/car.gif?2',
       value: ':car: ',
     },
     {
+      label: 'dab',
+      avatar: 'https://cdn.bitwave.tv/uploads/6503df28-e3f3-4d71-950c-549ca290540f?2',
+      value: ':dab: ',
+    },
+    {
       label: 'sadcat',
+      avatar: 'https://cdn.bitwave.tv/static/emotes/sadcat.png?2',
       value: ':sadcat: ',
     },
     {
       label: 'clap',
+      avatar: 'https://cdn.bitwave.tv/uploads/c0c72634-224b-4f6a-a6d0-510561c7f0d0?2',
       value: ':clap: ',
     },
     {
       label: 'pepelaugh',
+      avatar: 'https://cdn.bitwave.tv/uploads/9f718df6-a755-4969-ae7f-f9af1d1d8062?2',
       value: ':pepelaugh: ',
     },
     {
       label: 'reee',
+      avatar: 'https://cdn.bitwave.tv/static/emotes/reee.gif?2',
       value: ':reee: ',
     },
     {
       label: 'smug',
+      avatar: 'https://cdn.bitwave.tv/static/emotes/smug.png?2',
       value: ':smug: ',
     },
     {
       label: 'shrug',
-      value: ':shrug: ',
+      avatar: 'https://cdn.bitwave.tv/static/emotes/shrug2-52.png?2',
+      value: ':shrug2: ',
     },
     {
       label: 'popcorn',
+      avatar: 'https://cdn.bitwave.tv/static/emotes/popcorn.gif?2',
       value: ':popcorn: ',
+    },
+    {
+      label: 'tos',
+      avatar: 'https://cdn.bitwave.tv/uploads/cd4138be-8458-4473-a06d-43ea761f8012?2',
+      value: ':tos: ',
     },
   ];
 
@@ -230,13 +255,16 @@
       },
 
       sendMessage() {
+        // Don't send a message if auto completing
+        if ( this.autocomplete ) return this.onTab();
+
         if ( this.getMessage.length > 300 ) return;
         if ( this.autocomplete ) this.onTab();
         this.$emit( 'send' );
         this.messageBuffer.push(this.getMessage);
         this.messageBuffer = this.messageBuffer.splice(-10);
         this.messageBufferIndex = this.messageBuffer.length;
-        this.setMessage( '' );
+        this.setChatMessage( '' );
       },
 
       lastMessageHandler ( event ) {
@@ -288,10 +316,10 @@
       onTab ( event ) {
         if ( !this.autocomplete || !this.autocompleteValue ) return;
         if ( event ) {
-          const msg = event.srcElement.value.replace( this.autocomplete[0], this.autocompleteValue.value );
+          const msg = event.srcElement.value.replace( new RegExp( this.autocomplete[0] + '$' ), this.autocompleteValue.value );
           this.setChatMessage( msg );
         } else {
-          const msg = this.getMessage.replace( this.autocomplete[0], this.autocompleteValue.value );
+          const msg = this.getMessage.replace( new RegExp( this.autocomplete[0] + '$' ), this.autocompleteValue.value );
           this.setChatMessage( msg );
         }
       },
