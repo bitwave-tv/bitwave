@@ -386,8 +386,9 @@
 
     computed: {
       ...mapGetters({
-        username: VStore.$getters.getUsername,
-        user: VStore.$getters.getUser,
+        username : VStore.$getters.getUsername,
+        user     : VStore.$getters.getUser,
+        isAdmin  : VStore.$getters.isAdmin,
       }),
 
       posterCacheBusted () {
@@ -405,11 +406,6 @@
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
       },
-
-      isAdmin () {
-        const user = this.user;
-        return user && user.hasOwnProperty( 'role' ) && user.role === 'admin';
-      }
     },
 
     /*async validate ( { params, query, store, $axios } ) {

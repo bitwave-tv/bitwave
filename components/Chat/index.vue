@@ -27,7 +27,7 @@
       <div class="d-flex">
 
         <!-- Create Poll Button -->
-        <div v-if="page === username">
+        <div v-if="page.toLowerCase() === username.toLowerCase()">
           <v-menu
             v-model="showPoll"
             :close-on-content-click="false"
@@ -56,16 +56,32 @@
         </div>
 
         <!-- Placeholder -->
-        <v-btn
-          :style="{ 'min-width': '40px' }"
-          small
-          color="yellow"
-          class="ml-2 px-0 black--text"
-          disabled
-          @click="scrollToBottom(true)"
+        <v-menu
+          v-model="adminActionsMenu"
+          :close-on-content-click="false"
+          bottom
+          left
+          offset-y
+          transition="slide-y-transition"
         >
-          <v-icon>verified_user</v-icon>
-        </v-btn>
+          <template #activator="{ on }">
+            <v-btn
+              v-on="on"
+              :style="{ 'min-width': '40px' }"
+              small
+              light
+              color="yellow"
+              class="ml-2 px-0"
+              :disabled="!isAdmin"
+              @click="scrollToBottom(true)"
+            >
+              <v-icon>verified_user</v-icon>
+            </v-btn>
+          </template>
+
+          <chat-admin-menu @close="adminActionsMenu = false" />
+
+        </v-menu>
 
       </div>
 
@@ -133,6 +149,7 @@
 
   const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
   const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
+  const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import { Chat } from '@/store/chat';
@@ -178,6 +195,7 @@
       ViewerList,
       ChatRate,
       ViewRate,
+      ChatAdminMenu,
     },
 
     data() {
@@ -266,6 +284,8 @@
           average: 0,
           total: 0,
         },
+
+        adminActionsMenu: false,
       }
     },
 
@@ -973,6 +993,7 @@
     computed: {
       ...mapGetters({
         isAuth       : VStore.$getters.isAuth,
+        isAdmin      : VStore.$getters.isAdmin,
         user         : VStore.$getters.getUser,
         _username    : VStore.$getters.getUsername,
         getChatToken : VStore.$getters.getChatToken,

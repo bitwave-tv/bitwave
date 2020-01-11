@@ -23,6 +23,7 @@ const $states = {
 
 const $getters = {
   isAuth       : 'IS_AUTH',
+  isAdmin      : 'IS_ADMIN',
   getAuth      : 'GET_AUTH',
   getUID       : 'GET_UID',
   getUser      : 'GET_USER',
@@ -157,6 +158,13 @@ export const getters = {
 
   [$getters.getUserCount] ( state ) {
     return state[$states.userlist].length;
+  },
+
+  [$getters.isAdmin] ( state ) {
+    const user = state[$states.user];
+    return user
+      && user.hasOwnProperty( 'role' )
+      && user.role === 'admin';
   },
 
 };
