@@ -173,6 +173,8 @@
 </template>
 
 <script>
+  import { auth } from '@/plugins/firebase';
+
   export default {
     name: 'ChatAdminMenu',
 
@@ -193,6 +195,8 @@
       },
 
       async createSystemAlert () {
+        await this.updateToken();
+        
         const payload = {
           message: this.systemAlertMessage,
         };
@@ -210,6 +214,8 @@
       },
 
       async createFireworks () {
+        await this.updateToken();
+
         const payload = {
           message: this.FireworksMessage,
           subtext: this.FireworksSubtext,
@@ -225,6 +231,11 @@
         } catch ( error ) {
           this.$toast.error( error.message, { icon: 'error', duration: 5000, position: 'top-center' } );
         }
+      },
+
+      async updateToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
       },
     },
 
