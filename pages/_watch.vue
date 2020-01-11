@@ -11,7 +11,8 @@
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center grey--text">
           <v-avatar size="32">
-            <img :src="avatar" :alt="name" />
+            <img v-if="avatar" :src="avatar" :alt="name" />
+            <v-icon v-else>warning</v-icon>
           </v-avatar>
           <div class="mx-2">{{ name }}</div>
         </div>

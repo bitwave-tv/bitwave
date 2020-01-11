@@ -6,7 +6,10 @@
       color="yellow"
       class="d-flex align-center justify-space-between pl-2"
     >
-      <h5 class="black--text body-2">Bitwave Admin Alerts</h5>
+      <h5 class="black--text body-2">
+        <v-icon color="black">announcement</v-icon>
+        Bitwave Admin Alerts
+      </h5>
       <v-btn
         color="black"
         text
@@ -24,6 +27,7 @@
         class="d-flex mb-3"
         color="yellow"
         light
+        block
         @click.prevent="showSystemAlertDialog = true"
       >
         Create System Alert
