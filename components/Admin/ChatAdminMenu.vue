@@ -196,7 +196,7 @@
 
       async createSystemAlert () {
         await this.updateToken();
-        
+
         const payload = {
           message: this.systemAlertMessage,
         };

@@ -50,6 +50,10 @@
           >
         </video>
       </v-sheet>
+
+      <!-- Video Overlay -->
+      <stickers :channel="name" />
+
     </v-responsive>
 
 
@@ -93,6 +97,7 @@
   import StreamInfo from '@/components/Channel/StreamInfo';
 
   const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
+  const Stickers = async () => await import ( '@/components/effects/Stickers' );
 
   export default {
     name: 'watch',
@@ -119,6 +124,7 @@
     },
 
     components: {
+      Stickers,
       KickStreamButton,
       StreamInfo,
       FollowButton,
