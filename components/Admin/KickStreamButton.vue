@@ -2,7 +2,7 @@
   <div>
     <v-dialog
       v-model="dialog"
-      width="300"
+      :width="$vuetify.breakpoint.mdAndDown ? '95%' : '400'"
     >
       <template v-slot:activator="{ on }">
         <v-btn
@@ -10,9 +10,8 @@
           color="red"
           class="mr-2"
           small
-          dark
         >
-          Kick
+          admin
         </v-btn>
       </template>
 
@@ -21,40 +20,93 @@
           class="title yellow black--text pa-1 mb-3"
           primary-title
         >
-          Confirm Kick Streamer
+          <div>
+            <v-icon color="black">security</v-icon>
+            Admin Controls
+          </div>
+          <v-spacer />
+          <v-btn
+            color="black"
+            text
+            icon
+            pa-0
+            @click="dialog = false"
+          >
+            <v-icon color="black">close</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text>
-          By default this will also reset the streamer's streamkey to prevent the
-          streaming client from auto-reconnecting.
+          <div>
+            By default kicking a stream will also reset the streamer's streamkey to prevent the
+            streaming client from auto-reconnecting.<br>
+            If you do not want to reset a streamer's key, choose <code>Disconnect</code> instead of <code>Kick</code>.
+          </div>
+          <div>
+            For performance reasons, do not start more than <strong>2</strong> transcoder. If transcoded streams begin to buffer or stutter
+            try disabling a transcoder.<br>
+            Also avoid attempting to transocde multiple high res / high bitrate streams as those require more power.
+          </div>
         </v-card-text>
 
         <v-divider />
 
         <v-card-actions>
-          <v-btn
-            color="yellow"
-            text
-            small
-            @click="kickStreamer( false )"
-          >
-            Test
-          </v-btn>
+          <span>Transcoder:</span>
           <v-spacer />
           <v-btn
+            color="green"
+            small
+            outlined
+            @click="transcodeStreamer( 'start' )"
+          >
+            Start
+          </v-btn>
+          <v-btn
             color="red"
+            class="ml-2"
+            small
+            outlined
+            @click="transcodeStreamer( 'stop' )"
+          >
+            Stop
+          </v-btn>
+        </v-card-actions>
+
+        <v-divider />
+
+        <v-card-actions>
+          <span>Livestream:</span>
+          <v-spacer />
+          <v-btn
+            color="yellow"
+            small
+            outlined
+            @click="transcodeStreamer( 'start' )"
+          >
+            Disconnect
+          </v-btn>
+          <v-btn
+            color="red"
+            class="ml-2"
+            small
+            outlined
+            @click="transcodeStreamer( 'stop' )"
+          >
+            Kick
+          </v-btn>
+        </v-card-actions>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="blue"
             small
             @click="dialog = false"
           >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="yellow"
-            small
-            light
-            @click="kickStreamer( true )"
-          >
-            Confirm
+            Close
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -66,6 +118,7 @@
   import { auth } from '@/plugins/firebase.js';
 
   const endpoint = 'https://api.bitwave.tv/v1/admin/stream/kick';
+  const transcodeEndpoint = 'https://api.bitwave.tv/v1/streamer/transcoder/';
 
   export default {
     name: 'KickStreamButton',
@@ -83,6 +136,7 @@
     methods: {
       async getFreshIdToken () {
         const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
         console.log( `Fresh ID token:\n${token}` );
         return token;
       },
@@ -99,6 +153,25 @@
             this.success( 'Successfully kicked stream' );
           else
             this.error( 'Failed to kick stream' );
+        } catch ( error ) {
+          console.error( error );
+          this.error( error.message );
+        }
+        this.dialog = false;
+      },
+
+      async transcodeStreamer ( mode ) {
+        try {
+          await this.getFreshIdToken();
+          const { data } = await this.$axios.post(
+            transcodeEndpoint + mode,
+            { user: this.streamer },
+          );
+          console.log( data );
+          if ( data.success )
+            this.success( 'Successfully transcoded stream' );
+          else
+            this.error( 'Failed to transcode stream' );
         } catch ( error ) {
           console.error( error );
           this.error( error.message );

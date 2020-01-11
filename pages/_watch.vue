@@ -1,7 +1,6 @@
 <template>
   <div :style="{ paddingRight: mobile ? '0' : '450px' }">
 
-
     <!-- Streamer Top Bar -->
     <v-sheet
       class="py-2 px-3 hide-scrollbar"
