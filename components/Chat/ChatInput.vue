@@ -1,9 +1,9 @@
 <template>
   <!-- Chat Input -->
   <v-sheet
-    class="px-2 py-2"
+    id="chat-input"
+    class="pa-2"
     color="black"
-    :style="{ position: 'relative', }"
   >
 
     <!-- Text Input Field -->
@@ -30,6 +30,8 @@
         @keyup.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
         @cut="event => lastMessageHandler(event)"
+        @keydown="onDetectAutocomplete"
+        @click:clear="setChatMessage( '' )"
         @keydown.tab.prevent="event => onTab(event)"
         @keydown.down="event => onArrow(event)"
         @keydown.up="event => onArrow(event)"
@@ -232,7 +234,20 @@
       sendMessage ( event ) {
         // Insert new line when shift-enter is pressed
         if ( event.shiftKey ) {
-          this.setChatMessage( this.getMessage + '\\n' );
+          // Insert at cursor selection
+          const msg =
+            this.getMessage.substring( 0, event.target.selectionStart )
+            + '\\n'
+            + this.getMessage.substring( event.target.selectionEnd, this.getMessage.length );
+
+          const position = event.target.selectionStart + 2;
+
+          // this.setChatMessage( this.getMessage + '\\n' );
+          this.setChatMessage( msg );
+
+          // Reset cursor position after insertion
+          this.$nextTick(() => event.target.setSelectionRange( position, position ) );
+
           return;
         }
 
@@ -265,17 +280,6 @@
             else this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
             event.preventDefault();
           }
-          // Idk why this is needed
-          else {
-            // this.message = '';
-          }
-        }
-
-
-        // Detect keystrokes that trigger autocomplete
-        if ( event.key === '@' || event.key === '/' || event.key === ':' || this.autocomplete ) {
-          if ( event.key === '@' || event.key === '/' || event.key === ':' ) this.autocompleteSelection = 0;
-          this.setChatMessage( event.srcElement.value );
         }
 
         if ( event.type === 'cut' ) {
@@ -285,6 +289,9 @@
             }
           }, 20 );
         }
+
+        // Detect keystrokes that trigger autocomplete
+        if ( this.autocomplete ) this.setChatMessage( event.srcElement.value );
       },
 
       onArrow ( event ) {
@@ -294,6 +301,15 @@
 
         if ( event.key === 'ArrowUp' )   this.autocompleteSelection -= 1;
         if ( event.key === 'ArrowDown' ) this.autocompleteSelection += 1;
+      },
+
+      onDetectAutocomplete ( event ) {
+        // Detect keystrokes that trigger autocomplete
+        if ( event.key === '@' || event.key === '/' || event.key === ':' ) {
+          // ['@','/',':'].includes( event.key )
+          this.autocompleteSelection = 0;
+          this.autocomplete = event.key;
+        }
       },
 
       onTab ( event ) {
@@ -336,7 +352,7 @@
 
         if ( emoteMatch ) {
           this.autocompleteData = this.emoteList;
-          this.acSize = 1;
+          this.acSize = 5;
           return emoteMatch;
         }
       },
@@ -380,3 +396,9 @@
     },
   }
 </script>
+
+<style lang="scss">
+  #chat-input {
+    position: relative;
+  }
+</style>

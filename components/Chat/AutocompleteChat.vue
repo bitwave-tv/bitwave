@@ -84,6 +84,7 @@
 
         return this.acData
           .filter( user => user.value.toLowerCase().includes( filter ) )
+          .sort( ( a, b ) => filter && a.label.toLowerCase().startsWith( filter ) ? -1 : 0 )
           .splice( 0, this.size );
       },
 
