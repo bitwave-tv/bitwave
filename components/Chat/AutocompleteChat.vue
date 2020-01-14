@@ -15,14 +15,14 @@
           @click="onClick( index )"
         >
           <v-avatar
-            v-if="user.hasOwnProperty( 'avatar' ) || user.hasOwnProperty( 'color' )"
+            v-if="user.hasOwnProperty( 'image' ) || user.hasOwnProperty( 'color' )"
             class="mr-3"
             :color="user.color"
             size="24"
           >
             <img
-              v-if="!!user.avatar"
-              :src="user.avatar"
+              v-if="!!user.image"
+              :src="user.image"
               :alt="user.label"
             >
             <v-icon v-else>person</v-icon>

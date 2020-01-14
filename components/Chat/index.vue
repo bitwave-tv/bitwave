@@ -136,22 +136,22 @@
 </template>
 
 <script>
-  import { auth, db } from '@/plugins/firebase.js'
-  import jwt_decode from 'jwt-decode'
+  import { auth, db } from '@/plugins/firebase.js';
+  import jwt_decode from 'jwt-decode';
 
-  import socketio from 'socket.io-client'
+  import socketio from 'socket.io-client';
 
-  import ChatInput from '@/components/Chat/ChatInput'
-  import ChatMessages from '@/components/Chat/ChatMessages'
-  import ChatPoll from '@/components/Chat/ChatPoll'
-  import ChatPollVote from '@/components/Chat/ChatPollVote'
-  import ViewerList from '@/components/Chat/ViewerList'
+  import ChatInput from '@/components/Chat/ChatInput';
+  import ChatMessages from '@/components/Chat/ChatMessages';
+  import ChatPoll from '@/components/Chat/ChatPoll';
+  import ChatPollVote from '@/components/Chat/ChatPollVote';
+  import ViewerList from '@/components/Chat/ViewerList';
 
   const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
   const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
   const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
 
-  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { Chat } from '@/store/chat';
   import { VStore } from '@/store';
 
@@ -162,29 +162,28 @@
     stripHTML
   } from '@/assets/js/ChatHelpers';
 
-  let trollInitialized = false;
-  let trollDataError = null;
-  let trollDataWaiters = [];
-  const trollDataLoaded = () => new Promise(( resolve, reject ) => {
-    if ( trollInitialized ) resolve();
-    if ( trollDataError ) reject( trollDataError );
-    trollDataWaiters.push( { resolve, reject } );
-  });
-
   // Creates server map for switching chat servers
   const chatServers = new Map([
     [ 'DEV',  'localhost:5000'  ],
     [ 'PROD', 'https://chat.bitwave.tv' ],
   ]);
 
+  const compareTokens = ( t1, t2 ) => {
+    const dt1 = jwt_decode( t1 );
+    const dt2 = jwt_decode( t2 );
+    return dt1.user.avi === dt2.user.avi
+      && dt1.user.name === dt2.user.name
+      && dt1.user.color === dt2.user.color
+      && dt1.user.userColor === dt2.user.userColor;
+  };
 
   export default {
     name: 'Chat',
 
     props: {
-      chatChannel : { type: String },
-      forceGlobal : { type: Boolean },
-      hydrationData: { type: Array },
+      chatChannel   : { type: String },
+      forceGlobal   : { type: Boolean },
+      hydrationData : { type: Array },
     },
 
     components: {
@@ -206,28 +205,11 @@
         unsubscribePoll: null,
 
         loading: true,
-        token: null,
-        trollId: null,
         socket: null,
         chatLimit: 50,
         userToken: null,
 
-        messages: [
-          {
-            timestamp : Date.now(),
-            username  : 'MarkPugner',
-            avatar    : 'https://cdn.bitwave.tv/uploads/avatar/94b06c45-af56-4d49-8d42-62853eac66d8-md',
-            message   : `<p>Connecting to chat server... <img src="https://cdn.bitwave.tv/static/emotes/catspin.gif" alt=":catspin:"></p>`,
-            channel   : 'litechat',
-          },
-          {
-            timestamp : Date.now(),
-            username  : 'Dispatch',
-            avatar    : 'https://cdn.bitwave.tv/static/img/glitchwave-100.gif',
-            message   : `<img src="https://cdn.bitwave.tv/static/emotes/happy-ny2.gif?2" alt=":ny:">`,
-            channel   : 'litechat',
-          },
-        ],
+        messages: [],
 
         ignoreList: [],
         ignoreChannelList: [],
@@ -290,6 +272,19 @@
     },
 
     methods: {
+      async connectToChat () {
+
+        await this.initChat();
+
+        const tokenUser = {
+          type  : 'unknown',
+          token : this.getChatToken,
+          page  : this.page,
+        };
+
+        this.connectChat( tokenUser );
+      },
+
       async onResize () {
         await this.$nextTick( async () => await this.scrollToBottom( false ) );
       },
@@ -311,14 +306,20 @@
         if ( user ) {
           await this.subscribeToUser( user.uid );
         } else {
-          // if ( !this.token ) await this.getTrollToken();
-          await trollDataLoaded();
-          const tokenTroll = {
-            type  : 'troll',
-            token : this.token,
-            page  : this.page,
-          };
-          this.connectChat( tokenTroll );
+          await this.logoutChat();
+
+          // Prevents edge case where troll users get connected twice
+          // This occurs during page loads for trolls only.
+          const tokenUpdated = !this.userToken || this.userToken.token !== this.getChatToken;
+          if ( tokenUpdated ) {
+            const tokenTroll = {
+              type: 'troll',
+              token: this.getChatToken,
+              page: this.page,
+            };
+            this.connectChat( tokenTroll );
+          }
+
         }
       },
 
@@ -326,11 +327,6 @@
         const userdocRef = db.collection( 'users' ).doc( uid );
         let lastUser = {};
         this.unsubscribeUser = userdocRef.onSnapshot( async doc => {
-
-          // Swap ID token for Chat Token
-          const idToken = await auth.currentUser.getIdToken();
-          await this.exchangeIdTokenChatToken( idToken );
-          const chatToken = this.getChatToken;
 
           const user = doc.data();
           user.page  = this.page;
@@ -355,12 +351,27 @@
 
           // Check if reconnection required
           if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username || lastUser.color !== user.color ) {
-            const tokenUser = {
-              type  : 'user',
-              token : chatToken,
-              page  : this.page,
-            };
-            this.connectChat( tokenUser );
+            const oldToken = this.getChatToken;
+
+            // Swap ID token for Chat Token
+            const idToken = await auth.currentUser.getIdToken();
+            await this.exchangeIdTokenChatToken( idToken );
+            const chatToken = this.getChatToken;
+
+            const tokenUpdated = !compareTokens( oldToken, this.getChatToken );
+
+            if ( process.env.APP_DEBUG ) console.log( `Has our chat token updated? ${tokenUpdated ? 'Yes' : 'No'}` );
+
+            if ( tokenUpdated ) {
+              // Create user payload
+              const tokenUser = {
+                type  : 'user',
+                token : chatToken,
+                page  : this.page,
+              };
+              this.connectChat( tokenUser ); // Connect to chat server
+            }
+
           }
           lastUser = user; // Record user state
         });
@@ -387,10 +398,10 @@
 
         this.socket = socketio( this.chatServer, socketOptions );
 
-        this.socket.on( 'connect',      async ()      => await this.socketConnect() );
-        this.socket.on( 'reconnect',    async ()      => await this.socketReconnect() );
-        this.socket.on( 'error',        async error   => await this.socketError( `Connection Failed`, error ));
-        this.socket.on( 'disconnect',   async data    => await this.socketError( `Connection Lost`, data ));
+        this.socket.on( 'connect',    async ()    => await this.socketConnect() );
+        this.socket.on( 'reconnect',  async ()    => await this.socketReconnect() );
+        this.socket.on( 'error',      async error => await this.socketError( `Connection Failed`, error ) );
+        this.socket.on( 'disconnect', async data  => await this.socketError( `Connection Lost`, data ) );
 
         // this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
         this.socket.on( 'update usernames', async () => await this.updateViewers() );
@@ -436,7 +447,7 @@
 
       async httpHydrate () {
         try {
-          const { data } = await this.$axios.get(  `https://chat.bitwave.tv/v1/messages${ !this.global ? `/${this.page}` : '' }` );
+          const { data } = await this.$axios.get(  `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }` );
           await this.hydrate( data.data );
         } catch ( error ) {
           console.log( error );
@@ -478,13 +489,11 @@
       async rcvMessageBulk ( messages ) {
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         messages.forEach( el => {
-          const filterMsg = this.filterMessage( el );
-          if ( filterMsg ) return;
+          // Filter messages
+          if ( this.filterMessage( el ) ) return;
 
           // Notification Sounds
-          if ( this.notify ) {
-            if ( pattern.test( el.message ) ) this.sound.play().then();
-          }
+          if ( this.notify ) if ( pattern.test( el.message ) ) this.sound.play().then();
 
           // For Text to Speech
           const currentChat = el.channel.toLowerCase() === this.username.toLowerCase();
@@ -495,15 +504,12 @@
           this.messages.push( el );
 
           // Track message count
-          if ( this.statInterval ) {
-            this.newMessageCount++;
-          }
+          if ( this.statInterval ) this.newMessageCount++;
         });
 
         if ( this.$refs['chatmessages'] ) {
           if ( !this.$refs['chatmessages'].showFAB ) {
             this.messages = this.messages.splice( -this.chatLimit );
-            // if ( this.messages.length > this.chatLimit - 5 ) this.messages = this.messages.splice( -this.chatLimit );
           }
         } else {
           console.warn( `Failed to find 'chatmessages' component...` );
@@ -571,10 +577,9 @@
           this.viewStats = calcStats( this.viewStats.value, this.getChannelViews( this.page ), this.viewStats.total, this.getChannelViews( this.page ) );
 
           this.newMessageCount = 0;
-          this.statTickCount = 0;
-        }
-        // Short rate stat update
-        else {
+          this.statTickCount   = 0;
+        } else {
+          // Short rate stat update
           this.chatStats.value.splice( this.chatStats.value.length - 1, 1, this.newMessageCount );
           this.viewStats.value.splice( this.viewStats.value.length - 1, 1, this.getChannelViews( this.page ) );
           this.chatStats.current = this.newMessageCount;
@@ -673,7 +678,6 @@
               break;
             case 'w':
             case 'whisper':
-              // this.socket.emit( 'whisper', msg );
               msg.message = msg.message.replace( '/w', '!w' );
               this.socket.emit( 'message', msg );
               break;
@@ -703,39 +707,6 @@
         } catch ( error ) {
           console.error( error );
           return null;
-        }
-      },
-
-      async getTrollToken () {
-        try {
-          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token' );
-          const trollToken = data.chatToken;                   // Get new troll token and
-          localStorage.setItem( 'troll', trollToken );         // Save token to localStorage
-          this.setChatToken( trollToken );
-          this.token = trollToken;
-          this.trollId = jwt_decode( trollToken ).user.name;   // Then parse the token
-          trollInitialized = true;
-          trollDataWaiters.forEach( v => v.resolve() );        // Finally, Resolve our waiters
-        } catch ( error ) {
-          console.error( `Failed to get troll token`, error ); // Error getting troll token
-          trollDataError = error;
-          trollDataWaiters.forEach( v => v.reject(error) );    // Reject our waiters
-        }
-      },
-
-      async setupTrollData () {
-        try {
-          const trollToken = localStorage.getItem( 'troll' );  // Check for an existing token
-          if ( !trollToken ) await this.getTrollToken();           // No token found, go get one
-          if ( trollToken ) {                 // We have a token
-            this.setChatToken( trollToken );  // use the token
-            this.token = trollToken;
-            this.trollId = jwt_decode( trollToken ).user.name;  // Decode the token
-            trollInitialized = true;
-            trollDataWaiters.forEach( v => v.resolve() );       // Resolve our waiters
-          }
-        } catch ( error ) {
-          console.log( `Failed to access localstorage`, error );
         }
       },
 
@@ -984,8 +955,14 @@
       }),
 
       ...mapActions({
-        exchangeIdTokenChatToken: VStore.$actions.exchangeIdTokenChatToken,
         updateViewers: VStore.$actions.updateViewers,
+      }),
+
+      ...mapActions(Chat.namespace, {
+        initChat : Chat.$actions.init,
+        logoutChat : Chat.$actions.logout,
+        updateChatToken : Chat.$actions.updateChatToken,
+        exchangeIdTokenChatToken: Chat.$actions.exchangeIdTokenChatToken,
       }),
 
     },
@@ -996,7 +973,6 @@
         isAdmin      : VStore.$getters.isAdmin,
         user         : VStore.$getters.getUser,
         _username    : VStore.$getters.getUsername,
-        getChatToken : VStore.$getters.getChatToken,
         getChannelViews : VStore.$getters.getChannelViews,
       }),
 
@@ -1011,6 +987,9 @@
         notify            : Chat.$states.notify,
         getIgnoreList     : Chat.$states.ignoreList,
         getMessage        : Chat.$states.message,
+
+        getChatToken      : Chat.$states.chatToken,
+        displayName       : Chat.$states.displayName,
       }),
 
       global: {
@@ -1029,7 +1008,8 @@
       },
 
       username () {
-        return this._username || this.trollId || 'troll';
+        // return this._username || this.trollId || 'troll';
+        return this.displayName || this._username || 'troll';
       },
 
       page () {
@@ -1047,7 +1027,7 @@
 
     watch: {
       global: async function ( val, old ) {
-        if ( this.loading ) return;
+        // if ( this.loading ) return;
         await this.httpHydrate();
         /*if ( !val ) {
           // Remove global messages when going into local chat
@@ -1068,7 +1048,7 @@
     async mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 
-      await this.setupTrollData();
+      await this.connectToChat();
 
       // Add listener for voice changes, then update voices.
       this.voicesListTTS = speechSynthesis.getVoices();
@@ -1132,9 +1112,6 @@
         console.log ( 'No autocomplete option found.' );
         this.setAutocomplete ( true );
       }
-
-      // Add hydration for global
-      this.$nextTick( async () => { if ( this.global ) await this.httpHydrate(); } );
 
       // Listen for new polls
       this.subscribeToPoll( this.page );

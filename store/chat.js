@@ -1,5 +1,9 @@
 // Define Store states, getters, mutations & actions
 
+import jwt_decode from 'jwt-decode';
+
+let loggingOut = false;
+
 const $states = {
   room       : 'ROOM',
   global     : 'GLOBAL',
@@ -19,16 +23,21 @@ const $states = {
   viewerList       : 'VIEWER_LIST',
   roomViewerList   : 'ROOM_VIEWER_LIST',
   streamViewerList : 'STREAM_VIEWER_LIST',
+
+  emoteList : 'EMOTE_LIST',
+
+  chatToken : 'CHAT_TOKEN',
+  displayName : 'DISPLAY_NAME',
 };
 
 const $getters = {
-  viewerCount         : 'VIEWER_COUNT',
   getStreamViewerList : 'GET_STREAM_VIEWERLIST',
 };
 
 const $mutations = {
   setRoom       : 'SET_ROOM',
   setGlobal     : 'SET_GLOBAL',
+  setGlobalSSR  : 'SET_GLOBAL_SSR',
   setTimestamps : 'SET_TIMESTAMPS',
   setUseTts     : 'SET_USE_TTS',
   setUseIgnore  : 'SET_USE_IGNORE',
@@ -47,10 +56,23 @@ const $mutations = {
   setViewerList       : 'SET_VIEWERLIST',
   setRoomViewerList   : 'SET_ROOM_VIEWERLIST',
   setStreamViewerList : 'SET_STREAM_VIEWERLIST',
+
+  setEmoteList : 'SET_EMOTE_LIST',
+
+  setChatToken : 'SET_CHAT_TOKEN',
+  setDisplayName : 'SET_DISPLAY_NAME',
 };
 
 const $actions = {
   updateViewerList : 'UPDATE_VIEWERLIST',
+  updateEmoteList  : 'UPDATE_EMOTE_LIST',
+  updateChatToken  : 'UPDATE_CHAT_TOKEN',
+
+  createTrollToken : 'CREATE_TROLL_TOKEN',
+  exchangeIdTokenChatToken : 'exchangeIdTokenChatToken',
+
+  init   : 'INIT_CHAT',
+  logout : 'LOGOUT',
 };
 
 
@@ -71,19 +93,15 @@ export const state = () => ({
   [$states.message]          : '',
   [$states.messageBuffer]    : [],
 
-  [$states.viewerList]       : [],
-  [$states.roomViewerList]   : {},
-  [$states.streamViewerList] : [],
+  [$states.emoteList] : [],
+
+  [$states.chatToken] : null,
+  [$states.displayName] : '',
 });
 
 
 // Create Store Getters
 export const getters = {
-  // Get total viewer count
-  [$getters.viewerCount] ( state ) {
-    return state[$states.viewerList].length;
-  },
-
   // Get stream viewer list
   [$getters.getStreamViewerList] ( state ) {
     return state[$states.streamViewerList];
@@ -108,6 +126,12 @@ export const mutations = {
   [$mutations.setGlobal] ( state, data ) {
     state[$states.global] = JSON.parse( data );
     localStorage.setItem( 'globalchat', data );
+    this.$cookies.set( '_bw_global', data );
+  },
+
+  // Set global chat SSR
+  [$mutations.setGlobalSSR] ( state, data ) {
+    state[$states.global] = JSON.parse( data );
   },
 
   // Set use TTS
@@ -176,16 +200,18 @@ export const mutations = {
     }
   },
 
-  [$mutations.setRoomViewerList] ( state, data ) {
-    state[$states.roomViewerList] = { ...data };
+  [$mutations.setEmoteList] ( state, data ) {
+    state[$states.emoteList] = data;
   },
 
-  [$mutations.setViewerList] ( state, data ) {
-    state[$states.viewerList] = [ ...data ];
+  // Set chat token
+  [$mutations.setChatToken] ( state, data ) {
+    state[$states.chatToken] = data;
   },
 
-  [$mutations.setStreamViewerList] ( state, data ) {
-    state[$states.streamViewerList] = data;
+  // Set chat token
+  [$mutations.setDisplayName] ( state, data ) {
+    state[$states.displayName] = data;
   },
 };
 
@@ -196,57 +222,97 @@ export const actions = {
     commit( 'SET_ROOM', data );
   },
 
-  [$actions.updateViewerList] ( { dispatch, commit, state }, data ) {
-
-    // Create list of unique viewers in each channel
-    const roomViewerList = data.reduce( ( accumulator, user ) => {
-      let username = user.username;
-      let channel  = user.page ? user.page.watch || user.page : 'global' ;
-
-      if ( !channel ) return accumulator;
-      if ( typeof( channel ) === 'string' ) channel = channel.toLowerCase();
-
-      if ( username ) username = username.toLowerCase();
-
-      if ( channel in accumulator ) {
-        if ( username in accumulator[channel] ) {
-          accumulator[channel].viewers[username].push( user );
-        } else {
-          accumulator[channel].viewers[username] = [ user ];
-          accumulator[channel].total++;
-        }
-      } else {
-        accumulator[channel] = {
-          viewers: {},
-          total: 1,
-        };
-        accumulator[channel].viewers[username] = [ user ];
-        accumulator[channel].total = 1;
-      }
-      return accumulator;
-    }, {} );
-    commit( $mutations.setRoomViewerList, roomViewerList );
-
-
-    // Create unique list of users globally
-    const key = 'username';
-    const viewerList = data.reduce( ( accumulator, current ) => {
-      if ( !accumulator.find( obj => obj[key] === current[key] ) ) accumulator.push( current );
-      return accumulator;
-    }, [] );
-    commit( $mutations.setViewerList, viewerList );
-
-    // Create list of viewers in each stream
-    const streamViewers = Object.entries( roomViewerList ).map( streamer => {
-      const streamViewers = Object.entries( streamer[1].viewers );
-      return {
-        streamer: streamer[0],
-        viewCount: streamViewers.length,
-        streamViewers,
-      }
-    });
-    commit( $mutations.setStreamViewerList, streamViewers );
+  async [$actions.updateEmoteList] ( { commit } ) {
+    try {
+      const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/emotes', { progress: false } );
+      commit( $mutations.setEmoteList,  data.data );
+    } catch ( error ) {
+      console.error( `Failed to load emote list.` );
+      console.error( error );
+    }
   },
+
+  async [$actions.updateChatToken] ( { commit }, data ) {
+    try {
+      commit( $mutations.setChatToken, data );
+      const { user } = jwt_decode( data );
+      commit( $mutations.setDisplayName, user.name );
+    } catch ( error ) {
+      console.error( `Failed to update chat token.` );
+      console.error( error );
+    }
+  },
+
+
+  async [$actions.exchangeIdTokenChatToken] ({ dispatch }, idToken) {
+    try {
+      const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
+
+      localStorage.setItem( 'chatToken', data.chatToken );
+
+      await dispatch( $actions.updateChatToken, data.chatToken );
+
+      if ( process.env.APP_DEBUG ) console.log( `%cCHAT STORE:%c Chat Token: %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken );
+    } catch ( error ) {
+      console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
+    }
+  },
+
+
+  async [$actions.createTrollToken] ({ dispatch }) {
+    const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token' );
+
+    localStorage.setItem( 'troll', data.chatToken );
+
+    await dispatch( $actions.updateChatToken, data.chatToken );
+  },
+
+
+  async [$actions.init] ({ dispatch }) {
+    // Check for user token
+    const userToken = localStorage.getItem( 'chatToken' );
+    if ( userToken ) {
+      await dispatch( $actions.updateChatToken, userToken );
+      return;
+    }
+
+    // Check for troll token
+    const trollToken = localStorage.getItem( 'troll' );
+    if ( trollToken ) {
+      await dispatch( $actions.updateChatToken, trollToken );
+      return;
+    }
+
+    // No existing tokens, get new troll token
+    await dispatch( $actions.createTrollToken );
+  },
+
+  async [$actions.logout] ({ dispatch }) {
+    // Prevent edge case where logout is called from multiple locations
+    if ( loggingOut ) {
+      if ( process.env.APP_DEBUG ) console.log( `Logout is already in progress.` );
+      return;
+    }
+
+    loggingOut = true; // Lock action while processing
+
+    // Remove user chat token
+    localStorage.removeItem( 'chatToken' );
+
+    // Check for existing troll token
+    const trollToken = localStorage.getItem( 'troll' );
+
+    if ( !trollToken ) {
+      // Create new troll token if for some reason we don't have one
+      await dispatch( $actions.createTrollToken );
+    } else {
+      // Use existing troll token if available
+      await dispatch( $actions.updateChatToken, trollToken );
+    }
+
+    loggingOut = false; // Unlock when completed
+  },
+
 };
 
 

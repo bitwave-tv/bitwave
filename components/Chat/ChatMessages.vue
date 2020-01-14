@@ -7,7 +7,7 @@
       id="chat-scroll"
       ref="scroller"
     >
-      <template v-for="(msg, index) in messages">
+      <template v-for="( msg, index ) in messages">
         <chat-message
           v-if="msg.username !== ( index && messages[ index - 1 ].username )"
           :key="index"
@@ -31,7 +31,7 @@
         <!-- Append messages -->
         <div
           v-else
-          class="msg append py-1 pl-3 pr-1"
+          class="msg append pb-1 pl-3 pr-1"
           :key="index"
         >
           <div

@@ -93,6 +93,7 @@
 
   import Chat from '~/components/Chat';
   import FollowButton from '@/components/FollowButton';
+  import { Chat as ChatStore } from '@/store/chat';
   import { VStore } from '@/store';
   import StreamInfo from '@/components/Channel/StreamInfo';
 
@@ -326,7 +327,7 @@
       },
     },
 
-    async asyncData ( { $axios, params } ) {
+    async asyncData ( { $axios, params, store } ) {
       const channel = params.watch;
       try {
         const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}` );
@@ -367,7 +368,8 @@
 
         const getChatHydration = async () => {
           try {
-            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages/${channel}` );
+            const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
             if ( data.success ) return data.data;
           } catch ( error ) {
             console.log( error );

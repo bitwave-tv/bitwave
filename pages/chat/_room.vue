@@ -11,6 +11,7 @@
 
 <script>
   import Chat from '~/components/Chat/index'
+  import { Chat as ChatStore } from '@/store/chat';
 
   export default {
     name: 'chat-room',
@@ -25,10 +26,12 @@
       return {}
     },
 
-    async asyncData ( { $axios, params } ) {
+    async asyncData ( { $axios, params, store } ) {
+      const channel = params.room;
       const getChatHydration = async () => {
         try {
-          const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages' );
+          const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
           if ( data.success ) return data.data;
         } catch ( error ) {
           console.log( error );

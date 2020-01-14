@@ -1,5 +1,6 @@
 import { auth, db } from '@/plugins/firebase.js';
 import axios from 'axios';
+import { Chat } from '@/store/chat';
 
 let unsubscribeUser = null;
 
@@ -10,7 +11,6 @@ const $states = {
   user : 'USER',
 
   channel   : 'CHANNEL',
-  chatToken : 'CHAT_TOKEN',
 
   sidebarData : 'SIDEBAR_DATA',
   newVersion  : 'LATEST_VERSION',
@@ -28,8 +28,8 @@ const $getters = {
   getUID       : 'GET_UID',
   getUser      : 'GET_USER',
   getUsername  : 'GET_USERNAME',
-  getChatToken : 'GET_CHAT_TOKEN',
   getStreamKey : 'GET_STREAM_KEY',
+  getBalance   : 'GET_BALANCE',
   getChannel   : 'GET_CHANNEL',
 
   getSidebarData : 'GET_SIDEBAR_DATA',
@@ -46,8 +46,6 @@ const $mutations = {
   setAuth : 'SET_AUTH',
   setUser : 'SET_USER',
 
-  setChatToken : 'SET_CHAT_TOKEN',
-
   setSidebarData : 'SET_SIDEBAR_DATA',
   setNewVersion : 'SET_LATEST_VERSION',
 
@@ -58,8 +56,6 @@ const $mutations = {
 };
 
 const $actions = {
-  exchangeIdTokenChatToken : 'exchangeIdTokenChatToken',
-
   registerUser : 'REGISTER_USER',
   loginUser    : 'LOGIN_USER',
   login        : 'LOGIN',
@@ -79,7 +75,6 @@ export const state = () => ({
   [$states.auth]        : null,
   [$states.user]        : null,
   [$states.channel]     : null,
-  [$states.chatToken]   : null,
   [$states.sidebarData] : [],
   [$states.newVersion]  : null,
   [$states.alerts]      : {},
@@ -117,10 +112,6 @@ export const getters = {
   [$getters.getChannel] : state => {
     if ( !state[$states.channel] ) return 'global';
     else return state[$states.channel];
-  },
-
-  [$getters.getChatToken] : state => {
-    return state[$states.chatToken];
   },
 
   [$getters.getStreamKey] ( state ) {
@@ -167,6 +158,14 @@ export const getters = {
       && user.role === 'admin';
   },
 
+  [$getters.getBalance] ( state ) {
+    const user = state[$states.user];
+    return user
+      && user.hasOwnProperty( 'balance' )
+      && user.balance
+      || 0;
+  },
+
 };
 
 
@@ -182,10 +181,6 @@ export const mutations = {
 
   [$mutations.setMetaUser] ( state, data ) {
     state[$states.metaUser] = data;
-  },
-
-  [$mutations.setChatToken] ( state, token ) {
-    state[$states.chatToken] = token;
   },
 
   [$mutations.setSidebarData] ( state, data ) {
@@ -242,6 +237,11 @@ export const actions = {
       } catch ( error ) {
         console.log( `ERROR: No valid cookie found.`, error );
       }
+
+      // cookie for global chat hydration flag
+      if ( cookies._bw_global !== undefined ) {
+        commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, cookies._bw_global );
+      }
     }
     commit( $mutations.setAuth, authUser );
     commit( $mutations.setUser, user );
@@ -251,6 +251,7 @@ export const actions = {
     // Chat user hydration data
     dispatch( $actions.updateViewers );
 
+    dispatch( `${Chat.namespace}/${Chat.$actions.updateEmoteList}` );
   },
 
   async nuxtClientInit ({ dispatch }, { req, params }) {
@@ -315,11 +316,9 @@ export const actions = {
 
     if ( process.client )
       console.log( `%cSTORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
-
-    await dispatch ( $actions.exchangeIdTokenChatToken, token );
   },
 
-  async [$actions.logout] ({ commit }) {
+  async [$actions.logout] ({ dispatch, commit }) {
     try {
       if ( unsubscribeUser ) {
         unsubscribeUser();
@@ -333,6 +332,8 @@ export const actions = {
 
       this.$cookies.remove( 'user' );
       this.$cookies.remove( 'auth' );
+
+      await dispatch( `${Chat.namespace}/${Chat.$actions.logout}` );
 
       console.log( 'Logged Out' );
     } catch ( error ) {
@@ -355,16 +356,6 @@ export const actions = {
     }
   },
 
-  async [$actions.exchangeIdTokenChatToken] ({ store, commit }, idToken) {
-    try {
-      const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
-      commit( $mutations.setChatToken, data.chatToken );
-      // console.log( `%cSTORE:%c Got ChatToken! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken );
-    } catch ( error ) {
-      console.log( `%cSTORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
-    }
-  },
-
   async [$actions.fetchSidebarData] ({ commit }) {
     try {
       const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
@@ -376,7 +367,7 @@ export const actions = {
 
   async [$actions.newVersionAvailable] ( { commit }, latestVersions ) {
     const currentVersion = process.env.VERSION;
-    const newVersion = currentVersion < latestVersions[process.env.BITWAVE_ENV]
+    const newVersion = currentVersion < latestVersions[ process.env.BITWAVE_ENV ]
       ? latestVersions[process.env.BITWAVE_ENV]
       : false;
     if ( newVersion ) {
@@ -384,7 +375,7 @@ export const actions = {
       setTimeout( () => {
         commit( $mutations.setNewVersion, newVersion );
         this.$toast.global.update( { message: `[ v${newVersion} ] A new version of bitwave is available` } );
-      }, 5000);
+      }, 2500);
     } else {
       this.$toast.clear();
     }
@@ -394,7 +385,7 @@ export const actions = {
     console.log( 'Alerts updated!', alerts );
     setTimeout( () => {
       commit( $mutations.setAlerts, alerts );
-    }, 5000);
+    }, 1000);
   },
 
   async [$actions.updateViewers] ( { commit } ) {

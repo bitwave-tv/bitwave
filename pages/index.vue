@@ -202,6 +202,7 @@
 <script>
   import StreamGrid from '@/components/StreamGrid'
   import BannerVideo from '@/components/BannerVideo';
+  import { Chat as ChatStore } from '@/store/chat';
 
   export default {
     scrollToTop: true,
@@ -241,20 +242,23 @@
 
     },
 
-    async asyncData ({ $axios }) {
+    async asyncData ({ $axios, store }) {
       try {
         const live = (await $axios.get( `https://api.bitwave.tv/api/sources/list` )).data.live;
         const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
 
         const getChatHydration = async () => {
           try {
-            const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages' );
+            const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+            const channel = live[0].name;
+            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
             if ( data.success ) return data.data;
           } catch ( error ) {
             console.log( error );
           }
           return [];
         };
+
         const chatMessages = await getChatHydration();
 
         return {

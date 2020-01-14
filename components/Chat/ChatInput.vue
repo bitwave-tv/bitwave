@@ -38,6 +38,7 @@
 
     <!-- Bottom Buttons -->
     <div class="d-flex align-center">
+      <!-- Chat Settings -->
       <v-menu
         v-model="showChatSettings"
         :close-on-content-click="false"
@@ -58,6 +59,33 @@
         </template>
         <chat-settings
           @close="showChatSettings = false"
+        />
+      </v-menu>
+
+      <!-- Chat Coin -->
+      <v-menu
+        v-if="false"
+        v-model="showChatCoins"
+        :close-on-content-click="false"
+        transition="slide-x-transition"
+        :max-width="320"
+        top
+        right
+        offset-y
+      >
+        <template #activator="{ on }">
+          <v-btn
+            v-on="on"
+            class="ml-2"
+            small
+            icon
+          >
+            <v-icon>attach_money</v-icon>
+          </v-btn>
+        </template>
+
+        <chat-coin
+          @close="showChatCoins = false"
         />
       </v-menu>
 
@@ -101,10 +129,12 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations } from 'vuex';
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { Chat } from '@/store/chat';
 
-  const ChatSettings = () => import( '@/components/Chat/ChatSettings' );
+  const ChatSettings = async () => await import( '@/components/Chat/ChatSettings' );
+  const ChatCoin     = async () => await import ( '@/components/Payment/ChatCoin' );
+
   import AutocompleteChat from '@/components/Chat/AutocompleteChat';
   import { VStore } from '@/store';
 
@@ -155,72 +185,11 @@
     },
   ];
 
-  const emotes = [
-    {
-      label: 'blob',
-      avatar: 'https://cdn.bitwave.tv/static/emotes/blobby.gif?2',
-      value: ':blob: ',
-    },
-    {
-      label: 'bitwave',
-      value: ':bitwave: ',
-    },
-    {
-      label: 'car',
-      avatar: 'https://cdn.bitwave.tv/static/img/car.gif?2',
-      value: ':car: ',
-    },
-    {
-      label: 'dab',
-      avatar: 'https://cdn.bitwave.tv/uploads/6503df28-e3f3-4d71-950c-549ca290540f?2',
-      value: ':dab: ',
-    },
-    {
-      label: 'sadcat',
-      avatar: 'https://cdn.bitwave.tv/static/emotes/sadcat.png?2',
-      value: ':sadcat: ',
-    },
-    {
-      label: 'clap',
-      avatar: 'https://cdn.bitwave.tv/uploads/c0c72634-224b-4f6a-a6d0-510561c7f0d0?2',
-      value: ':clap: ',
-    },
-    {
-      label: 'pepelaugh',
-      avatar: 'https://cdn.bitwave.tv/uploads/9f718df6-a755-4969-ae7f-f9af1d1d8062?2',
-      value: ':pepelaugh: ',
-    },
-    {
-      label: 'reee',
-      avatar: 'https://cdn.bitwave.tv/static/emotes/reee.gif?2',
-      value: ':reee: ',
-    },
-    {
-      label: 'smug',
-      avatar: 'https://cdn.bitwave.tv/static/emotes/smug.png?2',
-      value: ':smug: ',
-    },
-    {
-      label: 'shrug',
-      avatar: 'https://cdn.bitwave.tv/static/emotes/shrug2-52.png?2',
-      value: ':shrug2: ',
-    },
-    {
-      label: 'popcorn',
-      avatar: 'https://cdn.bitwave.tv/static/emotes/popcorn.gif?2',
-      value: ':popcorn: ',
-    },
-    {
-      label: 'tos',
-      avatar: 'https://cdn.bitwave.tv/uploads/cd4138be-8458-4473-a06d-43ea761f8012?2',
-      value: ':tos: ',
-    },
-  ];
-
   export default {
     name: 'ChatInput',
 
     components: {
+      ChatCoin,
       ChatSettings,
       AutocompleteChat,
     },
@@ -233,6 +202,8 @@
     data() {
       return {
         showChatSettings: false,
+        showChatCoins: false,
+
         messageBufferIndex: 0,
         showUsernameSuggestions: false,
 
@@ -248,6 +219,10 @@
       ...mapMutations(Chat.namespace, {
         setMessage: Chat.$mutations.setMessage,
         addToMessageBuffer : Chat.$mutations.addToMessageBuffer,
+      }),
+
+      ...mapActions(Chat.namespace, {
+        updateEmoteList: Chat.$actions.updateEmoteList,
       }),
 
       updateMessage ( event ) {
@@ -360,7 +335,7 @@
           .match( /:[\w]*$/g );
 
         if ( emoteMatch ) {
-          this.autocompleteData = emotes;
+          this.autocompleteData = this.emoteList;
           this.acSize = 1;
           return emoteMatch;
         }
@@ -376,6 +351,7 @@
         getMessage: Chat.$states.message,
         enableAutocomplete: Chat.$states.autocomplete,
         getMessageBuffer : Chat.$states.messageBuffer,
+        emoteList : Chat.$states.emoteList,
       }),
 
       userlist () {
@@ -383,7 +359,7 @@
         return this.getUserList
           .map( user => {
             return {
-              avatar: user.data.avatar,
+              image: user.data.avatar,
               color: user.data.color,
               label: user.data.username,
               value: `@${user.data.username} `,
@@ -397,6 +373,10 @@
           ? this.autocomplete[0].substr(1)
           : '';
       },
+    },
+
+    async created () {
+      await this.updateEmoteList();
     },
   }
 </script>
