@@ -51,6 +51,7 @@ module.exports = {
   ],
 
   workbox: {
+    // config: { debug: true },
     runtimeCaching: [
       {
         urlPattern: 'https://stream.bitwave.tv/stream/.*',
@@ -97,9 +98,9 @@ module.exports = {
       },
 
       // Cache emotes
-      /*{
-        urlPattern: 'https://cdn.bitwave.tv/static/emotes/.*',
-        handler: 'StaleWhileRevalidate',
+      {
+        urlPattern: 'https://cdn.bitwave.tv/static/emotes/(.*)\\?4$',
+        handler: 'CacheFirst',
         method: 'GET',
         strategyOptions: {
           cacheName: 'bitwave-emotes',
@@ -112,7 +113,7 @@ module.exports = {
             purgeOnQuotaError: true,
           },
         },
-      },*/
+      },
 
       // more workbox cache settings...
     ],
@@ -168,7 +169,7 @@ module.exports = {
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-    progress: false,
+    // progress: false,
   },
 
   /*
