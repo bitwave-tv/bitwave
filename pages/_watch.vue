@@ -52,7 +52,7 @@
       </v-sheet>
 
       <!-- Video Overlay -->
-      <stickers :channel="name" />
+      <stickers />
 
     </v-responsive>
 
@@ -99,6 +99,8 @@
 
   const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
   const Stickers = async () => await import ( '@/components/effects/Stickers' );
+
+  const DEBUG_VIDEO_JS = false;
 
   export default {
     name: 'watch',
@@ -168,12 +170,52 @@
               overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
+              handlePartialData: true,
             },
           },
         });
 
+        // --- Video.js plugin functions
+
+        // Add reloadSourceOnError plugin
+        this.player.reloadSourceOnError({ errorInterval: 10 });
+
+        // Load all qualities
+        this.qualityLevels = this.player.qualityLevels();
+        this.player.hlsQualitySelector({
+          displayCurrentQuality: true,
+        });
+
+
+        // Autoplay detection magic
+        /*const autoPlayEvents = [ 'loadedmetadata', 'durationchange' ];
+        const autoPlayListener = event => {
+          // Attempt Autoplay
+          const attemptAutoplay = () => {
+            this.player.play()
+              .then(() => {
+                if ( process.env.APP_DEBUG ) console.log( `Autoplayed` )
+              })
+              .catch ( error => {
+                if ( process.env.APP_DEBUG ) console.log( `Autoplay prevented, Attempting to autoplay muted.`, error );
+                this.player.muted( true );
+                this.player.play();
+              });
+          };
+          if (event.type === 'durationchange' && this.player.duration() === Infinity) {
+            attemptAutoplay();
+            this.player.off( autoPlayEvents, autoPlayListener );
+          }
+          if (event.type === 'loadedmetadata') {
+            attemptAutoplay();
+            this.player.off( autoPlayEvents, autoPlayListener );
+          }
+        };
+        this.player.on( autoPlayEvents, autoPlayListener ); //*/
+
+
         // Video Player Ready
-        this.player.ready( () => {
+        this.player.ready( async () => {
           // Restore Volume & mute
           try {
             console.log( `Volume: ${this.player.volume()}, Muted: ${this.player.muted()}` );
@@ -184,12 +226,27 @@
           } catch ( error ) {
             console.warn( 'Failed to find prior volume level' ); // No volume value in memory
           }
-        });
 
-        // Load all qualities
-        this.qualityLevels = this.player.qualityLevels();
-        this.player.hlsQualitySelector({
-          displayCurrentQuality: true,
+          this.player.tech().on( 'retryplaylist', ( event ) => {
+            console.log( `retryplaylist:`, event );
+            if ( !this.live ) console.log( `livestream is offline.` );
+          });
+
+          this.player.tech().on( 'usage', ( event ) => {
+            console.log( `${event.name}:`, event );
+          });
+
+          window.$bw = {
+            getVideoLogs: this.player.log.history,
+            hls: this.player.tech().hls,
+            player: this.player,
+          };
+
+          if ( DEBUG_VIDEO_JS ) {
+            this.player.log.level('debug');
+            // Logs can also be accessed with this.player.log.history();
+          }
+
         });
 
         // Save volume on change
@@ -203,9 +260,9 @@
         });
 
         // Begin playing when new media is loaded
-        this.player.on( 'loadeddata', () => {
+        /*this.player.on( 'loadeddata', () => {
           // this.player.play()
-        });
+        });*/
 
         this.player.on( 'ended', async () => {
           this.url = await this.getRandomBump();
@@ -213,11 +270,12 @@
           this.reloadPlayer();
         });
 
-        this.player.on( 'error', error =>{
+        this.player.on( 'error', error => {
           // Brush player errors under the rug
-          if ( this.live ) console.log( 'streamer offline and got an error' );
-          console.warn( error );
+          if ( !this.live ) console.log( 'streamer offline and got an error' );
+          console.warn( `player error:`, error );
         });
+
 
         this.initialized = true;
 
@@ -308,6 +366,11 @@
 
           this.reloadPlayer();
         }
+
+        // Detect user going [ online -> offline ]
+        /*else if ( this.live && !live ) {
+          console.log( 'Livestream ending' );
+        }*/
 
         // Detect source change
         else if ( this.url !== url  || this.type !== type ) {

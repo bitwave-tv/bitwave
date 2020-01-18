@@ -36,16 +36,25 @@
           background-color="transparent"
           class="no-focus"
         >
+
           <v-tab>
             <div>
               Description
             </div>
           </v-tab>
+
           <v-tab>
             <div>
               Archives
             </div>
           </v-tab>
+
+          <v-tab>
+            <div>
+              Stream Health
+            </div>
+          </v-tab>
+
         </v-tabs>
       </template>
     </v-toolbar>
@@ -126,6 +135,18 @@
           />
         </div>
       </v-tab-item>
+
+      <!-- Debug Stream -->
+      <v-tab-item
+        v-if="isAdmin"
+      >
+        <div>
+          <debug-stream
+            :streamer="name"
+          />
+        </div>
+      </v-tab-item>
+
     </v-tabs-items>
 
 
@@ -157,6 +178,8 @@
   const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
   const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
 
+  const DebugStream = async () => await import ( '@/components/Analytics/DebugStream' );
+
   export default {
     name: 'StreamInfo',
 
@@ -166,6 +189,7 @@
       ShareStream,
       EditStreamData,
       RestreamDialog,
+      DebugStream,
     },
 
     props: {
@@ -203,6 +227,7 @@
       ...mapGetters({
         username: VStore.$getters.getUsername,
         uid: VStore.$getters.getUID,
+        isAdmin  : VStore.$getters.isAdmin,
       }),
 
       channelOwner () {

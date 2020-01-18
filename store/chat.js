@@ -252,7 +252,7 @@ export const actions = {
 
       await dispatch( $actions.updateChatToken, data.chatToken );
 
-      if ( process.env.APP_DEBUG ) console.log( `%cCHAT STORE:%c Chat Token: %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data.chatToken );
+      if ( process.env.APP_DEBUG ) console.log( `%cCHAT STORE:%c Set Chat Token.`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
     } catch ( error ) {
       console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
     }
@@ -261,9 +261,7 @@ export const actions = {
 
   async [$actions.createTrollToken] ({ dispatch }) {
     const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token' );
-
     localStorage.setItem( 'troll', data.chatToken );
-
     await dispatch( $actions.updateChatToken, data.chatToken );
   },
 
