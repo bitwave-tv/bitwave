@@ -49,7 +49,9 @@
             </div>
           </v-tab>
 
-          <v-tab>
+          <v-tab
+            v-if="isAdmin || channelOwner"
+          >
             <div>
               Stream Health
             </div>
@@ -138,7 +140,7 @@
 
       <!-- Debug Stream -->
       <v-tab-item
-        v-if="isAdmin"
+        v-if="isAdmin || channelOwner"
       >
         <div>
           <debug-stream
