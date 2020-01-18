@@ -45,6 +45,14 @@ export const listenToConfiguationUpdates = callbacks => {
 };
 
 
+export const listenToFeatureFlags = callbacks => {
+  return db.collection( 'configurations' ).doc( 'features' ).onSnapshot( async doc => {
+    const data = doc.data();
+    await Promise.all( callbacks.map( async cb => await cb( data ) ) );
+  })
+};
+
+
 /**
  * Manage firebase authentication
  */
@@ -64,6 +72,11 @@ export default async ( { app, store } ) => {
     listenToConfiguationUpdates([
       async ({ version }) => await store.dispatch( VStore.$actions.newVersionAvailable, version ),
       async ({ alerts }) => await store.dispatch( VStore.$actions.updateAlerts, alerts ),
+    ]);
+
+    // Listen to the feature flags, and dispatch updates
+    listenToFeatureFlags([
+      async ( featureFlags ) => await store.dispatch( VStore.$actions.updateFeatureFlags, featureFlags ),
     ]);
 
   }

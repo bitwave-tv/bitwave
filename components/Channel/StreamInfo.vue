@@ -50,10 +50,10 @@
           </v-tab>
 
           <v-tab
-            v-if="isAdmin || channelOwner"
+            v-if="featureFlag"
           >
             <div>
-              Stream Health
+              Stream Stats
             </div>
           </v-tab>
 
@@ -140,9 +140,11 @@
 
       <!-- Debug Stream -->
       <v-tab-item
-        v-if="isAdmin || channelOwner"
+        v-if="featureFlag"
       >
-        <div>
+        <div
+          style="min-height: 500px"
+        >
           <debug-stream
             :streamer="name"
           />
@@ -229,8 +231,21 @@
       ...mapGetters({
         username: VStore.$getters.getUsername,
         uid: VStore.$getters.getUID,
+        isStreamer : VStore.$getters.isStreamer,
         isAdmin  : VStore.$getters.isAdmin,
+        getFeatureFlag : VStore.$getters.getFeatureFlag,
       }),
+
+      featureFlag () {
+        const flags = this.getFeatureFlag( 'streamStats' );
+        if ( flags._disabled ) return false;
+        if ( flags._enabled ) return true;
+        if ( flags.users && this.uid ) return true;
+        if ( flags.streamers && this.isStreamer ) return true;
+        if ( flags.owner && this.channelOwner ) return true;
+        if ( flags.admin && this.isAdmin ) return true;
+        return false;
+      },
 
       channelOwner () {
         if ( !this.username ) return false;

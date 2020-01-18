@@ -16,13 +16,17 @@ const $states = {
   newVersion  : 'LATEST_VERSION',
 
   alerts: 'SYSTEM_ALERT',
+  featureFlags : 'FEATURE_FLAGS',
 
   channelsViewers : 'CHANNEL_VIEWERS',
   userlist        : 'USERLIST',
+
+  pinToLive : 'PIN_TO_LIVE',
 };
 
 const $getters = {
   isAuth       : 'IS_AUTH',
+  isStreamer   : 'IS_STREAMER',
   isAdmin      : 'IS_ADMIN',
   getAuth      : 'GET_AUTH',
   getUID       : 'GET_UID',
@@ -36,6 +40,7 @@ const $getters = {
   isUpdateAvailable : 'IS_UPDATE_AVAILABLE',
 
   getAlerts: 'GET_SYSTEM_ALERT',
+  getFeatureFlag: 'GET_FEATURE_FLAG',
 
   getChannelViews : 'GET_CHANNEL_VIEWS',
   getUserList     : 'GET_USERLIST',
@@ -50,9 +55,12 @@ const $mutations = {
   setNewVersion : 'SET_LATEST_VERSION',
 
   setAlerts: 'SET_SYSTEM_ALERT',
+  setFeatureFlags : 'SET_FEATURE_FLAGS',
 
   setChannelViewers : 'SET_CHANNEL_VIEWERS',
   setUserList       : 'SET_USER_LIST',
+
+  setPinToLive : 'SET_PIN_TO_LIVE',
 };
 
 const $actions = {
@@ -65,6 +73,7 @@ const $actions = {
   newVersionAvailable : 'NEW_VERSION_AVAILABLE',
 
   updateAlerts : 'CHECK_FOR_ALERTS',
+  updateFeatureFlags : 'UPDATE_FEATURE_FLAGS',
 
   updateViewers : 'UPDATE_VIEWERS',
 };
@@ -78,6 +87,7 @@ export const state = () => ({
   [$states.sidebarData] : [],
   [$states.newVersion]  : null,
   [$states.alerts]      : {},
+  [$states.featureFlags]: {},
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
@@ -88,6 +98,11 @@ export const state = () => ({
 export const getters = {
   [$getters.isAuth] : state => {
     return !!state[$states.auth];
+  },
+
+  [$getters.isStreamer] : state => {
+    return state[$states.user]
+      && state[$states.user].hasOwnProperty( 'streamkey' );
   },
 
   [$getters.getAuth] : state => {
@@ -132,6 +147,16 @@ export const getters = {
 
   [$getters.getAlerts] ( state ) {
     return state[$states.alerts];
+  },
+
+  [$getters.getFeatureFlag] ( state ) {
+    return featureName => {
+      if ( !featureName ) return false;
+      if ( state[$states.featureFlags] && state[$states.featureFlags].hasOwnProperty(featureName) )
+        return state[$states.featureFlags][featureName];
+      else
+        return false;
+    };
   },
 
   // Get Channel Viewer Data
@@ -195,6 +220,10 @@ export const mutations = {
     state[$states.alerts] = data;
   },
 
+  [$mutations.setFeatureFlags] ( state, data ) {
+    state[$states.featureFlags] = data;
+  },
+
   [$mutations.setChannelViewers] ( state, data ) {
     state[$states.channelsViewers] = data;
   },
@@ -207,6 +236,10 @@ export const mutations = {
         watching: data[key].watching,
       };
     }).reverse();
+  },
+
+  [$mutations.setPinToLive] ( state, data ) {
+    state[$states.pinToLive] = data;
   },
 
   setAvatar( state, url ) {
@@ -386,6 +419,11 @@ export const actions = {
     setTimeout( () => {
       commit( $mutations.setAlerts, alerts );
     }, 1000);
+  },
+
+  async [$actions.updateFeatureFlags] ( { commit }, featureFlags ) {
+    console.log( 'Feature Flags updated!', featureFlags );
+    commit( $mutations.setFeatureFlags, featureFlags );
   },
 
   async [$actions.updateViewers] ( { commit } ) {

@@ -1,5 +1,164 @@
 <template>
-  <div class="chart-data">
+  <div>
+    <v-container>
+      <v-row class="stream-stats">
+
+        <!-- Bitrate Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              {{ streamer }}: Bitrate
+            </div>
+            <v-sparkline
+              :value="graphValues1"
+              :gradient="gradient"
+              :smooth="radius || false"
+              :padding="padding"
+              :line-width="width"
+              :type="type"
+              stroke-linecap="round"
+              gradient-direction="top"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-for="( stat, name, index ) in bitrateStats[bitrateStats.length - 1]"
+              >
+                <!-- TODO: add click support -->
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index < 3"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Packet Size Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              {{ streamer }}: Target Size per Frame
+            </div>
+            <v-sparkline
+              :value="graphValues2"
+              :gradient="gradient"
+              :smooth="radius || false"
+              :padding="padding"
+              :line-width="width"
+              :type="type"
+              stroke-linecap="round"
+              gradient-direction="top"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-for="( stat, name, index ) in data[data.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== 5 - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Dropped Frames Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              Player: Dropped Frames %
+            </div>
+            <v-sparkline
+              :value="graphVideoPlaybackQuality"
+              :gradient="gradient"
+              :smooth="radius || false"
+              :padding="padding"
+              :line-width="width"
+              :type="type"
+              stroke-linecap="round"
+              gradient-direction="top"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-if="videoPlaybackQuality.length > 2"
+                v-for="( stat, name, index ) in videoPlaybackQuality[videoPlaybackQuality.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== Object.keys(videoPlaybackQuality[videoPlaybackQuality.length - 1]).length - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Bandwidth Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              Player: Detected Bandwidth (estimate)
+            </div>
+            <v-sparkline
+              :value="graphHlsBandwidth"
+              :gradient="gradient"
+              :smooth="radius || false"
+              :padding="padding"
+              :line-width="width"
+              :type="type"
+              stroke-linecap="round"
+              gradient-direction="top"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-if="hlsGraphStats.length > 2"
+                v-for="( stat, name, index ) in hlsGraphStats[hlsGraphStats.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== Object.keys(hlsGraphStats[hlsGraphStats.length - 1]).length - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <v-alert
       class="my-3 mx-2"
@@ -12,131 +171,26 @@
       <div class="overline mt-2">Note: this only works for streams on the bitwave / bitrave server.</div>
     </v-alert>
 
-    <div class="mb-3">
-      <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-        {{ streamer }}: Bitrate
+    <v-card class="mx-2 pa-3">
+      <div class="white--text title">Experimental Player Settings</div>
+      <div>
+        Attempt to keep player as live as possible by preferring to <i>skip</i> to live
+        content when we detect that the player is beginning to fall behind.<br>
+        This will make it seems like streams are 'jumpy' or inconsistent, but will ensure
+        that you are always watching the most recent stream.<br>
+        Disabling this means streams will be <i>smoother</i>,but can sometimes fall up to
+        a full minute behind the live broadcast due to netowrk or hardware lag.<br>
+        This setting defaults to <kbd>disabled</kbd> when you refresh the page.
       </div>
-      <v-sparkline
-        :value="graphValues1"
-        :gradient="gradient"
-        :smooth="radius || false"
-        :padding="padding"
-        :line-width="width"
-        :type="type"
-        stroke-linecap="round"
-        gradient-direction="top"
+      <v-switch
+        v-model="pinToLive"
+        label="Keep Stream Live"
+        color="yellow"
+        hide-details
+        dense
+        inset
       />
-      <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
-        <template
-          v-for="( stat, name, index ) in bitrateStats[bitrateStats.length - 1]"
-        >
-          <div @click="graphData1 = name">
-            <span class="grey--text mr-1">{{ name }}</span>
-            <span class="body-2">{{ stat }}</span>
-          </div>
-          <v-divider
-            v-if="index < 3"
-            color="orange"
-            vertical
-          />
-        </template>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-        {{ streamer }}: Target Size per Frame
-      </div>
-      <v-sparkline
-        :value="graphValues2"
-        :gradient="gradient"
-        :smooth="radius || false"
-        :padding="padding"
-        :line-width="width"
-        :type="type"
-        stroke-linecap="round"
-        gradient-direction="top"
-      />
-      <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
-        <template
-          v-for="( stat, name, index ) in data[data.length - 1]"
-        >
-          <div @click="graphData2 = name">
-            <span class="grey--text mr-1">{{ name }}</span>
-            <span class="body-2">{{ stat }}</span>
-          </div>
-          <v-divider
-            v-if="index !== 5 - 1"
-            color="orange"
-            vertical
-          />
-        </template>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-        Player: Dropped Frames %
-      </div>
-      <v-sparkline
-        :value="graphVideoPlaybackQuality"
-        :gradient="gradient"
-        :smooth="radius || false"
-        :padding="padding"
-        :line-width="width"
-        :type="type"
-        stroke-linecap="round"
-        gradient-direction="top"
-      />
-      <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
-        <template
-          v-if="videoPlaybackQuality.length > 2"
-          v-for="( stat, name, index ) in videoPlaybackQuality[videoPlaybackQuality.length - 1]"
-        >
-          <div>
-            <span class="grey--text mr-1">{{ name }}</span>
-            <span class="body-2">{{ stat }}</span>
-          </div>
-          <v-divider
-            v-if="index !== Object.keys(videoPlaybackQuality[videoPlaybackQuality.length - 1]).length - 1"
-            color="orange"
-            vertical
-          />
-        </template>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-        Player: Detected Bandwidth (estimate)
-      </div>
-      <v-sparkline
-        :value="graphHlsBandwidth"
-        :gradient="gradient"
-        :smooth="radius || false"
-        :padding="padding"
-        :line-width="width"
-        :type="type"
-        stroke-linecap="round"
-        gradient-direction="top"
-      />
-      <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
-        <template
-          v-if="hlsGraphStats.length > 2"
-          v-for="( stat, name, index ) in hlsGraphStats[hlsGraphStats.length - 1]"
-        >
-          <div @click="hlsGraph1 = name">
-            <span class="grey--text mr-1">{{ name }}</span>
-            <span class="body-2">{{ stat }}</span>
-          </div>
-          <v-divider
-            v-if="index !== Object.keys(hlsGraphStats[hlsGraphStats.length - 1]).length - 1"
-            color="orange"
-            vertical
-          />
-        </template>
-      </div>
-    </div>
+    </v-card>
 
   </div>
 </template>
@@ -144,9 +198,23 @@
 <script>
   import socketio from 'socket.io-client';
 
+  import { mapState, mapMutations } from 'vuex';
+  import { VStore } from '@/store';
+
   const APIServer = 'https://api.bitwave.tv';
 
   let minBandwidth = null;
+
+  const formatDataSize = sizeInKb => {
+    if ( !sizeInKb ) return `Error`;
+    if ( sizeInKb < 512 ) return `${sizeInKb.toFixed(1)}kb`;
+    sizeInKb /= 1024;
+    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(1)}mb`;
+    sizeInKb /= 1024;
+    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(1)}gb`;
+    sizeInKb /= 1024;
+    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(1)}tb`;
+  };
 
   export default {
     name: 'DebugStream',
@@ -224,15 +292,18 @@
         this.$toast.error( `${streamer} is now offline`, { icon: 'error', duration: 2000, position: 'top-right' } );
       },
 
+      ...mapMutations({
+        setPinToLive: VStore.$mutations.setPinToLive,
+      }),
     },
 
     computed: {
       bitrateStats () {
         return this.data.map( data => {
           return {
-            bitrate: ( data.currentKbps / 1024 ).toFixed(1) + 'mb/s',
+            bitrate: formatDataSize( data.currentKbps ) + '/s',
             fps: data.currentFps,
-            totalData: ( data.targetSize / 1024 / 1024 ).toFixed(1) + 'mb',
+            totalData: formatDataSize( data.targetSize ),
             time: data.timemark,
           };
         });
@@ -251,7 +322,7 @@
           return {
             // ...hlsStats.videoPlaybackQuality,
             dropped: hlsStats.videoPlaybackQuality.droppedVideoFrames,
-            total: hlsStats.videoPlaybackQuality.totalVideoFrames,
+            total: ( hlsStats.videoPlaybackQuality.totalVideoFrames / 1000 ).toFixed(1) + 'k',
             percentDropped: (hlsStats.videoPlaybackQuality.droppedVideoFrames / hlsStats.videoPlaybackQuality.totalVideoFrames * 100).toFixed(2) + '%',
           }
         });
@@ -265,8 +336,8 @@
       hlsGraphStats () {
         return this.hlsStats.map( hlsStats => {
           return {
-            bandwidth: ( hlsStats.bandwidth / 1024 / 1024 ).toFixed(2) + 'mb/s',
-            min: ( minBandwidth / 1024 / 1024 ).toFixed(2) + 'mb/s',
+            bandwidth: formatDataSize( hlsStats.bandwidth / 1024 ) + '/s',
+            min: formatDataSize( minBandwidth / 1024 ) + '/s',
             requests: hlsStats.mediaRequests,
             aborted: hlsStats.mediaRequestsAborted,
             errored: hlsStats.mediaRequestsErrored,
@@ -278,6 +349,15 @@
       graphHlsBandwidth () {
         return this.hlsStats
           .map( hlsStats => hlsStats.bandwidth );
+      },
+
+      ...mapState({
+        getPinToLive: VStore.$states.pinToLive,
+      }),
+
+      pinToLive: {
+        set ( val ) { this.setPinToLive( val ) },
+        get () { return this.getPinToLive }
       },
     },
 
@@ -303,14 +383,11 @@
 </script>
 
 <style lang='scss'>
-  .chart-data {
-    position: relative;
-    pointer-events: none;
+  .stream-stats {
     z-index: 2;
 
     .graph {
       background: rgba(0,0,0,.85);
-      position: absolute;
       top: 0;
       left: 0;
       right: 0;

@@ -88,7 +88,7 @@
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
-  import { mapGetters } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   import { db } from '@/plugins/firebase.js';
 
   import Chat from '~/components/Chat';
@@ -149,6 +149,9 @@
         description: null,
         timestamp: null,
         recentBumps: [],
+
+        // performance logging
+        lastVPQ: null,
       }
     },
 
@@ -236,9 +239,30 @@
             console.log( `${event.name}:`, event );
           });
 
+          this.player.liveTracker.on('liveedgechange', async () => {
+            // This is currently an opt-in feature
+            if ( !this.pinToLive ) return;
+
+            // Only respond to when we fall behind
+            if ( this.player.liveTracker.atLiveEdge() ) return;
+
+            // Don't respond to when user has paused the player
+            if ( this.player.paused() ) return;
+
+            console.log('We have fallen behind live!');
+
+            setTimeout(() => {
+              // Do not jump ahead if user has paused the player
+              if ( this.player.paused() ) return;
+
+              console.log( 'Attempting to catch back up to live.' );
+              this.player.liveTracker.seekToLiveEdge();
+            }, 8 * 1000 );
+          });
+
           window.$bw = {
             getVideoLogs: this.player.log.history,
-            hls: this.player.tech().hls,
+            hls: this.player.tech({ IWillNotUseThisInPlugins: true }).hls,
             player: this.player,
           };
 
@@ -260,9 +284,7 @@
         });
 
         // Begin playing when new media is loaded
-        /*this.player.on( 'loadeddata', () => {
-          // this.player.play()
-        });*/
+        // this.player.on( 'loadeddata', () => {});
 
         this.player.on( 'ended', async () => {
           this.url = await this.getRandomBump();
@@ -296,6 +318,7 @@
           eventLabel    : this.name,
           eventValue    : this.watchInterval / 60,
         });
+        this.checkDroppedFrames();
       },
 
       async getRandomBump () {
@@ -388,6 +411,50 @@
         this.player.poster = this.poster;
         this.player.src( { src: this.url, type: this.type } );
       },
+
+      // Logs & reports dropped frames
+      checkDroppedFrames () {
+        // disable reporting when stream is offline
+        if ( !this.live ) return;
+
+        // Ensure we have access to HLS tech & stats
+        if ( !$bw || !$bw.hls || !$bw.hls.stats ) return;
+
+        if ( !this.lastVPQ ) {
+          this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
+          return;
+        }
+
+        const playbackQuality = { ...$bw.hls.stats.videoPlaybackQuality };
+
+        // Ensure we have enough data to prevent false positives
+        if ( !playbackQuality.totalVideoFrames > 6000 ) return;
+
+        // Detect how many frames we have dropped since our last check
+        const percentDroppedFrames = (
+          ( playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames )
+          / ( playbackQuality.totalVideoFrames - this.lastVPQ.totalVideoFrames )
+            * 100 );
+
+        // Log dropped frames at various levels
+        if ( percentDroppedFrames >= 20)
+          console.warn( `We have dropped more than 20% of frames!\n${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
+        else if ( percentDroppedFrames >= 5 )
+          console.log( `We have dropped more than 5% of frames!\n${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
+        else if ( percentDroppedFrames > 0 )
+          console.debug( `Good news, we have dropped very few (if any) frames.\nOnly ${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
+
+        // Log dropped frames for analyzing and finding bottlenecked regions
+        this.$ga.event({
+          eventCategory : 'playback-errors',
+          eventAction   : 'dropped-frames',
+          eventLabel    : this.name,
+          eventValue    : percentDroppedFrames,
+        });
+
+        // Update for next loop
+        this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
+      },
     },
 
     async asyncData ( { $axios, params, store } ) {
@@ -456,6 +523,10 @@
     },
 
     computed: {
+      ...mapState({
+        pinToLive : VStore.$states.pinToLive,
+      }),
+
       ...mapGetters({
         username : VStore.$getters.getUsername,
         user     : VStore.$getters.getUser,
@@ -476,6 +547,14 @@
         return this.mounted
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
+      },
+    },
+
+    watch: {
+      pinToLive ( pin ) {
+        if ( this.player && this.live && pin ) {
+          this.player.liveTracker.trigger('liveedgechange')
+        }
       },
     },
 
