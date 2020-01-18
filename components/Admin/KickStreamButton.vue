@@ -82,7 +82,7 @@
             color="yellow"
             small
             outlined
-            @click="transcodeStreamer( 'start' )"
+            @click="kickStreamer( false )"
           >
             Disconnect
           </v-btn>
@@ -91,7 +91,7 @@
             class="ml-2"
             small
             outlined
-            @click="transcodeStreamer( 'stop' )"
+            @click="kickStreamer( true )"
           >
             Kick
           </v-btn>
@@ -137,7 +137,7 @@
       async getFreshIdToken () {
         const token = await auth.currentUser.getIdToken( true );
         this.$axios.setToken( token, 'Bearer' );
-        console.log( `Fresh ID token:\n${token}` );
+        console.log( `Fresh ID token:`, { token } );
         return token;
       },
 
@@ -149,10 +149,14 @@
             { streamer: this.streamer },
           );
           console.log( data );
-          if ( data.success )
+          if ( data.success ){
             this.success( 'Successfully kicked stream' );
-          else
+            if ( resetKey ) this.success( 'Successfully reset stream key' );
+          }
+          else {
             this.error( 'Failed to kick stream' );
+            if ( resetKey ) this.error( 'Failed to reset stream key' );
+          }
         } catch ( error ) {
           console.error( error );
           this.error( error.message );
@@ -169,9 +173,9 @@
           );
           console.log( data );
           if ( data.success )
-            this.success( 'Successfully transcoded stream' );
+            this.success( `Successfully ${mode ? 'STARTED' : 'STOPPED'} transcoding stream` );
           else
-            this.error( 'Failed to transcode stream' );
+            this.error( `Failed to ${mode ? 'STARTED' : 'STOPPED'} transcode stream` );
         } catch ( error ) {
           console.error( error );
           this.error( error.message );
