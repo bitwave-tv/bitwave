@@ -726,12 +726,13 @@
           message = sanitize( message );
         }
 
-        const voice = new SpeechSynthesisUtterance();
-        const pitch = 1;
-        voice.voice = this.voicesListTTS[this.getTtsVoice];
-        voice.rate  = this.getTtsRate / 10.0;
-        voice.pitch = pitch;
-        voice.text  = message;
+        const voice  = new SpeechSynthesisUtterance();
+        const pitch  = 1;
+        voice.voice  = this.voicesListTTS[this.getTtsVoice];
+        voice.rate   = this.getTtsRate / 10.0;
+        voice.volume = this.getTtsVolume / 10.0;
+        voice.pitch  = pitch;
+        voice.text   = message;
 
         voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
 
@@ -983,6 +984,7 @@
         getUseIgnore      : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         notify            : Chat.$states.notify,
         getIgnoreList     : Chat.$states.ignoreList,

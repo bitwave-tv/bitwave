@@ -139,6 +139,19 @@
           </template>
         </v-slider>
       </v-list-item>
+
+      <v-list-item>
+        <v-slider
+          :disabled="!useTts"
+          label="Vol."
+          v-model="ttsVolume"
+          class="align-center"
+          :max="10"
+          :min="0"
+          :step="0.5"
+          hide-details
+        />
+      </v-list-item>
     </div>
   </v-card>
 </template>
@@ -169,6 +182,7 @@
         setUseIgnore      : Chat.$mutations.setUseIgnore,
         setTrollTts       : Chat.$mutations.setTrollTts,
         setTtsRate        : Chat.$mutations.setTtsRate,
+        setTtsVolume      : Chat.$mutations.setTtsVolume,
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
@@ -192,6 +206,7 @@
         getUseIgnore      : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
@@ -225,6 +240,11 @@
       ttsRate: {
         set ( val ) { this.setTtsRate( val ) },
         get () { return this.getTtsRate }
+      },
+
+      ttsVolume: {
+        set ( val ) { this.setTtsVolume( val ) },
+        get () { return this.getTtsVolume }
       },
 
       ttsVoice: {

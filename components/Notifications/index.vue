@@ -6,6 +6,7 @@
       left
       offset-y
       transition="slide-y-transition"
+      :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '375px'"
     >
       <template #activator="{ on }">
         <v-btn
@@ -36,6 +37,7 @@
           class="pl-2 d-flex justify-space-between align-center"
         >
           <h5 class="black--text body-2">
+            <v-icon color="grey darken-4">notifications</v-icon>
             Notifications
           </h5>
           <v-btn
@@ -74,16 +76,25 @@
               :key="notification.id"
               :to="notification.url"
             >
-              <v-list-item-action>
-                <v-icon>{{ notification.icon }}</v-icon>
+              <v-list-item-action class="mr-4">
+                <v-avatar
+                  v-if="notification.hasOwnProperty( 'avatar' )"
+                  size="32"
+                >
+                  <img
+                    :src="notification.avatar"
+                    :alt="notification.streamer"
+                  >
+                </v-avatar>
+                <v-icon v-else>{{ notification.icon }}</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title class="d-flex justify-space-between">
-                  <div>{{ notification.title }}</div>
+                  <div class="text-truncate">{{ notification.title }}</div>
                 </v-list-item-title>
                 <!--<v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>-->
                 <v-list-item-subtitle>
-                  <div class="grey--text">{{ timestamp( notification.timestamp.toDate() ) }}</div>
+                  <div class="grey--text">{{ notification.streamer }} - {{ timestamp( notification.timestamp.toDate() ) }}</div>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
