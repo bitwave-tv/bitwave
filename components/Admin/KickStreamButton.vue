@@ -173,9 +173,9 @@
           );
           console.log( data );
           if ( data.success )
-            this.success( `Successfully ${mode ? 'STARTED' : 'STOPPED'} transcoding stream` );
+            this.success( `Successfully ${mode === 'start' ? 'STARTED' : 'STOPPED'} transcoding stream` );
           else
-            this.error( `Failed to ${mode ? 'STARTED' : 'STOPPED'} transcode stream` );
+            this.error( `Failed to ${mode === 'start' ? 'STARTED' : 'STOPPED'} transcode stream` );
         } catch ( error ) {
           console.error( error );
           this.error( error.message );
