@@ -76,18 +76,18 @@
               :key="notification.id"
               :to="notification.url"
             >
-              <v-list-item-action class="mr-4">
-                <v-avatar
+              <div>
+                <div
                   v-if="notification.hasOwnProperty( 'avatar' )"
-                  size="32"
+                  class="v-avatar va-32 mr-4"
                 >
                   <img
                     :src="notification.avatar"
                     :alt="notification.streamer"
                   >
-                </v-avatar>
+                </div>
                 <v-icon v-else>{{ notification.icon }}</v-icon>
-              </v-list-item-action>
+              </div>
               <v-list-item-content>
                 <v-list-item-title class="d-flex justify-space-between">
                   <div class="text-truncate">{{ notification.title }}</div>
@@ -205,3 +205,11 @@
     },
   }
 </script>
+
+<style lang="scss">
+  .v-avatar.va-32 {
+    height: 32px;
+    min-width: 32px;
+    width: 32px;
+  }
+</style>
