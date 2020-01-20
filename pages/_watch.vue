@@ -445,12 +445,14 @@
           console.debug( `Good news, we have dropped very few (if any) frames.\nOnly ${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
 
         // Log dropped frames for analyzing and finding bottlenecked regions
-        this.$ga.event({
-          eventCategory : 'playback-errors',
-          eventAction   : 'dropped-frames',
-          eventLabel    : this.name,
-          eventValue    : percentDroppedFrames,
-        });
+        if ( percentDroppedFrames >= 5 ) {
+          this.$ga.event({
+            eventCategory : 'playback-errors',
+            eventAction   : 'dropped-frames',
+            eventLabel    : this.name,
+            eventValue    : percentDroppedFrames,
+          });
+        }
 
         // Update for next loop
         this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };

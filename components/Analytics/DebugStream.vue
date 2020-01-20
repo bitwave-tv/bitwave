@@ -207,13 +207,13 @@
 
   const formatDataSize = sizeInKb => {
     if ( !sizeInKb ) return `Error`;
-    if ( sizeInKb < 512 ) return `${sizeInKb.toFixed(1)}kb`;
+    if ( sizeInKb < 512 ) return `${sizeInKb.toFixed(2)}kb`;
     sizeInKb /= 1024;
-    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(1)}mb`;
+    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(2)}mb`;
     sizeInKb /= 1024;
-    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(1)}gb`;
+    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(2)}gb`;
     sizeInKb /= 1024;
-    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(1)}tb`;
+    if ( sizeInKb < 512 ) return `${(sizeInKb).toFixed(2)}tb`;
   };
 
   export default {
@@ -227,7 +227,7 @@
       return {
         socket: null,
 
-        gradient: [ '#f72047', 'orange', '#ffd200', '#03a9f4', 'blue' ],
+        gradient: [ '#f72047', '#ff9800', '#ffd200', '#03a9f4', 'blue' ],
         radius: 5,
         padding: 5,
         width: 2,
@@ -279,7 +279,7 @@
 
         this.data.push( data );
         this.data = this.data.splice( -this.maxHistory );
-        this.data[ 0 ].currentKbps = 0;
+        // this.data[ 0 ].currentKbps = 0;
 
         this.hlsStats.push( JSON.parse(JSON.stringify($bw.hls.stats)) );
         this.hlsStats = this.hlsStats.splice( -this.maxHistory );
