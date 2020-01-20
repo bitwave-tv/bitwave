@@ -344,6 +344,7 @@
 
       async startRestreamer () {
         const token = await this.getFreshIdToken();
+        this.$axios.setToken( token, 'Bearer' );
         const payload = this.createPayload();
         console.log(payload);
         try {
