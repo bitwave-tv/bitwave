@@ -316,7 +316,7 @@
         const streamRef   = db.collection( 'streams' ).doc( stream );
 
         await streamRef.update({
-          archive: this.streamData.archive,
+          archive: !!this.streamData.archive,
           nsfw: this.streamData.nsfw,
           title: this.streamData.title,
           description: this.streamData.description,
