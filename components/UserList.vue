@@ -41,6 +41,19 @@
         </v-list>
       </v-flex>
 
+      <div>
+        <v-btn
+          to="/streamkey"
+          text
+          tile
+          class="text-center py-2 grey--text"
+          style="height: auto;"
+        >
+          STREAM<br>
+          HERE
+        </v-btn>
+      </div>
+
       <!-- User Channels -->
       <v-flex
         class="hide-scrollbar"
@@ -104,7 +117,7 @@
                 size="40"
                 class="blue--text"
               >
-                <v-icon light>more_horiz</v-icon>
+                <v-icon light>search</v-icon><!-- more_horiz -->
               </v-avatar>
             </v-list-item-avatar>
             <v-list-item-content>
