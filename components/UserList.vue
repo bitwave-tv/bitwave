@@ -46,6 +46,7 @@
           to="/streamkey"
           text
           tile
+          block
           class="text-center py-2 grey--text"
           style="height: auto;"
         >
@@ -63,6 +64,8 @@
           class="pt-0"
           dense
         >
+
+          <!-- List of streams live now -->
           <template
             v-for="( user, i ) in sidebarData"
           >
@@ -104,7 +107,48 @@
             </v-lazy>
           </template>
 
-          <!-- View All Streamers -->
+          <div
+            v-if="uid && following.length > 0"
+            class="overline text-center grey--text mt-3"
+          >
+            FOLLOWING
+          </div>
+
+          <!-- List of streams following  -->
+          <template
+            v-if="uid"
+            v-for="( user, i ) in following"
+          >
+            <v-lazy
+              :value="i < 15"
+              min-height="56"
+              :key="`${i}-f`"
+            >
+              <v-list-item
+                class="py-1"
+                :to="user.to"
+                router
+                exact
+              >
+                <v-list-item-avatar
+                  :color="'#000'"
+                  class="my-1"
+                >
+                  <v-avatar
+                    :size="40"
+                  >
+                    <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
+                  </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-content class="py-0">
+                  <v-list-item-title>{{ user.title }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-lazy>
+          </template>
+
+          <!-- Search All Streamers -->
           <v-list-item
             class="py-0"
             to="/streamers"
@@ -147,6 +191,8 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import { VStore } from '@/store';
+  import { auth,db } from '@/plugins/firebase';
+  import axios from 'axios';
 
   export default {
     name: 'UserList',
@@ -169,6 +215,7 @@
         ],
         userUpdateRate: 10,
         userListTimer: null,
+        following: [],
       }
     },
 
@@ -176,16 +223,37 @@
       ...mapActions({
         fetchData : VStore.$actions.fetchSidebarData,
       }),
+
+      async authenticated ( user ) {
+        if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
+      },
+
+      async getFollowing ( userId ) {
+        if ( userId ) {
+          console.log('Loading channels users follows');
+          const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
+          const query = await db
+            .collection('followers')
+            .where('viewerId', '==', userId)
+            .limit( 10 )
+            .get();
+          const streamers = query.docs.map( doc => doc.data().streamerId );
+          console.log( `Following ${streamers.length} users` );
+          this.following = data.users.filter( streamer => streamers.includes( streamer.owner ) && !streamer.live );
+        }
+      },
     },
 
     computed: {
       ...mapGetters({
         sidebarData: VStore.$getters.getSidebarData,
+        uid : VStore.$getters.getUID,
       }),
     },
 
     async mounted () {
       this.userListTimer = setInterval( async () => await this.fetchData(), this.userUpdateRate * 1000 );
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     beforeDestroy () {
