@@ -92,7 +92,6 @@
                 <v-list-item-title class="d-flex justify-space-between">
                   <div class="text-truncate">{{ notification.title }}</div>
                 </v-list-item-title>
-                <!--<v-list-item-subtitle>{{ notification.message }}</v-list-item-subtitle>-->
                 <v-list-item-subtitle>
                   <div class="grey--text">{{ notification.streamer }} - {{ timestamp( notification.timestamp.toDate() ) }}</div>
                 </v-list-item-subtitle>

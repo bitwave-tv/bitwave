@@ -10,7 +10,7 @@
       <template v-for="( msg, index ) in messages">
         <chat-message
           v-if="msg.username !== ( index && messages[ index - 1 ].username )"
-          :key="index"
+          :key="msg._id"
           :kkey="msg.timestamp"
           :username="msg.username"
           :display-name="msg.username"
