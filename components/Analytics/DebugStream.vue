@@ -431,9 +431,9 @@
           },
         },
 
-        points: [],
-        points2: [],
-        points3: [],
+        points  : [],
+        points2 : [],
+        points3 : [],
 
         vjsLogs: 'No logs loaded\nInitial load may take a moment to process.',
       };

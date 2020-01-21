@@ -268,7 +268,6 @@
 
           if ( DEBUG_VIDEO_JS ) {
             this.player.log.level('debug');
-            // Logs can also be accessed with this.player.log.history();
           }
 
         });
@@ -324,7 +323,7 @@
       async getRandomBump () {
         const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
         // limit to checking 5 most recent bumps
-        if ( this.recentBumps.length >= 10 ) this.recentBumps = this.recentBumps.splice( -10 );
+        if ( this.recentBumps.length >= 15 ) this.recentBumps = this.recentBumps.splice( -15 );
         // Recurse until we get a fresh bump
         if ( this.recentBumps.includes( data.url ) ){
           console.log(`Recently seen ${data.url}, getting a new bump`);
@@ -445,14 +444,12 @@
           console.debug( `Good news, we have dropped very few (if any) frames.\nOnly ${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
 
         // Log dropped frames for analyzing and finding bottlenecked regions
-        if ( percentDroppedFrames >= 5 ) {
-          this.$ga.event({
-            eventCategory : 'playback-errors',
-            eventAction   : 'dropped-frames',
-            eventLabel    : this.name,
-            eventValue    : percentDroppedFrames,
-          });
-        }
+        this.$ga.event({
+          eventCategory : 'playback-errors',
+          eventAction   : 'dropped-frames',
+          eventLabel    : this.name,
+          eventValue    : percentDroppedFrames,
+        });
 
         // Update for next loop
         this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
