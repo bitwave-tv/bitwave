@@ -7,34 +7,53 @@ export default {
   extends: Line,
 
   mixins: [
-    reactiveProp,
+    // reactiveProp,
   ],
 
   props: {
     options: { type: Object },
-    datasets: { type: Array },
+    points: { type: Array },
   },
 
   methods: {
     create () {
-      if ( !this.$data._chart ) this.renderChart( this.chartData, this.options );
+      this.renderChart( this.chartData, this.options );
     },
 
     update () {
-      this.$data._chart.data.datasets = [...this.datasets];
+      this.$data._chart.data.datasets[ 0 ].data = this.points;
+      this.$data._chart.data.labels = new Array(this.points.length).fill(0).map( (v, i ) => i);
       this.$data._chart.update();
     },
   },
 
   watch: {
-    datasets ( newVal ) {
-      // this.update();
+    points ( newVal ) {
+      this.update();
     },
   },
 
   mounted () {
     // this.chartData is created in the mixin.
     // If you want to pass options please create a local options object
+
+    this.chartData = {
+      labels: new Array(120).fill(0).map( (v, i ) => i),
+
+      datasets: [
+        {
+          label: 'Data Set Name',
+          borderColor: 'blue',
+          // pointRadius: 0,
+          pointBorderWidth: 0,
+          pointStyle: 'line',
+          cubicInterpolationMode: 'monotone',
+          data: [ 0 ],
+        },
+      ],
+    };
+
     this.create();
+
   },
 }

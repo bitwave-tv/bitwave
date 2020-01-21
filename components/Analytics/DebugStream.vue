@@ -161,17 +161,17 @@
         <!-- Chart.js Graph -->
         <v-col
           cols="12"
+          md="6"
         >
           <v-card color="grey darken-4">
             <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              NEW! Player: Detected Bandwidth (estimate)
+              {{ streamer }}: Target Size per Frame
             </div>
-
             <basic-line
-              :chartData="chartData"
+              :points="points"
               :options="chartOptions"
+              :height="100"
             />
-
             <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
               <template
                 v-if="hlsGraphStats.length > 2"
@@ -191,6 +191,75 @@
             </div>
           </v-card>
         </v-col>
+
+        <!-- Chart.js Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              NEW! Player: Detected Bandwidth (estimate)
+            </div>
+            <basic-line
+              :points="points2"
+              :options="chartOptions"
+              :height="100"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-for="( stat, name, index ) in data[data.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== 5 - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- Chart.js Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              NEW! Player: Dropped Frames
+            </div>
+            <basic-line
+              :points="points3"
+              :options="chartOptions"
+              :height="100"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-if="videoPlaybackQuality.length > 2"
+                v-for="( stat, name, index ) in videoPlaybackQuality[videoPlaybackQuality.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== Object.keys(videoPlaybackQuality[videoPlaybackQuality.length - 1]).length - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+
       </v-row>
     </v-container>
 
@@ -283,20 +352,57 @@
         hlsGraph: 'bandwidth',
 
         chartOptions: {
+          aspectRatio: 16/9,
+
           xAxisID: 'Time',
+
           responsive: true,
+          maintainAspectRatio: false,
+
+          animation: { duration: 0 },
+
+          legend: {
+            display: false
+          },
+
+          scales: {
+
+            xAxes: [{
+              ticks: {
+                stepSize: 30,
+                display: false,
+              },
+
+              gridLines: {
+                drawTicks: true,
+                display: true,
+                color: 'rgba(0, 0, 0, 0.5)',
+              },
+
+              drawBorder: true,
+            }],
+
+            yAxes: [{
+              ticks: {
+                display: false,
+              },
+
+              gridLines: {
+                drawTicks: true,
+                display: true,
+                color: 'rgba(0, 0, 0, 0.5)',
+              },
+
+              drawBorder: true,
+            }],
+
+          },
         },
 
-        chartData: {
-          labels: 'I really dunno',
-          datasets: [
-            {
-              label: 'Data One',
-              backgroundColor: 'blue',
-              data: [],
-            }
-          ]
-        },
+        points: [],
+        points2: [],
+        points3: [],
+
       };
     },
 
@@ -342,14 +448,14 @@
 
         minBandwidth = minBandwidth === null ? $bw.hls.stats.bandwidth : Math.min($bw.hls.stats.bandwidth, minBandwidth);
 
-        // this.data.push(data.targetSize / data.frames);
-        const newDatasets = this.chartData.datasets;
-        newDatasets[0].data.push(data.targetSize / data.frames);
+        this.points.push( data.targetSize / data.frames );
+        this.points = this.points.splice(-60);
 
-        this.chartData = {
-          labels: 'I really dunno',
-          datasets: [ newDatasets.splice(-120) ],
-        };
+        this.points2.push( $bw.hls.stats.bandwidth );
+        this.points2 = this.points2.splice(-60);
+
+        this.points3.push( $bw.hls.stats.videoPlaybackQuality.droppedVideoFrames / $bw.hls.stats.videoPlaybackQuality.totalVideoFrames * 100 );
+        this.points3 = this.points3.splice(-60);
 
       },
 
