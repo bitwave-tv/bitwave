@@ -157,6 +157,40 @@
             </div>
           </v-card>
         </v-col>
+
+        <!-- Chart.js Graph -->
+        <v-col
+          cols="12"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              NEW! Player: Detected Bandwidth (estimate)
+            </div>
+
+            <basic-line
+              :chartData="chartData"
+              :options="chartOptions"
+            />
+
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-if="hlsGraphStats.length > 2"
+                v-for="( stat, name, index ) in hlsGraphStats[hlsGraphStats.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== Object.keys(hlsGraphStats[hlsGraphStats.length - 1]).length - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
 
@@ -201,6 +235,8 @@
   import { mapState, mapMutations } from 'vuex';
   import { VStore } from '@/store';
 
+  import BasicLine from '@/assets/js/Charts/BasicLine';
+
   const APIServer = 'https://api.bitwave.tv';
 
   let minBandwidth = null;
@@ -223,6 +259,10 @@
       streamer: { type: String },
     },
 
+    components: {
+      BasicLine
+    },
+
     data() {
       return {
         socket: null,
@@ -241,6 +281,22 @@
 
         hlsStats: [],
         hlsGraph: 'bandwidth',
+
+        chartOptions: {
+          xAxisID: 'Time',
+          responsive: true,
+        },
+
+        chartData: {
+          labels: 'I really dunno',
+          datasets: [
+            {
+              label: 'Data One',
+              backgroundColor: 'blue',
+              data: [],
+            }
+          ]
+        },
       };
     },
 
@@ -285,6 +341,16 @@
         this.hlsStats = this.hlsStats.splice( -this.maxHistory );
 
         minBandwidth = minBandwidth === null ? $bw.hls.stats.bandwidth : Math.min($bw.hls.stats.bandwidth, minBandwidth);
+
+        // this.data.push(data.targetSize / data.frames);
+        const newDatasets = this.chartData.datasets;
+        newDatasets[0].data.push(data.targetSize / data.frames);
+
+        this.chartData = {
+          labels: 'I really dunno',
+          datasets: [ newDatasets.splice(-120) ],
+        };
+
       },
 
       async onStreamerOffline( { live, streamer, server } ) {
