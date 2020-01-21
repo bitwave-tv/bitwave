@@ -357,6 +357,7 @@
 
     watch: {
       user ( newVal ) {
+        if ( !newVal ) return;
         this.imageUrl = newVal.avatar;
         this.email    = newVal.email;
       },

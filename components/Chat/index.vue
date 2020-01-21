@@ -13,7 +13,9 @@
     >
 
       <!-- Viewer List -->
-      <ViewerList :page="page" />
+      <div style="height: 32px;">
+        <ViewerList :page="page" />
+      </div>
 
       <!-- Chat Label -->
       <h4

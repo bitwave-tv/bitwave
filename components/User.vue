@@ -160,6 +160,7 @@
 
       async authenticated( user ) {
         if ( user ) { /* user logged in */ }
+        else await this.logoutStore();
         this.loading = false;
       },
 
@@ -181,6 +182,7 @@
 
       avatar () {
         if ( this.user ) return this.user.avatar;
+        else return false;
       },
 
       userType () {

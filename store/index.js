@@ -354,23 +354,26 @@ export const actions = {
   },
 
   async [$actions.logout] ({ dispatch, commit }) {
+    console.log( 'Logging Out...' );
     try {
       if ( unsubscribeUser ) {
-        unsubscribeUser();
+        await unsubscribeUser();
         unsubscribeUser = null;
       }
 
       await auth.signOut();
 
-      commit( $mutations.setUser, null );
-      commit( $mutations.setAuth, null );
-
       this.$cookies.remove( 'user' );
       this.$cookies.remove( 'auth' );
 
+      // Clear store login data
+      commit( $mutations.setUser, null );
+      commit( $mutations.setAuth, null );
+
+      // Triggers actions in child stores
       await dispatch( `${Chat.namespace}/${Chat.$actions.logout}` );
 
-      console.log( 'Logged Out' );
+      console.log( '%cSTORE:%c Logged Out', 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
     } catch ( error ) {
       console.log( `ERROR: ${error}` );
     }

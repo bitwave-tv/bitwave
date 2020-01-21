@@ -127,7 +127,7 @@
                   For PC you can use <span class="font-weight-bold yellow--text">OBS Studio</span> or <span class="font-weight-bold blue--text">Streamlabs</span>.
                   But you should probably use OBS Studio. It generally has better performance, despite not being as fancy looking.
                   Additionally you may be interested in wasting hours of your life attempting to install, remove, re-install, configure, diagnose, setup, use, then reinstalling
-                  <span class="font-weight-bold red--text">Voicemeter</span>, which allows you to attempt to manage audio routing for streaming entirely in software.
+                  <span class="font-weight-bold red--text">Voicemeeter</span>, which allows you to attempt to manage audio routing for streaming entirely in software.
                 </div>
 
                 <div class="mb-3">
@@ -172,7 +172,7 @@
                   outlined
                   :block="$vuetify.breakpoint.smAndDown"
                 >
-                  Voicemeter
+                  Voicemeeter
                 </v-btn>
               </div>
             </v-col>
