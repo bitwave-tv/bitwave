@@ -26,12 +26,10 @@
         <div class="d-flex align-start pa-2">
           <div>
             <div class="title">Stream Archive Manager</div>
-
-              <img
-                src="https://netdata.stream.bitwave.tv/api/v1/badge.svg?chart=disk_space._mnt_bitwave_archives&alarm=disk_space_usage&refresh=auto"
-                alt="Remaining archive storage space"
-              >
-
+            <img
+              src="https://netdata.stream.bitwave.tv/api/v1/badge.svg?chart=disk_space._mnt_bitwave_archives&alarm=disk_space_usage&refresh=auto"
+              alt="Remaining archive storage space"
+            >
           </div>
           <v-spacer/>
           <v-text-field
@@ -131,20 +129,14 @@
     },
 
     methods: {
-      view () {
-        this.$toast.error('Archive Manager does not exist.');
-      },
-
       async getFreshIdToken () {
         const token = await auth.currentUser.getIdToken( true );
         this.$axios.setToken( token, 'Bearer' );
-        return token;
       },
 
       async getArchives () {
         this.loading = true;
         const { data } = await this.$axios.get('https://api.bitwave.tv/v1/archives/old');
-        console.log( data );
 
         this.archives = data.data
           .map( archive => ({ ...archive.data, timeAgo: archive.timeAgo, id: archive.id }) )
@@ -155,18 +147,12 @@
 
       async deleteArchive ( archive ) {
         const endpoint = `https://api.bitwave.tv/v1/archives/${archive.id}`;
-        const options = {
-          data: {
-            user: this.username,
-          },
-        };
+        const options = { data: { user: this.username } };
 
         try {
           const { data } = await this.$axios.delete( endpoint, options );
-
           if ( data.success ) this.$toast.success( data.message, { duration: 2500, icon: 'done', position: 'bottom-center' } );
           else this.$toast.success( data.message, { duration: 2500, icon: 'error', position: 'bottom-center' } );
-
           this.archives = this.archives.filter( a => a.id !== archive.id );
         } catch ( error ) {
           await this.getFreshIdToken();
