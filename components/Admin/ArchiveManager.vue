@@ -23,7 +23,7 @@
 
       <!-- Archive Top Bar -->
       <template v-slot:top>
-        <div class="d-flex align-start pa-2">
+        <div class="d-flex flex-wrap align-start pa-2">
           <div>
             <div class="title">Stream Archive Manager</div>
             <img
@@ -65,7 +65,6 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
-              class="mr-3"
               icon
               color="red"
               :loading="item.loading"
@@ -112,12 +111,13 @@
           },
           {
             text: 'Date',
+            width: 150,
             align: 'right',
             sortable: true,
             value: 'timeAgo',
           },
           {
-            width: '0',
+            text: 'Delete',
             value: 'action',
             sortable: false,
             align: 'center'

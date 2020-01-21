@@ -52,6 +52,30 @@
         <v-divider />
 
         <v-card-actions>
+          <span>NSFW:</span>
+          <v-spacer />
+          <v-btn
+            color="green"
+            small
+            outlined
+            @click="setNSFW( false )"
+          >
+            SAFE
+          </v-btn>
+          <v-btn
+            color="red"
+            class="ml-2"
+            small
+            outlined
+            @click="setNSFW( true )"
+          >
+            NSFW
+          </v-btn>
+        </v-card-actions>
+
+        <v-divider />
+
+        <v-card-actions>
           <span>Transcoder:</span>
           <v-spacer />
           <v-btn
@@ -119,6 +143,7 @@
 
   const endpoint = 'https://api.bitwave.tv/v1/admin/stream/kick';
   const transcodeEndpoint = 'https://api.bitwave.tv/v1/streamer/transcoder/';
+  const nsfwEndpoint = 'https://api.bitwave.tv/v1/admin/stream/';
 
   export default {
     name: 'KickStreamButton',
@@ -139,6 +164,22 @@
         this.$axios.setToken( token, 'Bearer' );
         console.log( `Fresh ID token:`, { token } );
         return token;
+      },
+
+      async setNSFW ( nsfw ) {
+        try {
+          const endpoint = nsfwEndpoint + this.streamer;
+          const { data } = await this.$axios.post(
+            endpoint,
+            { nsfw: nsfw },
+          );
+          if ( data.success ) this.success( data.message );
+          else this.error( data.message );
+        } catch ( error ) {
+          console.error( error );
+          this.error( error.message );
+          await this.getFreshIdToken();
+        }
       },
 
       async kickStreamer ( resetKey ) {

@@ -26,7 +26,7 @@
 
     </v-row>
 
-    <div>Nothing <i>everything</i> here works yet. In case you didn't notice...</div>
+    <div>Not <i>everything</i> here works yet. In case you didn't notice...</div>
   </v-container>
 </template>
 
