@@ -82,6 +82,7 @@
 
         <!-- Dropped Frames Graph -->
         <v-col
+          v-if="false"
           cols="12"
           md="6"
         >
@@ -98,6 +99,40 @@
               :type="type"
               stroke-linecap="round"
               gradient-direction="top"
+            />
+            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
+              <template
+                v-if="videoPlaybackQuality.length > 2"
+                v-for="( stat, name, index ) in videoPlaybackQuality[videoPlaybackQuality.length - 1]"
+              >
+                <div>
+                  <span class="grey--text mr-1">{{ name }}</span>
+                  <span class="body-2">{{ stat }}</span>
+                </div>
+                <v-divider
+                  v-if="index !== Object.keys(videoPlaybackQuality[videoPlaybackQuality.length - 1]).length - 1"
+                  color="orange"
+                  vertical
+                  class="mx-1"
+                />
+              </template>
+            </div>
+          </v-card>
+        </v-col>
+
+        <!-- New Chart.js Dropped Frames Graph -->
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <v-card color="grey darken-4">
+            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
+              NEW! Player: Dropped Frames
+            </div>
+            <basic-line
+              :points="points3"
+              :options="chartOptions"
+              :height="100"
             />
             <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
               <template
@@ -160,6 +195,7 @@
 
         <!-- Chart.js Graph -->
         <v-col
+          v-if="false"
           cols="12"
           md="6"
         >
@@ -194,6 +230,7 @@
 
         <!-- Chart.js Graph -->
         <v-col
+          v-if="false"
           cols="12"
           md="6"
         >
@@ -225,36 +262,31 @@
           </v-card>
         </v-col>
 
-        <!-- Chart.js Graph -->
+        <!-- Video.js Output Log -->
         <v-col
           cols="12"
-          md="6"
         >
           <v-card color="grey darken-4">
             <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              NEW! Player: Dropped Frames
+              NEW! Player: Debug Logs
             </div>
-            <basic-line
-              :points="points3"
-              :options="chartOptions"
-              :height="100"
+            <v-textarea
+              style="font-size: 10px;"
+              :value="vjsLogs"
+              dense
+              filled
+              hide-details
             />
-            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
-              <template
-                v-if="videoPlaybackQuality.length > 2"
-                v-for="( stat, name, index ) in videoPlaybackQuality[videoPlaybackQuality.length - 1]"
+            <div class="d-flex justify-end">
+              <v-btn
+                class="ma-2"
+                color="blue"
+                outlined
+                small
+                @click="loadLogs"
               >
-                <div>
-                  <span class="grey--text mr-1">{{ name }}</span>
-                  <span class="body-2">{{ stat }}</span>
-                </div>
-                <v-divider
-                  v-if="index !== Object.keys(videoPlaybackQuality[videoPlaybackQuality.length - 1]).length - 1"
-                  color="orange"
-                  vertical
-                  class="mx-1"
-                />
-              </template>
+                Load Logs
+              </v-btn>
             </div>
           </v-card>
         </v-col>
@@ -403,6 +435,7 @@
         points2: [],
         points3: [],
 
+        vjsLogs: 'No logs loaded\nInitial load may take a moment to process.',
       };
     },
 
@@ -462,6 +495,10 @@
       async onStreamerOffline( { live, streamer, server } ) {
         console.log( `${streamer} has gone offline on the ${server} server` );
         this.$toast.error( `${streamer} is now offline`, { icon: 'error', duration: 2000, position: 'top-right' } );
+      },
+
+      loadLogs () {
+        this.vjsLogs = $bw.getVideoLogs().map( log => log.toString() ).join('\n')
       },
 
       ...mapMutations({
