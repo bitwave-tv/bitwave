@@ -41,14 +41,14 @@
         </v-list>
       </v-flex>
 
-      <div>
+      <div class="mt-1">
         <v-btn
+          class="text-center py-2"
+          style="height: auto;"
           to="/streamkey"
           text
           tile
           block
-          class="text-center py-2 grey--text"
-          style="height: auto;"
         >
           STREAM<br>
           HERE
@@ -64,6 +64,12 @@
           class="pt-0"
           dense
         >
+
+          <div
+            class="overline text-center grey--text mt-1 mb-1"
+          >
+            LIVE NOW
+          </div>
 
           <!-- List of streams live now -->
           <template
@@ -109,7 +115,7 @@
 
           <div
             v-if="uid && following.length > 0"
-            class="overline text-center grey--text mt-3"
+            class="overline text-center grey--text mt-3 mb-1"
           >
             FOLLOWING
           </div>

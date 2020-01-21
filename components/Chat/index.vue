@@ -69,7 +69,7 @@
               v-on="on"
               :style="{ 'min-width': '40px' }"
               small
-              light
+              :light="isAdmin"
               color="yellow"
               class="ml-2 px-0"
               :disabled="!isAdmin"

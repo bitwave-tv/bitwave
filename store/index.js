@@ -91,6 +91,8 @@ export const state = () => ({
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
+
+  [$states.pinToLive] : false,
 });
 
 
