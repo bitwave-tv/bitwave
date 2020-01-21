@@ -15,19 +15,18 @@
         cols="12"
         md="6"
       >
-        <archive-manager />
+        <reports />
       </v-col>
 
       <v-col
         cols="12"
-        md="6"
       >
-        <reports />
+        <archive-manager />
       </v-col>
 
     </v-row>
 
-    <div>Nothing here works yet. In case you didn't notice...</div>
+    <div>Nothing <i>everything</i> here works yet. In case you didn't notice...</div>
   </v-container>
 </template>
 
