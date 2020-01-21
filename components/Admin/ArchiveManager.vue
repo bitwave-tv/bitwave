@@ -184,7 +184,6 @@
 
     async mounted () {
       await this.getArchives();
-      await this.getFreshIdToken();
     },
 
   };
