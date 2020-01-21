@@ -391,7 +391,7 @@ export const actions = {
 
   async [$actions.fetchSidebarData] ({ commit }) {
     try {
-      const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
+      const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/live' );
       commit ( $mutations.setSidebarData, data.users );
     } catch ( error ) {
       console.error( `${error.message}: Failed to update user list.`, error );

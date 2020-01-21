@@ -58,7 +58,7 @@
 
 
     <!-- Chat -->
-    <div
+    <div :key="1"
       class="d-flex"
       :class="{ 'chat-desktop': !mobile }"
       :style="{ maxHeight: mobile ? '390px' : '100%' }"
@@ -560,14 +560,16 @@
       },
     },
 
-    /*async validate ( { params, query, store, $axios } ) {
+    async validate ( { params, $axios } ) {
       const user = params.watch;
-      if ( !user.match( /^[a-zA-Z0-9._-]+$/ ) ) {
-        return false;
-      }
+
+      // Verify username is valid
+      if ( !user.match( /^[a-zA-Z0-9._-]+$/ ) ) return false;
+
+      // Check for user channel data via API
       const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
       return !!data.name;
-    },*/
+    },
 
     /*beforeRouteUpdate ( to, from, next ) {
       const params = to.params;
