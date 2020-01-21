@@ -49,6 +49,20 @@
 
           <div class="px-3" v-if="restreamData">
 
+            <v-select
+              class="mb-5"
+              :items="streamingPlatforms"
+              color="yellow"
+              label="Streaming Services"
+              outlined
+              single-line
+              dense
+              hide-details
+              clearable
+              prepend-icon="rss_feed"
+              @change="val => restreamData.server = val"
+            />
+
             <v-text-field
               v-model="restreamData.server"
               color="yellow"
@@ -274,6 +288,13 @@
         showKey: false,
         creatingRestreamer: false,
         streamerRef: null,
+
+        streamingPlatforms: [
+          { text: 'Custom Server', value: 'rtmp://' },
+          { text: 'Twitch', value: 'rtmp://live-sfo.twitch.tv/app' },
+          { text: 'dlive', value: 'rtmp://stream.dlive.tv/live' },
+          { text: 'YouTube', value: 'rtmp://a.rtmp.youtube.com/livedlive.tv/live2' },
+        ],
       };
     },
 

@@ -127,6 +127,7 @@
       },
 
       userlist () {
+        if ( !this.showViewers ) return [];
         return this.getUserList.filter( viewer => {
           return this.showAll
             ? viewer

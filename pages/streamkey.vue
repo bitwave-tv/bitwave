@@ -1,9 +1,9 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row class="justify-space-around">
       <v-col
         cols="12"
-        md="6"
+        :md="userType === 'Streamer' ? 6 : 8"
       >
         <v-card class="pa-3" v-if="userType === 'Streamer'">
           <h2 class="mb-2">
@@ -72,9 +72,10 @@
                   :light="alert.type !== 'error'"
                   @click="requestKey"
                 >
-                  Request Key
+                  Create My Key
                 </v-btn>
                 <v-btn
+                  v-if="alert.type === 'error'"
                   color="yellow"
                   :to="buttonLink"
                   outlined
@@ -88,6 +89,7 @@
       </v-col>
 
       <v-col
+        v-if="userType === 'Streamer'"
         cols="12"
         md="6"
       >
@@ -204,13 +206,12 @@
             <br>
             <div class="mb-2">2. How do I ban here?</div>
             <div>
-              <span class="body-1 white--text font-weight-bold">You don't.</span>
-              <div class="mb-1">But you can do <code>/ignore SomeUsername</code> to ignore a user.</div>
+              <div class="mb-1">You can do <code>/ignore Username</code> to ignore a user.</div>
             </div>
             <div>
               <div class="mb-1">
                 <span class="font-italic font-weight-light mr-2">Tip:</span>
-                <code>/i user</code> to save keystrokes &
+                <code>/i Username</code> to save keystrokes &
                 also try<code>/u</code> for unignore.
               </div>
             </div>
@@ -256,14 +257,14 @@
       >
         <div class="display-2 ml-5 mb-2 font-weight-thin yellow--text">The Basic Rules</div>
         <v-card>
-          <v-card-text class="pb-0">
+          <!--<v-card-text class="pb-0">
             <div class="overline">in plain english</div>
             <div class="headline">Don't be degenerate</div>
-          </v-card-text>
+          </v-card-text>-->
           <v-card-text>
-            <div>1. Use your brain.</div>
+            <div>1. Use your brain. (Don't be dumb)</div>
             <div>2. Don't attack chat.</div>
-            <div>3. This is <span class="font-weight-bold red--text">not</span> a dating site.</div>
+            <div>3. This is not a dating site.</div>
             <div>
               4. Attempts to interfere, disrupt, or disable normal operations of the site
               will be subject to IP Scraping™.
