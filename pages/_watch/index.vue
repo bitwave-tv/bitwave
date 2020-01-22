@@ -39,12 +39,12 @@
         v-intersect="{
           handler: onIntersect,
           options: {
-            threshold: [ 0, 0.2, 0.3, 0.5, 0.75, 1.0 ],
+            threshold: [ 0.2, 0.3, 0.5 ],
           },
         }"
       >
         <div
-          :class="{ 'detach-player': detach && !this.mobile, 'elevation-6': detach && !this.mobile }"
+          :class="{ 'detach-player': smartDetach, 'elevation-6': smartDetach }"
         >
           <video
             playsinline
@@ -61,6 +61,22 @@
               :type="type"
             >
           </video>
+
+          <div
+            v-if="smartDetach"
+            class="d-flex align-center justify-space-between detach-overlay"
+          >
+            <h5 class="white--text body-2 ml-2">{{ name }}</h5>
+            <v-btn
+              color="white"
+              text
+              icon
+              pa-0
+              @click="detach = false"
+            >
+              <v-icon color="white">close</v-icon>
+            </v-btn>
+          </div>
         </div>
       </v-sheet>
 
@@ -567,6 +583,12 @@
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
       },
+
+      smartDetach () {
+        return this.detach
+          && !this.mobile
+          && !this.player.isInPictureInPicture();
+      },
     },
 
     watch: {
@@ -613,10 +635,24 @@
   .detach-player {
     position: fixed;
     left: 80px;
-    bottom: 0px;
+    bottom: 0;
     margin: 1rem;
     width: 20rem;
     height: 11.25rem;
     z-index: 10;
+    overflow: hidden;
+
+    &:hover .detach-overlay {
+      transform: translateY( 0 );
+    }
+  }
+
+  .detach-overlay {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    transform: translateY( -100% );
+    transition: .1s;
+    background-color: rgba(0,0,0,.75);
   }
 </style>

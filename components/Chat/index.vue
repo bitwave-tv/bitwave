@@ -414,9 +414,8 @@
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
 
-        if ( process.env.APP_DEBUG ) {
+        if ( process.env.APP_DEBUG )
           this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${ attempt })` ) );
-        }
       },
 
       async socketConnect () {
@@ -437,14 +436,15 @@
       },
 
       async socketReconnect () {
-        this.$toast.success( 'Success: Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
+        this.$toast.success( 'Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
         console.log( 'Chat reconnected, requesting re-hydration' );
         await this.httpHydrate();
       },
 
       async socketError ( error, reason ) {
         this.loading = true;
-        this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
+        if ( process.env.APP_DEBUG )
+          this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
       },
 
       async httpHydrate () {

@@ -271,11 +271,14 @@
               NEW! Player: Debug Logs
             </div>
             <v-textarea
+              :rows="6"
               style="font-size: 10px;"
               :value="vjsLogs"
               dense
               filled
               hide-details
+              :full-width="true"
+              readonly
             />
             <div class="d-flex justify-end">
               <v-btn
@@ -397,36 +400,54 @@
             display: false
           },
 
+          /*layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 10,
+              bottom: 10
+            }
+          },*/
+
           scales: {
 
             xAxes: [{
               ticks: {
+                beginAtZero: true,
                 stepSize: 30,
                 display: false,
               },
 
               gridLines: {
-                drawTicks: true,
+                drawTicks: false,
                 display: true,
-                color: 'rgba(0, 0, 0, 0.5)',
+                // color: 'rgba(0, 0, 0, 0.5)',
+                color: 'rgba(255, 255, 255, 0.1)',
               },
 
               drawBorder: true,
             }],
 
-            yAxes: [{
-              ticks: {
-                display: false,
-              },
+            yAxes: [
+              {
+                ticks: {
+                  padding: 10,
+                  precision: 2,
+                  display: true,
+                  beginAtZero: true,
+                },
 
-              gridLines: {
-                drawTicks: true,
-                display: true,
-                color: 'rgba(0, 0, 0, 0.5)',
-              },
+                gridLines: {
+                  drawTicks: false,
+                  display: true,
+                  // color: 'rgba(0, 0, 0, 0.5)',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  zeroLineColor : 'rgba(255, 255, 255, 0.85)',
+                },
 
-              drawBorder: true,
-            }],
+                drawBorder: false,
+              },
+            ],
 
           },
         },
@@ -498,7 +519,12 @@
       },
 
       loadLogs () {
-        this.vjsLogs = $bw.getVideoLogs().map( log => log.toString() ).join('\n')
+        const logs = $bw.getVideoLogs()
+          .splice( -5000 );
+
+        this.vjsLogs = logs
+          .map( log => log.toString() )
+          .join('\n');
       },
 
       ...mapMutations({
