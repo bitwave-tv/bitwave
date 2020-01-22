@@ -314,6 +314,11 @@
           localStorage.setItem( 'muted',  muted );
         });
 
+        // PiP events
+        this.player.on( 'enterpictureinpicture', () => {
+          this.detach = false;
+        });
+
         // Begin playing when new media is loaded
         // this.player.on( 'loadeddata', () => {});
 
