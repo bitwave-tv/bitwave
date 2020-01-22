@@ -20,8 +20,6 @@ const $states = {
 
   channelsViewers : 'CHANNEL_VIEWERS',
   userlist        : 'USERLIST',
-
-  pinToLive : 'PIN_TO_LIVE',
 };
 
 const $getters = {
@@ -59,8 +57,6 @@ const $mutations = {
 
   setChannelViewers : 'SET_CHANNEL_VIEWERS',
   setUserList       : 'SET_USER_LIST',
-
-  setPinToLive : 'SET_PIN_TO_LIVE',
 };
 
 const $actions = {
@@ -91,8 +87,6 @@ export const state = () => ({
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
-
-  [$states.pinToLive] : false,
 });
 
 
@@ -238,10 +232,6 @@ export const mutations = {
         watching: data[key].watching,
       };
     }).reverse();
-  },
-
-  [$mutations.setPinToLive] ( state, data ) {
-    state[$states.pinToLive] = data;
   },
 
   setAvatar( state, url ) {

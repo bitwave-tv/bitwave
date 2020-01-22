@@ -23,6 +23,8 @@
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
+  const DEBUG_VIDEO_JS = false;
+
   export default {
     name: 'StreamPlayer',
 
@@ -43,6 +45,8 @@
     methods: {
 
       playerInitialize () {
+        this.initialized = false;
+
         // Create video.js player
         this.player = videojs( 'streamplayer', {
           liveui: true,
@@ -57,12 +61,20 @@
               overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
+              handlePartialData: true,
             },
           },
         });
 
+
         // Video Player Ready
         this.player.ready( () => this.onPlayerReady() );
+
+
+        // --- Video.js plugin functions
+
+        // Add reloadSourceOnError plugin
+        this.player.reloadSourceOnError({ errorInterval: 10 });
 
         // Load all qualities
         this.qualityLevels = this.player.qualityLevels();
@@ -80,20 +92,58 @@
       },
 
       onPlayerReady () {
-        // Restore Volume
+        // Restore Volume & mute
         try {
-          /*console.log(`Volume: ${this.player.volume()}, Muted: ${this.player.muted()}`);
-          let muted = localStorage.getItem( 'muted' );
-          console.log(`Muted: ${muted}`);
-          if ( muted !== null ) {
-            this.player.muted( muted );
-          }*/
+          console.log( `Volume: ${this.player.volume()}, Muted: ${this.player.muted()}` );
+          let muted = JSON.parse( localStorage.getItem( 'muted' ) );
+          if ( muted !== null ) this.player.muted( muted );
           let volume = localStorage.getItem( 'volume' );
           if ( volume !== null ) this.player.volume( volume );
         } catch ( error ) {
-          // No volume value in memory
-          console.warn( 'Failed to find prior volume level' );
+          console.warn( 'Failed to find prior volume level' ); // No volume value in memory
         }
+
+        this.player.tech().on( 'retryplaylist', ( event ) => {
+          console.log( `retryplaylist:`, event );
+          if ( !this.live ) console.log( `livestream is offline.` );
+        });
+
+        this.player.tech().on( 'usage', ( event ) => {
+          console.log( `${event.name}:`, event );
+        });
+
+        this.player.liveTracker.on('liveedgechange', async () => {
+          // This is currently an opt-in feature
+          if ( !this.pinToLive ) return;
+
+          // Only respond to when we fall behind
+          if ( this.player.liveTracker.atLiveEdge() ) return;
+
+          // Don't respond to when user has paused the player
+          if ( this.player.paused() ) return;
+
+          console.log('We have fallen behind live!');
+
+          setTimeout(() => {
+            // Do not jump ahead if user has paused the player
+            if ( this.player.paused() ) return;
+
+            console.log( 'Attempting to catch back up to live.' );
+            this.player.liveTracker.seekToLiveEdge();
+          }, 8 * 1000 );
+        });
+
+        window.$bw = {
+          getVideoLogs: this.player.log.history,
+          hls: this.player.tech({ IWillNotUseThisInPlugins: true }).hls,
+          player: this.player,
+        };
+
+        if ( DEBUG_VIDEO_JS ) {
+          this.player.log.level('debug');
+        }
+
+        this.initialized = true;
       },
 
       reloadPlayer () {
@@ -119,7 +169,8 @@
 
       onError ( error ) {
         // Brush player errors under the rug
-        console.warn( error );
+        if ( !this.live ) console.log( 'streamer offline and got an error' );
+        console.warn( `player error:`, error );
       },
 
       playerDispose (){

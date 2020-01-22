@@ -39,7 +39,7 @@
         v-intersect="{
           handler: onIntersect,
           options: {
-            threshold: [ 0.2, 0.3, 0.5 ],
+            threshold: [ 0.2, 0.3, 0.5, 1.0 ],
           },
         }"
       >
@@ -56,10 +56,7 @@
             :poster="posterCacheBusted"
             :style="{ width: '100%' }"
           >
-            <source
-              :src="url"
-              :type="type"
-            >
+            <source v-if="live" :src="url" :type="type">
           </video>
 
           <div
@@ -72,7 +69,7 @@
               text
               icon
               pa-0
-              @click="detach = false"
+              @click="setDetach( false )"
             >
               <v-icon color="white">close</v-icon>
             </v-btn>
@@ -117,19 +114,18 @@
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
-  import { mapState, mapGetters } from 'vuex';
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { db } from '@/plugins/firebase.js';
 
   import Chat from '~/components/Chat';
   import FollowButton from '@/components/FollowButton';
   import { Chat as ChatStore } from '@/store/chat';
   import { VStore } from '@/store';
+  import { Player } from '@/store/player';
   import StreamInfo from '@/components/Channel/StreamInfo';
 
   const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
   const Stickers = async () => await import ( '@/components/effects/Stickers' );
-
-  const DEBUG_VIDEO_JS = false;
 
   export default {
     name: 'watch',
@@ -184,9 +180,6 @@
 
         // performance logging
         lastVPQ: null,
-
-        // Detach player
-        detach: false,
       }
     },
 
@@ -212,6 +205,12 @@
             },
           },
         });
+
+        window.$bw = {
+          player: this.player,
+          getVideoLogs: this.player.log.history,
+          hls: null,
+        };
 
         // --- Video.js plugin functions
 
@@ -265,16 +264,18 @@
             console.warn( 'Failed to find prior volume level' ); // No volume value in memory
           }
 
-          this.player.tech().on( 'retryplaylist', ( event ) => {
+          const playerTech = this.player.tech({ IWillNotUseThisInPlugins: true });
+
+          playerTech.on( 'retryplaylist', ( event ) => {
             console.log( `retryplaylist:`, event );
             if ( !this.live ) console.log( `livestream is offline.` );
           });
 
-          this.player.tech().on( 'usage', ( event ) => {
+          playerTech.on( 'usage', ( event ) => {
             console.log( `${event.name}:`, event );
           });
 
-          this.player.liveTracker.on('liveedgechange', async () => {
+          this.player.liveTracker.on( 'liveedgechange', async () => {
             // This is currently an opt-in feature
             if ( !this.pinToLive ) return;
 
@@ -295,16 +296,9 @@
             }, 8 * 1000 );
           });
 
-          window.$bw = {
-            getVideoLogs: this.player.log.history,
-            hls: this.player.tech({ IWillNotUseThisInPlugins: true }).hls,
-            player: this.player,
-          };
+          this.setSource({ url: this.url, type: this.type });
 
-          if ( DEBUG_VIDEO_JS ) {
-            this.player.log.level('debug');
-          }
-
+          this.initialized = true;
         });
 
         // Save volume on change
@@ -319,16 +313,16 @@
 
         // PiP events
         this.player.on( 'enterpictureinpicture', () => {
-          this.detach = false;
+          this.setDetach( false );
         });
 
         // Begin playing when new media is loaded
-        // this.player.on( 'loadeddata', () => {});
+        this.player.on( 'loadeddata', () => {
+          if ( !window.$bw.hls && this.live ) window.$bw.hls = this.player.tech({ IWillNotUseThisInPlugins: true }).hls;
+        });
 
         this.player.on( 'ended', async () => {
-          this.url = await this.getRandomBump();
-          // this.player.load();
-          this.reloadPlayer();
+          this.setSource({ url: this.getRandomBump(), type: 'video/mp4' });
         });
 
         this.player.on( 'error', error => {
@@ -336,9 +330,6 @@
           if ( !this.live ) console.log( 'streamer offline and got an error' );
           console.warn( `player error:`, error );
         });
-
-
-        this.initialized = true;
 
         this.getStreamData(); // Get stream data
       },
@@ -423,10 +414,7 @@
           this.live = live;
 
           // Load and Play stream
-          this.url  = url;
-          this.type = type;
-
-          this.reloadPlayer();
+          this.setSource({ url, type });
         }
 
         // Detect user going [ online -> offline ]
@@ -436,9 +424,7 @@
 
         // Detect source change
         else if ( this.url !== url  || this.type !== type ) {
-          this.url  = url;
-          this.type = type;
-          this.reloadPlayer();
+          this.setSource({ url, type });
         }
 
         this.live = live;
@@ -496,8 +482,17 @@
       },
 
       onIntersect ( entries, observer ) {
-        this.detach = entries[0].intersectionRatio <= 0.5;
+        this.setDetach( entries[0].intersectionRatio <= 0.5 );
       },
+
+      ...mapMutations(Player.namespace, {
+        setSource: Player.$mutations.setSource,
+        setDetach: Player.$mutations.setDetach,
+      }),
+
+      ...mapActions( Player.namespace, {
+        loadSettings: Player.$actions.loadSettings,
+      }),
     },
 
     async asyncData ( { $axios, params, store } ) {
@@ -566,8 +561,10 @@
     },
 
     computed: {
-      ...mapState({
-        pinToLive : VStore.$states.pinToLive,
+      ...mapState(Player.namespace, {
+        source : Player.$states.source,
+        pinToLive : Player.$states.keepLive,
+        detach : Player.$states.detach,
       }),
 
       ...mapGetters({
@@ -595,6 +592,7 @@
       smartDetach () {
         return this.detach
           && !this.mobile
+          && this.player
           && !this.player.isInPictureInPicture();
       },
     },
@@ -602,8 +600,14 @@
     watch: {
       pinToLive ( pin ) {
         if ( this.player && this.live && pin ) {
-          this.player.liveTracker.trigger('liveedgechange')
+          this.player.liveTracker.trigger( 'liveedgechange' );
         }
+      },
+
+      source ( newSource ) {
+        this.url  = newSource.url;
+        this.type = newSource.type;
+        this.reloadPlayer();
       },
     },
 
@@ -625,7 +629,11 @@
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
+
+      await this.loadSettings();
+
       this.playerInitialize();
+
       this.mounted = true;
     },
 

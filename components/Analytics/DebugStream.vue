@@ -337,7 +337,7 @@
   import socketio from 'socket.io-client';
 
   import { mapState, mapMutations } from 'vuex';
-  import { VStore } from '@/store';
+  import { Player } from '@/store/player';
 
   import BasicLine from '@/assets/js/Charts/BasicLine';
 
@@ -527,8 +527,8 @@
           .join('\n');
       },
 
-      ...mapMutations({
-        setPinToLive: VStore.$mutations.setPinToLive,
+      ...mapMutations(Player.namespace, {
+        setPinToLive: Player.$mutations.setKeepLive,
       }),
     },
 
@@ -586,8 +586,8 @@
           .map( hlsStats => hlsStats.bandwidth );
       },
 
-      ...mapState({
-        getPinToLive: VStore.$states.pinToLive,
+      ...mapState(Player.namespace, {
+        getPinToLive: Player.$states.keepLive,
       }),
 
       pinToLive: {
