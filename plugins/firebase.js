@@ -30,6 +30,7 @@ const listenToAuthState = ( callback ) => {
       await callback( user );
     } else {
       if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
+      await callback( null );
     }
   }, async error => {
     console.error( 'Auth Error:', error )
@@ -65,7 +66,8 @@ export default async ( { app, store } ) => {
 
     // Listen for authentication changes
     listenToAuthState( user => {
-      store.dispatch( VStore.$actions.login, user );
+      if ( user ) store.dispatch( VStore.$actions.login, user );
+      else store.dispatch( VStore.$actions.logout );
     });
 
     // Listen to the configuration, and dispatch updates

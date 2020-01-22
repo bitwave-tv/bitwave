@@ -160,7 +160,6 @@
 
       async authenticated( user ) {
         if ( user ) { /* user logged in */ }
-        else await this.logoutStore();
         this.loading = false;
       },
 
