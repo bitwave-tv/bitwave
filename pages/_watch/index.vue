@@ -44,7 +44,7 @@
         }"
       >
         <div
-          :class="{ 'detach-player': detach, 'elevation-6': detach }"
+          :class="{ 'detach-player': detach && !this.mobile, 'elevation-6': detach && !this.mobile }"
         >
           <video
             playsinline
@@ -472,7 +472,7 @@
       },
 
       onIntersect ( entries, observer ) {
-        this.detach = entries[0].intersectionRatio <= 0.5
+        this.detach = entries[0].intersectionRatio <= 0.5;
       },
     },
 
