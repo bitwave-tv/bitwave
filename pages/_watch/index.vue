@@ -139,6 +139,9 @@
     head () {
       return {
         title: `${this.name} - [bitwave.tv]`,
+        link: [
+          { rel: 'canonical', href: `https://bitwave.tv/${this.name}` },
+        ],
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
           { name: 'og:description', hid: 'og:description', content: (this.description || '').substring( 0, 200 ) },

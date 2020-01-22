@@ -210,6 +210,9 @@
     head () {
       return {
         title: `Homepage - [bitwave.tv]`,
+        link: [
+          { rel: 'canonical', href: `https://bitwave.tv` },
+        ],
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
           { name: 'og:description', hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
