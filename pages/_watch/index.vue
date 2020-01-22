@@ -33,22 +33,35 @@
 
     <!-- Video JS -->
     <v-responsive :aspect-ratio="16/9">
-      <v-sheet color="black">
-        <video
-          playsinline
-          id="streamplayer"
-          class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
-          controls
-          autoplay
-          preload="auto"
-          :poster="posterCacheBusted"
-          :style="{ width: '100%' }"
+      <v-sheet
+        color="grey darken-4"
+        style="height: 100%;"
+        v-intersect="{
+          handler: onIntersect,
+          options: {
+            threshold: [ 0, 0.2, 0.3, 0.5, 0.75, 1.0 ],
+          },
+        }"
+      >
+        <div
+          :class="{ 'detach-player': detach, 'elevation-6': detach }"
         >
-          <source
-            :src="url"
-            :type="type"
+          <video
+            playsinline
+            id="streamplayer"
+            class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
+            controls
+            autoplay
+            preload="auto"
+            :poster="posterCacheBusted"
+            :style="{ width: '100%' }"
           >
-        </video>
+            <source
+              :src="url"
+              :type="type"
+            >
+          </video>
+        </div>
       </v-sheet>
 
       <!-- Video Overlay -->
@@ -152,6 +165,9 @@
 
         // performance logging
         lastVPQ: null,
+
+        // Detach player
+        detach: false,
       }
     },
 
@@ -454,6 +470,10 @@
         // Update for next loop
         this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
       },
+
+      onIntersect ( entries, observer ) {
+        this.detach = entries[0].intersectionRatio <= 0.5
+      },
     },
 
     async asyncData ( { $axios, params, store } ) {
@@ -589,4 +609,14 @@
 
 <style lang='scss'>
   @import "~assets/style/stream-player.scss";
+
+  .detach-player {
+    position: fixed;
+    left: 80px;
+    bottom: 0px;
+    margin: 1rem;
+    width: 20rem;
+    height: 11.25rem;
+    z-index: 10;
+  }
 </style>
