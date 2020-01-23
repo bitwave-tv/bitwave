@@ -333,7 +333,7 @@ export const actions = {
     // Timestamps
     try {
       const showTimestamps = localStorage.getItem( 'showtimestamps' );
-      if ( !!showTimestamps ) commit($mutations.setTimestamps, showTimestamps );
+      if ( !!showTimestamps ) commit( $mutations.setTimestamps, showTimestamps );
     } catch ( error ) {
       console.log( 'No showTimestamps option found.' );
     }
@@ -365,7 +365,7 @@ export const actions = {
     // Get ignore list
     try {
       const ignores = localStorage.getItem( 'ignorelist' );
-      if ( ignores ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
+      if ( !!ignores ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
     } catch ( error ) {
       console.log( 'No ignore list found.' );
     }

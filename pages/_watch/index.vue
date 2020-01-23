@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ paddingRight: mobile ? '0' : '450px' }">
+  <div :style="{ paddingRight: mobile ? landscape ? '50%' : '0' : '450px' }">
 
     <!-- Streamer Top Bar -->
     <v-sheet
@@ -86,8 +86,11 @@
     <!-- Chat -->
     <div :key="1"
       class="d-flex"
-      :class="{ 'chat-desktop': !mobile }"
-      :style="{ maxHeight: mobile ? '390px' : '100%' }"
+      :class="{ 'chat-desktop': !mobile || ( mobile && landscape ) }"
+      :style="{
+        maxHeight: mobile && !landscape ? '390px' : '100%',
+        width: mobile && landscape ? '50%' : null
+      }"
     >
       <chat
         :chat-channel="name"
@@ -165,6 +168,7 @@
     data () {
       return {
         mounted: false,
+        landscape: false,
         player: null,
         qualityLevels: null,
         initialized: false,
@@ -485,6 +489,11 @@
         this.setDetach( entries[0].intersectionRatio <= 0.5 );
       },
 
+      onOrientationChange () {
+        this.landscape = window.orientation !== 0;
+        console.log( 'Landscape: ', this.landscape );
+      },
+
       ...mapMutations(Player.namespace, {
         setSource: Player.$mutations.setSource,
         setDetach: Player.$mutations.setDetach,
@@ -634,10 +643,14 @@
 
       this.playerInitialize();
 
+      this.landscape = window.orientation !== 0;
+      window.addEventListener( 'orientationchange', this.onOrientationChange );
+
       this.mounted = true;
     },
 
     beforeDestroy () {
+      window.removeEventListener( 'orientationchange', this.onOrientationChange );
       if ( this.streamDataListener ) this.streamDataListener();
       if ( this.watchTimer ) clearInterval( this.watchTimer );
       this.playerDispose();

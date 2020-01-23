@@ -321,7 +321,6 @@
             };
             this.connectChat( tokenTroll );
           }
-
         }
       },
 
@@ -449,7 +448,7 @@
 
       async httpHydrate () {
         try {
-          const { data } = await this.$axios.get(  `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }` );
+          const { data } = await this.$axios.get(  `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }`, { progress: false } );
           await this.hydrate( data.data );
         } catch ( error ) {
           console.log( error );
@@ -518,9 +517,9 @@
 
         if ( !this.$refs['chatmessages'].showFAB ) {
           this.messages.splice( 0, this.messages.length - this.chatLimit );
+          this.scrollToBottom();
+          // this.$nextTick( () => this.scrollToBottom() );
         }
-
-        this.scrollToBottom();
       },
 
       filterMessage ( message ) {

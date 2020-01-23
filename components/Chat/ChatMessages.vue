@@ -11,7 +11,6 @@
         <chat-message
           v-if="msg.username !== ( index && messages[ index - 1 ].username )"
           :key="msg._id"
-          :kkey="msg.timestamp"
           :username="msg.username"
           :display-name="msg.username"
           :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
@@ -86,6 +85,7 @@
         onScrollTimer: null,
         showFAB: false,
         scrolling: false,
+        atBottom: true,
       }
     },
 
@@ -95,29 +95,34 @@
       },
 
       checkIfBottom () {
-        if ( this.messages.length === 0 ) return true;
-        const scrollTop    = this.chatContainer.scrollTop;
-        const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
-        const scrollHeight = this.chatContainer.scrollHeight;
-        const lastMessageHeight = this.chatContainer.lastElementChild.clientHeight;
-        // const lastMessageHeight = document.querySelector("#chat-scroll > div:last-child").clientHeight;
-        return scrollTop + clientHeight >= scrollHeight - lastMessageHeight;
+        if ( this.messages.length === 0 || this.atBottom ) {
+          return true;
+        } else {
+          const scrollTop    = this.chatContainer.scrollTop;
+          const clientHeight = this.chatContainer.clientHeight; // or offsetHeight
+          const scrollHeight = this.chatContainer.scrollHeight;
+          const lastMessageHeight = this.chatContainer.lastElementChild.clientHeight;
+          // const lastMessageHeight = document.querySelector("#chat-scroll > div:last-child").clientHeight;
+          return scrollTop + clientHeight >= scrollHeight - lastMessageHeight;
+        }
       },
 
       async scrollToBottom ( force ) {
         // If we are NOT at the bottom && NOT forcing scroll, bail early
-        if ( !this.checkIfBottom() && !force ) {
-          return;
-        }
+        if ( !this.checkIfBottom() && !force ) return;
 
         this.showFAB = false;
         this.scrolling = true;
 
+        const scrollHeight = this.chatContainer.scrollHeight + 750;
+
         // Scroll to last message
         // After it's added to DOM
+        // requestAnimationFrame( () => {
         this.$nextTick( () => {
+
           this.chatContainer.scroll({
-            top: this.chatContainer.scrollHeight + 500,
+            top: scrollHeight,
             behavior: 'smooth',
           });
 
@@ -129,15 +134,17 @@
                 top: this.chatContainer.scrollHeight + 500,
                 behavior: 'smooth',
               });*/
-              this.jumpToBottom();
+              this.jumpToBottom( scrollHeight );
               this.scrolling = false;
+              this.atBottom = true;
             });
           }, 500 );
         });
       },
 
-      jumpToBottom () {
-        this.chatContainer.scrollTop = this.chatContainer.scrollHeight + 750;
+      jumpToBottom ( scrollGoal ) {
+        this.chatContainer.scrollTop = scrollGoal ? scrollGoal : this.chatContainer.scrollHeight + 750;
+        this.atBottom = true;
       },
 
       getTime ( timestamp ) {
@@ -150,9 +157,8 @@
 
       onScrollUp ( scrollPosition ) {
         if ( !this.scrolling ) {
-          this.showFAB = true;
-        } else {
-          // console.log( `Scroll up detected but ignored because we are currently scrolling.` );
+          this.showFAB  = true;
+          this.atBottom = false;
         }
       },
 
@@ -163,6 +169,8 @@
       },
 
       onScroll ( event ) {
+        if ( this.scrolling ) return;
+
         if ( !this.onScrollTimer ) {
           const scrollStart  = this.chatContainer.scrollTop;
           const scrollHStart = this.chatContainer.scrollHeight;

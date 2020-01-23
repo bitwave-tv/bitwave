@@ -209,8 +209,9 @@
             to     : '/',
           },
         ],
-        userUpdateRate: 10,
+        userUpdateRate: 15,
         userListTimer: null,
+
         following: [],
         followingLimit: 10,
       }
