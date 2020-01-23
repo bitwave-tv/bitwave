@@ -490,7 +490,7 @@
       },
 
       onOrientationChange () {
-        this.landscape = window.orientation !== 0;
+        this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
         console.log( 'Landscape: ', this.landscape );
       },
 
@@ -643,7 +643,7 @@
 
       this.playerInitialize();
 
-      this.landscape = window.orientation !== 0;
+      this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
 
       this.mounted = true;
