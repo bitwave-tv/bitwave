@@ -132,13 +132,13 @@
 
 <script>
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+  import { VStore } from '@/store';
   import { Chat } from '@/store/chat';
 
   const ChatSettings = async () => await import( '@/components/Chat/ChatSettings' );
   const ChatCoin     = async () => await import ( '@/components/Payment/ChatCoin' );
 
   import AutocompleteChat from '@/components/Chat/AutocompleteChat';
-  import { VStore } from '@/store';
 
   const commands = [
     {
@@ -242,11 +242,10 @@
 
           const position = event.target.selectionStart + 2;
 
-          // this.setChatMessage( this.getMessage + '\\n' );
           this.setChatMessage( msg );
 
           // Reset cursor position after insertion
-          this.$nextTick(() => event.target.setSelectionRange( position, position ) );
+          this.$nextTick( () => event.target.setSelectionRange( position, position ) );
 
           return;
         }

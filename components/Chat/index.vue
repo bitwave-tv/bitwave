@@ -465,17 +465,12 @@
 
         // Request poll hydration
         if ( this.pollData.id ) await this.socket.emit( 'hydratepoll', this.pollData.id );
-        else console.log( 'no poll to hydrate' );
 
         const size = data.length;
         if ( !size ) {
           this.messages = [];
           return console.log( 'Hydration data was empty' );
         }
-
-        this.messages = size > this.chatLimit + 5
-          ? data.splice( -this.chatLimit + 5 )
-          : data;
 
         this.messages = data.filter( message => !this.filterMessage( message ) );
 
@@ -503,18 +498,26 @@
           if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
 
           // Add message to list
-          this.messages.push( el );
+          this.messages.push( Object.freeze( el ) );
 
           // Track message count
           if ( this.statInterval ) this.newMessageCount++;
         });
 
-        if ( this.$refs['chatmessages'] ) {
+        /*if ( this.$refs['chatmessages'] ) {
           if ( !this.$refs['chatmessages'].showFAB ) {
             this.messages = this.messages.splice( -this.chatLimit );
           }
         } else {
           console.warn( `Failed to find 'chatmessages' component...` );
+        }*/
+
+        /*if ( !this.$refs['chatmessages'].showFAB ) {
+          this.messages = this.messages.splice( -this.chatLimit );
+        }*/
+
+        if ( !this.$refs['chatmessages'].showFAB ) {
+          this.messages.splice( 0, this.messages.length - this.chatLimit );
         }
 
         this.scrollToBottom();
@@ -947,14 +950,9 @@
       }),
 
       ...mapMutations (Chat.namespace, {
-        setModeGlobal     : Chat.$mutations.setGlobal,
-        setModeTimestamps : Chat.$mutations.setTimestamps,
-        setUseIgnore      : Chat.$mutations.setUseIgnore,
-        setNotify         : Chat.$mutations.setNotify,
         setIgnoreList     : Chat.$mutations.setIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
         appendChatMessage : Chat.$mutations.appendMessage,
-        setAutocomplete   : Chat.$mutations.setAutocomplete,
       }),
 
       ...mapActions({
@@ -962,6 +960,7 @@
       }),
 
       ...mapActions(Chat.namespace, {
+        loadSettings : Chat.$actions.loadSettings,
         initChat : Chat.$actions.init,
         logoutChat : Chat.$actions.logout,
         updateChatToken : Chat.$actions.updateChatToken,
@@ -980,10 +979,10 @@
       }),
 
       ...mapState (Chat.namespace, {
-        getModeGlobal     : Chat.$states.global,
-        getModeTimestamps : Chat.$states.timestamps,
+        global            : Chat.$states.global,
+        showTimestamps    : Chat.$states.timestamps,
         getUseTts         : Chat.$states.useTts,
-        getUseIgnore      : Chat.$states.useIgnore,
+        useIgnore         : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
         getTtsVolume      : Chat.$states.ttsVolume,
@@ -995,21 +994,6 @@
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,
       }),
-
-      global: {
-        set ( val ) { this.setModeGlobal( val ) },
-        get () { return this.getModeGlobal }
-      },
-
-      showTimestamps: {
-        set ( val ) { this.setModeTimestamps( val ) },
-        get () { return this.getModeTimestamps }
-      },
-
-      useIgnore: {
-        set ( val ) { this.setUseIgnore( val ) },
-        get () { return this.getUseIgnore }
-      },
 
       username () {
         // return this._username || this.trollId || 'troll';
@@ -1030,8 +1014,7 @@
     },
 
     watch: {
-      global: async function ( val, old ) {
-        // if ( this.loading ) return;
+      async global ( val, old ) {
         await this.httpHydrate();
         /*if ( !val ) {
           // Remove global messages when going into local chat
@@ -1058,13 +1041,8 @@
       this.voicesListTTS = speechSynthesis.getVoices();
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
 
-      // Ignore users
-      try {
-        let ignore = localStorage.getItem( 'useignore' );
-        if ( !!ignore ) this.useIgnore = JSON.parse( ignore );
-      } catch ( error ) {
-        console.log( 'No ignore option found.' );
-      }
+      // Load settings from localstorage
+      await this.loadSettings();
 
       // Get ignore list
       try {
@@ -1080,41 +1058,6 @@
         if ( ignores ) this.ignoreChannelList = JSON.parse( ignores );
       } catch ( error ) {
         console.log( 'No ignore channel list found.' );
-      }
-
-      try {
-        const showTimestamps = localStorage.getItem( 'showtimestamps' );
-        if ( !!showTimestamps ) this.showTimestamps = showTimestamps;
-        else this.showTimestamps = true;
-      } catch ( error ) {
-        console.log( 'No showTimestamps option found.' );
-      }
-
-      try {
-        const global = localStorage.getItem( 'globalchat' );
-
-        if ( !!global ) this.setModeGlobal( global );
-        else this.setModeGlobal( false );
-
-      } catch ( error ) {
-        console.log( 'No global chat option found.' );
-        this.setModeGlobal( true );
-      }
-
-      try {
-        const notify = localStorage.getItem( 'notify' );
-        if ( !!notify ) this.setNotify( notify );
-      } catch ( error ) {
-        console.log ( 'No notification sound option found.' );
-        this.setNotify ( false );
-      }
-
-      try {
-        const autocomplete = localStorage.getItem( 'autocomplete' );
-        if ( !!autocomplete ) this.setAutocomplete( autocomplete );
-      } catch ( error ) {
-        console.log ( 'No autocomplete option found.' );
-        this.setAutocomplete ( true );
       }
 
       // Listen for new polls

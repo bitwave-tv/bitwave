@@ -75,6 +75,8 @@ const $actions = {
 
   init   : 'INIT_CHAT',
   logout : 'LOGOUT',
+
+  loadSettings : 'LOAD_SETTINGS',
 };
 
 
@@ -319,6 +321,73 @@ export const actions = {
     loggingOut = false; // Unlock when completed
   },
 
+  [$actions.loadSettings] ({ commit }) {
+    // Global chat
+    try {
+      const global = localStorage.getItem( 'globalchat' );
+      if ( !!global ) commit( $mutations.setGlobal, global );
+    } catch ( error ) {
+      console.log( 'No global chat option found.' );
+    }
+
+    // Timestamps
+    try {
+      const showTimestamps = localStorage.getItem( 'showtimestamps' );
+      if ( !!showTimestamps ) commit($mutations.setTimestamps, showTimestamps );
+    } catch ( error ) {
+      console.log( 'No showTimestamps option found.' );
+    }
+
+    // Ignore users
+    try {
+      const ignore = localStorage.getItem( 'useignore' );
+      if ( !!ignore ) commit( $mutations.setUseIgnore, JSON.parse( ignore ) );
+    } catch ( error ) {
+      console.log( 'No ignore option found.' );
+    }
+
+    // Notifications
+    try {
+      const notify = localStorage.getItem( 'notify' );
+      if ( !!notify ) commit( $mutations.setNotify, notify );
+    } catch ( error ) {
+      console.log ( 'No notification sound option found.' );
+    }
+
+    // Autocomplete
+    try {
+      const autocomplete = localStorage.getItem( 'autocomplete' );
+      if ( !!autocomplete ) commit( $mutations.setAutocomplete, autocomplete );
+    } catch ( error ) {
+      console.log ( 'No autocomplete option found.' );
+    }
+
+    // Get ignore list
+    try {
+      const ignores = localStorage.getItem( 'ignorelist' );
+      if ( ignores ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
+    } catch ( error ) {
+      console.log( 'No ignore list found.' );
+    }
+
+    // TODO: Implement
+    // Get ignore channel list
+    /*try {
+      let ignores = localStorage.getItem( 'ignoreChannelList' );
+      if ( ignores ) this.ignoreChannelList = JSON.parse( ignores );
+    } catch ( error ) {
+      console.log( 'No ignore channel list found.' );
+    }*/
+
+    // Get ignore channel list
+    /*try {
+      const ignores = localStorage.getItem( 'ignoreChannelList' );
+      if ( !!ignores ) commit( $mutations.setChannelIgnoreList, JSON.parse( ignores ) );
+    } catch ( error ) {
+      console.log( 'No ignore channel list found.' );
+    }*/
+
+  },
 };
 
 

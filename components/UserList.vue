@@ -72,46 +72,38 @@
           </div>
 
           <!-- List of streams live now -->
-          <template
-            v-for="( user, i ) in sidebarData"
+          <v-list-item
+            v-for="( user ) in sidebarData"
+            :key="user.owner"
+            :to="user.to"
+            class="py-1"
+            router
+            exact
           >
-            <v-lazy
-              :value="i < 15"
-              min-height="56"
-              :key="i"
+            <v-list-item-avatar
+              :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
+              class="my-1"
             >
-              <v-list-item
-                class="py-1"
-                :to="user.to"
-                router
-                exact
+              <v-badge
+                v-model="user.live && user.nsfw"
+                :color="!!user.nsfw ? 'orange' : 'green'"
+                overlap
               >
-                <v-list-item-avatar
-                  :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
-                  class="my-1"
+                <template v-slot:badge>
+                  <v-icon small>flag</v-icon>
+                </template>
+                <v-avatar
+                  :size="user.live ? 36 : 40"
                 >
-                  <v-badge
-                    v-model="user.live && user.nsfw"
-                    :color="!!user.nsfw ? 'orange' : 'green'"
-                    overlap
-                  >
-                    <template v-slot:badge>
-                      <v-icon small>flag</v-icon>
-                    </template>
-                    <v-avatar
-                      :size="user.live ? 36 : 40"
-                    >
-                      <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
-                    </v-avatar>
-                  </v-badge>
-                </v-list-item-avatar>
-                <v-list-item-content class="py-0">
-                  <v-list-item-title>{{ user.title }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-lazy>
-          </template>
+                  <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
+                </v-avatar>
+              </v-badge>
+            </v-list-item-avatar>
+            <v-list-item-content class="py-0">
+              <v-list-item-title>{{ user.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
 
           <div
             v-if="uid && following.length > 0"
@@ -123,12 +115,11 @@
           <!-- List of streams following  -->
           <template
             v-if="uid"
-            v-for="( user, i ) in following"
+            v-for="( user ) in following"
           >
             <v-lazy
-              :value="i < 15"
               min-height="56"
-              :key="`${i}-f`"
+              :key="`${user.owner}-offline`"
             >
               <v-list-item
                 class="py-1"
@@ -198,7 +189,6 @@
   import { mapGetters, mapActions } from 'vuex';
   import { VStore } from '@/store';
   import { auth,db } from '@/plugins/firebase';
-  import axios from 'axios';
 
   export default {
     name: 'UserList',
@@ -222,6 +212,7 @@
         userUpdateRate: 10,
         userListTimer: null,
         following: [],
+        followingLimit: 10,
       }
     },
 
@@ -237,11 +228,11 @@
       async getFollowing ( userId ) {
         if ( userId ) {
           console.log('Loading channels users follows');
-          const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/list' );
+          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list' );
           const query = await db
             .collection('followers')
             .where('viewerId', '==', userId)
-            .limit( 10 )
+            .limit( this.followingLimit )
             .get();
           const streamers = query.docs.map( doc => doc.data().streamerId );
           console.log( `Following ${streamers.length} users` );
