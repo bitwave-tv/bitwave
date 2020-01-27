@@ -35,11 +35,11 @@
     <v-responsive :aspect-ratio="16/9">
       <v-sheet
         color="grey darken-4"
-        style="height: 100%;"
+        class="fill-height"
         v-intersect="{
           handler: onIntersect,
           options: {
-            threshold: [ 0.2, 0.3, 0.5, 1.0 ],
+            threshold: [ 0, 0.5, 1.0 ],
           },
         }"
       >
@@ -56,9 +56,14 @@
             :poster="posterCacheBusted"
             :style="{ width: '100%' }"
           >
-            <source v-if="live" :src="url" :type="type">
+            <source
+              v-if="live"
+              :src="url"
+              :type="type"
+            >
           </video>
 
+          <!-- Detached player topbar overlay -->
           <div
             v-if="smartDetach"
             class="d-flex align-center justify-space-between detach-overlay"
@@ -75,6 +80,16 @@
             </v-btn>
           </div>
         </div>
+
+        <v-img
+          v-if="smartDetach"
+          :lazy-src="posterCacheBusted"
+          :src="posterCacheBusted"
+          height="100%"
+          style="filter: grayscale(80%);"
+        >
+          <div class="fill-height" style="background-image: radial-gradient( transparent 50%, black )"></div>
+        </v-img>
       </v-sheet>
 
       <!-- Video Overlay -->
@@ -357,12 +372,12 @@
 
       async getRandomBump () {
         const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
-        // limit to checking 5 most recent bumps
+        // limit to checking 15 most recent bumps
         if ( this.recentBumps.length >= 15 ) this.recentBumps = this.recentBumps.splice( -15 );
         // Recurse until we get a fresh bump
         if ( this.recentBumps.includes( data.url ) ){
           console.log(`Recently seen ${data.url}, getting a new bump`);
-          return this.getRandomBump();
+          return await this.getRandomBump();
         }
         this.recentBumps.push( data.url );
         return data.url;
@@ -491,7 +506,6 @@
 
       onOrientationChange () {
         this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
-        console.log( 'Landscape: ', this.landscape );
       },
 
       ...mapMutations(Player.namespace, {

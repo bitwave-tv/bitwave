@@ -13,11 +13,18 @@
         :alt="props.username"
         :key="props.username"
       >
-      <div
+      <img
+        v-else
+        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png"
+        alt="hazmat suit trolll"
+        :style="{ background: props.color }"
+        :key="props.username"
+      >
+      <!--<div
         v-else
         class="v-icon material-icons"
         :style="{ background: props.color }"
-      >person</div>
+      >person</div>-->
     </div>
 
     <!-- Chat Content -->
@@ -34,7 +41,10 @@
         </div>
 
         <!-- Room Label -->
-        <nuxt-link :to="props.channel">
+        <nuxt-link
+          :to="props.channel"
+          no-prefetch
+        >
           <kbd>{{ props.channel }}</kbd>
         </nuxt-link>
       </div>

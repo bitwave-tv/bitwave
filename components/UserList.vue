@@ -23,6 +23,7 @@
             :to="item.to"
             router
             exact
+            @click="onClick"
           >
             <v-list-item-action class="my-1">
               <v-avatar
@@ -49,6 +50,7 @@
           text
           tile
           block
+          @click="onClick"
         >
           STREAM<br>
           HERE
@@ -58,7 +60,7 @@
       <!-- User Channels -->
       <v-flex
         class="hide-scrollbar"
-        style="overflow-y: auto; will-change: transform;"
+        style="overflow-y: auto; will-change: transform; overscroll-behavior-y: contain;"
       >
         <v-list
           class="pt-0"
@@ -79,6 +81,7 @@
             class="py-1"
             router
             exact
+            @click="onClick"
           >
             <v-list-item-avatar
               :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
@@ -105,12 +108,14 @@
             </v-list-item-content>
           </v-list-item>
 
-          <div
-            v-if="uid && following.length > 0"
-            class="overline text-center grey--text mt-3 mb-1"
-          >
-            FOLLOWING
-          </div>
+          <v-slide-y-transition>
+            <div
+              v-if="uid && following.length > 0"
+              class="overline text-center grey--text mt-3 mb-1"
+            >
+              FOLLOWING
+            </div>
+          </v-slide-y-transition>
 
           <!-- List of streams following  -->
           <template
@@ -126,9 +131,10 @@
                 :to="user.to"
                 router
                 exact
+                @click="onClick"
               >
                 <v-list-item-avatar
-                  :color="'#000'"
+                  color="#000"
                   class="my-1"
                 >
                   <v-avatar
@@ -151,6 +157,7 @@
             to="/streamers"
             router
             exact
+            @click="onClick"
           >
             <v-list-item-avatar>
               <v-avatar
@@ -176,6 +183,7 @@
           color="yellow"
           block
           outlined
+          small
           @click.stop="miniVariant = !miniVariant"
         >
           <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
@@ -222,13 +230,16 @@
         fetchData : VStore.$actions.fetchSidebarData,
       }),
 
+      onClick () {
+        window.navigator.vibrate( 10 );
+      },
+
       async authenticated ( user ) {
         if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
       },
 
       async getFollowing ( userId ) {
         if ( userId ) {
-          console.log('Loading channels users follows');
           const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list' );
           const query = await db
             .collection('followers')
@@ -236,7 +247,6 @@
             .limit( this.followingLimit )
             .get();
           const streamers = query.docs.map( doc => doc.data().streamerId );
-          console.log( `Following ${streamers.length} users` );
           this.following = data.users.filter( streamer => streamers.includes( streamer.owner ) && !streamer.live );
         }
       },
