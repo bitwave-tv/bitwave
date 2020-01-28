@@ -37,11 +37,13 @@
           <v-sheet
             v-for="( message, index ) in messages"
             :key="message.timestamp"
-            class="pt-1 mx-1 msg"
+            class="mx-1 msg"
             color="transparent"
           >
-            <div class="d-flex" v-if="message.username !== ( index && messages[ index - 1 ].username )">
-              <!-- Chat Avatar -->
+
+            <!-- Chat Message -->
+            <!--<div class="d-flex" v-if="message.username !== ( index && messages[ index - 1 ].username )">
+              &lt;!&ndash; Chat Avatar &ndash;&gt;
               <div class="v-avatar mr-2 mt-2">
                 <img
                   v-if="!!message.avatar"
@@ -56,14 +58,14 @@
                 >person</div>
               </div>
               <div class="flex-grow-1">
-                <!-- Message Header -->
+                &lt;!&ndash; Message Header &ndash;&gt;
                 <div class="d-flex align-center">
-                  <!-- Timestamp & Username -->
+                  &lt;!&ndash; Timestamp & Username &ndash;&gt;
                   <div class="flex-grow-1 subtitle-2">
                     <span class="time">{{ getTime(message.timestamp) }}</span>
                     <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
                   </div>
-                  <!-- Room Label -->
+                  &lt;!&ndash; Room Label &ndash;&gt;
                   <div class="flex-shrink-1">
                     <nuxt-link :to="message.channel">
                       <kbd>{{ message.channel }}</kbd>
@@ -72,13 +74,37 @@
                 </div>
                 <div v-html="message.message"></div>
               </div>
-            </div>
-            <div v-else class="msg append pt-1">
+            </div>-->
+            <chat-message
+              v-if="message.username !== ( index && messages[ index - 1 ].username )"
+              :key="message._id"
+              :username="message.username"
+              :display-name="message.username"
+              :user-styling="{ color: message.userColor ? message.userColor : '#9e9e9e' }"
+              :channel="message.channel"
+              :timestamp="getTime( message.timestamp )"
+              :avatar="message.avatar"
+              :color="message.color"
+              :global="getGlobalTag( message.global )"
+            >
+              <div
+                class="body-2 msg"
+                v-html="message.message"
+              ></div>
+            </chat-message>
+
+            <!-- Append messages -->
+            <div
+              v-else
+              class="msg append pl-3 pr-1"
+              :key="message._id"
+            >
               <div
                 class="body-2 msg"
                 v-html="message.message"
               ></div>
             </div>
+
           </v-sheet>
         </transition-group>
 
@@ -104,8 +130,14 @@
   import socketio from 'socket.io-client';
   import moment from 'moment';
 
+  import ChatMessage from '@/components/Chat/ChatMessage'
+
   export default {
     name: 'chat-overlay',
+
+    components: {
+      ChatMessage,
+    },
 
     layout: 'overlay',
 
@@ -238,6 +270,10 @@
         return this.overlay.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : '';
       },
 
+      getGlobalTag ( global ) {
+        return this.global ? `[${global ? 'G' : global === false ? 'L' : 'U'}]` : '';
+      },
+
       onInterval () {
         this.scrollContainer.scroll({
           top: this.scrollContainer.scrollHeight + 500,
@@ -279,7 +315,7 @@
       max-height: 20rem;
       overflow: hidden;
 
-      &.append {
+      &.append .msg {
         padding-left: 40px;
       }
 
