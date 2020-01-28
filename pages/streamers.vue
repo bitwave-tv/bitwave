@@ -37,10 +37,10 @@
             md="4"
             lg="2"
             v-for="streamer in filteredStreamers"
+            :key="streamer.name"
           >
             <v-lazy
               min-height="150px"
-              :key="streamer.name"
               :options="{ threshold: 0.5 }"
             >
               <stream-card
