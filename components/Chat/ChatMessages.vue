@@ -138,19 +138,19 @@
             behavior: 'smooth',
           });
 
-          clearTimeout( this.scrollTimeout );
+          // clearTimeout( this.scrollTimeout );
 
-          this.scrollTimeout = setTimeout( () => {
+          /*this.scrollTimeout = setTimeout( () => {
             this.$nextTick( () => {
-              /*this.chatContainer.scroll({
+              /!*this.chatContainer.scroll({
                 top: this.chatContainer.scrollHeight + 500,
                 behavior: 'smooth',
-              });*/
+              });*!/
               this.jumpToBottom( scrollHeight );
               this.scrolling = false;
               this.atBottom = true;
             });
-          }, 500 );
+          }, 500 );*/
         });
       },
 
@@ -210,7 +210,7 @@
             }
 
             this.onScrollTimer = null;
-          }, 250 );
+          }, 125 );
         }
       },
     },

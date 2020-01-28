@@ -678,7 +678,7 @@
   .detach-player {
     position: fixed;
     left: 80px;
-    bottom: 0;
+    bottom: 16px;
     margin: 1rem;
     width: 20rem;
     height: 11.25rem;
