@@ -191,7 +191,9 @@
         });
 
         this.processMessages();
+
         this.loaded = true;
+
         this.$nextTick( () =>
           this.scrollContainer.scroll({
             top: this.scrollContainer.scrollHeight + 500,
@@ -249,12 +251,14 @@
       else await this.httpHydrate();
     },
 
-    mounted () {
+    async mounted () {
       this.overlayId = this.$route.params.id;
       this.debug = !!this.$route.query.debug;
       this.scrollContainer = document.querySelector( '#overlay' );
       // this.scrollContainer = this.$refs['overlay']; // container
       this.subscribeToOverlay( this.overlayId );
+
+      this.$nextTick( async () => await this.httpHydrate() );
     },
 
     beforeDestroy () {
