@@ -272,7 +272,7 @@
           avatar: url,
         });
 
-        if ( this.showStreamInfo ) {
+        if ( this.isStreamer ) {
           const stream = this.username.toLowerCase();
           const streamRef = db.collection( 'streams' ).doc( stream );
           await streamRef.update({
@@ -368,6 +368,7 @@
         uid      : VStore.$getters.getUID,
         user     : VStore.$getters.getUser,
         username : VStore.$getters.getUsername,
+        isStreamer : VStore.$getters.isStreamer,
       }),
     },
 
