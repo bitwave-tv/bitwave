@@ -41,7 +41,7 @@
         </div>
         <div class="caption d-flex align-center">
 
-          <div>{{ name }}</div>
+          <div class="d-block text-truncate">{{ name }}</div>
 
           <template v-if="nsfw">
             <v-divider vertical class="mx-2"/>
