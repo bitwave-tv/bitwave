@@ -541,8 +541,8 @@
 
         if ( !this.$refs['chatmessages'].showFAB ) {
           this.messages.splice( 0, this.messages.length - this.chatLimit );
-          this.scrollToBottom();
-          // this.$nextTick( () => this.scrollToBottom() );
+          // this.scrollToBottom();
+          this.$nextTick( () => this.scrollToBottom() );
         }
       },
 

@@ -98,6 +98,8 @@
         showFAB: false,
         scrolling: false,
         atBottom: true,
+
+        scrollInterval: null,
       }
     },
 
@@ -220,7 +222,7 @@
       },
 
       onScrollInterval () {
-        if ( !this.showFAB && this.atBottom ) {
+        if ( !this.showFAB /*&& this.atBottom*/ ) {
           const scrollHeight = this.chatContainer.scrollHeight + 750;
           this.chatContainer.scroll({
             top: scrollHeight,
