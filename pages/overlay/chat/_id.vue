@@ -63,7 +63,7 @@
             <!-- Append messages -->
             <div
               v-else
-              class="msg append pl-3 pr-1"
+              class="msg append"
               :key="message._id"
             >
               <div

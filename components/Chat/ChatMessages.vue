@@ -7,38 +7,50 @@
       id="chat-scroll"
       ref="scroller"
     >
-      <template v-for="( msg, index ) in messages">
-        <chat-message
-          v-if="msg.username !== ( index && messages[ index - 1 ].username )"
-          :key="msg._id"
-          :username="msg.username"
-          :display-name="msg.username"
-          :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
-          :channel="msg.channel"
-          :timestamp="getTime( msg.timestamp )"
-          :avatar="msg.avatar"
-          :color="msg.color"
-          :global="getGlobalTag( msg.global )"
-          @reply="addUserTag"
-        >
-          <div
-            class="body-2 msg"
-            v-html="msg.message"
-          ></div>
-        </chat-message>
 
-        <!-- Append messages -->
+      <transition-group
+        name="fade-transition"
+        :duration="100"
+        tag="div"
+      >
         <div
-          v-else
-          class="msg append pb-1 pl-3 pr-1"
+          v-for="( msg, index ) in messages"
           :key="msg._id"
+          class="pb-1 pl-3 pr-1"
         >
+          <chat-message
+            v-if="msg.username !== ( index && messages[ index - 1 ].username )"
+            :key="msg._id"
+            :username="msg.username"
+            :display-name="msg.username"
+            :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
+            :channel="msg.channel"
+            :timestamp="getTime( msg.timestamp )"
+            :avatar="msg.avatar"
+            :color="msg.color"
+            :global="getGlobalTag( msg.global )"
+            @reply="addUserTag"
+          >
+            <div
+              class="body-2 msg"
+              v-html="msg.message"
+            ></div>
+          </chat-message>
+
+          <!-- Append messages -->
           <div
-            class="body-2 msg"
-            v-html="msg.message"
-          ></div>
+            v-else
+            class="msg append"
+            :key="msg._id"
+          >
+            <div
+              class="body-2 msg"
+              v-html="msg.message"
+            ></div>
+          </div>
         </div>
-      </template>
+      </transition-group>
+
     </div>
 
     <!-- FAB for Scroll Down -->
@@ -225,8 +237,8 @@
 
       /* Hover Chat Message */
       /*&:hover {
-        !*background: #212121;
-        color: #9e9e9e;*!
+        background: #212121;
+        !*color: #9e9e9e;*!
       }*/
 
       &.append .msg {
@@ -236,8 +248,8 @@
 
     .stb-fab {
       position: absolute;
-      right: 0;
-      left: 0;
+      /*right: 0;*/
+      left: 50%;
       top: 0;
       z-index: 3;
     }

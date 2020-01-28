@@ -1,5 +1,5 @@
 <template functional>
-  <div class="msg d-flex pb-1 pl-3 pr-1">
+  <div class="msg d-flex">
 
     <!-- Chat Avatar -->
     <div
@@ -34,11 +34,12 @@
       <div class="d-flex align-center">
 
         <!-- Timestamp & Username -->
-        <div class="flex-grow-1 subtitle-2">
+        <div class="bw-meta subtitle-2">
           <span class="time">{{ props.timestamp }}</span>
           <span class="global">{{ props.global }}</span>
-          <span class="username" :style="props.userStyling" v-html="props.displayName" />
         </div>
+
+        <div class="username flex-grow-1 subtitle-2 pl-1" :style="props.userStyling" v-html="props.displayName" />
 
         <!-- Room Label -->
         <nuxt-link
@@ -129,10 +130,14 @@
       overflow: hidden;
     }
 
-    .time,
-    .global {
+    .bw-meta {
       user-select: none;
       color: #757575;
+    }
+
+    .time,
+    .global {
+      /*font-size: .75rem;*/
     }
 
     .username {
