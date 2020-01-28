@@ -59,6 +59,10 @@
 </script>
 
 <style lang="scss">
+  html {
+    overflow-y: auto !important;
+  }
+
   #logo.app-title-active {
     &:hover::before {
       opacity: 0.24;

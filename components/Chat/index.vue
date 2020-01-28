@@ -59,6 +59,7 @@
 
         <!-- Placeholder -->
         <v-menu
+          v-if="isAdmin"
           v-model="adminActionsMenu"
           :close-on-content-click="false"
           bottom
@@ -80,9 +81,29 @@
               <v-icon>verified_user</v-icon>
             </v-btn>
           </template>
-
           <chat-admin-menu @close="adminActionsMenu = false" />
+        </v-menu>
 
+        <!-- Overflow menu -->
+        <v-menu
+          v-model="overflowMenu"
+          :close-on-content-click="true"
+          bottom
+          left
+          offset-y
+          transition="slide-y-transition"
+        >
+          <template #activator="{ on }">
+            <v-btn
+              v-on="on"
+              class="ml-2 px-0"
+              small
+              icon
+            >
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+          </template>
+          <chat-overflow-menu :channel="page"/>
         </v-menu>
 
       </div>
@@ -152,6 +173,7 @@
   const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
   const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
   const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
+  const ChatOverflowMenu = async () => await import ( '@/components/Chat/ChatOverflowMenu' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { Chat } from '@/store/chat';
@@ -189,6 +211,7 @@
     },
 
     components: {
+      ChatOverflowMenu,
       ChatInput,
       ChatMessages,
       ChatPoll,
@@ -270,6 +293,7 @@
         },
 
         adminActionsMenu: false,
+        overflowMenu: false,
       }
     },
 
