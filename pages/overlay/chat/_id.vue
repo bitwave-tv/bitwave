@@ -156,6 +156,8 @@
       },
 
       connectChat () {
+        this.$nextTick( async () => await this.httpHydrate() );
+
         if ( this.socket ) this.socket.disconnect();
         this.socket = socketio( 'chat.bitwave.tv', { transports: [ 'websocket' ] } );
 
@@ -193,6 +195,8 @@
         this.processMessages();
 
         this.loaded = true;
+
+        console.log(`Loaded: ${this.loaded}`);
 
         this.$nextTick( () =>
           this.scrollContainer.scroll({
@@ -257,8 +261,6 @@
       this.scrollContainer = document.querySelector( '#overlay' );
       // this.scrollContainer = this.$refs['overlay']; // container
       this.subscribeToOverlay( this.overlayId );
-
-      this.$nextTick( async () => await this.httpHydrate() );
     },
 
     beforeDestroy () {
