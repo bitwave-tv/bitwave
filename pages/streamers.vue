@@ -31,17 +31,17 @@
       </v-row>
 
       <v-row>
-        <template v-for="streamer in filteredStreamers">
           <v-col
-            lg="2"
-            md="4"
-            sm="6"
             cols="12"
+            sm="6"
+            md="4"
+            lg="2"
+            v-for="streamer in filteredStreamers"
           >
             <v-lazy
               min-height="150px"
               :key="streamer.name"
-              :options="{ threshold: 0.9 }"
+              :options="{ threshold: 0.5 }"
             >
               <stream-card
                 :to="streamer.to.toString()"
@@ -50,10 +50,10 @@
                 :nsfw="streamer.nsfw"
                 :title="streamer.title"
                 :name="streamer.name"
+                :viewers="getChannelViews( streamer.name )"
               />
             </v-lazy>
           </v-col>
-        </template>
       </v-row>
     </v-container>
   </div>
@@ -61,6 +61,9 @@
 
 <script>
   import StreamCard from '@/components/StreamCard';
+
+  import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     name: 'streamers',
@@ -106,6 +109,10 @@
     },
 
     computed: {
+      ...mapGetters({
+        getChannelViews: VStore.$getters.getChannelViews,
+      }),
+
       streamerNames () {
         return this.streamers.map( s => {
           return {
