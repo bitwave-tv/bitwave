@@ -156,6 +156,10 @@
       vertical-align: middle;
     }
 
+    img {
+      min-width: 20px;
+    }
+
 
     /* Big / Smol Text Styling */
 
