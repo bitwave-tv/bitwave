@@ -35,6 +35,7 @@
           v-model="tabData"
           background-color="transparent"
           class="no-focus"
+          show-arrows
         >
 
           <v-tab>
