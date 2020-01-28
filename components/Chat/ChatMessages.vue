@@ -123,6 +123,8 @@
         // If we are NOT at the bottom && NOT forcing scroll, bail early
         if ( !this.checkIfBottom() && !force ) return;
 
+        // if ( this.scrolling ) return;
+
         this.showFAB = false;
         this.scrolling = true;
 
@@ -144,7 +146,7 @@
           clearTimeout( this.scrollTimeout );
 
           this.scrollTimeout = setTimeout( () => {
-            this.$nextTick( () => {
+            // this.$nextTick( () => {
               /*this.chatContainer.scroll({
                 top: this.chatContainer.scrollHeight + 500,
                 behavior: 'smooth',
@@ -152,7 +154,7 @@
               this.jumpToBottom( scrollHeight );
               this.scrolling = false;
               this.atBottom = true;
-            });
+            // });
           }, 500 );
         });
       },
