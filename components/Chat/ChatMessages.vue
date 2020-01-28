@@ -133,30 +133,30 @@
         // Scroll to last message
         // After it's added to DOM
         // requestAnimationFrame( () => {
-        this.$nextTick( () => {
+        // this.$nextTick( () => {
 
           this.chatContainer.scroll({
             top: scrollHeight,
             behavior: 'smooth',
           });
 
-          // this.scrolling = false;
-          // this.atBottom = true;
+          this.scrolling = false;
+          this.atBottom = true;
 
-          clearTimeout( this.scrollTimeout );
+          /*clearTimeout( this.scrollTimeout );
 
           this.scrollTimeout = setTimeout( () => {
             // this.$nextTick( () => {
-              /*this.chatContainer.scroll({
+              /!*this.chatContainer.scroll({
                 top: this.chatContainer.scrollHeight + 500,
                 behavior: 'smooth',
-              });*/
+              });*!/
               this.jumpToBottom( scrollHeight );
               this.scrolling = false;
               this.atBottom = true;
             // });
-          }, 500 );
-        });
+          }, 500 );*/
+        // });
       },
 
       jumpToBottom ( scrollGoal ) {
@@ -218,16 +218,28 @@
           }, 125 );
         }
       },
+
+      onScrollInterval () {
+        if ( !this.showFAB && this.atBottom ) {
+          const scrollHeight = this.chatContainer.scrollHeight + 750;
+          this.chatContainer.scroll({
+            top: scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      },
     },
 
     async mounted () {
       this.chatContainer = this.$refs.scroller;
       this.chatContainer.addEventListener( 'scroll', this.onScroll, { passive: true } );
       this.$nextTick( () => this.jumpToBottom() );
+      this.scrollInterval = setInterval( () => this.onScrollInterval(), 500 );
     },
 
     beforeDestroy () {
       this.chatContainer.removeEventListener( 'scroll', this.onScroll );
+      clearInterval( this.scrollInterval );
     }
   }
 </script>

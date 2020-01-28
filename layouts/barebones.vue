@@ -58,7 +58,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   html {
     overflow-y: auto !important;
   }
