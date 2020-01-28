@@ -46,6 +46,7 @@
         :close-on-content-click="false"
         transition="slide-x-transition"
         :max-width="320"
+        max-height="90vh"
         top
         right
         offset-y
