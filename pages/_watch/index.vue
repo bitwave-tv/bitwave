@@ -341,7 +341,7 @@
         });
 
         this.player.on( 'ended', async () => {
-          this.setSource({ url: this.getRandomBump(), type: 'video/mp4' });
+          this.setSource({ url: await this.getRandomBump(), type: 'video/mp4' });
         });
 
         this.player.on( 'error', error => {

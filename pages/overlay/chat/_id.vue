@@ -36,45 +36,12 @@
         <transition-group name="fade-transition">
           <v-sheet
             v-for="( message, index ) in messages"
-            :key="message.timestamp"
+            :key="message._id"
             class="mx-1 msg"
             color="transparent"
           >
 
             <!-- Chat Message -->
-            <!--<div class="d-flex" v-if="message.username !== ( index && messages[ index - 1 ].username )">
-              &lt;!&ndash; Chat Avatar &ndash;&gt;
-              <div class="v-avatar mr-2 mt-2">
-                <img
-                  v-if="!!message.avatar"
-                  :src="message.avatar"
-                  :alt="message.username"
-                  :key="message.username"
-                >
-                <div
-                  v-else
-                  class="v-icon notranslate material-icons"
-                  :style="{ background: message.color }"
-                >person</div>
-              </div>
-              <div class="flex-grow-1">
-                &lt;!&ndash; Message Header &ndash;&gt;
-                <div class="d-flex align-center">
-                  &lt;!&ndash; Timestamp & Username &ndash;&gt;
-                  <div class="flex-grow-1 subtitle-2">
-                    <span class="time">{{ getTime(message.timestamp) }}</span>
-                    <span class="username" :style="{ color: message.userColor ? message.userColor : '#9e9e9e' }" v-html="message.username"></span>
-                  </div>
-                  &lt;!&ndash; Room Label &ndash;&gt;
-                  <div class="flex-shrink-1">
-                    <nuxt-link :to="message.channel">
-                      <kbd>{{ message.channel }}</kbd>
-                    </nuxt-link>
-                  </div>
-                </div>
-                <div v-html="message.message"></div>
-              </div>
-            </div>-->
             <chat-message
               v-if="message.username !== ( index && messages[ index - 1 ].username )"
               :key="message._id"

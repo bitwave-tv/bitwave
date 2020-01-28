@@ -31,7 +31,7 @@
         <div
           v-else
           class="msg append pb-1 pl-3 pr-1"
-          :key="index"
+          :key="msg._id"
         >
           <div
             class="body-2 msg"
