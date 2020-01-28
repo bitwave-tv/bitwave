@@ -154,8 +154,8 @@
                 behavior: 'smooth',
               });*/
               this.jumpToBottom( scrollHeight );
-              // this.scrolling = false;
-              // this.atBottom = true;
+              this.scrolling = false;
+              this.atBottom = true;
             // });
           }, 500 );
         // });
