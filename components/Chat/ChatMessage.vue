@@ -34,7 +34,7 @@
       <div class="d-flex align-center">
 
         <!-- Timestamp & Username -->
-        <div class="bw-meta subtitle-2">
+        <div class="bw-meta subtitle-2 flex-shrink-0"">
           <span class="time">{{ props.timestamp }}</span>
           <span class="global">{{ props.global }}</span>
         </div>
