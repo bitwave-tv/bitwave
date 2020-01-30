@@ -475,7 +475,7 @@
     async mounted () {
       console.log( 'StreamArchives loading...' );
       this.showDeletedArchives = this.channelOwner;
-      setTimeout( async () => await this.loadArchives(), 250 );
+      await this.loadArchives();
       await this.updateToken();
       try {
         this.$ga.event({

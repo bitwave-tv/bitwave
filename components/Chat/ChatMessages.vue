@@ -10,7 +10,7 @@
 
       <transition-group
         name="fade-transition"
-        :duration="100"
+        :duration="150"
         tag="div"
       >
         <div
@@ -20,7 +20,6 @@
         >
           <chat-message
             v-if="msg.username !== ( index && messages[ index - 1 ].username )"
-            :key="msg._id"
             :username="msg.username"
             :display-name="msg.username"
             :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
@@ -41,7 +40,6 @@
           <div
             v-else
             class="msg append"
-            :key="msg._id"
           >
             <div
               class="body-2 msg"
@@ -137,28 +135,21 @@
         // requestAnimationFrame( () => {
         // this.$nextTick( () => {
 
-          this.chatContainer.scroll({
-            top: scrollHeight,
-            behavior: 'smooth',
-          });
+        this.chatContainer.scroll({
+          top: scrollHeight,
+          behavior: 'smooth',
+        });
 
-          // this.scrolling = false;
-          // this.atBottom = true;
+        // this.scrolling = false;
+        // this.atBottom = true;
 
-          clearTimeout( this.scrollTimeout );
+        clearTimeout( this.scrollTimeout );
 
-          this.scrollTimeout = setTimeout( () => {
-            // this.$nextTick( () => {
-              /*this.chatContainer.scroll({
-                top: this.chatContainer.scrollHeight + 500,
-                behavior: 'smooth',
-              });*/
-              this.jumpToBottom( scrollHeight );
-              this.scrolling = false;
-              this.atBottom = true;
-            // });
-          }, 500 );
-        // });
+        this.scrollTimeout = setTimeout( () => {
+            this.jumpToBottom( scrollHeight );
+            this.scrolling = false;
+            this.atBottom = true;
+        }, 500 );
       },
 
       jumpToBottom ( scrollGoal ) {
@@ -217,7 +208,7 @@
             }
 
             this.onScrollTimer = null;
-          }, 125 );
+          }, 100 );
         }
       },
 
@@ -241,7 +232,7 @@
 
     beforeDestroy () {
       this.chatContainer.removeEventListener( 'scroll', this.onScroll );
-      clearInterval( this.scrollInterval );
+      // clearInterval( this.scrollInterval );
     }
   }
 </script>
@@ -267,9 +258,9 @@
 
     .stb-fab {
       position: absolute;
-      /*right: 0;*/
-      left: 50%;
       top: 0;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 3;
     }
   }

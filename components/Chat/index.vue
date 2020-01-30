@@ -57,7 +57,7 @@
           </v-menu>
         </div>
 
-        <!-- Placeholder -->
+        <!-- Admin Menu -->
         <v-menu
           v-if="isAdmin"
           v-model="adminActionsMenu"
@@ -396,7 +396,6 @@
               };
               this.connectChat( tokenUser ); // Connect to chat server
             }
-
           }
           lastUser = user; // Record user state
         });
@@ -472,7 +471,7 @@
 
       async httpHydrate () {
         try {
-          const { data } = await this.$axios.get(  `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }`, { progress: false } );
+          const { data } = await this.$axios.get( `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }`, { progress: false } );
           await this.hydrate( data.data );
         } catch ( error ) {
           console.log( error );
@@ -540,7 +539,7 @@
         }*/
 
         if ( !this.$refs['chatmessages'].showFAB ) {
-          this.messages.splice( 0, this.messages.length - this.chatLimit );
+          if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           // this.scrollToBottom();
           this.$nextTick( () => this.scrollToBottom() );
         }
@@ -1019,8 +1018,7 @@
       }),
 
       username () {
-        // return this._username || this.trollId || 'troll';
-        return this.displayName || this._username || 'troll';
+        return this.displayName || this._username || 'user';
       },
 
       page () {
@@ -1039,13 +1037,6 @@
     watch: {
       async global ( val, old ) {
         await this.httpHydrate();
-        /*if ( !val ) {
-          // Remove global messages when going into local chat
-          this.messages = this.messages.filter( m => ( m.channel.toLowerCase() === this.page.toLowerCase() || m.channel.toLowerCase() === this.username.toLowerCase() ) );
-        } else {
-          // Re-hydrate when going into global chat
-          await this.httpHydrate();
-        }*/
       },
     },
 
@@ -1134,6 +1125,12 @@
     .highlight {
       font-weight: bold;
       color: yellow;
+    }
+
+    code .highlight {
+      background-color: yellow;
+      padding: 0 4px;
+      color: inherit;
     }
   }
 

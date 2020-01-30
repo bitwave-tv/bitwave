@@ -61,6 +61,7 @@
           </v-btn>
         </template>
         <chat-settings
+          class="mb-3"
           @close="showChatSettings = false"
         />
       </v-menu>
@@ -252,7 +253,11 @@
         }
 
         // Don't send a message if auto completing
-        if ( this.autocomplete ) return this.onTab();
+        if ( this.autocomplete ) {
+          // Add exception for instances where we have no match or an exact match.
+          const send = !this.autocompleteValue || this.autocomplete[0].toLowerCase() === this.autocompleteValue.value.trim().toLowerCase();
+          if ( !send ) return this.onTab();
+        }
 
         if ( this.getMessage.length > 300 ) return;
         if ( this.autocomplete ) this.onTab();

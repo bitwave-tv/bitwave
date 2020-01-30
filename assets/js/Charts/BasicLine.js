@@ -13,6 +13,7 @@ export default {
   props: {
     options: { type: Object },
     points: { type: Array },
+    gradient: { type: Array },
   },
 
   methods: {
@@ -24,6 +25,22 @@ export default {
       this.$data._chart.data.datasets[ 0 ].data = this.points;
       this.$data._chart.data.labels = new Array(this.points.length).fill(0).map( (v, i ) => i);
       this.$data._chart.update();
+    },
+
+    createGradient ( colors ) {
+      if ( !colors || colors.length === 0 ) colors = ['#01ffff', '#01ffc3', '#ffb3fd'];
+
+      const colorCount = colors.length;
+      const height = this.$refs.canvas.height;
+      const gradient = this.$refs.canvas
+        .getContext('2d')
+        .createLinearGradient(0, 0, 0, height);
+
+      colors.forEach( ( color, index ) => {
+        gradient.addColorStop( index / colorCount, color );
+      });
+
+      return gradient;
     },
   },
 
@@ -43,7 +60,11 @@ export default {
       datasets: [
         {
           label: 'Data Set Name',
-          borderColor: 'blue',
+
+          borderColor: this.createGradient( this.gradient ),
+          borderJoinStyle: 'round',
+
+          // borderColor: 'blue',
           // pointRadius: 0,
           pointBorderWidth: 0,
           pointStyle: 'line',

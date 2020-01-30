@@ -137,10 +137,11 @@
 
   import Chat from '~/components/Chat';
   import FollowButton from '@/components/FollowButton';
+  import StreamInfo from '@/components/Channel/StreamInfo';
+
   import { Chat as ChatStore } from '@/store/chat';
   import { VStore } from '@/store';
   import { Player } from '@/store/player';
-  import StreamInfo from '@/components/Channel/StreamInfo';
 
   const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
   const Stickers = async () => await import ( '@/components/effects/Stickers' );

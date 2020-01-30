@@ -123,16 +123,18 @@
         <!-- New Chart.js Dropped Frames Graph -->
         <v-col
           cols="12"
-          md="6"
+          lg="6"
         >
           <v-card color="grey darken-4">
             <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              NEW! Player: Dropped Frames
+              Player: Dropped Frames
             </div>
             <basic-line
               :points="points3"
+              :gradient="gradient3"
               :options="chartOptions"
-              :height="100"
+              :height="150"
+              class="mx-3"
             />
             <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
               <template
@@ -157,21 +159,18 @@
         <!-- Bandwidth Graph -->
         <v-col
           cols="12"
-          md="6"
+          lg="6"
         >
           <v-card color="grey darken-4">
             <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              Player: Detected Bandwidth (estimate)
+              Player: Insantaneous Estimated Bandwidth
             </div>
-            <v-sparkline
-              :value="graphHlsBandwidth"
-              :gradient="gradient"
-              :smooth="radius || false"
-              :padding="padding"
-              :line-width="width"
-              :type="type"
-              stroke-linecap="round"
-              gradient-direction="top"
+            <basic-line
+              :points="points4"
+              :gradient="gradient4"
+              :options="chartOptions3"
+              :height="150"
+              class="mx-3"
             />
             <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
               <template
@@ -387,7 +386,7 @@
         hlsGraph: 'bandwidth',
 
         chartOptions: {
-          aspectRatio: 16/9,
+          aspectRatio: 9/16,
 
           xAxisID: 'Time',
 
@@ -441,7 +440,64 @@
                   drawTicks: false,
                   display: true,
                   // color: 'rgba(0, 0, 0, 0.5)',
-                  color: 'rgba(255, 255, 255, 0.5)',
+                  color: 'rgba(255, 255, 255, 0.25)',
+                  zeroLineColor : 'rgba(255, 255, 255, 0.85)',
+                },
+
+                drawBorder: false,
+              },
+            ],
+
+          },
+        },
+
+        chartOptions3: {
+          aspectRatio: 9/16,
+
+          xAxisID: 'Time',
+
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 0 },
+          legend: { display: false },
+
+          scales: {
+
+            xAxes: [{
+              ticks: {
+                // beginAtZero: true,
+                stepSize: 30,
+                maxTicksLimit: 10,
+                display: false,
+              },
+
+              gridLines: {
+                drawTicks: false,
+                display: true,
+                // color: 'rgba(0, 0, 0, 0.5)',
+                color: 'rgba(255, 255, 255, .25)',
+              },
+
+              drawBorder: true,
+            }],
+
+            yAxes: [
+              {
+                ticks: {
+                  callback: function ( label, index ) {
+                    return `${(label / 1024 / 1024).toFixed(1)} mb/s`;
+                  },
+                  padding: 10,
+                  precision: 2,
+                  display: true,
+                  beginAtZero: true,
+                },
+
+                gridLines: {
+                  drawTicks: false,
+                  display: true,
+                  // color: 'rgba(0, 0, 0, 0.5)',
+                  color: 'rgba(255, 255, 255, 0.25)',
                   zeroLineColor : 'rgba(255, 255, 255, 0.85)',
                 },
 
@@ -455,6 +511,12 @@
         points  : [],
         points2 : [],
         points3 : [],
+        points4 : [],
+
+        gradient1: [ 'blue', 'green', 'yellow', 'orange', 'red' ],
+        gradient2: [ '#01ffff', '#01ffc3', '#ffb3fd' ],
+        gradient3: [ '#01ffff', '#01ffc3', '#ffb3fd' ],
+        gradient4: [ '#0336ff', '#2196f3', '#ff9800', '#f72047' ],
 
         vjsLogs: 'No logs loaded\nInitial load may take a moment to process.',
       };
@@ -510,6 +572,9 @@
 
         this.points3.push( $bw.hls.stats.videoPlaybackQuality.droppedVideoFrames / $bw.hls.stats.videoPlaybackQuality.totalVideoFrames * 100 );
         this.points3 = this.points3.splice(-60);
+
+        this.points4.push( $bw.hls.stats.bandwidth );
+        this.points4 = this.points4.splice(-60);
 
       },
 

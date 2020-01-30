@@ -137,7 +137,7 @@
 
     .time,
     .global {
-      /*font-size: .75rem;*/
+      font-size: .75rem;
     }
 
     .username {

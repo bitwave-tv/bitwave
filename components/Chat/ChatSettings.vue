@@ -20,27 +20,23 @@
 
     <div class="px-3">
       <div class="d-flex">
-        <div class="flex-grow-1">
-          <v-switch
-            v-model="globalChat"
-            label="Global Chat"
-            color="yellow"
-            hide-details
-            dense
-            inset
-          />
-        </div>
-        <div class="flex-grow-1">
-          <v-switch
-            v-model="showTimestamps"
-            class="ml-3"
-            label="Timestamps"
-            color="yellow"
-            hide-details
-            dense
-            inset
-          />
-        </div>
+        <v-switch
+          v-model="globalChat"
+          label="Global Chat"
+          color="yellow"
+          hide-details
+          dense
+          inset
+        />
+        <v-switch
+          v-model="showTimestamps"
+          class="ml-3"
+          label="Timestamps"
+          color="yellow"
+          hide-details
+          dense
+          inset
+        />
       </div>
 
       <v-switch
@@ -79,30 +75,26 @@
     <div class="pb-2">
       <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
 
-      <div class="d-flex mb-3">
-        <v-flex>
-          <v-switch
-            v-model="useTts"
-            label="Use TTS"
-            class="ml-3 mt-0 pt-0"
-            color="yellow"
-            hide-details
-            dense
-            inset
-          />
-        </v-flex>
-        <v-flex>
-          <v-switch
-            v-model="trollTts"
-            :disabled="!useTts"
-            label="Troll TTS"
-            class="ml-0 mt-0 pt-0"
-            color="yellow"
-            hide-details
-            dense
-            inset
-          />
-        </v-flex>
+      <div class="d-flex justify-space-around mb-3">
+        <v-switch
+          v-model="useTts"
+          label="Use TTS"
+          class="d-block mt-0 pt-0"
+          color="yellow"
+          hide-details
+          dense
+          inset
+        />
+        <v-switch
+          v-model="trollTts"
+          :disabled="!useTts"
+          label="Troll TTS"
+          class="d-block mt-0 pt-0"
+          color="yellow"
+          hide-details
+          dense
+          inset
+        />
       </div>
 
       <v-flex mx-3>
@@ -261,10 +253,6 @@
         set ( val ) { this.setAutocomplete( val ) },
         get () { return this.getAutocomplete }
       },
-    },
-
-    created () {
-
     },
 
     async mounted () {
