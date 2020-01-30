@@ -39,7 +39,7 @@
           <span class="global">{{ props.global }}</span>
         </div>
 
-        <div class="username flex-grow-1 subtitle-2 pl-1" :style="props.userStyling" v-html="props.displayName" />
+        <div class="username text-truncate flex-grow-1 subtitle-2 pl-1" :style="props.userStyling" v-html="props.displayName" />
 
         <!-- Room Label -->
         <nuxt-link
