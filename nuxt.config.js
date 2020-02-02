@@ -87,7 +87,7 @@ module.exports = {
           cacheName: 'assets',
           cacheExpiration: {
             maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 7, // ( 1 day ) 1 year
+            maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
             purgeOnQuotaError: true,
           }
         },
@@ -103,7 +103,7 @@ module.exports = {
           },*/
           cacheExpiration: {
             maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 7, // ( 1 day ) 1 year
+            maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
             purgeOnQuotaError: true,
           }
         },
@@ -160,7 +160,7 @@ module.exports = {
           },
           cacheExpiration: {
             maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+            maxAgeSeconds: 60 * 60 * 24 * 1, // 30 Days
             purgeOnQuotaError: true,
           },
         },
