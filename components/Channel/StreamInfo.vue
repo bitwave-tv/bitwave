@@ -37,27 +37,9 @@
           class="no-focus"
           show-arrows
         >
-
-          <v-tab>
-            <div>
-              Description
-            </div>
-          </v-tab>
-
-          <v-tab>
-            <div>
-              Archives
-            </div>
-          </v-tab>
-
-          <v-tab
-            v-if="featureFlag"
-          >
-            <div>
-              Stream Stats
-            </div>
-          </v-tab>
-
+          <v-tab>Description</v-tab>
+          <v-tab>Archives</v-tab>
+          <v-tab v-if="featureFlag">Stream Stats</v-tab>
         </v-tabs>
       </template>
     </v-toolbar>

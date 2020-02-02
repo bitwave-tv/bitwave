@@ -19,7 +19,11 @@
             >
               <template v-slot:item="data">
                 <v-list-item-avatar>
-                  <img :src="data.item.avatar+'?_bw'" :alt="data.item.name" crossorigin>
+                  <img
+                    :src="`${data.item.avatar}?_bw`"
+                    :alt="data.item.name"
+                    crossorigin
+                  >
                 </v-list-item-avatar>
                 <v-list-item-title>
                   {{ data.item.text }}
@@ -84,6 +88,7 @@
         }
       } catch ( error ) {
         console.log( `ERROR: Failed to hydrate page:\n`, error );
+        error( { statusCode: 500, message: 'Server under heavy load.<br>lease try again later.' } );
       }
     },
 

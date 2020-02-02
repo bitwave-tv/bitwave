@@ -109,12 +109,10 @@
               class="d-flex align-items-center"
             >
               <v-img
-                class=""
-                src="/images/OBS-480.png?_bw"
+                src="/images/OBS-480.png"
                 :aspect-ratio="16/9"
                 contain
                 width="100%"
-                crossorigin
               />
             </v-col>
             <v-col class="d-flex flex-column">

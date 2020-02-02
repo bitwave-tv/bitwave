@@ -104,7 +104,7 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="user.avatar+'?_bw'"
+                      :src="`${user.avatar}?_bw`"
                       :alt="user.name"
                       crossorigin
                     />
@@ -152,7 +152,7 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="user.avatar+'?_bw'"
+                      :src="`${user.avatar}?_bw`"
                       :alt="user.name"
                       crossorigin
                     >

@@ -5,12 +5,11 @@
     <v-row class="justify-center">
       <div class="d-flex align-center">
         <v-img
-          src="https://cdn.bitwave.tv/static/img/firework-banner.gif?_bw"
+          src="https://cdn.bitwave.tv/static/img/firework-banner.gif"
           alt="santa troll"
           height="80"
           width="80"
           contain
-          crossorigin
         />
         <span class="font-weight-light display-1 white--text text-center mx-2">Freedom of Expression</span>
       </div>

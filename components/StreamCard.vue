@@ -11,9 +11,7 @@
         lazy-src="https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg"
         :aspect-ratio="16/9"
         :class="{ 'blur': live && nsfw }"
-      >
-        <!--<div class="fill-height bottom-gradient"></div>-->
-      </v-img>
+      />
 
       <!-- View Counter -->
       <div class="view-counter">
@@ -23,7 +21,7 @@
           tile
         >
           <div v-if="live" class="d-flex align-center">
-            <div class="white--text">{{ viewers < 2 ? '🐜🐜' : viewers }}</div>
+            <div class="white--text">{{ viewers < 1 ? '🐜🐜' : viewers }}</div>
             <v-icon v-show="viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
           </div>
           <div v-else class="d-flex align-center">

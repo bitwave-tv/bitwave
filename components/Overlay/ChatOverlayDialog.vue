@@ -35,7 +35,7 @@
           :disabled="saveLoading"
           prepend-icon="event_note"
           @change="enableSave = true"
-        ></v-text-field>
+        />
 
         <!-- Channel -->
         <v-autocomplete
@@ -56,7 +56,10 @@
         >
           <template v-slot:item="data">
             <v-list-item-avatar>
-              <img :src="data.item.avatar" :alt="data.item.name">
+              <img
+                :src="`${data.item.avatar}?_bw`"
+                :alt="data.item.name"
+              >
             </v-list-item-avatar>
             <v-list-item-title>
               {{ data.item.text }}
@@ -77,7 +80,7 @@
             :loading="saveLoading"
             :disabled="saveLoading"
             @change="enableSave = true"
-          ></v-switch>
+          />
 
           <!-- Show Timestamps -->
           <v-switch
@@ -89,7 +92,7 @@
             :loading="saveLoading"
             :disabled="saveLoading"
             @change="enableSave = true"
-          ></v-switch>
+          />
         </div>
 
         <!-- History Size -->
