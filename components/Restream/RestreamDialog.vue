@@ -292,8 +292,8 @@
         streamingPlatforms: [
           { text: 'Custom Server', value: 'rtmp://' },
           { text: 'Twitch', value: 'rtmp://live-sfo.twitch.tv/app' },
-          { text: 'dlive', value: 'rtmp://stream.dlive.tv/live' },
-          { text: 'YouTube', value: 'rtmp://a.rtmp.youtube.com/livedlive.tv/live2' },
+          { text: 'Dlive', value: 'rtmp://stream.dlive.tv/live' },
+          { text: 'YouTube', value: 'rtmp://a.rtmp.youtube.com/live2' },
         ],
       };
     },
