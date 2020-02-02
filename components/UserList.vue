@@ -104,8 +104,9 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="user.avatar"
+                      :src="user.avatar+'?_bw'"
                       :alt="user.name"
+                      crossorigin
                     />
                   </v-avatar>
                 </v-badge>
@@ -149,7 +150,12 @@
                   <v-avatar
                     :size="40"
                   >
-                    <img :class="{ offline : !user.live }" :src="user.avatar" :alt="user.name">
+                    <img
+                      :class="{ offline : !user.live }"
+                      :src="user.avatar+'?_bw'"
+                      :alt="user.name"
+                      crossorigin
+                    >
                   </v-avatar>
                 </v-list-item-avatar>
                 <v-list-item-content class="py-0">
@@ -226,11 +232,11 @@
             to     : '/',
           },
         ],
-        userUpdateRate: 15,
+        userUpdateRate: 30,
         userListTimer: null,
 
         following: [],
-        followingLimit: 10,
+        followingLimit: 5,
       }
     },
 
@@ -249,14 +255,18 @@
 
       async getFollowing ( userId ) {
         if ( userId ) {
-          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list' );
-          const query = await db
-            .collection('followers')
-            .where('viewerId', '==', userId)
-            .limit( this.followingLimit )
-            .get();
-          const streamers = query.docs.map( doc => doc.data().streamerId );
-          this.following = data.users.filter( streamer => streamers.includes( streamer.owner ) && !streamer.live );
+          try {
+            const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list' );
+            const query = await db
+              .collection('followers')
+              .where('viewerId', '==', userId)
+              .limit( this.followingLimit )
+              .get();
+            const streamers = query.docs.map( doc => doc.data().streamerId );
+            this.following = data.users.filter( streamer => streamers.includes( streamer.owner ) && !streamer.live );
+          } catch ( error ) {
+            console.error( error.message );
+          }
         }
       },
     },

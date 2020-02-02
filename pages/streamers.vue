@@ -19,7 +19,7 @@
             >
               <template v-slot:item="data">
                 <v-list-item-avatar>
-                  <img :src="data.item.avatar" :alt="data.item.name">
+                  <img :src="data.item.avatar+'?_bw'" :alt="data.item.name" crossorigin>
                 </v-list-item-avatar>
                 <v-list-item-title>
                   {{ data.item.text }}

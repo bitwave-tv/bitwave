@@ -8,9 +8,11 @@
       class="mb-4"
     >
       <v-flex xs12 md10 lg8 xl6>
-        <v-img
-          src="https://dispatch.sfo2.cdn.digitaloceanspaces.com/static/img/bitwave_banner.png"
-          alt="bitwave tv live streaming platform" />
+        <img
+          src="https://cdn.bitwave.tv/static/img/bitwave_banner.png?_bw"
+          alt="bitwave tv live streaming platform"
+          crossorigin
+        />
       </v-flex>
     </v-layout>
 

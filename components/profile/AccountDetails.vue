@@ -11,9 +11,10 @@
 
           <div class="d-flex justify-space-around align-center">
             <v-avatar color="white" size="100" class="ma-3">
-              <v-img
-                :src="imageUrl || 'https://cdn.bitwave.tv/static/img/shield.png'"
+              <img
+                :src="imageUrl+'?_bw' || 'https://cdn.bitwave.tv/static/img/shield.png?_bw'"
                 alt="avatar"
+                crossorigin
               />
             </v-avatar>
             <div class="flex-shrink-1 text-xs-center my-1">

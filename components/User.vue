@@ -20,7 +20,7 @@
           :loading="loading"
         >
           <v-avatar size="32" color="grey">
-            <img v-if="avatar" :src="avatar" :alt="username">
+            <img v-if="avatar" :src="avatar" :alt="username" crossorigin>
             <v-icon v-else color="white">person</v-icon>
           </v-avatar>
         </v-btn>
@@ -30,7 +30,7 @@
         <v-sheet tile color="yellow" class="px-2 py-1">
           <div class="d-flex align-center">
             <v-avatar class="mr-4" size="40" color="grey">
-              <img v-if="avatar" :src="avatar" :alt="username">
+              <img v-if="avatar" :src="avatar" :alt="username" crossorigin>
               <v-icon v-else>person</v-icon>
             </v-avatar>
 

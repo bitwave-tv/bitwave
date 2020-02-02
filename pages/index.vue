@@ -5,11 +5,12 @@
     <v-row class="justify-center">
       <div class="d-flex align-center">
         <v-img
-          src="https://cdn.bitwave.tv/static/img/firework-banner.gif"
+          src="https://cdn.bitwave.tv/static/img/firework-banner.gif?_bw"
           alt="santa troll"
           height="80"
           width="80"
           contain
+          crossorigin
         />
         <span class="font-weight-light display-1 white--text text-center mx-2">Freedom of Expression</span>
       </div>
@@ -44,8 +45,9 @@
                 contain
                 max-height="2rem"
                 max-width="2rem"
-                src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif"
+                src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw"
                 alt="Cool blobby with sunglasses"
+                crossorigin
               />
               <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
             </div>

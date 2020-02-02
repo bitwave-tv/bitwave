@@ -99,10 +99,12 @@
             />
 
             <div v-show="!live">
-                <span class="red--text font-weight-bold">
-                  Not Live!
-                </span>
+                <span class="red--text font-weight-bold">Not Live!</span>
               You must be live on bitwave in order to start restreaming.
+            </div>
+            <div v-show="live">
+                <span class="blue--text font-weight-bold">READY</span>
+              You can safely close this window at any time.
             </div>
 
             <div class="d-flex justify-space-between align-center mt-3">

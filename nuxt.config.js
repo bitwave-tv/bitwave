@@ -1,6 +1,7 @@
 require('dotenv').config();
 const pkg = require('./package');
 
+// noinspection PointlessArithmeticExpressionJS
 module.exports = {
   mode: 'universal',
 
@@ -10,7 +11,7 @@ module.exports = {
   env: {
     version: pkg.version || '0.0.0',
     VERSION: pkg.version || '0.0.0',
-    APP_DEBUG: process.env.APP_DEBUG || false,
+    APP_DEBUG: process.env.APP_DEBUG === 'true' || false,
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
   },
 
@@ -30,8 +31,14 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
+        crossorigin: 'anonymous',
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons|IBM+Plex+Sans:500&display=swap',
+        href: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:500&display=swap',
+      },
+      {
+        crossorigin: 'anonymous',
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css?family=Material+Icons',
       },
     ],
   },
@@ -52,45 +59,71 @@ module.exports = {
 
   workbox: {
     // config: { debug: true },
+
+    cleanupOutdatedCaches: true,
+
+    preCaching: [
+      'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap',
+      'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:500&display=swap',
+      'https://fonts.googleapis.com/css?family=Material+Icons',
+    ],
+
     runtimeCaching: [
-      {
+      /*{
         urlPattern: 'https://stream.bitwave.tv/stream/.*',
         handler: 'networkOnly',
         strategyOptions: {
           cacheName: 'HLS-cache',
-          /*cacheExpiration: {
-            maxEntries: 200,
-            maxAgeSeconds: 600
-          }*/
         },
-      },
+      },*/
+
 
       // Cache fonts
       {
         urlPattern: 'https://fonts.googleapis.com',
-        handler: 'StaleWhileRevalidate',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'assets',
-        },
-      },
-      {
-        urlPattern: 'https://fonts.gstatic.com',
-        handler: 'CacheFirst',
+        handler: 'NetworkFirst',
         method: 'GET',
         strategyOptions: {
           cacheName: 'assets',
           cacheExpiration: {
             maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+            maxAgeSeconds: 60 * 60 * 24 * 7, // ( 1 day ) 1 year
+            purgeOnQuotaError: true,
           }
         },
       },
+      {
+        urlPattern: 'https://fonts.gstatic.com',
+        handler: 'StaleWhileRevalidate',
+        method: 'GET',
+        strategyOptions: {
+          cacheName: 'assets',
+          /*cacheableResponse: {
+            statuses: [ 200 ],
+          },*/
+          cacheExpiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 7, // ( 1 day ) 1 year
+            purgeOnQuotaError: true,
+          }
+        },
+      },
+
 
       // Cache basic API responses
       {
         urlPattern: 'https://api.bitwave.tv/api/(?:channels/list|bump)$',
         handler: 'NetworkFirst',
+        method: 'GET',
+        strategyOptions: {
+          cacheName: 'bitwave-api',
+        },
+      },
+
+      // Long lived API responses
+      {
+        urlPattern: 'https://api.bitwave.tv/api/channels(/?|/([a-zA-Z0-9._-]+)?)$',
+        handler: 'StaleWhileRevalidate',
         method: 'GET',
         strategyOptions: {
           cacheName: 'bitwave-api',
@@ -109,7 +142,25 @@ module.exports = {
           },
           cacheExpiration: {
             maxEntries: 10,
-            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+            purgeOnQuotaError: true,
+          },
+        },
+      },
+
+      // Cache Hazzy
+      {
+        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*$',
+        handler: 'NetworkFirst',
+        method: 'GET',
+        strategyOptions: {
+          cacheName: 'bitwave-images',
+          cacheableResponse: {
+            statuses: [ 200 ],
+          },
+          cacheExpiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
             purgeOnQuotaError: true,
           },
         },

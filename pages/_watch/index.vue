@@ -11,7 +11,12 @@
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center grey--text">
           <v-avatar size="32">
-            <img v-if="avatar" :src="avatar" :alt="name" />
+            <img
+              v-if="avatar"
+              :src="avatar+'?_bw'"
+              :alt="name"
+              crossorigin
+            />
             <v-icon v-else>warning</v-icon>
           </v-avatar>
           <div class="mx-2">{{ name }}</div>
@@ -602,7 +607,7 @@
           catch ( error ) {
             console.error( `Database query failed!` );
             console.error( error.message );
-            return { success: false, error: { statusCode: 500, message: `Bitwave API cache failed & Bitwave Database API failed!\n${error.message}` } };
+            return { success: false, error: { statusCode: 500, message: `Bitwave API cache failed & Bitwave Database API failed!<br>${error.message}` } };
           }
         }
 
@@ -693,7 +698,6 @@
 
       // Get Channel data for page
       const channelData = await getChannelHydration();
-      console.log( channelData );
       if ( channelData.success === false  ) {
         console.log( `Channel Data API failed - Displaying error page.` );
         error( { ...channelData.error } );
