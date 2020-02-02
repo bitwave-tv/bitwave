@@ -249,7 +249,7 @@
       },
 
       channelOwner () {
-        if ( !this.username ) return false;
+        if ( !this.username || !this.name ) return false;
         return this.name.toLowerCase() === this.username.toLowerCase();
       },
 

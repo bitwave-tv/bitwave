@@ -194,12 +194,27 @@
         watchTimer: null,
         showStreamStats: false,
         streamDataListener: null,
-        description: null,
-        timestamp: null,
         recentBumps: [],
 
         // performance logging
         lastVPQ: null,
+
+
+        // Hydrated data defaults
+        name: '',
+        avatar: null,
+        title: '',
+        description: '',
+        poster: '',
+        live: false,
+        nsfw: false,
+        owner: null,
+        url: null,
+        type: null,
+        timestamp: null,
+
+        // Chat hydrated data defaults
+        chatMessages: [],
       }
     },
 
@@ -313,7 +328,7 @@
 
               console.log( 'Attempting to catch back up to live.' );
               this.player.liveTracker.seekToLiveEdge();
-            }, 8 * 1000 );
+            }, 5 * 1000 );
           });
 
           this.setSource({ url: this.url, type: this.type });
@@ -389,7 +404,7 @@
       },
 
       getStreamData () {
-        const streamer  = this.name.toLowerCase();
+        const streamer  = ( this.name || this.channel ).toLowerCase();
         this.streamDataListener = db
           .collection( 'streams' )
           .doc( streamer )
@@ -519,69 +534,184 @@
       }),
     },
 
-    async asyncData ( { $axios, params, store } ) {
+    async asyncData ( { $axios, params, store, error } ) {
       const channel = params.watch;
-      try {
-        const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}` );
 
-        // Streamer user properties
-        const name   = data.name;
-        const avatar = data.avatar;
-        const owner  = data.owner;
+      const getChannelHydration = async () => {
+        let channelData = null;
 
-        // Stream data
-        const title       = data.title;
-        const description = data.description;
-
-        // Stream properties
-        const nsfw = data.nsfw;
-        const live = data.live;
-
-        // Stream media
-        let type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
-        let url  = data.url;
-
-        // Process timestamp
-        const timestamp = data.timestamp
-          ? new Date( data.timestamp )
-          : null;
-
-        // Process cover image
-        const poster = live
-          ? data.thumbnail
-          : data.poster;
-
-        // Fallback to bump if offline
-        if ( !live ) {
-          const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump' );
-          url = data.url;
-          type = 'video/mp4';
-        }
-
-        const getChatHydration = async () => {
-          try {
-            const global = store.state[ChatStore.namespace][ChatStore.$states.global];
-            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
-            if ( data.success ) return data.data;
-          } catch ( error ) {
-            console.log( error );
+        // Attempt to load via API server
+        try {
+          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}` );
+          // Simple response validation
+          if ( data && data.hasOwnProperty( 'name' ) ) {
+            channelData = data;
           }
-          return [];
-        };
-
-        const chatMessages = await getChatHydration();
-
-        return { name, avatar, title, description, poster, live, nsfw, owner, url, type, timestamp, chatMessages };
-
-      } catch ( err ) {
-        console.log( `ERROR: Failed to hydrate channel '${channel}':\n`, err );
-        return {
-          name: 'Error',
-          title: 'Failed to preload data',
-          url: 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
-          type: 'video/mp4',
         }
+
+        // API server failed
+        catch ( error ) {
+          console.error( error.message );
+
+          // API failed with 404, but server did not fail with 5xx
+          if ( error.response && error.response.status === 404 ) {
+            console.error( `API server reponded with 404` );
+            return { success: false, error: { statusCode: 404, message: `Could not find channel.` } };
+          }
+        }
+
+        // API server failed unexpectedly 5xx - Attempt to load from database
+        if ( !channelData ) {
+          // API server failed, query database directly
+          try {
+            console.log( `API server failed! Attempting to bypass.` );
+
+            const streamer  = channel.toLowerCase();
+
+            const streamDoc = await db
+              .collection( 'streams' )
+              .doc( streamer )
+              .get();
+
+            // Channel does not exist in database (404)
+            if ( !streamDoc.exists ) {
+              console.error( `Database query did not find streamer!` );
+              return { success: false, error: { statusCode: 404, message: `Could not find channel.` } };
+            }
+
+            const data = streamDoc.data();
+
+            // Re-map channel data
+            channelData = {
+              name: data.user.name,
+              avatar: data.user.avatar,
+              to: `/${data.user.name}`,
+              title: data.title,
+              description: data.description,
+              poster: data.cover,
+              thumbnail: data.thumbnail,
+              live: data.live,
+              nsfw: data.nsfw,
+              url: data.url,
+              owner: data.owner,
+            };
+
+          }
+
+          // API & Database query failure
+          catch ( error ) {
+            console.error( `Database query failed!` );
+            console.error( error.message );
+            return { success: false, error: { statusCode: 500, message: `Bitwave API cache failed & Bitwave Database API failed!\n${error.message}` } };
+          }
+        }
+
+        try {
+          const data = channelData;
+
+          // Streamer user properties
+          const name   = data.name;
+          const avatar = data.avatar;
+          const owner  = data.owner;
+
+          // Stream data
+          const title       = data.title;
+          const description = data.description;
+
+          // Stream properties
+          const nsfw = data.nsfw;
+          const live = data.live;
+
+          // Stream media
+          let type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+          let url  = data.url;
+
+          // Process timestamp
+          const timestamp = data.timestamp
+            ? new Date( data.timestamp )
+            : null;
+
+          // Process cover image
+          const poster = live
+            ? data.thumbnail
+            : data.poster;
+
+
+          // Fallback to bump if offline
+          if ( live === false ) {
+            try {
+              const { data } = await $axios.get( 'https://api.bit.wave.tv/api/bump' );
+              url = data.url;
+              type = 'video/mp4';
+            } catch ( error ) {
+              console.error( error.message );
+              url  = 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4';
+              type = 'video/mp4';
+            }
+          }
+
+          return {
+            success: true,
+            data: {
+              name,
+              avatar,
+              title,
+              description,
+              poster,
+              live,
+              nsfw,
+              owner,
+              url,
+              type,
+              timestamp,
+            }
+          }
+        }
+
+        // Unknown error, unlikely to occur
+        catch ( error ) {
+          console.error( error.message );
+          return { success: false, error: { statusCode: 500, message: `Unknown API Error!\n${error.message}` } };
+        }
+
+        // Should never occur
+        return { success: false, error: { statusCode: 500, message: `This should never occur.` } };
+      };
+
+      const getChatHydration = async () => {
+        try {
+          const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
+          if ( data && data.success ) return data.data;
+        } catch ( error ) {
+          console.log( `Chat hydration request failed` );
+          console.error( error.message );
+        }
+        return null;
+      };
+
+
+      // Get Channel data for page
+      const channelData = await getChannelHydration();
+      console.log( channelData );
+      if ( channelData.success === false  ) {
+        console.log( `Channel Data API failed - Displaying error page.` );
+        error( { ...channelData.error } );
+        return;
       }
+
+      // Get chat data for chat
+      const chatMessages = await getChatHydration();
+      if ( !chatMessages ) {
+        const errorMessage = `Failed to load chat data for ${channel}`;
+        console.error( errorMessage );
+      }
+
+      return {
+        channel: channel,
+        ...channelData.data,
+        chatMessages: chatMessages || [],
+      };
     },
 
     computed: {
@@ -635,31 +765,22 @@
       },
     },
 
-    async validate ( { params, $axios } ) {
-      const user = params.watch;
-
+    async validate ( { params } ) {
       // Verify username is valid
-      if ( !user.match( /^[a-zA-Z0-9._-]+$/ ) ) return false;
-
-      // Check for user channel data via API
-      const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
-      return !!data.name;
+      const user = params.watch;
+      const validator = /^[a-zA-Z0-9._-]+$/;
+      return validator.test( user );
     },
-
-    /*beforeRouteUpdate ( to, from, next ) {
-      const params = to.params;
-      next();
-    },*/
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
 
       await this.loadSettings();
 
-      this.playerInitialize();
-
       this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
+
+      this.playerInitialize();
 
       this.mounted = true;
     },
