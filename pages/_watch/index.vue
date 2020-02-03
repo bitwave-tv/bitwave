@@ -238,7 +238,8 @@
           poster: this.poster,
           html5: {
             hls: {
-              overrideNative: !videojs.browser.IS_SAFARI,
+              overrideNative: true,
+              // overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
               handlePartialData: true,
