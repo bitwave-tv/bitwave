@@ -57,7 +57,7 @@
           <template v-slot:item="data">
             <v-list-item-avatar>
               <img
-                :src="`${data.item.avatar}?_bw1`"
+                :src="`${data.item.avatar}?_bw`"
                 :alt="data.item.name"
               >
             </v-list-item-avatar>

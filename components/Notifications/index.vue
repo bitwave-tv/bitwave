@@ -82,7 +82,7 @@
                   class="v-avatar va-32 mr-4"
                 >
                   <img
-                    :src="`${notification.avatar}?_bw1`"
+                    :src="`${notification.avatar}?_bw`"
                     :alt="notification.streamer"
                     crossorigin
                   >

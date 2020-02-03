@@ -13,7 +13,7 @@
           <v-avatar size="32">
             <img
               v-if="avatar"
-              :src="`${avatar}?_bw1`"
+              :src="`${avatar}?_bw`"
               :alt="name"
               crossorigin
             />

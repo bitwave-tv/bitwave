@@ -9,14 +9,14 @@
       <!-- Todo: add crossorigin -->
       <img
         v-if="!!props.avatar"
-        :src="`${props.avatar}?_bw1`"
+        :src="`${props.avatar}?_bw`"
         :alt="props.username"
         :key="props.username"
         crossorigin
       >
       <img
         v-else
-        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw1"
+        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
         alt="hazmat suit trolll"
         :style="{ background: props.color }"
         :key="props.username"
