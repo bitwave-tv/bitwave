@@ -238,8 +238,7 @@
           poster: this.poster,
           html5: {
             hls: {
-              overrideNative: true,
-              // overrideNative: !videojs.browser.IS_SAFARI,
+              overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
               handlePartialData: true,
@@ -764,9 +763,11 @@
       },
 
       source ( newSource ) {
-        this.url  = newSource.url;
-        this.type = newSource.type;
-        this.reloadPlayer();
+        if ( this.url  !== newSource.url || this.type !== newSource.type ) {
+          this.url  = newSource.url;
+          this.type = newSource.type;
+          this.reloadPlayer();
+        }
       },
     },
 
@@ -782,10 +783,10 @@
 
       await this.loadSettings();
 
+      this.playerInitialize();
+
       this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
-
-      this.playerInitialize();
 
       this.mounted = true;
     },

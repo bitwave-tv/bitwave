@@ -11,7 +11,7 @@ module.exports = {
   env: {
     version: pkg.version || '0.0.0',
     VERSION: pkg.version || '0.0.0',
-    APP_DEBUG: process.env.APP_DEBUG === 'true' || false,
+    APP_DEBUG: process.env.APP_DEBUG || false,
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
   },
 
@@ -62,11 +62,11 @@ module.exports = {
 
     cleanupOutdatedCaches: true,
 
-    preCaching: [
+    /*preCaching: [
       'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap',
       'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:500&display=swap',
       'https://fonts.googleapis.com/css?family=Material+Icons',
-    ],
+    ],*/
 
     runtimeCaching: [
       /*{
