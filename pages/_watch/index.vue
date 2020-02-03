@@ -783,10 +783,12 @@
 
       await this.loadSettings();
 
-      this.playerInitialize();
 
       this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
+
+
+      this.playerInitialize();
 
       this.mounted = true;
     },
