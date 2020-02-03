@@ -150,7 +150,7 @@ module.exports = {
 
       // Cache Hazzy
       {
-        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw1)$',
+        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw)$',
         handler: 'NetworkFirst',
         method: 'GET',
         strategyOptions: {

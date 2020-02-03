@@ -57,7 +57,7 @@
             class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
             controls
             autoplay
-            preload="auto"
+            preload="none"
             :poster="posterCacheBusted"
             :style="{ width: '100%' }"
           >
@@ -645,7 +645,7 @@
           // Fallback to bump if offline
           if ( live === false ) {
             try {
-              const { data } = await $axios.get( 'https://api.bit.wave.tv/api/bump' );
+              const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump' );
               url = data.url;
               type = 'video/mp4';
             } catch ( error ) {
