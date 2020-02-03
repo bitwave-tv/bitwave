@@ -9,7 +9,7 @@
     >
       <v-flex xs12 md10 lg8 xl6>
         <img
-          src="https://cdn.bitwave.tv/static/img/bitwave_banner.png?_bw"
+          src="https://cdn.bitwave.tv/static/img/bitwave_banner.png?_bw11"
           alt="bitwave tv live streaming platform"
           crossorigin
         />

@@ -44,7 +44,7 @@
                 contain
                 max-height="2rem"
                 max-width="2rem"
-                src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw"
+                src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw1"
                 alt="Cool blobby with sunglasses"
                 crossorigin
               />

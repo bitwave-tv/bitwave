@@ -12,7 +12,7 @@
           <div class="d-flex justify-space-around align-center">
             <v-avatar color="white" size="100" class="ma-3">
               <img
-                :src="`${imageUrl}?_bw` || `https://cdn.bitwave.tv/static/img/shield.png?_bw`"
+                :src="`${imageUrl}?_bw1` || `https://cdn.bitwave.tv/static/img/shield.png?_bw1`"
                 alt="avatar"
                 crossorigin
               />

@@ -123,7 +123,7 @@ module.exports = {
       // Long lived API responses
       {
         urlPattern: 'https://api.bitwave.tv/api/channels(/?|/([a-zA-Z0-9._-]+)?)$',
-        handler: 'StaleWhileRevalidate',
+        handler: 'NetworkFirst',
         method: 'GET',
         strategyOptions: {
           cacheName: 'bitwave-api',
@@ -150,14 +150,11 @@ module.exports = {
 
       // Cache Hazzy
       {
-        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*$',
+        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw1)$',
         handler: 'NetworkFirst',
         method: 'GET',
         strategyOptions: {
           cacheName: 'bitwave-images',
-          cacheableResponse: {
-            statuses: [ 200 ],
-          },
           cacheExpiration: {
             maxEntries: 10,
             maxAgeSeconds: 60 * 60 * 24 * 1, // 30 Days

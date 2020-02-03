@@ -22,7 +22,7 @@
           <v-avatar size="32" color="grey">
             <img
               v-if="avatar"
-              :src="`${avatar}?_bw`"
+              :src="`${avatar}?_bw1`"
               :alt="username"
               crossorigin
             >
@@ -37,7 +37,7 @@
             <v-avatar class="mr-4" size="40" color="grey">
               <img
                 v-if="avatar"
-                :src="`${avatar}?_bw`"
+                :src="`${avatar}?_bw1`"
                 :alt="username"
                 crossorigin
               >

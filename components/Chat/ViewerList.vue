@@ -71,7 +71,7 @@
                   <v-list-item-avatar class="mr-3">
                     <img
                       v-if="!!viewer.data.avatar"
-                      :src="`${viewer.data.avatar}?_bw`"
+                      :src="`${viewer.data.avatar}?_bw1`"
                       :alt="viewer.data.username"
                       crossorigin
                     >

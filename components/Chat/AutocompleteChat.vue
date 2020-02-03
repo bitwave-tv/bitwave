@@ -22,7 +22,7 @@
           >
             <img
               v-if="!!user.image"
-              :src="`${user.image}?_bw`"
+              :src="`${user.image}?_bw1`"
               :alt="user.label"
               crossorigin
             >

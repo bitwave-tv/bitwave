@@ -104,7 +104,7 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="`${user.avatar}?_bw`"
+                      :src="`${user.avatar}?_bw1`"
                       :alt="user.name"
                       crossorigin
                     />
@@ -152,7 +152,7 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="`${user.avatar}?_bw`"
+                      :src="`${user.avatar}?_bw1`"
                       :alt="user.name"
                       crossorigin
                     >
@@ -232,7 +232,7 @@
             to     : '/',
           },
         ],
-        userUpdateRate: 30,
+        userUpdateRate: 20,
         userListTimer: null,
 
         following: [],

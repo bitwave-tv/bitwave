@@ -238,7 +238,7 @@ export const actions = {
       commit( $mutations.setEmoteList,  data.data );
     } catch ( error ) {
       console.error( `Failed to load emote list.` );
-      console.error( error );
+      console.error( error.message );
     }
   },
 
@@ -249,7 +249,7 @@ export const actions = {
       commit( $mutations.setDisplayName, user.name );
     } catch ( error ) {
       console.error( `Failed to update chat token.` );
-      console.error( error );
+      console.error( error.message );
     }
   },
 

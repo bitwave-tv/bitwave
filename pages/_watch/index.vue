@@ -13,7 +13,7 @@
           <v-avatar size="32">
             <img
               v-if="avatar"
-              :src="`${avatar}?_bw`"
+              :src="`${avatar}?_bw1`"
               :alt="name"
               crossorigin
             />
@@ -61,8 +61,8 @@
             :poster="posterCacheBusted"
             :style="{ width: '100%' }"
           >
+            <!-- v-if="live || videojs.browser.IS_SAFARI" -->
             <source
-              v-if="live"
               :src="url"
               :type="type"
             >
@@ -769,12 +769,12 @@
       },
     },
 
-    async validate ( { params } ) {
+    /*async validate ( { params } ) {
       // Verify username is valid
       const user = params.watch;
       const validator = /^[a-zA-Z0-9._-]+$/;
       return validator.test( user );
-    },
+    },*/
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
