@@ -763,7 +763,7 @@
       },
 
       source ( newSource ) {
-        if ( this.url  !== newSource.url || this.type !== newSource.type ) {
+        if ( true || this.url  !== newSource.url || this.type !== newSource.type ) {
           this.url  = newSource.url;
           this.type = newSource.type;
           this.reloadPlayer();
