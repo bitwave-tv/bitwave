@@ -25,6 +25,7 @@ module.exports = {
       { name: 'viewport',     content: 'width=device-width, initial-scale=1' },
       { name: 'description',  hid: 'description', content: pkg.description},
       { name: 'og:site_name', content: '[bitwave.tv]' },
+      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
       { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
     ],
     script: [],
@@ -150,11 +151,14 @@ module.exports = {
 
       // Cache Hazzy
       {
-        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw)$',
+        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw).*$',
         handler: 'NetworkFirst',
         method: 'GET',
         strategyOptions: {
           cacheName: 'bitwave-images',
+          cacheableResponse: {
+            statuses: [ 200 ],
+          },
           cacheExpiration: {
             maxEntries: 10,
             maxAgeSeconds: 60 * 60 * 24 * 1, // 30 Days

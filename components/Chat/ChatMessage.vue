@@ -9,7 +9,7 @@
       <!-- Todo: add crossorigin -->
       <img
         v-if="!!props.avatar"
-        :src="`${props.avatar}?_bw`"
+        :src="`${props.avatar}?_bw=1`"
         :alt="props.username"
         :key="props.username"
         crossorigin
@@ -36,7 +36,7 @@
       <div class="d-flex align-center">
 
         <!-- Timestamp & Username -->
-        <div class="bw-meta subtitle-2 flex-shrink-0"">
+        <div class="bw-meta subtitle-2 flex-shrink-0">
           <span class="time">{{ props.timestamp }}</span>
           <span class="global">{{ props.global }}</span>
         </div>

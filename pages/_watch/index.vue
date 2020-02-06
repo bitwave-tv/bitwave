@@ -29,7 +29,10 @@
             small
             outlined
           >NSFW</v-chip>
-          <KickStreamButton :streamer="name" v-if="isAdmin" />
+          <KickStreamButton
+            v-if="isAdmin"
+            :streamer="name"
+          />
           <FollowButton :streamer-id="owner" />
         </div>
       </div>
@@ -71,9 +74,19 @@
           <!-- Detached player topbar overlay -->
           <div
             v-if="smartDetach"
-            class="d-flex align-center justify-space-between detach-overlay"
+            class="d-flex align-center detach-overlay"
           >
             <h5 class="white--text body-2 ml-2">{{ name }}</h5>
+            <v-spacer/>
+            <v-btn
+              color="white"
+              text
+              icon
+              pa-0
+              @click="openPiP"
+            >
+              <v-icon color="white">picture_in_picture</v-icon>
+            </v-btn>
             <v-btn
               color="white"
               text
@@ -204,13 +217,12 @@
         // performance logging
         lastVPQ: null,
 
-
         // Hydrated data defaults
         name: '',
         avatar: null,
         title: '',
         description: '',
-        poster: '',
+        poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         live: false,
         nsfw: false,
         owner: null,
@@ -537,6 +549,14 @@
       ...mapActions( Player.namespace, {
         loadSettings: Player.$actions.loadSettings,
       }),
+
+      async openPiP () {
+        try {
+          await this.player.requestPictureInPicture();
+        } catch ( error ) {
+          console.error( error.message );
+        }
+      },
     },
 
     async asyncData ( { $axios, params, store, error } ) {
@@ -771,24 +791,22 @@
       },
     },
 
-    /*async validate ( { params } ) {
+    async validate ( { params } ) {
       // Verify username is valid
       const user = params.watch;
       const validator = /^[a-zA-Z0-9._-]+$/;
       return validator.test( user );
-    },*/
+    },
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
 
       await this.loadSettings();
 
+      this.playerInitialize();
 
       this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
-
-
-      this.playerInitialize();
 
       this.mounted = true;
     },
@@ -808,7 +826,7 @@
   .detach-player {
     position: fixed;
     left: 80px;
-    bottom: 16px;
+    top: 48px;
     margin: 1rem;
     width: 20rem;
     height: 11.25rem;
