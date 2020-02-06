@@ -155,7 +155,7 @@ module.exports = {
         handler: 'CacheFirst',
         method: 'GET',
         strategyOptions: {
-          cacheName: 'bitwave-images',
+          cacheName: 'bitwave-images-v1',
           cacheableResponse: {
             statuses: [ 200 ],
           },

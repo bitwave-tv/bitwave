@@ -9,7 +9,7 @@
       <!-- Todo: add crossorigin -->
       <img
         v-if="!!props.avatar"
-        :src="`${props.avatar}?__bw`"
+        :src="`${props.avatar}?_bw1`"
         :alt="props.username"
         :key="props.username"
         crossorigin
