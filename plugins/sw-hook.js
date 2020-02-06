@@ -11,6 +11,7 @@ if ('serviceWorker' in navigator) {
         try {
           await caches.delete('bitwave-images');
           await caches.delete('bitwave-images-v1');
+          await caches.delete('bitwave-images-v2');
         } catch ( error ) {
           console.error( error.message );
         }

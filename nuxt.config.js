@@ -150,7 +150,7 @@ module.exports = {
       },
 
       // Cache Hazzy
-      {
+      /*{
         urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw).*$',
         handler: 'StaleWhileRevalidate',
         method: 'GET',
@@ -165,7 +165,7 @@ module.exports = {
             purgeOnQuotaError: true,
           },
         },
-      },
+      },*/
 
       // more workbox cache settings...
     ],
