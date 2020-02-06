@@ -191,6 +191,7 @@ module.exports = {
   plugins: [
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
+    { src: '@/plugins/sw-hook', ssr: false },
   ],
 
   /*
