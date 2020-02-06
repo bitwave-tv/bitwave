@@ -151,11 +151,11 @@ module.exports = {
 
       // Cache Hazzy
       {
-        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw1).*$',
-        handler: 'CacheFirst',
+        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw).*$',
+        handler: 'StaleWhileRevalidate',
         method: 'GET',
         strategyOptions: {
-          cacheName: 'bitwave-images-v1',
+          cacheName: 'bitwave-images-v2',
           cacheableResponse: {
             statuses: [ 200 ],
           },
