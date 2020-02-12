@@ -5,14 +5,14 @@
     <div
       class="v-avatar mr-2 mt-2"
       @click="listeners.reply( props.username )"
+      @dblclick="listeners.whisper( props.username )"
     >
       <!-- Todo: add crossorigin -->
       <img
         v-if="!!props.avatar"
-        :src="`${props.avatar}?_bw2`"
+        :src="`${props.avatar}`"
         :alt="props.username"
         :key="props.username"
-        crossorigin
       >
       <img
         v-else

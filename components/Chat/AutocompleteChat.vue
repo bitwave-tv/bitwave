@@ -22,9 +22,8 @@
           >
             <img
               v-if="!!user.image"
-              :src="`${user.image}?_bw`"
+              :src="`${user.image}`"
               :alt="user.label"
-              crossorigin
             >
             <v-icon v-else>person</v-icon>
           </v-avatar>

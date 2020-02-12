@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card color="grey darken-4">
-      <v-sheet color="yellow" class="d-flex justify-space-between align-center pa-3">
+      <v-sheet color="primary" class="d-flex justify-space-between align-center pa-3">
         <div class="title black--text">
           <v-icon color="black" class="mr-1">{{ !!this.data ? 'edit' : 'add_to_queue' }}</v-icon>
           {{ !!this.data ? 'Edit' : 'Create New' }} OBS Chat Overlay
@@ -25,7 +25,7 @@
           v-model="overlay.title"
           class="mb-2"
           label="Name"
-          color="yellow"
+          color="primary"
           clearable
           outlined
           dense
@@ -75,7 +75,7 @@
             v-model="overlay.global"
             class="flex-grow-1"
             :label="`${overlay.global ? 'Global' : 'Local'} Chat`"
-            color="yellow"
+            color="primary"
             hide-details
             :loading="saveLoading"
             :disabled="saveLoading"
@@ -87,7 +87,7 @@
             v-model="overlay.showTimestamps"
             class="flex-grow-1"
             label="Show Timestamps"
-            color="yellow"
+            color="primary"
             hide-details
             :loading="saveLoading"
             :disabled="saveLoading"
@@ -109,13 +109,13 @@
           >
             <template #prepend>
               <v-icon
-                color="yellow"
+                color="primary"
                 @click="overlay.history -= 5"
               >remove</v-icon>
             </template>
             <template #append>
               <v-icon
-                color="yellow"
+                color="primary"
                 @click="overlay.history += 5"
               >add</v-icon>
             </template>
@@ -133,8 +133,7 @@
           cancel
         </v-btn>
         <v-btn
-          color="yellow"
-          light
+          color="success"
           :loading="saveLoading"
           @click="save"
         >
@@ -150,7 +149,7 @@
     >
       <v-card>
         <v-sheet
-          color="yellow"
+          color="primary"
           class="pa-2 d-flex justify-space-between align-center"
         >
           <h4 class="black--text body-1">
@@ -165,14 +164,14 @@
         <v-card-actions class="justify-end">
           <v-btn
             class="mr-2"
-            color="yellow"
+            color="primary"
             outlined
             @click="showExitConfirm = false"
           >
             No
           </v-btn>
           <v-btn
-            color="yellow"
+            color="primary"
             light
             @click="forceQuit"
           >

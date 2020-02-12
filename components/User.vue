@@ -22,9 +22,8 @@
           <v-avatar size="32" color="grey">
             <img
               v-if="avatar"
-              :src="`${avatar}?_bw`"
+              :src="`${avatar}`"
               :alt="username"
-              crossorigin
             >
             <v-icon v-else color="white">person</v-icon>
           </v-avatar>
@@ -32,14 +31,13 @@
       </template>
 
       <v-card width="225">
-        <v-sheet tile color="yellow" class="px-2 py-1">
+        <v-sheet tile color="primary" class="px-2 py-1">
           <div class="d-flex align-center">
             <v-avatar class="mr-4" size="40" color="grey">
               <img
                 v-if="avatar"
-                :src="`${avatar}?_bw`"
+                :src="`${avatar}`"
                 :alt="username"
-                crossorigin
               >
               <v-icon v-else>person</v-icon>
             </v-avatar>

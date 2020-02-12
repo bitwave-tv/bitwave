@@ -104,9 +104,8 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="`${user.avatar}?_bw`"
+                      :src="`${user.avatar}`"
                       :alt="user.name"
-                      crossorigin
                     />
                   </v-avatar>
                 </v-badge>
@@ -152,9 +151,8 @@
                   >
                     <img
                       :class="{ offline : !user.live }"
-                      :src="`${user.avatar}?_bw`"
+                      :src="`${user.avatar}`"
                       :alt="user.name"
-                      crossorigin
                     >
                   </v-avatar>
                 </v-list-item-avatar>

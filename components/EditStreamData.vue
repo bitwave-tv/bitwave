@@ -12,7 +12,7 @@
         class="mr-3"
         outlined
         small
-        color="yellow"
+        color="primary"
       >
         edit
         <v-icon small class="ml-1">edit</v-icon>
@@ -25,7 +25,7 @@
     >
       <v-sheet
         tile
-        color="yellow"
+        color="primary"
         class="pa-2 d-flex justify-space-between align-center"
       >
         <h4 class="black--text body-1">
@@ -51,7 +51,7 @@
             v-model="streamData.nsfw"
             class="my-0"
             label="Not Safe For Work (NSFW)"
-            color="yellow"
+            color="primary"
             hide-details
             inset
             :loading="saveLoading"
@@ -62,7 +62,7 @@
             {{ this.streamData.title }}
           </div>
           <v-btn
-            color="yellow"
+            color="primary"
             outlined
             small
             @click="previewData = !previewData"
@@ -81,7 +81,7 @@
             v-model="streamData.archive"
             class="mb-4"
             label="Archives"
-            color="yellow"
+            color="primary"
             hide-details
             inset
             :loading="saveLoading"
@@ -94,7 +94,7 @@
           </div>
           <v-text-field
             v-model="streamData.title"
-            color="yellow"
+            color="primary"
             outlined
             clearable
             dense
@@ -110,7 +110,7 @@
           <v-textarea
             v-model="streamData.description"
             hint="markdown supported"
-            color="yellow"
+            color="primary"
             outlined
             rows="15"
             counter
@@ -156,8 +156,7 @@
             cancel
           </v-btn>
           <v-btn
-            color="yellow"
-            light
+            color="success"
             small
             :loading="saveLoading"
             @click="updateStreamData"
@@ -176,7 +175,7 @@
       <v-card>
 
         <v-sheet
-          color="yellow"
+          color="primary"
           class="pa-2 d-flex justify-space-between align-center"
         >
           <h4 class="black--text body-1">
@@ -192,20 +191,22 @@
 
         <v-card-actions class="justify-end">
 
+          <v-btn
+            color="red"
+            @click="forceQuit"
+            outlined
+            small
+          >
+            exit
+          </v-btn>
             <v-btn
               class="mr-2"
-              color="yellow"
+              color="primary"
               outlined
+              small
               @click="showExitConfirm = false"
             >
-              No
-            </v-btn>
-            <v-btn
-              color="yellow"
-              light
-              @click="forceQuit"
-            >
-              Yes
+              no
             </v-btn>
 
         </v-card-actions>
@@ -255,7 +256,10 @@
       async getStreamData () {
         const stream = this.username.toLowerCase();
         try {
-          const doc = await db.collection( 'streams' ).doc( stream ).get();
+          const doc = await db
+            .collection( 'streams' )
+            .doc( stream )
+            .get();
           const data = doc.data();
           this.archive = data.archive;
           this.streamData.archive = data.archive;

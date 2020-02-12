@@ -12,9 +12,8 @@
           <div class="d-flex justify-space-around align-center">
             <v-avatar color="white" size="100" class="ma-3">
               <img
-                :src="`${imageUrl}?_bw` || `https://cdn.bitwave.tv/static/img/shield.png?_bw`"
+                :src="`${imageUrl}` || `https://cdn.bitwave.tv/static/img/shield.png`"
                 alt="avatar"
-                crossorigin
               />
             </v-avatar>
             <div class="flex-shrink-1 text-xs-center my-1">
@@ -221,7 +220,6 @@
 
       async logout () {
         await this.logoutStore();
-        // await this.$router.push( '/signout' );
       },
 
       onFilePicked ( file ) {
@@ -256,14 +254,50 @@
           console.log( `Upload successfull.` );
           this.$toast.success( 'Upload successful', { icon: 'done', duration: 5000 } );
           console.log( data );
-          this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
-          this.saveUserAvatar( this.imageUrl );
+
+          if ( data.hasOwnProperty( 'avatars' ) ) {
+            // Supports additional webp images
+            this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
+            this.saveUserAvatars( this.imageUrl, data.avatars );
+          } else {
+            // Fallback code
+            this.imageUrl = data.transforms.find( image => image.id === 'thumbnail' ).location;
+            this.saveUserAvatar( this.imageUrl );
+          }
+
         } catch ( error ) {
           console.log( `Upload failed!` );
           this.$toast.error( 'Failed to upload image', { icon: 'error', duration: 5000 } );
           console.log( error.message );
         }
         this.uploadingAvatar = false;
+      },
+
+      async saveUserAvatars ( url, avatars ) {
+        const userId = this.uid;
+        const docRef = db.collection( 'users' ).doc( userId );
+        await docRef.update({
+          avatar: url,
+          avatars: avatars,
+        });
+
+        if ( this.isStreamer ) {
+          const stream = this.username.toLowerCase();
+          const streamRef = db.collection( 'streams' ).doc( stream );
+          await streamRef.update({
+            'user.avatar': url,
+            'user.avatars': avatars,
+          });
+        }
+
+        this.imageFile = null;
+        this.imageName = '';
+
+        this.$ga.event({
+          eventCategory : 'profile',
+          eventAction   : 'update avatar',
+          eventLabel    : this.username.toLowerCase(),
+        });
       },
 
       async saveUserAvatar ( url ) {

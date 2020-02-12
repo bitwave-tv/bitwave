@@ -48,6 +48,7 @@
           hide-details
           dense
           flat
+          inset
         />
       </div>
 
@@ -68,15 +69,26 @@
                   class="pl-3"
                   :to="`${viewer.data.page}`"
                 >
-                  <v-list-item-avatar class="mr-3">
-                    <img
-                      v-if="!!viewer.data.avatar"
-                      :src="`${viewer.data.avatar}?_bw`"
-                      :alt="viewer.data.username"
-                      crossorigin
+                  <picture
+                    v-if="!!viewer.data.avatar"
+                    class="v-avatar v-list-item__avatar ml-0 mr-3"
+                    style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+                  >
+                    <source
+                      v-if="viewer.data.avatars"
+                      :srcset="`${viewer.data.avatars.webp}`"
+                      type="image/webp"
                     >
+                    <img
+                      :src="`${viewer.data.avatar}`"
+                      :alt="viewer.data.username"
+                    >
+                  </picture>
+                  <v-list-item-avatar
+                    v-else
+                    class="mr-3"
+                  >
                     <v-icon
-                      v-else
                       :style="{ background: viewer.data.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.data.color && 'black' }"
                     >person</v-icon>
                   </v-list-item-avatar>

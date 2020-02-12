@@ -44,7 +44,7 @@
                 small
                 class="black--text"
                 :disabled="showPollClient"
-                color="yellow"
+                color="primary"
               >POLL</v-btn>
             </template>
 
@@ -145,6 +145,7 @@
       :show-timestamps="showTimestamps"
       :global="global"
       @reply="addUserTag"
+      @whisper="addWhisper"
     />
 
     <!-- Chat Input -->
@@ -325,6 +326,11 @@
       async addUserTag ( user ) {
         this.$refs['chat-input'].$refs['chatmessageinput'].focus();
         this.appendChatMessage( `@${user} ` );
+      },
+
+      async addWhisper ( user ) {
+        this.$refs['chat-input'].$refs['chatmessageinput'].focus();
+        this.setMessage( `/w @${user} ` );
       },
 
       async authenticated ( user ) {

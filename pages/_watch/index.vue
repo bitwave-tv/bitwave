@@ -4,7 +4,7 @@
     <!-- Streamer Top Bar -->
     <v-sheet
       class="py-2 px-3 hide-scrollbar"
-      color="#212121"
+      color="grey darken-4"
       tile
       style="border-right: solid 1px #ffeb3b; overflow: auto"
     >
@@ -13,9 +13,8 @@
           <v-avatar size="32">
             <img
               v-if="avatar"
-              :src="`${avatar}?_bw`"
+              :src="`${avatar}`"
               :alt="name"
-              crossorigin
             />
             <v-icon v-else>warning</v-icon>
           </v-avatar>

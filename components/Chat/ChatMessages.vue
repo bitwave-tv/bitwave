@@ -7,7 +7,6 @@
       id="chat-scroll"
       ref="scroller"
     >
-
       <transition-group
         name="fade-transition"
         :duration="150"
@@ -29,6 +28,7 @@
             :color="msg.color"
             :global="getGlobalTag( msg.global )"
             @reply="addUserTag"
+            @whisper="addWhisper"
           >
             <div
               class="body-2 msg"
@@ -48,7 +48,6 @@
           </div>
         </div>
       </transition-group>
-
     </div>
 
     <!-- FAB for Scroll Down -->
@@ -57,8 +56,8 @@
         <v-btn
           v-show="showFAB"
           fab
-          small
-          color="yellow"
+          x-small
+          color="primary"
           @click="scrollToBottom( true )"
           class="black--text mt-3"
         >
@@ -104,6 +103,10 @@
     methods: {
       addUserTag ( user ) {
         this.$emit( 'reply', user );
+      },
+
+      addWhisper ( user ) {
+        this.$emit( 'whisper', user );
       },
 
       checkIfBottom () {

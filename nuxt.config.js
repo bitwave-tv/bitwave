@@ -26,7 +26,7 @@ module.exports = {
       { name: 'description',  hid: 'description', content: pkg.description},
       { name: 'og:site_name', content: '[bitwave.tv]' },
       { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
-      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
+      // { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
     ],
     script: [],
     link: [

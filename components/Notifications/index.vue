@@ -82,9 +82,8 @@
                   class="v-avatar va-32 mr-4"
                 >
                   <img
-                    :src="`${notification.avatar}?_bw`"
+                    :src="`${notification.avatar}`"
                     :alt="notification.streamer"
-                    crossorigin
                   >
                 </div>
                 <v-icon v-else>{{ notification.icon }}</v-icon>

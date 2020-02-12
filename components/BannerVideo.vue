@@ -39,10 +39,11 @@
 </template>
 
 <script>
-  import videojs from 'video.js'
-  // import 'videojs-contrib-dash'
+  import videojs from 'video.js';
+  import 'videojs-contrib-quality-levels';
+  // import 'videojs-contrib-dash';
 
-  import Chat from '@/components/Chat'
+  import Chat from '@/components/Chat';
 
   const preroll = 'https://cdn.bitwave.tv/static/REWIND.mp4';
 

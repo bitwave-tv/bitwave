@@ -237,7 +237,7 @@
       return {
         mounted: false,
         player: null,
-        poster: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
+        poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         offline: true,
       }
     },
