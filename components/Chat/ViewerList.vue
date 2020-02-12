@@ -47,7 +47,6 @@
           color="yellow"
           hide-details
           dense
-          flat
           inset
         />
       </div>

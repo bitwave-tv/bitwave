@@ -56,6 +56,8 @@
                 label="NSFW"
                 color="yellow"
                 hide-details
+                dense
+                inset
                 @change="showSave = true"
               />
             </v-flex>
@@ -65,6 +67,8 @@
                 label="Archive"
                 color="yellow"
                 hide-details
+                dense
+                inset
                 @change="showSave = true"
               />
             </v-flex>

@@ -19,27 +19,79 @@
           small
           :loading="loading"
         >
-          <v-avatar size="32" color="grey">
+          <!-- Avatar with webp support -->
+          <picture
+            v-if="avatar"
+            class="v-avatar ml-0 mr-4"
+            style="height: 32px; min-width: 32px; width: 32px; background: #212121;"
+          >
+            <source
+              v-if="avatars"
+              :srcset="`${avatars.webp}`"
+              type="image/webp"
+            >
             <img
-              v-if="avatar"
               :src="`${avatar}`"
               :alt="username"
             >
-            <v-icon v-else color="white">person</v-icon>
+          </picture>
+
+          <v-avatar
+            v-else
+            size="32"
+            color="grey darken-4"
+          >
+            <!-- Troll Hazzy -->
+            <img
+              src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
+              alt="hazmat suit trolll"
+              :style="{ background: props.color }"
+              :key="props.username"
+              crossorigin
+            >
+            <!--<v-icon v-else color="white">person</v-icon>-->
           </v-avatar>
+
         </v-btn>
       </template>
 
       <v-card width="225">
         <v-sheet tile color="primary" class="px-2 py-1">
           <div class="d-flex align-center">
-            <v-avatar class="mr-4" size="40" color="grey">
+
+            <!-- Avatar with webp support -->
+            <picture
+              v-if="avatar"
+              class="v-avatar ml-0 mr-4"
+              style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+            >
+              <source
+                v-if="avatars"
+                :srcset="`${avatars.webp}`"
+                type="image/webp"
+              >
               <img
-                v-if="avatar"
                 :src="`${avatar}`"
                 :alt="username"
               >
-              <v-icon v-else>person</v-icon>
+            </picture>
+
+            <!-- Fallback when we don't have a user avatar -->
+            <v-avatar
+              v-else
+              class="mr-4"
+              size="40"
+              color="grey darken-4"
+            >
+              <!-- Troll Hazzy -->
+              <img
+                src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
+                alt="hazmat suit trolll"
+                :style="{ background: props.color }"
+                :key="props.username"
+                crossorigin
+              >
+              <!--<v-icon v-else>person</v-icon>-->
             </v-avatar>
 
             <div>
@@ -189,6 +241,11 @@
 
       avatar () {
         if ( this.user ) return this.user.avatar;
+        else return false;
+      },
+
+      avatars () {
+        if ( this.user ) return this.user.avatars;
         else return false;
       },
 

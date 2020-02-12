@@ -10,7 +10,7 @@
         <v-card class="mb-4 pa-3">
 
           <div class="d-flex justify-space-around align-center">
-            <v-avatar color="white" size="100" class="ma-3">
+            <v-avatar color="grey darken-4" size="100" class="ma-3">
               <img
                 :src="`${imageUrl}` || `https://cdn.bitwave.tv/static/img/shield.png`"
                 alt="avatar"

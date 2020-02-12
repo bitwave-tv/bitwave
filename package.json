@@ -3,7 +3,6 @@
   "version": "1.8.57",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
-  "private": true,
   "scripts": {
     "dev": "title [DEV] bitwave.tv && cross-env NODE_ENV=development nuxt",
     "dev:express": "cross-env NODE_ENV=development nodemon server/index.js --watch server",

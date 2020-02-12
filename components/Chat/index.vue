@@ -1147,22 +1147,22 @@
 
     &::-webkit-scrollbar-track
     {
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,0.25);
       border-radius: 0;
       background-color: #0a0a0a;
     }
 
     &::-webkit-scrollbar
     {
-      width: 10px;
+      width: 6px;
       background-color: #0a0a0a;
     }
 
     &::-webkit-scrollbar-thumb
     {
       border-radius: 0;
-      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-      background-color: #555;
+      -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,.25);
+      background-color: #333;
     }
   }
 
