@@ -55,7 +55,7 @@
           <span>NSFW:</span>
           <v-spacer />
           <v-btn
-            color="green"
+            color="blue"
             small
             outlined
             @click="setNSFW( false )"
@@ -82,9 +82,17 @@
             color="green"
             small
             outlined
-            @click="transcodeStreamer( 'start' )"
+            @click="transcodeStreamer( 'start', { enable144p: false, enable480p: true } )"
           >
-            Start
+            480p
+          </v-btn>
+          <v-btn
+            color="green"
+            small
+            outlined
+            @click="transcodeStreamer( 'start', { enable144p: true, enable480p: false } )"
+          >
+            144p
           </v-btn>
           <v-btn
             color="red"
@@ -126,8 +134,9 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            color="blue"
+            color="primary"
             small
+            text
             @click="dialog = false"
           >
             Close
@@ -205,12 +214,12 @@
         this.dialog = false;
       },
 
-      async transcodeStreamer ( mode ) {
+      async transcodeStreamer ( mode, options ) {
         try {
           await this.getFreshIdToken();
           const { data } = await this.$axios.post(
             transcodeEndpoint + mode,
-            { user: this.streamer },
+            { user: this.streamer, ...options },
           );
           console.log( data );
           if ( data.success )
