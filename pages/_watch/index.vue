@@ -253,6 +253,7 @@
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
               handlePartialData: true,
+              smoothQualityChange: true,
             },
           },
         });
