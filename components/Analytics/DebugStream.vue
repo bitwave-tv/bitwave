@@ -327,6 +327,14 @@
         dense
         inset
       />
+      <v-switch
+        v-model="disableAutoplayBumps"
+        label="Disable autoplay for offline bumps"
+        color="yellow"
+        hide-details
+        dense
+        inset
+      />
     </v-card>
 
   </div>
@@ -594,6 +602,7 @@
 
       ...mapMutations(Player.namespace, {
         setPinToLive: Player.$mutations.setKeepLive,
+        setDisableBumps: Player.$mutations.setDisableBumps,
       }),
     },
 
@@ -653,11 +662,17 @@
 
       ...mapState(Player.namespace, {
         getPinToLive: Player.$states.keepLive,
+        getDisableBumps: Player.$states.disableBumps,
       }),
 
       pinToLive: {
         set ( val ) { this.setPinToLive( val ) },
         get () { return this.getPinToLive }
+      },
+
+      disableAutoplayBumps: {
+        set ( val ) { this.setDisableBumps( val ) },
+        get () { return this.getDisableBumps }
       },
     },
 

@@ -394,16 +394,18 @@ export const actions = {
   },
 
   async [$actions.newVersionAvailable] ( { commit }, latestVersions ) {
-    const currentVersion = process.env.VERSION;
-    const newVersion = currentVersion < latestVersions[ process.env.BITWAVE_ENV ]
-      ? latestVersions[process.env.BITWAVE_ENV]
-      : false;
+    const currentVersion = process.env.VERSION.split('.');
+    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.');
+
+    // accurately compare version numbers
+    const newVersion = ( currentVersion[0] < newestVersion[0] )
+                    || ( currentVersion[1] < newestVersion[1] )
+                    || ( currentVersion[2] < newestVersion[2] );
+
     if ( newVersion ) {
       console.log( `An update is available! [${newVersion}]` );
-      setTimeout( () => {
-        commit( $mutations.setNewVersion, newVersion );
-        this.$toast.global.update( { message: `[ v${newVersion} ] A new version of bitwave is available` } );
-      }, 2500);
+      commit( $mutations.setNewVersion, newVersion );
+      this.$toast.global.update( { message: `[ v${latestVersions[ process.env.BITWAVE_ENV ]} ] A new bitwave version is available` } );
     } else {
       this.$toast.clear();
     }

@@ -29,6 +29,8 @@ const $states = {
 
   chatToken : 'CHAT_TOKEN',
   displayName : 'DISPLAY_NAME',
+  displayChat : 'DISPLAY_CHAT',
+  chatWindow  : 'CHAT_WINDOW',
 };
 
 const $getters = {
@@ -63,6 +65,8 @@ const $mutations = {
 
   setChatToken : 'SET_CHAT_TOKEN',
   setDisplayName : 'SET_DISPLAY_NAME',
+  setDisplayChat : 'SET_DISPLAY_CHAT',
+  setChatWindow  : 'SET_CHAT_WINDOW',
 };
 
 const $actions = {
@@ -102,6 +106,8 @@ export const state = () => ({
 
   [$states.chatToken] : null,
   [$states.displayName] : '',
+  [$states.displayChat] : true,
+  [$states.chatWindow] : null,
 });
 
 
@@ -222,6 +228,16 @@ export const mutations = {
   // Set chat token
   [$mutations.setDisplayName] ( state, data ) {
     state[$states.displayName] = data;
+  },
+
+  // Controls chat visibility
+  [$mutations.setDisplayChat] ( state, data ) {
+    state[$states.displayChat] = data;
+  },
+
+  // Chat popout window
+  [$mutations.setChatWindow] ( state, data ) {
+    state[$states.chatWindow] = data;
   },
 };
 

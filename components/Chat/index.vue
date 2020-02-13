@@ -96,7 +96,7 @@
           <template #activator="{ on }">
             <v-btn
               v-on="on"
-              class="ml-2 px-0"
+              class="ml-3 px-0"
               small
               icon
             >

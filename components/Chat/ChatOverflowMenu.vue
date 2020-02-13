@@ -1,10 +1,8 @@
 <template>
-  <v-card class="mt-2">
+  <v-card class="mt-3">
     <div style="border-top: solid 3px #ffeb3b;">
 
-      <v-sheet
-        color="grey darken-4"
-      >
+      <v-sheet color="grey darken-4">
         <v-list
           dense
           :style="{ background: 'transparent' }"
@@ -16,22 +14,22 @@
           </div>
 
           <v-list-item @click="popoutChat">
-            <v-list-item-action class="my-1 mr-3">
-              <v-icon>open_in_new</v-icon>
+            <v-list-item-action class="mr-1">
+              <v-icon small>open_in_new</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Pop Out Chat</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
-          <!--<v-list-item @click="closeChat">
-            <v-list-item-action class="my-1 mr-3">
-              <v-icon>block</v-icon>
+          <v-list-item @click="closeChat">
+            <v-list-item-action class="mr-1">
+              <v-icon small>block</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Hide Chat</v-list-item-title>
+              <v-list-item-title>Close Chat</v-list-item-title>
             </v-list-item-content>
-          </v-list-item>-->
+          </v-list-item>
 
         </v-list>
       </v-sheet>
@@ -41,6 +39,9 @@
 </template>
 
 <script>
+  import { mapState, mapMutations } from 'vuex';
+  import { Chat } from '@/store/chat';
+
   export default {
     name: 'ChatOverflowMenu',
 
@@ -49,26 +50,38 @@
     },
 
     data() {
-      return {
-        popoutWindow: null,
-      };
+      return {};
     },
 
     methods: {
-      closeMenu () {
-        this.$emit( 'close' );
-      },
+      ...mapMutations(Chat.namespace,{
+        setDisplayChat: Chat.$mutations.setDisplayChat,
+        setChatWindow: Chat.$mutations.setChatWindow,
+      }),
 
       async popoutChat () {
-        if ( !this.popoutWindow || this.popoutWindow.closed ) {
-          this.popoutWindow = await this.createPopoutWindow();
+        if ( !this.chatWindow || !this.chatWindow.getWindow() || this.chatWindow.getWindow().closed ) {
+
+          console.log( `Creating new popup window` );
+
+          const cw = await this.createPopoutWindow();
+          this.setDisplayChat( false );
+
+          cw.addEventListener( 'beforeunload', () => this.setDisplayChat( true ) );
+
+          const vcx = { getWindow: () => cw };
+          Object.freeze( vcx );
+
+          this.setChatWindow( vcx );
+
         } else {
-          this.popoutWindow.focus();
+          this.setDisplayChat( false );
+          this.chatWindow.getWindow().focus();
         }
       },
 
       closeChat () {
-
+        this.setDisplayChat( false );
       },
 
       createPopoutWindow () {
@@ -82,17 +95,16 @@
         return open( url, title, optionsStr );
       },
 
-
     },
 
-    computed: {},
+    computed: {
+      ...mapState(Chat.namespace, {
+        chatWindow: Chat.$states.chatWindow,
+      }),
+    },
 
-    mounted() {
+    mounted () {
 
     },
   };
 </script>
-
-<style lang='scss'>
-
-</style>

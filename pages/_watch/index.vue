@@ -1,12 +1,15 @@
 <template>
-  <div :style="{ paddingRight: mobile ? landscape ? '50%' : '0' : '450px' }">
+  <div :style="{
+    marginRight: pageMarginRight,
+    borderTight: 'solid 1px #212121',
+  }">
 
     <!-- Streamer Top Bar -->
     <v-sheet
       class="py-2 px-3 hide-scrollbar"
       color="grey darken-4"
       tile
-      style="border-right: solid 1px #ffeb3b; overflow: auto"
+      style="border-right: solid 1px #ffeb3b !important; overflow: auto"
     >
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center grey--text">
@@ -50,20 +53,22 @@
           },
         }"
       >
-        <div
-          :class="{ 'detach-player': smartDetach, 'elevation-6': smartDetach }"
-        >
+        <div :class="{
+          'detach-player': smartDetach,
+          'elevation-6': smartDetach,
+        }">
           <video
             playsinline
             id="streamplayer"
             class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
             controls
-            autoplay
+            :autoplay="live || !disableBumps"
             preload="none"
             :poster="posterCacheBusted"
             :style="{ width: '100%' }"
           >
             <!-- v-if="live || videojs.browser.IS_SAFARI" -->
+            <!-- v-if="live || initialized" -->
             <source
               :src="url"
               :type="type"
@@ -116,7 +121,9 @@
 
 
     <!-- Chat -->
-    <div :key="1"
+    <div
+      v-if="displayChat"
+      :key="1"
       class="d-flex"
       :class="{ 'chat-desktop': !mobile || ( mobile && landscape ) }"
       :style="{
@@ -129,6 +136,24 @@
         :hydration-data="chatMessages"
       />
     </div>
+
+    <!-- Restore chat FAB -->
+    <v-fab-transition>
+      <v-btn
+        v-show="!displayChat"
+        color="yellow"
+        fixed
+        fab
+        large
+        dark
+        bottom
+        right
+        class="v-btn--example"
+        @click="() => setDisplayChat( true )"
+      >
+        <v-icon color="black">question_answer</v-icon>
+      </v-btn>
+    </v-fab-transition>
 
 
     <!-- Stream Info -->
@@ -242,7 +267,7 @@
         this.player = videojs( 'streamplayer', {
           liveui: true,
           fluid: true,
-          fill: true,
+          fill: false,
           // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
           plugins: { qualityLevels: {} },
@@ -460,19 +485,67 @@
         // Detect offline stream
         if ( !this.live && !live ) console.debug( 'User is offline' );
 
-        // Detect user going live
+        // Detect user going LIVE
         else if ( !this.live && live ) {
-          console.log( 'Livestream starting' );
+          // immediately set to LIVE state
           this.live = live;
+
+          console.log( 'Livestream starting' );
+          if ( this.offlineResetInterval ) clearInterval( this.offlineResetInterval );
 
           // Load and Play stream
           this.setSource({ url, type });
         }
 
-        // Detect user going [ online -> offline ]
-        /*else if ( this.live && !live ) {
+        // Detect user going OFFLINE
+        else if ( this.live && !live ) {
+          // immediately set to OFFLINE state
+          this.live = live;
+
           console.log( 'Livestream ending' );
-        }*/
+
+          // Experimental feature to prevent constant retries when player empties
+          // This should reduce erroneous 404's on the ingestion servers
+
+          const CHECK_INTERVAL = 5;
+          const MAX_TIME = 90;
+
+          // Try to prevent resetting while watching stale data
+          const canReset = () => {
+            const atLiveEdge = this.player.liveTracker && this.player.liveTracker.atLiveEdge();
+            const isPaused   = this.player.paused();
+            return atLiveEdge && !isPaused;
+          };
+
+          // Attempt to end stream and reset player
+          let TIME = 0;
+          const endStream = async () => {
+            // Abort if stream goes live
+            if ( this.live ) {
+              clearInterval( this.offlineResetInterval );
+              return;
+            }
+
+            // Always increment time
+            TIME += CHECK_INTERVAL;
+
+            // Check if satisfy requirements or have exceeded our max time
+            if ( !canReset() &&  TIME <= MAX_TIME ) return;
+
+            // Remove our interval
+            if ( this.offlineResetInterval ) clearInterval( this.offlineResetInterval );
+
+            // Reset basic player properties
+            this.poster = data.cover;
+            this.setSource({
+              url: await this.getRandomBump(),
+              type: 'video/mp4',
+            });
+          };
+
+          // Keep timer ID so we can cancel early if stream recovers
+          this.offlineResetInterval = setInterval( async () => await endStream(), CHECK_INTERVAL * 1000 );
+        }
 
         // Detect source change
         else if ( this.url !== url  || this.type !== type ) {
@@ -544,6 +617,10 @@
       ...mapMutations(Player.namespace, {
         setSource: Player.$mutations.setSource,
         setDetach: Player.$mutations.setDetach,
+      }),
+
+      ...mapMutations(ChatStore.namespace,{
+        setDisplayChat: ChatStore.$mutations.setDisplayChat,
       }),
 
       ...mapActions( Player.namespace, {
@@ -742,7 +819,12 @@
       ...mapState(Player.namespace, {
         source : Player.$states.source,
         pinToLive : Player.$states.keepLive,
+        disableBumps : Player.$states.disableBumps,
         detach : Player.$states.detach,
+      }),
+
+      ...mapState(ChatStore.namespace, {
+        displayChat: ChatStore.$states.displayChat
       }),
 
       ...mapGetters({
@@ -772,6 +854,11 @@
           && !this.mobile
           && this.player
           && !this.player.isInPictureInPicture();
+      },
+
+      pageMarginRight () {
+        if ( !this.displayChat ) return '0';
+        return this.mobile ? this.landscape ? '50%' : '0' : '450px';
       },
     },
 
