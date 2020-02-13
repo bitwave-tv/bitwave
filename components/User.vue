@@ -45,8 +45,6 @@
             <img
               src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
               alt="hazmat suit trolll"
-              :style="{ background: props.color }"
-              :key="props.username"
               crossorigin
             >
             <!--<v-icon v-else color="white">person</v-icon>-->
@@ -87,8 +85,6 @@
               <img
                 src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
                 alt="hazmat suit trolll"
-                :style="{ background: props.color }"
-                :key="props.username"
                 crossorigin
               >
               <!--<v-icon v-else>person</v-icon>-->
