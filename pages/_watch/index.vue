@@ -63,7 +63,7 @@
             class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
             controls
             :autoplay="live || !disableBumps"
-            preload="none"
+            preload="auto"
             :poster="posterCacheBusted"
             :style="{ width: '100%' }"
           >
