@@ -859,7 +859,11 @@
 
       pageMarginRight () {
         if ( !this.displayChat ) return '0';
-        return this.mobile ? this.landscape ? '50%' : '0' : '450px';
+        return this.mobile
+          ? this.landscape
+            ? '50%'
+            : '0'
+          : '450px';
       },
     },
 

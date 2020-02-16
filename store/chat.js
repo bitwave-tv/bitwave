@@ -248,12 +248,16 @@ export const actions = {
     commit( 'SET_ROOM', data );
   },
 
-  async [$actions.updateEmoteList] ( { commit } ) {
+  async [$actions.updateEmoteList] ( { state, commit } ) {
+    // Detect if we have already leaded emotes
+    if ( state[$states.emoteList] && state[$states.emoteList].length > 0 ) return;
+
+    // Load emote autocompletes
     try {
       const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/emotes', { progress: false } );
       commit( $mutations.setEmoteList,  data.data );
     } catch ( error ) {
-      console.error( `Failed to load emote list.` );
+      console.error( `Failed to load emote list!` );
       console.error( error.message );
     }
   },

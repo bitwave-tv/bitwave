@@ -271,12 +271,19 @@ export const actions = {
     commit( $mutations.setAuth, authUser );
     commit( $mutations.setUser, user );
 
-    await dispatch( $actions.fetchSidebarData );
+    const runParallel = [
+      // Sidebar Streams
+      dispatch( $actions.fetchSidebarData ),
 
-    // Chat user hydration data
-    dispatch( $actions.updateViewers );
+      // Chat user hydration data
+      dispatch( $actions.updateViewers ),
+    ];
 
-    dispatch( `${Chat.namespace}/${Chat.$actions.updateEmoteList}` );
+    // Hydrate emotes for logged in users
+    if ( authUser && user ) runParallel.push( dispatch( `${Chat.namespace}/${Chat.$actions.updateEmoteList}` ) );
+
+    // Run all our API actions in parallel
+    await Promise.all( runParallel );
   },
 
   async nuxtClientInit ({ dispatch }, { req, params }) {
@@ -424,21 +431,30 @@ export const actions = {
   },
 
   async [$actions.updateViewers] ( { commit } ) {
-    try {
-      const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/channels', { progress: false } );
-      commit( $mutations.setChannelViewers,  data.data );
-    } catch ( error ) {
-      console.log( `Failed to hydrate channels` );
-      console.log( error );
-    }
+    const updateChannelViewers = async () => {
+      try {
+        const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/channels', { progress: false } );
+        commit( $mutations.setChannelViewers,  data.data );
+      } catch ( error ) {
+        console.log( `Failed to hydrate channels` );
+        console.log( error );
+      }
+    };
 
-    try {
-      const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/users', { progress: false } );
-      commit( $mutations.setUserList, data.data );
-    } catch ( error ) {
-      console.log( `Failed to hydrate userlist` );
-      console.log( error );
-    }
+    const updateUserList = async () => {
+      try {
+        const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/users', { progress: false } );
+        commit( $mutations.setUserList, data.data );
+      } catch ( error ) {
+        console.log( `Failed to hydrate userlist` );
+        console.log( error );
+      }
+    };
+
+    await Promise.all([
+      updateChannelViewers(),
+      updateUserList(),
+    ]);
   }
 
 };

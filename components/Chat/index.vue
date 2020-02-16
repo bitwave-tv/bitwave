@@ -385,23 +385,33 @@
             const oldToken = this.getChatToken;
 
             // Swap ID token for Chat Token
-            const idToken = await auth.currentUser.getIdToken();
-            await this.exchangeIdTokenChatToken( idToken );
-            const chatToken = this.getChatToken;
+            const getNewToken = async () => {
+              const idToken = await auth.currentUser.getIdToken();
+              await this.exchangeIdTokenChatToken( idToken );
+              const chatToken = this.getChatToken;
 
-            const tokenUpdated = !compareTokens( oldToken, this.getChatToken );
+              const tokenUpdated = !compareTokens( oldToken, this.getChatToken );
 
-            if ( process.env.APP_DEBUG ) console.log( `Has our chat token updated? ${tokenUpdated ? 'Yes' : 'No'}` );
+              if ( process.env.APP_DEBUG ) console.log( `Has our chat token updated? ${tokenUpdated ? 'Yes' : 'No'}` );
 
-            if ( tokenUpdated ) {
-              // Create user payload
-              const tokenUser = {
-                type  : 'user',
-                token : chatToken,
-                page  : this.page,
-              };
-              this.connectChat( tokenUser ); // Connect to chat server
-            }
+              if ( tokenUpdated ) {
+                // Create user payload
+                const tokenUser = {
+                  type  : 'user',
+                  token : chatToken,
+                  page  : this.page,
+                };
+                this.connectChat( tokenUser ); // Connect to chat server
+              }
+            };
+
+            /*if ( !oldToken ) {
+              await getNewToken();
+            } else {
+              setTimeout( () => getNewToken(), 5000 );
+            }*/
+
+            await getNewToken();
           }
           lastUser = user; // Record user state
         });
@@ -433,10 +443,8 @@
         this.socket.on( 'error',      async error => await this.socketError( `Connection Failed`, error ) );
         this.socket.on( 'disconnect', async data  => await this.socketError( `Connection Lost`, data ) );
 
-        // this.socket.on( 'update usernames', async data => await this.updateViewerlist( data ) );
         this.socket.on( 'update usernames', async () => await this.updateViewers() );
 
-        // this.socket.on( 'hydrate',     async data => await this.hydrate( data ) );
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
@@ -447,8 +455,11 @@
       },
 
       async socketConnect () {
-        // Get RECAPTCHA v3 Token
-        this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
+        if ( process.env.APP_DEBUG && false ) { // For testing...
+          this.userToken.recaptcha = null;
+        } else { // Get RECAPTCHA v3 Token
+          this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
+        }
 
         // Attempt to connect...
         this.socket.emit( 'new user', this.userToken );
@@ -1042,10 +1053,9 @@
       page () {
         let channel = this.chatChannel;
         if ( channel ) {
-          if ( channel.match( /^[a-zA-Z0-9._-]+$/ ) )
-            return channel;
-          else
-            return '404';
+          return channel.match( /^[a-zA-Z0-9._-]+$/ )
+            ? channel
+            : '404';
         } else {
           return 'Global';
         }
