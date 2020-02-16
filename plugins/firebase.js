@@ -24,14 +24,16 @@ export { auth, db, FieldValue, EmailAuthProvider }
 
 const listenToAuthState = ( callback ) => {
   return auth.onAuthStateChanged( async user => {
+    const runParallel = [];
     // Handle login
     if ( user ) {
       if ( process.env.APP_DEBUG ) console.log( '[Firebase] Authenticated', user );
-      await callback( user );
+      runParallel.push( callback( user ) );
     } else {
       if ( process.env.APP_DEBUG ) console.log( '[Firebase] Not Authenticated' );
-      await callback( null );
+      runParallel.push( callback( null ) );
     }
+    await Promise.all( runParallel );
   }, async error => {
     console.error( 'Auth Error:', error )
   });
@@ -39,18 +41,24 @@ const listenToAuthState = ( callback ) => {
 
 
 export const listenToConfiguationUpdates = callbacks => {
-  return db.collection( 'configurations' ).doc( 'bitwave.tv' ).onSnapshot( async doc => {
-    const data = doc.data();
-    await Promise.all( callbacks.map( async cb => await cb( data ) ) );
-  })
+  return db
+    .collection( 'configurations' )
+    .doc( 'bitwave.tv' )
+    .onSnapshot( async doc => {
+      const data = doc.data();
+      await Promise.all( callbacks.map( async cb => await cb( data ) ) );
+    });
 };
 
 
 export const listenToFeatureFlags = callbacks => {
-  return db.collection( 'configurations' ).doc( 'features' ).onSnapshot( async doc => {
-    const data = doc.data();
-    await Promise.all( callbacks.map( async cb => await cb( data ) ) );
-  })
+  return db
+    .collection( 'configurations' )
+    .doc( 'features' )
+    .onSnapshot( async doc => {
+      const data = doc.data();
+      await Promise.all( callbacks.map( async cb => await cb( data ) ) );
+    });
 };
 
 
@@ -65,9 +73,9 @@ export default async ( { app, store } ) => {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
 
     // Listen for authentication changes
-    listenToAuthState( user => {
-      if ( user ) store.dispatch( VStore.$actions.login, user );
-      else store.dispatch( VStore.$actions.logout );
+    listenToAuthState( async user => {
+      if ( user ) await store.dispatch( VStore.$actions.login, user );
+      else await store.dispatch( VStore.$actions.logout );
     });
 
     // Listen to the configuration, and dispatch updates
