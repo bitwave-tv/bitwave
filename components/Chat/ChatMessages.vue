@@ -228,9 +228,8 @@
 
     async mounted () {
       this.chatContainer = this.$refs.scroller;
+      // this.$nextTick( () => this.jumpToBottom() );
       this.chatContainer.addEventListener( 'scroll', this.onScroll, { passive: true } );
-      this.$nextTick( () => this.jumpToBottom() );
-      // this.scrollInterval = setInterval( () => this.onScrollInterval(), 250 );
     },
 
     beforeDestroy () {
