@@ -110,21 +110,24 @@
                   </v-avatar>
                 </v-badge>
               </v-list-item-avatar>
-              <v-list-item-content class="py-0">
+              <v-list-item-content
+                v-if="!miniVariant"
+                class="py-0"
+              >
                 <v-list-item-title>{{ user.title }}</v-list-item-title>
                 <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </transition-group>
 
-          <v-slide-y-transition>
+          <v-slide-x-transition>
             <div
               v-if="uid && following.length > 0"
               class="overline text-center grey--text mt-3 mb-1"
             >
               FOLLOWING
             </div>
-          </v-slide-y-transition>
+          </v-slide-x-transition>
 
           <!-- List of streams following  -->
           <template
@@ -134,6 +137,7 @@
             <v-lazy
               min-height="56"
               :key="`${user.owner}-offline`"
+              transition="slide-x-transition"
             >
               <v-list-item
                 class="py-1"
@@ -143,7 +147,7 @@
                 @click="onClick"
               >
                 <v-list-item-avatar
-                  color="#000"
+                  color="#000000"
                   class="my-1"
                 >
                   <v-avatar
@@ -156,7 +160,10 @@
                     >
                   </v-avatar>
                 </v-list-item-avatar>
-                <v-list-item-content class="py-0">
+                <v-list-item-content
+                  v-if="!miniVariant"
+                  class="py-0"
+                >
                   <v-list-item-title>{{ user.title }}</v-list-item-title>
                   <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
                 </v-list-item-content>
@@ -178,7 +185,7 @@
                 size="40"
                 class="blue--text"
               >
-                <v-icon light>search</v-icon><!-- more_horiz -->
+                <v-icon light>search</v-icon>
               </v-avatar>
             </v-list-item-avatar>
             <v-list-item-content>
@@ -190,7 +197,7 @@
     </v-layout>
 
     <!-- Minify Panel -->
-    <template v-slot:append>
+    <template #append>
       <div class="pa-2">
         <v-btn
           color="yellow"
@@ -248,7 +255,8 @@
       },
 
       async authenticated ( user ) {
-        if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
+        // if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
+        await this.getFollowing( user.uid );
       },
 
       async getFollowing ( userId ) {
