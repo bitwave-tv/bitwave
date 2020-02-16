@@ -92,7 +92,7 @@
     data () {
       return {
         title: '[bitwave.tv]',
-        drawer: undefined,
+        drawer: null,
         ssr: true,
         systemAlertHidden: null,
       }

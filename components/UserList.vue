@@ -1,11 +1,11 @@
 <template>
   <v-navigation-drawer
     :value="value"
-    @input="$emit('input', $event)"
     :mini-variant="miniVariant"
     :clipped="false"
     color="grey darken-4"
     app
+    @input="$emit( 'input', $event )"
   >
     <v-layout
       fill-height
@@ -110,12 +110,9 @@
                   </v-avatar>
                 </v-badge>
               </v-list-item-avatar>
-              <v-list-item-content
-                v-if="!miniVariant"
-                class="py-0"
-              >
-                <v-list-item-title>{{ user.title }}</v-list-item-title>
-                <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+              <v-list-item-content class="py-0">
+                <v-list-item-title v-if="!miniVariant">{{ user.title }}</v-list-item-title>
+                <v-list-item-subtitle v-if="!miniVariant">{{ user.name }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </transition-group>
@@ -160,12 +157,9 @@
                     >
                   </v-avatar>
                 </v-list-item-avatar>
-                <v-list-item-content
-                  v-if="!miniVariant"
-                  class="py-0"
-                >
-                  <v-list-item-title>{{ user.title }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+                <v-list-item-content class="py-0">
+                  <v-list-item-title v-if="!miniVariant">{{ user.title }}</v-list-item-title>
+                  <v-list-item-subtitle v-if="!miniVariant">{{ user.name }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-lazy>
@@ -216,7 +210,7 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import { VStore } from '@/store';
-  import { auth,db } from '@/plugins/firebase';
+  import { auth, db } from '@/plugins/firebase';
 
   export default {
     name: 'UserList',
@@ -231,12 +225,13 @@
 
         items: [
           {
-            icon   : 'whatshot', //blur_on // ondemand_video // live_tv
+            icon   : 'whatshot',
             size   : 32,
             title  : 'Home',
             to     : '/',
           },
         ],
+
         userUpdateRate: 20,
         userListTimer: null,
 

@@ -500,7 +500,9 @@
           return console.log( 'Hydration data was empty' );
         }
 
-        this.messages = data.filter( message => !this.filterMessage( message ) );
+        this.messages = data
+          .filter( message => !this.filterMessage( message ) )
+          .map( message => Object.freeze( message ) );
 
         // Scroll after hydration
         if ( process.client ) {
@@ -721,8 +723,9 @@
       },
 
       async insertMessage ( message, color ) {
-        await this.rcvMessageBulk([
+        await this.rcvMessageBulk( Object.freeze([
           {
+            _id: Date.now(),
             timestamp: Date.now(),
             username: '[bitwave.tv]',
             userColor: color ? color : '#FFF',
@@ -730,7 +733,7 @@
             message: message,
             channel: this.page,
           },
-        ]);
+        ]));
       },
 
       async getRecaptchaToken ( action ) {
