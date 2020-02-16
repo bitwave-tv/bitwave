@@ -780,9 +780,10 @@
         return { success: false, error: { statusCode: 500, message: `This should never occur.` } };
       };
 
-      const getChatHydration = async () => {
+      const getChatHydration = async ( channel ) => {
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+          if ( global === null ) return null;
           const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
           if ( data && data.success ) return data.data;
         } catch ( error ) {
@@ -802,7 +803,7 @@
       }
 
       // Get chat data for chat
-      const chatMessages = await getChatHydration();
+      const chatMessages = await getChatHydration( channel );
       if ( !chatMessages ) {
         const errorMessage = `Failed to load chat data for ${channel}`;
         console.error( errorMessage );
@@ -811,7 +812,7 @@
       return {
         channel: channel,
         ...channelData.data,
-        chatMessages: chatMessages || [],
+        chatMessages: chatMessages,
       };
     },
 

@@ -87,7 +87,7 @@ const $actions = {
 // Create Store State
 export const state = () => ({
   [$states.room]       : '',
-  [$states.global]     : false,
+  [$states.global]     : null,
   [$states.timestamps] : true,
   [$states.useTts]     : false,
   [$states.useIgnore]  : true,
@@ -107,7 +107,7 @@ export const state = () => ({
   [$states.chatToken] : null,
   [$states.displayName] : '',
   [$states.displayChat] : true,
-  [$states.chatWindow] : null,
+  [$states.chatWindow]  : null,
 });
 
 
@@ -341,7 +341,8 @@ export const actions = {
     // Global chat
     try {
       const global = localStorage.getItem( 'globalchat' );
-      if ( !!global ) commit( $mutations.setGlobal, global );
+      if ( global !== null ) commit( $mutations.setGlobal, global );
+      else  commit( $mutations.setGlobal, false );
     } catch ( error ) {
       console.log( 'No global chat option found.' );
     }
@@ -349,7 +350,8 @@ export const actions = {
     // Timestamps
     try {
       const showTimestamps = localStorage.getItem( 'showtimestamps' );
-      if ( !!showTimestamps ) commit( $mutations.setTimestamps, showTimestamps );
+      if ( showTimestamps !== null ) commit( $mutations.setTimestamps, showTimestamps );
+      else commit( $mutations.setTimestamps, true );
     } catch ( error ) {
       console.log( 'No showTimestamps option found.' );
     }
@@ -357,7 +359,8 @@ export const actions = {
     // Ignore users
     try {
       const ignore = localStorage.getItem( 'useignore' );
-      if ( !!ignore ) commit( $mutations.setUseIgnore, JSON.parse( ignore ) );
+      if ( ignore !== null ) commit( $mutations.setUseIgnore, JSON.parse( ignore ) );
+      else commit( $mutations.setUseIgnore, true );
     } catch ( error ) {
       console.log( 'No ignore option found.' );
     }
@@ -365,7 +368,8 @@ export const actions = {
     // Notifications
     try {
       const notify = localStorage.getItem( 'notify' );
-      if ( !!notify ) commit( $mutations.setNotify, notify );
+      if ( notify !== null ) commit( $mutations.setNotify, notify );
+      else commit( $mutations.setNotify, true );
     } catch ( error ) {
       console.log ( 'No notification sound option found.' );
     }
@@ -373,7 +377,8 @@ export const actions = {
     // Autocomplete
     try {
       const autocomplete = localStorage.getItem( 'autocomplete' );
-      if ( !!autocomplete ) commit( $mutations.setAutocomplete, autocomplete );
+      if ( autocomplete !== null ) commit( $mutations.setAutocomplete, autocomplete );
+      else commit( $mutations.setAutocomplete, true );
     } catch ( error ) {
       console.log ( 'No autocomplete option found.' );
     }
@@ -381,7 +386,7 @@ export const actions = {
     // Get ignore list
     try {
       const ignores = localStorage.getItem( 'ignorelist' );
-      if ( !!ignores ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
+      if ( ignores !== null ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
     } catch ( error ) {
       console.log( 'No ignore list found.' );
     }

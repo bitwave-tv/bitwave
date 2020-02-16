@@ -484,8 +484,8 @@
         }
       },
 
-      async hydrate ( data ) {
-        if ( !data ) {
+      async hydrate ( data, isSSR ) {
+        if ( !data && !isSSR ) {
           this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000, position: 'top-right' } );
           console.log( 'Failed to receive hydration data' );
           return;
@@ -1060,7 +1060,7 @@
 
     async created () {
       // Hydrate chat from SSR or API
-      if ( this.hydrationData ) await this.hydrate( this.hydrationData );
+      if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
       else await this.httpHydrate();
     },
 
