@@ -247,42 +247,60 @@
     },
 
     async asyncData ({ $axios, store }) {
-      try {
-        const live = (await $axios.get( `https://api.bitwave.tv/api/sources/list` )).data.live;
-        const { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list' );
+      const defaultLive = [
+        {
+          "src": 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
+          "name": "offline",
+          "type": "video/mp4",
+        },
+      ];
 
-        const getChatHydration = async () => {
+      try {
+        const getStreams = async () => {
+          try {
+            const { data } = await $axios.get( 'https://api.bitwave.tv/v1/channels/live' );
+            if ( data && data.success ) {
+              return {
+                live: data.live,
+                streamers: data.streamers,
+              }
+            }
+          } catch ( error ) {
+            console.error( error );
+          }
+          return {
+            live: defaultLive,
+            streamers: [],
+          }
+        };
+
+        const streams = await getStreams();
+
+        const getChatHydration = async ( channel ) => {
           try {
             const global = store.state[ChatStore.namespace][ChatStore.$states.global];
-            const channel = live[0].name;
             const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
             if ( data.success ) return data.data;
           } catch ( error ) {
-            console.log( error );
+            console.error( error );
           }
           return [];
         };
 
-        const chatMessages = await getChatHydration();
+        const channel = streams.live.length > 0 ? streams.live[0].name : '';
+        const chatMessages = await getChatHydration( channel );
 
         return {
-          streamers: data.users.filter( s => s.live ),
-          live: live,
+          live: streams.live,
+          streamers: streams.streamers,
           offline: false,
           chatMessages,
         }
       } catch ( error ) {
-        console.log( error );
-        const defaultLive = [
-          {
-            "src": 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
-            "name": "offline",
-            "type": "video/mp4",
-          },
-        ];
+        console.error( error );
         return {
-          streamers: [],
           live: defaultLive,
+          streamers: [],
           offline: true,
           chatMessages: [],
         }
@@ -299,7 +317,7 @@
 
     mounted () {
       this.mounted = true;
-      if ( this.offline ) this.$toast.error( error.message, { duration: 5000, icon: 'error', position: 'top-center' } );
+      if ( this.offline ) this.$toast.error( 'API Error: SSR Hydration failed', { duration: 5000, icon: 'error', position: 'top-center' } );
     },
   }
 </script>
