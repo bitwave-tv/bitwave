@@ -21,7 +21,7 @@
           tile
         >
           <div v-if="live" class="d-flex align-center">
-            <div class="white--text">{{ viewers < 1 ? '🌊' : viewers }}</div>
+            <div class="white--text">{{ viewers <= 1 ? '🌊' : viewers }}</div>
             <v-icon v-show="viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
           </div>
           <div v-else class="d-flex align-center">
