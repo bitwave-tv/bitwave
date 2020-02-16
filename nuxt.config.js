@@ -13,6 +13,8 @@ module.exports = {
     VERSION: pkg.version || '0.0.0',
     APP_DEBUG: process.env.APP_DEBUG || false,
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
+
+    WORKBOX_DEBUG: process.env.WORKBOX_DEBUG,
   },
 
   /*
@@ -26,18 +28,21 @@ module.exports = {
       { name: 'description',  hid: 'description', content: pkg.description},
       { name: 'og:site_name', content: '[bitwave.tv]' },
       { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
-      // { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg', hid: 'og:image' },
+      // https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg // old image
     ],
     script: [],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
-        crossorigin: 'anonymous',
+        rel: 'icon',
+        type: 'image/x-icon',
+        href: '/favicon.ico',
+        crossorigin: 'anonymouse',
+      },
+      {
         rel: 'stylesheet',
         href: 'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:500&display=swap',
       },
       {
-        crossorigin: 'anonymous',
         rel: 'stylesheet',
         href: 'https://fonts.googleapis.com/css?family=Material+Icons',
       },
@@ -58,132 +63,170 @@ module.exports = {
     'vuetify/dist/vuetify.css',
   ],
 
-  workbox: {
-    // config: { debug: true },
 
-    cleanupOutdatedCaches: true,
+  pwa: {
+    workbox: {
+      config: { debug: process.env.WORKBOX_DEBUG },
 
-    /*preCaching: [
-      'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap',
-      'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:500&display=swap',
-      'https://fonts.googleapis.com/css?family=Material+Icons',
-    ],*/
+      importScripts: [
+        '/bitwave-offline-sw.js',
+      ],
 
-    runtimeCaching: [
-      /*{
-        urlPattern: 'https://stream.bitwave.tv/stream/.*',
-        handler: 'networkOnly',
-        strategyOptions: {
-          cacheName: 'HLS-cache',
-        },
-      },*/
+      cleanupOutdatedCaches: true,
 
+      /*preCaching: [
+        'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap',
+        'https://fonts.googleapis.com/css?family=IBM+Plex+Sans:500&display=swap',
+        'https://fonts.googleapis.com/css?family=Material+Icons',
+      ],*/
 
-      // Cache fonts
-      {
-        urlPattern: 'https://fonts.googleapis.com',
-        handler: 'NetworkFirst',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'assets',
-          cacheExpiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
-            purgeOnQuotaError: true,
-          }
-        },
-      },
-      {
-        urlPattern: 'https://fonts.gstatic.com',
-        handler: 'StaleWhileRevalidate',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'assets',
-          /*cacheableResponse: {
-            statuses: [ 200 ],
-          },*/
-          cacheExpiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
-            purgeOnQuotaError: true,
-          }
-        },
-      },
-
-
-      // Cache basic API responses
-      {
-        urlPattern: 'https://api.bitwave.tv/api/(?:channels/list|bump)$',
-        handler: 'NetworkFirst',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'bitwave-api',
-        },
-      },
-
-      // Long lived API responses
-      {
-        urlPattern: 'https://api.bitwave.tv/api/channels(/?|/([a-zA-Z0-9._-]+)?)$',
-        handler: 'NetworkFirst',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'bitwave-api',
-        },
-      },
-
-      // Cache emotes
-      {
-        urlPattern: 'https://cdn.bitwave.tv/static/emotes/(.*)\\?4$',
-        handler: 'CacheFirst',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'bitwave-emotes',
-          cacheableResponse: {
-            statuses: [ 200 ],
+      runtimeCaching: [
+        /*{
+          urlPattern: 'https://stream.bitwave.tv/stream/.*',
+          handler: 'networkOnly',
+          strategyOptions: {
+            cacheName: 'HLS-cache',
           },
-          cacheExpiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
-            purgeOnQuotaError: true,
+        },*/
+
+
+        // Cache fonts
+        {
+          urlPattern: 'https://fonts.googleapis.com',
+          handler: 'NetworkFirst',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'assets',
+            cacheExpiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
+              purgeOnQuotaError: true,
+            }
           },
         },
-      },
-
-      // Cache Hazzy
-      /*{
-        urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw).*$',
-        handler: 'StaleWhileRevalidate',
-        method: 'GET',
-        strategyOptions: {
-          cacheName: 'bitwave-images-v2',
-          cacheableResponse: {
-            statuses: [ 200 ],
-          },
-          cacheExpiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 1, // 30 Days
-            purgeOnQuotaError: true,
+        {
+          urlPattern: 'https://fonts.gstatic.com',
+          handler: 'StaleWhileRevalidate',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'assets',
+            /*cacheableResponse: {
+              statuses: [ 200 ],
+            },*/
+            cacheExpiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
+              purgeOnQuotaError: true,
+            }
           },
         },
-      },*/
 
-      // more workbox cache settings...
-    ],
-  },
 
-  /*
+        // Cache basic API responses
+        {
+          urlPattern: 'https://api.bitwave.tv/api/(?:channels/list|bump)$',
+          handler: 'NetworkFirst',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'bitwave-api',
+          },
+        },
+
+        // Long lived API responses
+        {
+          urlPattern: 'https://api.bitwave.tv/api/channels(/?|/([a-zA-Z0-9._-]+)?)$',
+          handler: 'NetworkFirst',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'bitwave-api',
+          },
+        },
+
+        // Cache emotes
+        {
+          urlPattern: 'https://cdn.bitwave.tv/static/emotes/(.*)\\?4$',
+          handler: 'CacheFirst',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'bitwave-emotes',
+            cacheableResponse: {
+              statuses: [ 200 ],
+            },
+            cacheExpiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+              purgeOnQuotaError: true,
+            },
+          },
+        },
+
+        // Cache Hazzy
+        /*{
+          urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw).*$',
+          handler: 'StaleWhileRevalidate',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'bitwave-images-v2',
+            cacheableResponse: {
+              statuses: [ 200 ],
+            },
+            cacheExpiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 1, // 30 Days
+              purgeOnQuotaError: true,
+            },
+          },
+        },*/
+
+        // more workbox cache settings...
+      ],
+
+      offlineAssets: [
+        // Route Locations
+        '/',
+        '/login',
+        '/profile',
+        '/chat',
+        '/embed',
+
+        // Assets
+        '/sounds/tweet.mp3',
+        'https://fonts.googleapis.com/css?family=Material+Icons',
+        'https://cdn.bitwave.tv/static/img/firework-banner.gif',
+
+      ],
+
+      // routingExtensions: [],
+    },
+
+    /*
   ** Manifest Module
   */
-  manifest: {
-    name: '[bitwave.tv]',
-    short_name: '[bitwave.tv]',
-    description: 'An open platform live streaming service for creators to freely express themselves.',
-    categories: [ 'entertainment', 'social' ],
-    lang: 'en',
-    display: 'standalone',
-    background_color: '#000000',
-    theme_color: '#ffff00',
+    manifest: {
+      name: '[bitwave.tv]',
+      short_name: '[bitwave.tv]',
+      description: 'An open platform live streaming service for creators to freely express themselves.',
+      categories: [ 'entertainment', 'social' ],
+      lang: 'en',
+      display: 'standalone',
+      background_color: '#000000',
+      theme_color: '#ffff00',
+    },
+
+    meta: {
+      appleStatusBarStyle: 'black-translucent',
+      name: '[bitwave.tv]',
+      description: 'An open platform live streaming service for creators to freely express themselves.',
+      theme_color: '#ffff00',
+      ogType: 'website',
+      ogHost: 'http://bitwave.tv',
+      twitterCard: 'summary_large_image',
+      twitterSite: '@BitwaveTV',
+      // twitterCreator: '',
+    },
   },
+
+
 
   /*
   ** Plugins to load before mounting the App
@@ -279,7 +322,11 @@ module.exports = {
     ** You can extend webpack config here
     */
 
+    crossorigin: true,
+
     extractCSS: true,
+
+    parallel: process.env.APP_DEBUG === 'true',
 
     extend ( config, ctx ) {
 
