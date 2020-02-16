@@ -871,7 +871,10 @@
         username = username.replace('@', '');
         const exists = this.ignoreList.find( el => el.toLowerCase() === username.toLowerCase() );
         if ( exists ) {
-          console.log( `User not found: '${username}'` );
+          console.log( `User already ignored: '${username}'` );
+
+          // Confirmation Message
+          await this.insertMessage( `You already ignore '${username}'` );
           return;
         }
         this.ignoreList.push( username );
@@ -920,6 +923,9 @@
           });
         } else {
           console.log( `Ignored user not found: '${username}'` );
+
+          // Error Message
+          await this.insertMessage( `You are not ignoring '${username}'` );
         }
       },
 
@@ -973,6 +979,9 @@
           });
         } else {
           console.log( `Ignored channel not found: '${channel}'` );
+
+          // Confirmation Message
+          await this.insertMessage( `You do not ignore ${username}'s channel` );
         }
       },
 
