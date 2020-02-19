@@ -115,10 +115,22 @@
 
         if ( userAction.outcome === 'accepted' ) {
           this.$toast.success('Successfully installed.', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-success',
+          });
         } else if (userAction.outcome === 'dismissed') {
           this.$toast.error('Installation cancelled', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-cancelled',
+          });
         } else {
           this.$toast.error('ERROR: Installation failed', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-failed',
+          });
         }
       },
 
