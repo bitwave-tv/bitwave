@@ -185,17 +185,18 @@ module.exports = {
       // Automatically cache for offline usage
       offlineAssets: [
         // Route Locations
+        /*
         '/',
         '/login',
         '/profile',
         '/chat',
         '/embed',
+        */
 
         // Assets
         '/sounds/tweet.mp3',
         'https://fonts.googleapis.com/css?family=Material+Icons',
         'https://cdn.bitwave.tv/static/img/firework-banner.gif',
-
       ],
 
       // routingExtensions: [],
