@@ -1,6 +1,6 @@
 // Created by xander on 2/16/2020
 
-// importScripts('sw.js');
+importScripts( 'sw.js' );
 
 // Define a custom route
 /*workbox.routing.registerRoute(
@@ -33,8 +33,8 @@ new RegExp('/.*' ),
 // see: https://github.com/GoogleChrome/workbox/issues/2084#issuecomment-506457979
 // documentation: https://developers.google.com/web/tools/workbox/guides/using-plugins
 
-/*const serverFailure = {
-  fetchDidSucceed: async ({request, response}) => {
+const serverFailure = {
+  fetchDidSucceed: async ({ request, response }) => {
     // response.ok means there was a 2xx response code.
     if ( response.ok ) return response;
 
@@ -47,6 +47,6 @@ new RegExp('/.*' ),
 const myStrategy = new workbox.strategies.NetworkFirst({ plugins: [ serverFailure ] });
 
 // Register router
-workbox.routing.registerRoute( '/', myStrategy, 'GET' );*/
+workbox.routing.registerRoute( '/.*', myStrategy, 'GET' );
 
 console.log('Starting bitwave-notifications service worker!');
