@@ -15,6 +15,8 @@ module.exports = {
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
 
     WORKBOX_DEBUG: process.env.WORKBOX_DEBUG,
+
+    IPINFO_TOKEN: process.env.IPINFO_TOKEN || '28731f83a6e092',
   },
 
   /*
