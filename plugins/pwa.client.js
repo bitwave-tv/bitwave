@@ -12,10 +12,7 @@ class PWAPrompt {
 
   async onBeforeInstallPrompt ( event ) {
     console.log( `PWA Install Prompt:`, event );
-
     this.deferredPrompt = event;
-
-    // event.preventDefault();
 
     /*if ( window.$nuxt.$route.path !== '/' ) {
       await event.prompt();
@@ -49,8 +46,9 @@ export default async ( { app, commit } ) => {
   if ( process.client ) {
 
     const onBeforeInstallPrompt = async ( event ) => {
-      await pwaPrompt.onBeforeInstallPrompt( event );
+      event.preventDefault();
       commit ( `${Chat.namespace}/${Chat.$mutations.setPwaPrompt}`, event );
+      await pwaPrompt.onBeforeInstallPrompt( event );
     };
 
     window.addEventListener( 'beforeinstallprompt', onBeforeInstallPrompt  );
