@@ -1,6 +1,6 @@
 // Created by xander on 2/16/2020
 
-importScripts( 'sw.js' );
+// importScripts( 'sw.js' );
 
 // Define a custom route
 /*workbox.routing.registerRoute(
@@ -44,9 +44,9 @@ const serverFailure = {
 };
 
 // Create strategy
-const myStrategy = new workbox.strategies.NetworkFirst({ plugins: [ serverFailure ] });
+const offlineStrategy = new workbox.strategies.NetworkFirst({ plugins: [ serverFailure ] });
 
 // Register router
-workbox.routing.registerRoute( '/.*', myStrategy, 'GET' );
+workbox.routing.registerRoute( '/.*', offlineStrategy, 'GET' );
 
-console.log('Starting bitwave-notifications service worker!');
+console.log('Starting bitwave-offline service worker!');
