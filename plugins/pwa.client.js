@@ -1,7 +1,7 @@
 // Created by xander on 2/16/2020
 
 
-import { Chat } from '@/store/chat';
+import { VStore } from '@/store';
 
 class PWAPrompt {
 
@@ -51,9 +51,9 @@ export default async ( { app, commit } ) => {
 
     const onBeforeInstallPrompt = async ( event ) => {
       console.log( `Prompt intercepted`, event );
-      
+
       event.preventDefault();
-      commit ( `${Chat.namespace}/${Chat.$mutations.setPwaPrompt}`, event );
+      commit ( `${VStore.$mutations.setPwaPrompt}`, event );
       await pwaPrompt.onBeforeInstallPrompt( event );
     };
 

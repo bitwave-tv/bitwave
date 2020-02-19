@@ -102,7 +102,11 @@
       hideSystemAlert () {
         this.systemAlertHidden = this.systemAlert.id;
         localStorage.setItem( 'hide-system-alert', this.systemAlert.id );
-      }
+      },
+
+      async newVersionAvailable ( info ) {
+        console.log( `New service worker available`, info );
+      },
     },
 
     computed: {
