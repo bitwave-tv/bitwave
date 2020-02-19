@@ -44,21 +44,20 @@ class PWAPrompt {
 export const pwaPrompt = new PWAPrompt();
 
 
-export default async ( { app, commit } ) => {
+export default async ( { store } ) => {
   // only run client side
   if ( process.client ) {
+    if ( process.env.APP_DEBUG ) console.log( `Listening for PWA prompt...` );
 
     const onBeforeInstallPrompt = async ( event ) => {
       console.log( `Prompt intercepted`, event );
 
       event.preventDefault();
-      commit ( `${VStore.$mutations.setPwaPrompt}`, event );
+      store.commit ( `${VStore.$mutations.setPwaPrompt}`, event );
       await pwaPrompt.onBeforeInstallPrompt( event );
     };
 
     window.addEventListener( 'beforeinstallprompt', onBeforeInstallPrompt  );
-
-    console.log( `Listening for PWA prompt...` );
 
   }
 };
