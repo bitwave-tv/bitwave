@@ -35,9 +35,8 @@ class PWAPrompt {
   }
 
 
-  async onUserChoice ( choice ) {
-    console.log( choice );
-    await this.promptUser();
+  onUserChoice ( choice ) {
+    console.log( `User Chooice:`, choice );
   }
 
 }
