@@ -82,6 +82,12 @@ module.exports = {
 
       // Runtime caching caches pages as we browse
       runtimeCaching: [
+        {
+          urlPattern: '/.*',
+          handler:    'networkFirst',
+          method:     'GET',
+        },
+
         /*{
           urlPattern: 'https://stream.bitwave.tv/stream/.*',
           handler: 'networkOnly',
@@ -161,32 +167,14 @@ module.exports = {
           },
         },
 
-        // Cache Hazzy
-        /*{
-          urlPattern: 'https://cdn.bitwave.tv/(static/img|uploads/avatar)/.*(_bw).*$',
-          handler: 'StaleWhileRevalidate',
-          method: 'GET',
-          strategyOptions: {
-            cacheName: 'bitwave-images-v2',
-            cacheableResponse: {
-              statuses: [ 200 ],
-            },
-            cacheExpiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 * 1, // 30 Days
-              purgeOnQuotaError: true,
-            },
-          },
-        },*/
-
         // more workbox cache settings...
       ],
 
       // Automatically cache for offline usage
       offlineAssets: [
         // Route Locations
-        '/',
         /*
+        '/',
         '/login',
         '/profile',
         '/chat',
