@@ -33,7 +33,7 @@ new RegExp('/.*' ),
 // see: https://github.com/GoogleChrome/workbox/issues/2084#issuecomment-506457979
 // documentation: https://developers.google.com/web/tools/workbox/guides/using-plugins
 
-const serverFailure = {
+/*const serverFailure = {
   fetchDidSucceed: async ({ request, response }) => {
     // response.ok means there was a 2xx response code.
     if ( response.ok ) return response;
@@ -47,6 +47,6 @@ const serverFailure = {
 const offlineStrategy = new workbox.strategies.NetworkFirst({ plugins: [ serverFailure ] });
 
 // Register router
-workbox.routing.registerRoute( '/.*', offlineStrategy, 'GET' );
+workbox.routing.registerRoute( '/.*', offlineStrategy, 'GET' );*/
 
 console.log('Starting bitwave-offline service worker!');

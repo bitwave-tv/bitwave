@@ -185,8 +185,8 @@ module.exports = {
       // Automatically cache for offline usage
       offlineAssets: [
         // Route Locations
-        /*
         '/',
+        /*
         '/login',
         '/profile',
         '/chat',
