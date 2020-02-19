@@ -236,7 +236,8 @@ module.exports = {
   plugins: [
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
-    { src: '@/plugins/sw-hook', ssr: false },
+    '@/plugins/pwa.client',
+    { src: '@/plugins/sw-hook', mode: 'client' },
   ],
 
   /*

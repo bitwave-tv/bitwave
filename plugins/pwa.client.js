@@ -25,8 +25,12 @@ class PWAPrompt {
 
   async promptUser () {
     if ( this.deferredPrompt ) {
-      const choice = await this.deferredPrompt.prompt();
-      this.onUserChoice( choice );
+
+      console.log(this.deferredPrompt);
+      this.deferredPrompt.prompt();
+      const userAction = await this.deferredPrompt.userChoice;
+
+      this.onUserChoice( userAction );
     }
   }
 
