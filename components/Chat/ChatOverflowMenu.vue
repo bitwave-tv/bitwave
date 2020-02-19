@@ -52,7 +52,6 @@
 <script>
   import { mapState, mapGetters, mapMutations } from 'vuex';
   import { Chat } from '@/store/chat';
-  import { pwaPrompt } from '@/plugins/pwa.client';
   import { VStore } from '@/store';
 
   export default {
@@ -110,8 +109,10 @@
 
       async showPWAPrompt () {
         const prompt = this.getPWaPrompt;
+
         await prompt.prompt();
         const userAction = await prompt.userChoice;
+
         if ( userAction.outcome === 'accepted' ) {
           this.$toast.success('Successfully installed.', { duration: 2000 });
         } else if (userAction.outcome === 'dismissed') {

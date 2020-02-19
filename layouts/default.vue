@@ -168,11 +168,11 @@
         });
       }
 
-      window.addEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
+      // window.addEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
     },
 
     beforeDestroy () {
-      window.removeEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
+      // window.removeEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
     }
 
   }
