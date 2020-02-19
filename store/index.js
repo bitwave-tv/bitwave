@@ -20,6 +20,8 @@ const $states = {
 
   channelsViewers : 'CHANNEL_VIEWERS',
   userlist        : 'USERLIST',
+
+  pwaPrompt: 'PWA_PROMPT',
 };
 
 const $getters = {
@@ -43,6 +45,8 @@ const $getters = {
   getChannelViews : 'GET_CHANNEL_VIEWS',
   getUserList     : 'GET_USERLIST',
   getUserCount    : 'GET_USER_COUNT',
+
+  getPWaPrompt: 'GET_PWA_PROMPT',
 };
 
 const $mutations = {
@@ -57,6 +61,8 @@ const $mutations = {
 
   setChannelViewers : 'SET_CHANNEL_VIEWERS',
   setUserList       : 'SET_USER_LIST',
+
+  setPwaPrompt : 'SET_PWA_PROMPT',
 };
 
 const $actions = {
@@ -87,6 +93,8 @@ export const state = () => ({
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
+
+  [$states.pwaPrompt]       : null,
 });
 
 
@@ -187,6 +195,10 @@ export const getters = {
       || 0;
   },
 
+  [$getters.getPWaPrompt] ( state ) {
+    return state[$states.pwaPrompt];
+  },
+
 };
 
 
@@ -241,6 +253,10 @@ export const mutations = {
   setChannel ( state, channel ) {
     state[$states.channel] = channel;
   },
+
+  [$mutations.setPwaPrompt] ( state, data ) {
+    state[$states.pwaPrompt] = data;
+  },
 };
 
 
@@ -268,6 +284,7 @@ export const actions = {
         commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, cookies._bw_global );
       }
     }
+
     commit( $mutations.setAuth, authUser );
     commit( $mutations.setUser, user );
 
@@ -300,12 +317,17 @@ export const actions = {
 
     // Create user document
     const userId = userCredential.user.uid;
-    await db.collection( 'users' ).doc( userId ).set({
-      _username: credential.username.toLowerCase(),
-      uid: userId,
-      username: credential.username,
-      email: credential.email,
-    });
+
+    await db
+      .collection( 'users' )
+      .doc( userId )
+      .set({
+        _username: credential.username.toLowerCase(),
+        uid: userId,
+        username: credential.username,
+        email: credential.email,
+      });
+
     return true;
   },
 

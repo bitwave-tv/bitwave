@@ -31,6 +31,17 @@
             </v-list-item-content>
           </v-list-item>
 
+          <v-divider v-if="getPWaPrompt" class="mt-2" />
+
+          <v-list-item v-if="getPWaPrompt"  @click="showPWAPrompt">
+            <v-list-item-action class="mr-1">
+              <v-icon small>block</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Install App</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
         </v-list>
       </v-sheet>
 
@@ -39,8 +50,10 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex';
+  import { mapState, mapGetters, mapMutations } from 'vuex';
   import { Chat } from '@/store/chat';
+  import { pwaPrompt } from '@/plugins/pwa.client';
+  import { VStore } from '@/store';
 
   export default {
     name: 'ChatOverflowMenu',
@@ -95,9 +108,17 @@
         return open( url, title, optionsStr );
       },
 
+      async showPWAPrompt () {
+        await this.getPWaPrompt.promptUser();
+      },
+
     },
 
     computed: {
+      ...mapGetters({
+        getPWaPrompt: VStore.$getters.getPWaPrompt,
+      }),
+
       ...mapState(Chat.namespace, {
         chatWindow: Chat.$states.chatWindow,
       }),

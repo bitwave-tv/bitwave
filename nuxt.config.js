@@ -80,6 +80,7 @@ module.exports = {
         'https://fonts.googleapis.com/css?family=Material+Icons',
       ],*/
 
+      // Runtime caching caches pages as we browse
       runtimeCaching: [
         /*{
           urlPattern: 'https://stream.bitwave.tv/stream/.*',
@@ -181,6 +182,7 @@ module.exports = {
         // more workbox cache settings...
       ],
 
+      // Automatically cache for offline usage
       offlineAssets: [
         // Route Locations
         '/',
