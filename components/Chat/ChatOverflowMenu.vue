@@ -31,7 +31,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-divider v-if="getPWaPrompt" class="mt-2" />
+          <v-divider v-if="getPWaPrompt" class="my-2" />
 
           <v-list-item v-if="getPWaPrompt"  @click="showPWAPrompt">
             <v-list-item-action class="mr-1">
