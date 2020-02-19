@@ -35,7 +35,7 @@
 
           <v-list-item v-if="getPWaPrompt"  @click="showPWAPrompt">
             <v-list-item-action class="mr-1">
-              <v-icon small>block</v-icon>
+              <v-icon small>important_devices</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Install App</v-list-item-title>
@@ -109,7 +109,16 @@
       },
 
       async showPWAPrompt () {
-        await this.getPWaPrompt.promptUser();
+        const prompt = this.getPWaPrompt;
+        await prompt.prompt();
+        const userAction = await prompt.userChoice;
+        if ( userAction.outcome === 'accepted' ) {
+          this.$toast.success('Successfully installed.', { duration: 2000 });
+        } else if (userAction.outcome === 'dismissed') {
+          this.$toast.error('Installation cancelled', { duration: 2000 });
+        } else {
+          this.$toast.error('ERROR: Installation failed', { duration: 2000 });
+        }
       },
 
     },

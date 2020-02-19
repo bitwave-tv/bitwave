@@ -236,7 +236,7 @@ module.exports = {
   plugins: [
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
-    '@/plugins/pwa.client',
+    { src: '@/plugins/pwa.client.js', mode: 'client' },
     { src: '@/plugins/sw-hook', mode: 'client' },
   ],
 
@@ -252,7 +252,6 @@ module.exports = {
     '@nuxtjs/toast',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
-    // { src: '~/plugins/nuxt-client-init', ssr: false },
   ],
 
   /*

@@ -113,6 +113,7 @@
       },
 
       onBeforeInstallPrompt ( prompt ) {
+        if ( process.env.APP_DEBUG ) console.log( `Listening for PWA prompt...` );
         console.log( `PWA Prompt:`, prompt );
         prompt.preventDefault();
         this.setPwaPrompt( prompt );
