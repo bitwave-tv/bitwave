@@ -50,12 +50,16 @@ export default async ( { app, commit } ) => {
   if ( process.client ) {
 
     const onBeforeInstallPrompt = async ( event ) => {
+      console.log( `Prompt intercepted`, event );
+      
       event.preventDefault();
       commit ( `${Chat.namespace}/${Chat.$mutations.setPwaPrompt}`, event );
       await pwaPrompt.onBeforeInstallPrompt( event );
     };
 
     window.addEventListener( 'beforeinstallprompt', onBeforeInstallPrompt  );
+
+    console.log( `Listening for PWA prompt...` );
 
   }
 };
