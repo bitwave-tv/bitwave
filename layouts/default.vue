@@ -75,7 +75,7 @@
 
   const Fireworks = async () => await import( '@/components/effects/fireworks' );
 
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapMutations } from 'vuex';
   import { VStore } from '@/store';
 
   export default {
@@ -99,10 +99,25 @@
     },
 
     methods: {
+      ...mapMutations({
+        setPwaPrompt: VStore.$mutations.setPwaPrompt
+      }),
+
       hideSystemAlert () {
         this.systemAlertHidden = this.systemAlert.id;
         localStorage.setItem( 'hide-system-alert', this.systemAlert.id );
-      }
+      },
+
+      async newVersionAvailable ( info ) {
+        console.log( `New service worker available`, info );
+      },
+
+      onBeforeInstallPrompt ( prompt ) {
+        if ( process.env.APP_DEBUG ) console.log( `Listening for PWA prompt...` );
+        console.log( `PWA Prompt:`, prompt );
+        prompt.preventDefault();
+        this.setPwaPrompt( prompt );
+      },
     },
 
     computed: {
@@ -152,7 +167,13 @@
           await this.newVersionAvailable({ version: 'SW' });
         });
       }
+
+      // window.addEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
     },
+
+    beforeDestroy () {
+      // window.removeEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
+    }
 
   }
 </script>

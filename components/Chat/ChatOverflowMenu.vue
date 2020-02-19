@@ -31,6 +31,17 @@
             </v-list-item-content>
           </v-list-item>
 
+          <v-divider v-if="getPWaPrompt" class="my-2" />
+
+          <v-list-item v-if="getPWaPrompt"  @click="showPWAPrompt">
+            <v-list-item-action class="mr-1">
+              <v-icon small>important_devices</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Install App</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
         </v-list>
       </v-sheet>
 
@@ -39,8 +50,9 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex';
+  import { mapState, mapGetters, mapMutations } from 'vuex';
   import { Chat } from '@/store/chat';
+  import { VStore } from '@/store';
 
   export default {
     name: 'ChatOverflowMenu',
@@ -95,9 +107,40 @@
         return open( url, title, optionsStr );
       },
 
+      async showPWAPrompt () {
+        const prompt = this.getPWaPrompt;
+
+        await prompt.prompt();
+        const userAction = await prompt.userChoice;
+
+        if ( userAction.outcome === 'accepted' ) {
+          this.$toast.success('Successfully installed.', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-success',
+          });
+        } else if (userAction.outcome === 'dismissed') {
+          this.$toast.error('Installation cancelled', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-cancelled',
+          });
+        } else {
+          this.$toast.error('ERROR: Installation failed', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-failed',
+          });
+        }
+      },
+
     },
 
     computed: {
+      ...mapGetters({
+        getPWaPrompt: VStore.$getters.getPWaPrompt,
+      }),
+
       ...mapState(Chat.namespace, {
         chatWindow: Chat.$states.chatWindow,
       }),

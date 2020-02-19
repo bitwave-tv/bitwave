@@ -1,7 +1,7 @@
 // Created by xander on 2/6/2020
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then( async (registrations) => {
+  navigator.serviceWorker.getRegistrations().then( async ( registrations ) => {
     for ( const worker of registrations ) {
       console.log( 'Service worker:', worker );
 

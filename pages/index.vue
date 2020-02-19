@@ -279,12 +279,13 @@
         const getChatHydration = async ( channel ) => {
           try {
             const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+            if ( global === null ) return null;
             const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }` );
             if ( data.success ) return data.data;
           } catch ( error ) {
             console.error( error );
           }
-          return [];
+          return null;
         };
 
         const channel = streams.live.length > 0 ? streams.live[0].name : '';
@@ -302,7 +303,7 @@
           live: defaultLive,
           streamers: [],
           offline: true,
-          chatMessages: [],
+          chatMessages: null,
         }
       }
     },

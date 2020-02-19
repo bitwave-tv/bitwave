@@ -25,6 +25,7 @@
         dense
         clearable
         counter="300"
+        @focus="onFocus"
         @change="value => this.setChatMessage( value )"
         @keyup.delete="updateMessage"
         @keyup.enter.prevent="sendMessage"
@@ -361,6 +362,11 @@
           return emoteMatch;
         }
       },
+
+      // Defer some load events til user interacts with chat
+      async onFocus () {
+        await this.updateEmoteList();
+      },
     },
 
     computed: {
@@ -397,7 +403,7 @@
     },
 
     async created () {
-      await this.updateEmoteList();
+      // await this.updateEmoteList();
     },
   }
 </script>
