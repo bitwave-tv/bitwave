@@ -86,6 +86,13 @@ module.exports = {
           urlPattern: '/.*',
           handler:    'networkFirst',
           method:     'GET',
+          strategyOptions: {
+            cacheExpiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 * 1, // 1 day
+              purgeOnQuotaError: true,
+            }
+          },
         },
 
         /*{
@@ -173,8 +180,8 @@ module.exports = {
       // Automatically cache for offline usage
       offlineAssets: [
         // Route Locations
+        '/*',
         /*
-        '/',
         '/login',
         '/profile',
         '/chat',
