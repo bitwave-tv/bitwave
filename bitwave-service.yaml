@@ -8,7 +8,7 @@ spec:
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 5000
+      port: 80
       targetPort: 3000
       name: nodejs
   selector:
