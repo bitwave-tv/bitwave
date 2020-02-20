@@ -14,11 +14,11 @@ spec:
       labels:
         app: bitwave
     spec:
-      hostPort: true
       containers:
         - name: bitwave-node
           image: bitwavetv/bitwave:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
+              hostPort: true
               protocol: TCP
