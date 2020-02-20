@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bitwave-pod
+  labels:
+    app: bitwave
+spec:
+  containers:
+    - name: bitwave-node
+      image: bitwavetv/bitwave:latest
+      ports:
+        - containerPort: 3000
