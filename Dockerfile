@@ -3,7 +3,7 @@ FROM node:12
 MAINTAINER dispatch <admin@bitwave.tv>
 
 # Install global npm packages
-RUN npm install -g typescript dotenv
+RUN npm install -g typescript
 
 # Install npm packages
 COPY package.json package-lock.json /bitwave/

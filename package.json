@@ -18,6 +18,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.9.5",
     "@nuxtjs/device": "^1.2.6",
+    "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/google-analytics": "^2.2.3",
     "@nuxtjs/manifest": "^3.0.0-beta.16",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
@@ -46,7 +47,6 @@
     "vue-virtual-scroller": "^1.0.0-rc.2"
   },
   "devDependencies": {
-    "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/vuetify": "^1.9.1",
     "node-sass": "^4.13.1",
     "nodemon": "^2.0.1",
