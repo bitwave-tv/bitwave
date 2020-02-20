@@ -18,10 +18,12 @@ WORKDIR /bitwave
 # Build server
 RUN cd /bitwave && \
     npm run build && \
-    npm prune --production
+    npm prune --production --dry-run
 
 # Expose port
 EXPOSE 3000
+
+ENV HOST 0.0.0.0
 
 # Start server
 CMD [ "npm", "start" ]
