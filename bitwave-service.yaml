@@ -7,8 +7,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 3000
+    - protocol: TCP
+      port: 3000
       targetPort: 3000
-      protocol: TCP
+      name: http
   selector:
     app: bitwave
