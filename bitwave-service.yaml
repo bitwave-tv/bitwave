@@ -8,8 +8,8 @@ spec:
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 3000
+      port: 5000
       targetPort: 3000
-      name: http
+      name: nodejs
   selector:
     app: bitwave
