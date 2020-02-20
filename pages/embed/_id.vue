@@ -71,7 +71,7 @@
     async asyncData ( { $axios, params } ) {
       const user = params.id;
       try {
-        const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}` );
+        const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${user}`, { timeout: 1500 } );
 
         const name   = data.name;
         const avatar = data.avatar;
@@ -88,7 +88,7 @@
         if ( data.thumbnail ) poster = live ? thumb : poster;
 
         if ( !live ) {
-          const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump' );
+          const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump', { timeout: 1500 } );
           url = data.url;
           type = 'video/mp4';
         }
