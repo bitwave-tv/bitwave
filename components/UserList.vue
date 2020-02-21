@@ -251,7 +251,7 @@
 
       async authenticated ( user ) {
         // if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
-        if ( user ) await this.getFollowing( user.uid );
+        if ( user ) setTimeout( async () => await this.getFollowing( user.uid ), 3000 );
       },
 
       async getFollowing ( userId ) {

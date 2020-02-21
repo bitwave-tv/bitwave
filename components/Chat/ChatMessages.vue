@@ -13,6 +13,7 @@
         tag="div"
       >
         <div
+          v-if="messages"
           v-for="( msg, index ) in messages"
           :key="msg._id"
           class="pb-1 pl-3 pr-1"
@@ -47,6 +48,23 @@
             ></div>
           </div>
         </div>
+
+        <v-sheet
+          v-if="!messages"
+          v-for="i in 5"
+          :key="i"
+          :color="`grey ${true ? 'darken-4' : 'lighten-4'}`"
+          class="mx-3 mt-3 mb-3 pa-2"
+        >
+          <v-skeleton-loader
+            ref="skeleton"
+            :boilerplate="false"
+            :type="`avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
+            class="d-flex"
+            dark
+          ></v-skeleton-loader>
+        </v-sheet>
+
       </transition-group>
     </div>
 

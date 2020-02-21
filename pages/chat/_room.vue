@@ -31,7 +31,7 @@
       const getChatHydration = async () => {
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
-          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 1500 } );
+          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 2000 } );
           if ( data.success ) return data.data;
         } catch ( error ) {
           console.log( error );

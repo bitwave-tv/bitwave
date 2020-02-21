@@ -235,7 +235,7 @@
         chatLimit: 50,
         userToken: null,
 
-        messages: [],
+        messages: null,
 
         ignoreList: [],
         ignoreChannelList: [],

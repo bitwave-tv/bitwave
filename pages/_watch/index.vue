@@ -255,7 +255,7 @@
         timestamp: null,
 
         // Chat hydrated data defaults
-        chatMessages: [],
+        chatMessages: null,
       }
     },
 
@@ -463,7 +463,7 @@
         if ( this.recentBumps.length >= 15 ) this.recentBumps = this.recentBumps.splice( -15 );
         // Recurse until we get a fresh bump
         if ( this.recentBumps.includes( data.url ) ){
-          console.log(`Recently seen ${data.url}, getting a new bump`);
+          console.log( `Recently seen ${data.url}, getting a new bump` );
           return await this.getRandomBump();
         }
         this.recentBumps.push( data.url );
@@ -673,7 +673,7 @@
 
         // Attempt to load via API server
         try {
-          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}`, { timeout: 1500 } );
+          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}`, { timeout: 2000 } );
           // Simple response validation
           if ( data && data.hasOwnProperty( 'name' ) ) {
             channelData = data;
@@ -771,7 +771,7 @@
           // Fallback to bump if offline
           if ( live === false ) {
             try {
-              const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump', { timeout: 1500 } );
+              const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump', { timeout: 2000 } );
               url = data.url;
               type = 'video/mp4';
             } catch ( error ) {
@@ -813,7 +813,7 @@
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
           if ( global === null ) return null;
-          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 1500 } );
+          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 2000 } );
           if ( data && data.success ) return data.data;
         } catch ( error ) {
           console.log( `Chat hydration request failed` );
