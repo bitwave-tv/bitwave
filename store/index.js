@@ -427,14 +427,14 @@ export const actions = {
     const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.');
 
     const checkNewVersion = ( currentVersion, newestVersion ) => {
-      if ( currentVersion[0] < newestVersion[0] )
+      if ( currentVersion[0 ] <  newestVersion[0] )
         return true;
-      if ( currentVersion[1] < newestVersion[1]
-        && currentVersion[0] < newestVersion[0] )
+      if ( currentVersion[1]  <  newestVersion[1]
+        && currentVersion[0] === newestVersion[0] )
         return true;
-      if ( currentVersion[2] < newestVersion[2]
-        && currentVersion[1] < newestVersion[1]
-        && currentVersion[0] < newestVersion[0] )
+      if ( currentVersion[2]  <  newestVersion[2]
+        && currentVersion[1] === newestVersion[1]
+        && currentVersion[0] === newestVersion[0] )
         return true;
       return false
     };
