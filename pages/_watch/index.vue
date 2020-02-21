@@ -378,6 +378,35 @@
           this.initialized = true;
         });
 
+
+        // Scroll to adjust volume
+        // player.controlBar.volumePanel.volumeControl
+        const volumeControlElement = this.player.controlBar.volumePanel.volumeControl.el();
+
+        const handleVolumeScroll = ( event ) => {
+          event.preventDefault();
+          if ( this.player.muted() ) return;
+          const vol = this.player.volume();
+          // Scroll 'up'
+          if ( event.deltaY < 0 ) this.player.volume( Math.min( 1.0, ( vol + .05 ) ) );
+          // Scroll 'down'
+          if ( event.deltaY > 0 ) this.player.volume( Math.max( 0.0, ( vol - .05 ) ) );
+        };
+
+        // Player is active (mouseover)
+        this.player.on( 'useractive', () => {
+          volumeControlElement.addEventListener( 'wheel', handleVolumeScroll );
+        });
+
+        // Player is inactive
+        this.player.on( 'userinactive', () => {
+          volumeControlElement.removeEventListener( 'wheel', handleVolumeScroll );
+        });
+
+        // Add event listener by default in case user loads with cursor over stream
+        volumeControlElement.addEventListener( 'wheel', handleVolumeScroll );
+
+
         // Save volume on change
         this.player.on( 'volumechange', () => {
           if ( !this.initialized ) return;
