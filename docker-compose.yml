@@ -1,0 +1,22 @@
+version: '3'
+
+# Microservices
+services:
+
+  # API Server Configuration
+  api-server:
+    container_name: bitwave
+    image: bitwavetv/bitwave:latest
+
+    ports:
+      - "5000:3000"
+
+    environment:
+      - BMS_ENV=dev
+
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 10s

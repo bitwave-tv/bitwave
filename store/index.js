@@ -426,10 +426,21 @@ export const actions = {
     const currentVersion = process.env.VERSION.split('.');
     const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.');
 
+    const checkNewVersion = ( currentVersion, newestVersion ) => {
+      if ( currentVersion[0] < newestVersion[0] )
+        return true;
+      if ( currentVersion[1] < newestVersion[1]
+        && currentVersion[0] < newestVersion[0] )
+        return true;
+      if ( currentVersion[2] < newestVersion[2]
+        && currentVersion[1] < newestVersion[1]
+        && currentVersion[0] < newestVersion[0] )
+        return true;
+      return false
+    };
+
     // accurately compare version numbers
-    const newVersion = ( currentVersion[0] < newestVersion[0] )
-                    || ( currentVersion[1] < newestVersion[1] )
-                    || ( currentVersion[2] < newestVersion[2] );
+    const newVersion = checkNewVersion( currentVersion, newestVersion );
 
     if ( newVersion ) {
       console.log( `An update is available! [${newVersion}]` );
