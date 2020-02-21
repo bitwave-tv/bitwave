@@ -673,7 +673,7 @@
 
         // Attempt to load via API server
         try {
-          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}`, { timeout: 2000 } );
+          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}`, { timeout: 5000 } );
           // Simple response validation
           if ( data && data.hasOwnProperty( 'name' ) ) {
             channelData = data;
@@ -771,7 +771,7 @@
           // Fallback to bump if offline
           if ( live === false ) {
             try {
-              const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump', { timeout: 2000 } );
+              const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump', { timeout: 5000 } );
               url = data.url;
               type = 'video/mp4';
             } catch ( error ) {
@@ -813,7 +813,7 @@
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
           if ( global === null ) return null;
-          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 2000 } );
+          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 5000 } );
           if ( data && data.success ) return data.data;
         } catch ( error ) {
           console.log( `Chat hydration request failed` );
@@ -827,7 +827,7 @@
       const channelData = await getChannelHydration();
       if ( channelData.success === false  ) {
         console.log( `Channel Data API failed - Displaying error page.` );
-        error( { ...channelData.error } );
+        // error( { ...channelData.error } );
         return;
       }
 

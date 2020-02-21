@@ -125,7 +125,7 @@
     async asyncData ( { $axios } ) {
       const getChatHydration = async () => {
         try {
-          const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages', { timeout: 2000 } );
+          const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages', { timeout: 5000 } );
           if ( data.success ) return data.data;
         } catch ( error ) {
           console.log( error );

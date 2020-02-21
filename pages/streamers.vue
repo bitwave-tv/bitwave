@@ -80,7 +80,7 @@
 
     async asyncData ({ $axios }) {
       try {
-        let { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list', { timeout: 2000 } );
+        let { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list', { timeout: 5000 } );
 
         return {
           streamers: data.users,

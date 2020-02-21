@@ -258,7 +258,7 @@
       try {
         const getStreams = async () => {
           try {
-            const { data } = await $axios.get( 'https://api.bitwave.tv/v1/channels/live', { timeout: 2000 } );
+            const { data } = await $axios.get( 'https://api.bitwave.tv/v1/channels/live', { timeout: 5000 } );
             if ( data && data.success ) {
               return {
                 live: data.live,
@@ -280,7 +280,7 @@
           try {
             const global = store.state[ChatStore.namespace][ChatStore.$states.global];
             if ( global === null ) return null;
-            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 2000 } );
+            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 5000 } );
             if ( data.success ) return data.data;
           } catch ( error ) {
             console.error( error );
