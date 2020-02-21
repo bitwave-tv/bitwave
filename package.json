@@ -14,7 +14,9 @@
     "generate": "nuxt generate",
     "docker:build": "docker build -t bitwavetv/bitwave:latest .",
     "docker:push": "docker push bitwavetv/bitwave:latest",
-    "k8:rollout": "kubectl rollout restart deployment bitwave-app -n bitwave-node"
+    "rollout": "kubectl rollout deployment/bitwave-app -n bitwave-node",
+    "rollout:restart": "kubectl rollout deployment/bitwave-app -n bitwave-node",
+    "rollout:status": "kubectl rollout status deployment/bitwave-app -n bitwave-node"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.9.5",
