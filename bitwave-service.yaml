@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bitwave-svc
+  labels:
+    app: bitwave
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      name: nodejs
+  selector:
+    app: bitwave

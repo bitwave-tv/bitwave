@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitwave-dep
+  labels:
+    app: bitwave
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bitwave
+  template:
+    metadata:
+      labels:
+        app: bitwave
+    spec:
+      containers:
+        - name: bitwave-node
+          image: bitwavetv/bitwave:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
