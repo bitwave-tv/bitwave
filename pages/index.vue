@@ -14,7 +14,7 @@
         <span class="font-weight-light display-1 white&#45;&#45;text text-center mx-2">Freedom of Expression</span>-->
         <v-img
           src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
-          alt="santa troll"
+          alt="Bitwave alley sign"
           height="92"
           contain
         />
