@@ -4,14 +4,21 @@
     <!-- Site Banner -->
     <v-row class="justify-center">
       <div class="d-flex align-center">
-        <v-img
+        <!--<v-img
           src="https://cdn.bitwave.tv/static/img/firework-banner.gif"
           alt="santa troll"
           height="80"
           width="80"
           contain
         />
-        <span class="font-weight-light display-1 white--text text-center mx-2">Freedom of Expression</span>
+        <span class="font-weight-light display-1 white&#45;&#45;text text-center mx-2">Freedom of Expression</span>-->
+        <v-img
+          src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
+          alt="santa troll"
+          height="92"
+          contain
+        />
+        <span class="font-weight-light display-1 white--text text-center mx-2">/OURALLEY/</span>
       </div>
     </v-row>
 
