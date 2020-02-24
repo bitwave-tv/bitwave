@@ -271,6 +271,7 @@
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
           plugins: { qualityLevels: {} },
           poster: this.poster,
+          inactivityTimeout: 1000,
           html5: {
             hls: {
               overrideNative: !videojs.browser.IS_SAFARI,

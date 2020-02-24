@@ -104,6 +104,7 @@
           this.player = videojs( 'solo-player', {
             // liveui: true,
             // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
+            inactivityTimeout: 1000,
           } );
           this.player.on( 'ended', async () => {
             this.reloadPlayer();
