@@ -827,8 +827,10 @@
       const channelData = await getChannelHydration();
       if ( channelData.success === false  ) {
         console.error( `Channel Data API failed.` );
-        // error( { ...channelData.error } );
-        // return;
+        if ( channelData && !channelData.success ) {
+          error( { ...channelData.error } );
+          return;
+        }
       }
 
       // Get chat data for chat
