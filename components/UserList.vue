@@ -251,13 +251,13 @@
 
       async authenticated ( user ) {
         // if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
-        if ( user ) setTimeout( async () => await this.getFollowing( user.uid ), 3000 );
+        if ( user ) setTimeout( async () => await this.getFollowing( user.uid ), 5000 );
       },
 
       async getFollowing ( userId ) {
         if ( userId ) {
           try {
-            const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list' );
+            const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/list', { progress: false } );
             const query = await db
               .collection('followers')
               .where('viewerId', '==', userId)
