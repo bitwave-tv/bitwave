@@ -834,11 +834,12 @@
       }
 
       // Get chat data for chat
-      const chatMessages = await getChatHydration( channel );
+      const chatMessages = null;
+      /*const chatMessages = await getChatHydration( channel );
       if ( !chatMessages ) {
         const errorMessage = `Failed to load chat data for ${channel}`;
         console.error( errorMessage );
-      }
+      }*/
 
       return {
         channel: channel,
@@ -914,7 +915,7 @@
       },
     },
 
-    async validate ( { params } ) {
+    validate ( { params } ) {
       // Verify username is valid
       const user = params.watch;
       const validator = /^[a-zA-Z0-9._-]+$/;

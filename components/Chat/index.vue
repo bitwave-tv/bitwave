@@ -1070,8 +1070,8 @@
 
     async created () {
       // Hydrate chat from SSR or API
-      if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
-      else await this.httpHydrate();
+      /*if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
+      else await this.httpHydrate();*/
     },
 
     async mounted () {
@@ -1111,6 +1111,10 @@
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
+
+      // Hydrate chat from SSR or API
+      if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
+      else await this.httpHydrate();
     },
 
     beforeDestroy () {

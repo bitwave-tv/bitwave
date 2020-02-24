@@ -289,7 +289,8 @@
         };
 
         const channel = streams.live.length > 0 ? streams.live[0].name : '';
-        const chatMessages = await getChatHydration( channel );
+        const chatMessages = null;
+        // const chatMessages = await getChatHydration( channel );
 
         return {
           live: streams.live,

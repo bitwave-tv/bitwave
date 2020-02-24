@@ -39,11 +39,19 @@
         return [];
       };
 
-      const chatMessages = await getChatHydration();
+      // const chatMessages = await getChatHydration();
+      const chatMessages = null;
 
       return {
         chatMessages,
       }
+    },
+
+    validate ( { params } ) {
+      // Verify username is valid
+      const user = params.room;
+      const validator = /^[a-zA-Z0-9._-]+$/;
+      return validator.test( user );
     },
 
     computed: {
