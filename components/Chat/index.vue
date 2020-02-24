@@ -1205,4 +1205,8 @@
      height   : calc(100vh - 48px);
      width    : 450px;
    }
+
+  .v-skeleton-loader__avatar {
+    margin-right: 16px;
+  }
 </style>

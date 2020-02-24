@@ -156,9 +156,3 @@
 
   };
 </script>
-
-<style lang='scss'>
-  .v-skeleton-loader__avatar {
-    margin-right: 16px;
-  }
-</style>

@@ -4,6 +4,7 @@
     color="black"
     class="d-flex flex-wrap justify-end elevation-8"
   >
+    <!-- Stream Player -->
     <div
       class="flex-grow-1 align-self-center"
       style="min-width: 40%;"
@@ -26,6 +27,7 @@
       </video>
     </div>
 
+    <!-- Chat -->
     <div
       v-if="displayChat"
       class="d-flex flex-shrink-1"
