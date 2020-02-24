@@ -27,6 +27,7 @@
     </div>
 
     <div
+      v-if="displayChat"
       class="d-flex flex-shrink-1"
       :style="{ width: mobile ? '100%' : '450px', 'max-height': mobile ? '500px' : '555px' }"
     >
@@ -35,6 +36,24 @@
         :hydration-data="chatMessages"
       />
     </div>
+
+    <!-- Restore chat FAB -->
+    <v-fab-transition>
+      <v-btn
+        v-show="!displayChat"
+        color="yellow"
+        fixed
+        fab
+        dark
+        bottom
+        right
+        class="v-btn--example"
+        @click="() => setDisplayChat( true )"
+      >
+        <v-icon color="black">question_answer</v-icon>
+      </v-btn>
+    </v-fab-transition>
+
   </v-card>
 </template>
 
@@ -42,6 +61,9 @@
   import videojs from 'video.js';
   import 'videojs-contrib-quality-levels';
   // import 'videojs-contrib-dash';
+
+  import { mapState, mapMutations } from 'vuex';
+  import { Chat as ChatStore } from '@/store/chat';
 
   import Chat from '@/components/Chat';
 
@@ -73,6 +95,10 @@
     },
 
     methods: {
+      ...mapMutations(ChatStore.namespace,{
+        setDisplayChat: ChatStore.$mutations.setDisplayChat,
+      }),
+
       playerInitialize () {
         try {
           this.player = videojs( 'solo-player', {
@@ -107,6 +133,10 @@
     },
 
     computed: {
+      ...mapState(ChatStore.namespace, {
+        displayChat: ChatStore.$states.displayChat
+      }),
+
       prerollVideo () {
         return {
           // do not show pre-roll if offline

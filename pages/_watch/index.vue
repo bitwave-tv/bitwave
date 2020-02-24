@@ -144,7 +144,6 @@
         color="yellow"
         fixed
         fab
-        large
         dark
         bottom
         right
