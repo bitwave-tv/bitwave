@@ -53,7 +53,7 @@
           v-if="!messages"
           v-for="i in 5"
           :key="i"
-          :color="`grey ${true ? 'darken-4' : 'lighten-4'}`"
+          color="grey darken-4"
           class="mx-3 mt-3 mb-3 pa-2"
         >
           <v-skeleton-loader
