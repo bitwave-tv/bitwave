@@ -105,11 +105,17 @@
             // liveui: true,
             // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
             inactivityTimeout: 1000,
-          } );
+            suppressNotSupportedError: true,
+            userActions: {
+              hotkeys: true,
+            },
+          });
+
           this.player.on( 'ended', async () => {
             this.reloadPlayer();
             this.player.play();
           });
+
           this.initialized = true;
         } catch ( error ) {
           console.error( error );

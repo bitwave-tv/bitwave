@@ -272,6 +272,10 @@
           plugins: { qualityLevels: {} },
           poster: this.poster,
           inactivityTimeout: 1000,
+          suppressNotSupportedError: true,
+          userActions: {
+            hotkeys: true,
+          },
           html5: {
             hls: {
               overrideNative: !videojs.browser.IS_SAFARI,
