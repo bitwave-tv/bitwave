@@ -128,7 +128,7 @@
       },
 
       checkIfBottom () {
-        if ( this.messages.length === 0 || this.atBottom ) {
+        if ( !this.messages || this.messages.length === 0 || this.atBottom ) {
           return true;
         } else {
           const scrollTop    = this.chatContainer.scrollTop;
