@@ -19,7 +19,7 @@ if ( !firebase.apps.length ) {
 }
 
 // Inject Firebase Analytics
-export default async ( { app }, inject ) => {
+export default async ( ctx, inject ) => {
   const analytics = firebase.analytics();
   inject( 'analytics', analytics );
 }
