@@ -130,6 +130,7 @@
     created () {
       this.loading = !this.streamers;
       this.streams = this.streamers;
+      if ( this.streams ) this.thumbnails = this.streams.map( stream => stream.thumbnail );
     },
 
     mounted () {
