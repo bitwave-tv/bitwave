@@ -6,12 +6,12 @@
       <div class="d-flex align-center">
         <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
         <v-img
-          src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
-          alt="Bitwave alley sign"
+          src="https://cdn.bitwave.tv/static/emotes/windowoflife-92.gif"
+          alt="Window of life smash"
           height="92"
           contain
         />
-        <span class="font-weight-light display-1 white--text text-center mx-2">/OURALLEY/</span>
+        <div class="font-weight-light display-1 white--text text-center mx-3">brick.of.life.🧱</div>
       </div>
     </v-row>
 
