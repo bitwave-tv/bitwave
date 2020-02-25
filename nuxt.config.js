@@ -17,6 +17,8 @@ module.exports = {
     WORKBOX_DEBUG: process.env.WORKBOX_DEBUG,
 
     IPINFO_TOKEN: process.env.IPINFO_TOKEN || '28731f83a6e092',
+
+    SSR_TIMEOUT: parseInt( process.env.SSR_TIMEOUT ) || 10 * 1000,
   },
 
   /*

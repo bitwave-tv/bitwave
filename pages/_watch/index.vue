@@ -669,15 +669,35 @@
       },
     },
 
-    async asyncData ( { $axios, params, store, error } ) {
+    async asyncData ( { $axios, params, error } ) {
       const channel = params.watch;
+
+
+      // Timeout to prevent SSR from locking up
+      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
+      // Axios wrapper to abort on timeout when server hangs
+      const axiosGet = async ( url, options = {} ) => {
+        if ( options.timeout > 0 ) {
+          const abort = $axios.CancelToken.source();
+          const id = setTimeout(
+            () => abort.cancel( `Canceled Request! Timeout of ${ options.timeout }ms.` ),
+            options.timeout
+          );
+          const response = await $axios.get( url, { cancelToken: abort.token, ...options } );
+          clearTimeout( id );
+          return response;
+        } else {
+          return await $axios.get( url, { ...options } );
+        }
+      };
 
       const getChannelHydration = async () => {
         let channelData = null;
 
         // Attempt to load via API server
         try {
-          const { data } = await $axios.get( `https://api.bitwave.tv/api/channel/${channel}`, { timeout: 5000 } );
+          const { data } = await axiosGet( `https://api.bitwave.tv/api/channel/${channel}`, { timeout } );
           // Simple response validation
           if ( data && data.hasOwnProperty( 'name' ) ) {
             channelData = data;
@@ -691,7 +711,10 @@
           // API failed with 404, but server did not fail with 5xx
           if ( error.response && error.response.status === 404 ) {
             console.error( `API server reponded with 404` );
-            return { success: false, error: { statusCode: 404, message: `Could not find channel.` } };
+            return {
+              success: false,
+              error: { statusCode: 404, message: `Could not find channel.` },
+            };
           }
         }
 
@@ -711,7 +734,10 @@
             // Channel does not exist in database (404)
             if ( !streamDoc.exists ) {
               console.error( `Database query did not find streamer!` );
-              return { success: false, error: { statusCode: 404, message: `Could not find channel.` } };
+              return {
+                success: false,
+                error: { statusCode: 404, message: `Could not find channel.` },
+              };
             }
 
             const data = streamDoc.data();
@@ -731,13 +757,18 @@
               owner: data.owner,
             };
 
+            console.log( `Bypass should be successfull...` );
+
           }
 
           // API & Database query failure
           catch ( error ) {
             console.error( `Database query failed!` );
             console.error( error.message );
-            return { success: false, error: { statusCode: 500, message: `Bitwave API cache failed & Bitwave Database API failed!<br>${error.message}` } };
+            return {
+              success: false,
+              error: { statusCode: 500, message: `Bitwave API cache failed & Bitwave Database API failed!<br>${error.message}` },
+            };
           }
         }
 
@@ -775,7 +806,7 @@
           // Fallback to bump if offline
           if ( live === false ) {
             try {
-              const { data } = await $axios.get( 'https://api.bitwave.tv/api/bump', { timeout: 5000 } );
+              const { data } = await axiosGet( 'https://api.bitwave.tv/api/bump', { timeout } );
               url = data.url;
               type = 'video/mp4';
             } catch ( error ) {
@@ -805,15 +836,32 @@
 
         // Unknown error, unlikely to occur
         catch ( error ) {
-          console.error( error.message );
-          return { success: false, error: { statusCode: 500, message: `Unknown API Error!\n${error.message}` } };
+          console.error( `Unknown API Error: ${error.message}` );
+          return {
+            success: false,
+            error: { statusCode: 500, message: `Unknown API Error!\n${error.message}` },
+          };
         }
 
         // Should never occur
-        return { success: false, error: { statusCode: 500, message: `This should never occur.` } };
+        console.error( `Something is REALLY fucked up! This should never occur`, this );
+        return {
+          success: false,
+          error: { statusCode: 500, message: `This should never occur.` },
+        };
       };
 
-      const getChatHydration = async ( channel ) => {
+      // Get Channel data for page
+      const channelData = await getChannelHydration();
+      if ( channelData.success === false  ) {
+        console.error( `Channel Data API failed.`, channelData.error );
+        if ( channelData && !channelData.success ) {
+          error( { ...channelData.error } );
+          return;
+        }
+      }
+
+      /*const getChatHydration = async ( channel ) => {
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
           if ( global === null ) return null;
@@ -824,21 +872,10 @@
           console.error( error.message );
         }
         return null;
-      };
-
-
-      // Get Channel data for page
-      const channelData = await getChannelHydration();
-      if ( channelData.success === false  ) {
-        console.error( `Channel Data API failed.` );
-        if ( channelData && !channelData.success ) {
-          error( { ...channelData.error } );
-          return;
-        }
-      }
+      };*/
 
       // Get chat data for chat
-      const chatMessages = null;
+      // const chatMessages = null;
       /*const chatMessages = await getChatHydration( channel );
       if ( !chatMessages ) {
         const errorMessage = `Failed to load chat data for ${channel}`;
@@ -848,7 +885,7 @@
       return {
         channel: channel,
         ...channelData.data,
-        chatMessages: chatMessages,
+        // chatMessages: chatMessages,
       };
     },
 
