@@ -233,6 +233,8 @@
           eventAction   : 'register',
         });
 
+        this.$analytics.logEvent( 'sign_up_attempt', { method: 'bitwave' } );
+
         this.loading = true;
         try {
           // Verify Username is valid & not taken
@@ -246,10 +248,14 @@
               stayLoggedIn: this.shouldStayLoggedIn,
             });
             this.showSuccess( 'User Created!' );
+
+            this.$analytics.logEvent( 'sign_up', { method: 'bitwave' } );
           }
         } catch ( error ) {
           console.log( error );
           this.showError( error );
+
+          this.$analytics.logEvent( 'sign_up_failed', { method: 'bitwave' } );
         }
         this.loading = false;
       },
@@ -263,13 +269,20 @@
           eventAction   : 'login',
         });
 
+        this.$analytics.logEvent( 'login_attempt', { method: 'bitwave' } );
+
         this.loading = true;
         try {
           await auth.setPersistence( this.shouldStayLoggedIn ? 'local' : 'session' ); // firebase.auth.Auth.Persistence.SESSION
           await auth.signInWithEmailAndPassword( email, password );
+
+          this.$analytics.logEvent( 'login', { method: 'bitwave' } );
+
         } catch ( error ) {
           this.showError( error.message );
           console.log( error.message );
+
+          this.$analytics.logEvent( 'login_failed', { method: 'bitwave' } );
         }
         this.loading = false;
       },
@@ -283,8 +296,12 @@
         try {
           await auth.sendPasswordResetEmail( email );
           this.showSuccess( 'Check email for reset link.' );
+
+          this.$analytics.logEvent( 'reset_password' );
         } catch ( error ) {
           this.showError( error.message );
+
+          this.$analytics.logEvent( 'reset_password_failed' );
         }
       },
 

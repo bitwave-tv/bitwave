@@ -236,6 +236,7 @@ module.exports = {
   plugins: [
     '@/plugins/axiossr',
     '@/plugins/firebase',
+    { src: '@/plugins/firebase-analytics.client.js', mode: 'client' },
     '@/plugins/VueClipboard',
     { src: '@/plugins/pwa.client.js', mode: 'client' },
     { src: '@/plugins/sw-hook', mode: 'client' },
