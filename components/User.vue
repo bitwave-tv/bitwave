@@ -225,6 +225,7 @@
           eventAction   : 'signout',
         });
         await this.logoutStore();
+        this.$analytics.logEvent( 'logout', { method: 'bitwave' } );
       },
     },
 
