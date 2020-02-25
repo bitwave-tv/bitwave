@@ -77,14 +77,17 @@
 
     methods: {
       getData () {
-        const streamRef = db.collection( 'streams' ).where( 'live', '==', true ).limit( 16 );
+        const streamRef = db
+          .collection( 'streams' )
+          .where( 'live', '==', true )
+          .limit( 16 );
         this.streamDataListener = streamRef.onSnapshot( async res => await this.dataChanged( res.docs ), error => console.warn( error ) );
       },
 
       async dataChanged( docs ) {
         this.streams = docs.map( doc => {
           const stream = doc.data();
-          const thumbnail = ( stream.live ? stream.thumbnail || stream.cover : stream.cover ) || stream.cover;
+          const thumbnail = ( stream.live ? stream.thumbnail : stream.cover ) || stream.cover;
           return {
             title     : stream.title,
             live      : stream.live,
@@ -105,7 +108,9 @@
         const coeff = 1000 * 60; // ms * sec
         const timestamp = Math.round( Date.now() / coeff ) * coeff;
 
-        this.streams[this.imageIndex].thumbnail = `${this.thumbnails[this.imageIndex]}?${timestamp}`;
+        const _thumbnail = this.thumbnails[this.imageIndex] || 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
+
+        this.streams[this.imageIndex].thumbnail = `${_thumbnail}?${timestamp}`;
       },
     },
 
@@ -128,7 +133,8 @@
     },
 
     mounted () {
-      this.getData();
+      // Wait 30 seconds before attaching DB listener
+      setTimeout( () => this.getData(), 30 * 1000 );
       this.thumbnailInterval = setInterval( () => this.updateThumbnails(), 10 * 1000 );
     },
 
