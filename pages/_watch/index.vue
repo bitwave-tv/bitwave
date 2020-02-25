@@ -635,7 +635,8 @@
           eventValue    : percentDroppedFrames,
         });
 
-        this.$analytics.logEvent( 'dropped_frames', { value: percentDroppedFrames } );
+        if ( percentDroppedFrames && percentDroppedFrames > 0.05 )
+          this.$analytics.logEvent( 'dropped_frames', { value: percentDroppedFrames } );
 
         // Update for next loop
         this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
