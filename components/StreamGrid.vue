@@ -135,7 +135,10 @@
 
     mounted () {
       // Wait 30 seconds before attaching DB listener
-      setTimeout( () => this.getData(), 30 * 1000 );
+      if ( this.streams && this.streams.length > 0 )
+        setTimeout( () => this.getData(), 30 * 1000 );
+      else
+        this.getData();
       this.thumbnailInterval = setInterval( () => this.updateThumbnails(), 10 * 1000 );
     },
 
