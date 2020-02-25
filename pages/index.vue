@@ -4,21 +4,14 @@
     <!-- Site Banner -->
     <v-row class="justify-center">
       <div class="d-flex align-center">
-        <!--<v-img
-          src="https://cdn.bitwave.tv/static/img/firework-banner.gif"
-          alt="santa troll"
-          height="80"
-          width="80"
-          contain
-        />
-        <span class="font-weight-light display-1 white&#45;&#45;text text-center mx-2">Freedom of Expression</span>-->
+        <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
         <v-img
-          src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
-          alt="Bitwave alley sign"
+          src="https://cdn.bitwave.tv/static/emotes/windowoflife-92.gif"
+          alt="Window of life smash"
           height="92"
           contain
         />
-        <span class="font-weight-light display-1 white--text text-center mx-2">/OURALLEY/</span>
+        <div class="font-weight-light display-1 white--text text-center mx-3">brick.of.life.🧱</div>
       </div>
     </v-row>
 
@@ -245,6 +238,7 @@
         mounted: false,
         player: null,
         poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
+        chatMessages: null,
         offline: true,
       }
     },
@@ -262,57 +256,58 @@
         },
       ];
 
-      try {
-        const getStreams = async () => {
-          try {
-            const { data } = await $axios.get( 'https://api.bitwave.tv/v1/channels/live', { timeout: 5000 } );
-            if ( data && data.success ) {
-              return {
-                live: data.live,
-                streamers: data.streamers,
-              }
+      // Timeout to prevent SSR from locking up
+      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
+      const getStreams = async () => {
+        try {
+          const { data } = await $axios.getSSR( 'https://api.bitwave.tv/v1/channels/live', { timeout } );
+          if ( data && data.success ) {
+            return {
+              live: data.live,
+              streamers: data.streamers,
             }
-          } catch ( error ) {
-            console.error( error );
+          } else {
+            console.log( `API Error:`, data );
           }
+        } catch ( error ) {
+          console.error( `Failed to get live channels from API server: ${error.message}` );
           return {
             live: defaultLive,
             streamers: [],
           }
-        };
-
-        const streams = await getStreams();
-
-        const getChatHydration = async ( channel ) => {
-          try {
-            const global = store.state[ChatStore.namespace][ChatStore.$states.global];
-            if ( global === null ) return null;
-            const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 5000 } );
-            if ( data.success ) return data.data;
-          } catch ( error ) {
-            console.error( error );
-          }
-          return null;
-        };
-
-        const channel = streams.live.length > 0 ? streams.live[0].name : '';
-        const chatMessages = null;
-        // const chatMessages = await getChatHydration( channel );
-
-        return {
-          live: streams.live,
-          streamers: streams.streamers,
-          offline: false,
-          chatMessages,
         }
-      } catch ( error ) {
-        console.error( error );
+        console.log( `Failed to get live channels from API server` );
         return {
           live: defaultLive,
           streamers: [],
-          offline: true,
-          chatMessages: null,
         }
+      };
+
+      const streams = await getStreams();
+
+      const getChatHydration = async ( channel ) => {
+        try {
+          const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+          if ( global === null ) return null;
+          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
+          if ( data && data.success ) return data.data;
+        } catch ( error ) {
+          console.log( `Chat hydration request failed` );
+          console.error( error.message );
+        }
+        return null;
+      };
+
+      // Get chat data for chat
+      const channel = streams.live.length > 0 ? streams.live[0].name : 'error';
+      const chatMessages = await getChatHydration( channel );
+
+      return {
+        live: streams.live,
+        streamers: streams.streamers,
+        chatMessages: chatMessages,
+        offline: false,
       }
     },
 
