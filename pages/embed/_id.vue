@@ -74,24 +74,8 @@
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
-      // Axios wrapper to abort on timeout when server hangs
-      const axiosGet = async ( url, options = {} ) => {
-        if ( options.timeout > 0 ) {
-          const abort = $axios.CancelToken.source();
-          const id = setTimeout(
-            () => abort.cancel( `Canceled Request! Timeout of ${ options.timeout }ms.` ),
-            options.timeout
-          );
-          const response = await $axios.get( url, { cancelToken: abort.token, ...options } );
-          clearTimeout( id );
-          return response;
-        } else {
-          return await $axios.get( url, { ...options } );
-        }
-      };
-
       try {
-        const { data } = await axiosGet( `https://api.bitwave.tv/api/channel/${user}`, { timeout } );
+        const { data } = await $axios.getSSR( `https://api.bitwave.tv/api/channel/${user}`, { timeout } );
 
         const name   = data.name;
         const avatar = data.avatar;
@@ -108,7 +92,7 @@
         if ( data.thumbnail ) poster = live ? thumb : poster;
 
         if ( !live ) {
-          const { data } = await axiosGet( 'https://api.bitwave.tv/api/bump', { timeout } );
+          const { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/bump', { timeout } );
           url = data.url;
           type = 'video/mp4';
         }

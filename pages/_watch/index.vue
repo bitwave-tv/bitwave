@@ -669,35 +669,19 @@
       },
     },
 
-    async asyncData ( { $axios, params, error } ) {
+    async asyncData ( { $axios, store, params, error } ) {
       const channel = params.watch;
 
 
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
-      // Axios wrapper to abort on timeout when server hangs
-      const axiosGet = async ( url, options = {} ) => {
-        if ( options.timeout > 0 ) {
-          const abort = $axios.CancelToken.source();
-          const id = setTimeout(
-            () => abort.cancel( `Canceled Request! Timeout of ${ options.timeout }ms.` ),
-            options.timeout
-          );
-          const response = await $axios.get( url, { cancelToken: abort.token, ...options } );
-          clearTimeout( id );
-          return response;
-        } else {
-          return await $axios.get( url, { ...options } );
-        }
-      };
-
       const getChannelHydration = async () => {
         let channelData = null;
 
         // Attempt to load via API server
         try {
-          const { data } = await axiosGet( `https://api.bitwave.tv/api/channel/${channel}`, { timeout } );
+          const { data } = await $axios.getSSR( `https://api.bitwave.tv/api/channel/${channel}`, { timeout } );
           // Simple response validation
           if ( data && data.hasOwnProperty( 'name' ) ) {
             channelData = data;
@@ -806,7 +790,7 @@
           // Fallback to bump if offline
           if ( live === false ) {
             try {
-              const { data } = await axiosGet( 'https://api.bitwave.tv/api/bump', { timeout } );
+              const { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/bump', { timeout } );
               url = data.url;
               type = 'video/mp4';
             } catch ( error ) {
@@ -861,31 +845,26 @@
         }
       }
 
-      /*const getChatHydration = async ( channel ) => {
+      const getChatHydration = async ( channel ) => {
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
           if ( global === null ) return null;
-          const { data } = await $axios.get( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout: 5000 } );
+          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
           if ( data && data.success ) return data.data;
         } catch ( error ) {
           console.log( `Chat hydration request failed` );
           console.error( error.message );
         }
         return null;
-      };*/
+      };
 
       // Get chat data for chat
-      // const chatMessages = null;
-      /*const chatMessages = await getChatHydration( channel );
-      if ( !chatMessages ) {
-        const errorMessage = `Failed to load chat data for ${channel}`;
-        console.error( errorMessage );
-      }*/
+      const chatMessages = await getChatHydration( channel );
 
       return {
         channel: channel,
         ...channelData.data,
-        // chatMessages: chatMessages,
+        chatMessages: chatMessages,
       };
     },
 

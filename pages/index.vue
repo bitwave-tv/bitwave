@@ -203,6 +203,7 @@
 <script>
   import StreamGrid from '@/components/StreamGrid'
   import BannerVideo from '@/components/BannerVideo';
+  import { Chat as ChatStore } from '@/store/chat';
 
   export default {
     scrollToTop: true,
@@ -246,7 +247,7 @@
 
     },
 
-    async asyncData ({ $axios }) {
+    async asyncData ({ $axios, store }) {
       const defaultLive = [
         {
           "src": 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
@@ -258,25 +259,9 @@
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
-      // Axios wrapper to abort on timeout when server hangs
-      const axiosGet = async ( url, options = {} ) => {
-        if ( options.timeout > 0 ) {
-          const abort = $axios.CancelToken.source();
-          const id = setTimeout(
-            () => abort.cancel( `Canceled Request! Timeout of ${ options.timeout }ms.` ),
-            options.timeout
-          );
-          const response = await $axios.get( url, { cancelToken: abort.token, ...options } );
-          clearTimeout( id );
-          return response;
-        } else {
-          return await $axios.get( url, { ...options } );
-        }
-      };
-
       const getStreams = async () => {
         try {
-          const { data } = await axiosGet( 'https://api.bitwave.tv/v1/channels/live', { timeout } );
+          const { data } = await $axios.getSSR( 'https://api.bitwave.tv/v1/channels/live', { timeout } );
           if ( data && data.success ) {
             return {
               live: data.live,
@@ -301,9 +286,27 @@
 
       const streams = await getStreams();
 
+      const getChatHydration = async ( channel ) => {
+        try {
+          const global = store.state[ChatStore.namespace][ChatStore.$states.global];
+          if ( global === null ) return null;
+          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
+          if ( data && data.success ) return data.data;
+        } catch ( error ) {
+          console.log( `Chat hydration request failed` );
+          console.error( error.message );
+        }
+        return null;
+      };
+
+      // Get chat data for chat
+      const channel = streams.live.length > 0 ? streams.live[0].name : 'error';
+      const chatMessages = await getChatHydration( channel );
+
       return {
         live: streams.live,
         streamers: streams.streamers,
+        chatMessages: chatMessages,
         offline: false,
       }
     },

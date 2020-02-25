@@ -234,6 +234,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/axiossr',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
     { src: '@/plugins/pwa.client.js', mode: 'client' },
