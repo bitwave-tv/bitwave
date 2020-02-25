@@ -90,10 +90,12 @@
           this.setDisplayChat( false );
           this.chatWindow.getWindow().focus();
         }
+        this.$analytics.logEvent( 'popout_chat' );
       },
 
       closeChat () {
         this.setDisplayChat( false );
+        this.$analytics.logEvent( 'close_chat' );
       },
 
       createPopoutWindow () {
@@ -113,24 +115,29 @@
         await prompt.prompt();
         const userAction = await prompt.userChoice;
 
+        this.$analytics.logEvent( 'show_pwa_prompt' );
+
         if ( userAction.outcome === 'accepted' ) {
           this.$toast.success('Successfully installed.', { duration: 2000 });
           this.$ga.event({
             eventCategory : 'pwa-install',
             eventAction   : 'pwa-success',
           });
+          this.$analytics.logEvent( 'pwa_installed' );
         } else if (userAction.outcome === 'dismissed') {
           this.$toast.error('Installation cancelled', { duration: 2000 });
           this.$ga.event({
             eventCategory : 'pwa-install',
             eventAction   : 'pwa-cancelled',
           });
+          this.$analytics.logEvent( 'pwa_install_cancelled' );
         } else {
           this.$toast.error('ERROR: Installation failed', { duration: 2000 });
           this.$ga.event({
             eventCategory : 'pwa-install',
             eventAction   : 'pwa-failed',
           });
+          this.$analytics.logEvent( 'pwa_install_failed' );
         }
       },
 

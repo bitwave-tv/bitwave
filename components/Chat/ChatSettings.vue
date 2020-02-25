@@ -205,52 +205,81 @@
       }),
 
       globalChat: {
-        set ( val ) { this.setModeGlobal( val ) },
+        set ( val ) {
+          this.setModeGlobal( val );
+          this.$analytics.logEvent( 'global_chat', { value: val } );
+        },
         get () { return this.getModeGlobal }
       },
 
       showTimestamps: {
-        set ( val ) { this.setModeTimestamps( val ) },
+        set ( val ) {
+          this.setModeTimestamps( val );
+          this.$analytics.logEvent( 'show_timestamps', { value: val } );
+        },
         get () { return this.getModeTimestamps }
       },
 
       useTts: {
-        set ( val ) { this.setUseTts( val ) },
+        set ( val ) {
+          this.setUseTts( val );
+          this.$analytics.logEvent( 'use_tts', { value: val } );
+        },
         get () { return this.getUseTts }
       },
 
       useIgnore: {
-        set ( val ) { this.setUseIgnore( val ) },
+        set ( val ) {
+          this.setUseIgnore( val );
+          this.$analytics.logEvent( 'use_ignore', { value: val } );
+        },
         get () { return this.getUseIgnore }
       },
 
       trollTts: {
-        set ( val ) { this.setTrollTts( val ) },
+        set ( val ) {
+          this.setTrollTts( val );
+          this.$analytics.logEvent( 'allow_troll_tts', { value: val } );
+        },
         get () { return this.getTrollTts }
       },
 
       ttsRate: {
-        set ( val ) { this.setTtsRate( val ) },
+        set ( val ) {
+          this.setTtsRate( val );
+          this.$analytics.logEvent( 'tts_rate', { value: val } );
+        },
         get () { return this.getTtsRate }
       },
 
       ttsVolume: {
-        set ( val ) { this.setTtsVolume( val ) },
+        set ( val ) {
+          this.setTtsVolume( val );
+          this.$analytics.logEvent( 'tts_volume', { value: val } );
+        },
         get () { return this.getTtsVolume }
       },
 
       ttsVoice: {
-        set ( val ) { this.setTtsVoice( val ) },
+        set ( val ) {
+          this.setTtsVoice( val );
+        },
         get () { return this.getTtsVoice }
       },
 
       notificationSound: {
-        set ( val ) { this.setNotify( val ) },
+        set ( val ) {
+          this.setNotify( val );
+          this.$analytics.logEvent( 'chat_notifications', { value: val } );
+        },
         get () { return this.getNotify }
       },
 
       autocomplete: {
-        set ( val ) { this.setAutocomplete( val ) },
+        set ( val ) {
+          this.setAutocomplete( val );
+          this.$analytics.logEvent( 'chat_autocomplete', { value: val } );
+        },
         get () { return this.getAutocomplete }
       },
     },

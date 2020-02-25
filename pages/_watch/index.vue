@@ -148,7 +148,7 @@
         bottom
         right
         class="v-btn--example"
-        @click="() => setDisplayChat( true )"
+        @click="showChat"
       >
         <v-icon color="black">question_answer</v-icon>
       </v-btn>
@@ -620,9 +620,9 @@
             * 100 );
 
         // Log dropped frames at various levels
-        if ( percentDroppedFrames >= 20)
+        if ( percentDroppedFrames >= 5)
           console.warn( `We have dropped more than 20% of frames!\n${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
-        else if ( percentDroppedFrames >= 5 )
+        else if ( percentDroppedFrames >= 1 )
           console.log( `We have dropped more than 5% of frames!\n${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
         else if ( percentDroppedFrames > 0 )
           console.debug( `Good news, we have dropped very few (if any) frames.\nOnly ${percentDroppedFrames.toFixed(1)}% of frames (${playbackQuality.droppedVideoFrames - this.lastVPQ.droppedVideoFrames}) dropped since our last check.` );
@@ -635,6 +635,8 @@
           eventValue    : percentDroppedFrames,
         });
 
+        this.$analytics.logEvent( 'dropped_frames', { value: percentDroppedFrames } );
+
         // Update for next loop
         this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
       },
@@ -645,6 +647,11 @@
 
       onOrientationChange () {
         this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+      },
+
+      showChat () {
+        this.setDisplayChat( true );
+        this.$analytics.logEvent( 'show_chat' );
       },
 
       ...mapMutations(Player.namespace, {
