@@ -79,8 +79,11 @@
     },
 
     async asyncData ({ $axios }) {
+      // Timeout to prevent SSR from locking up
+      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
       try {
-        let { data } = await $axios.get( 'https://api.bitwave.tv/api/channels/list', { timeout: 5000 } );
+        let { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/channels/list', { timeout } );
 
         return {
           streamers: data.users,
