@@ -7,11 +7,17 @@
         <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
         <v-img
           src="https://cdn.bitwave.tv/static/emotes/windowoflife-92.gif"
-          alt="Window of life smash"
+          alt="window of life smash"
           height="92"
           contain
         />
         <div class="font-weight-light display-1 white--text text-center mx-3">brick.of.life.🧱</div>
+        <v-img
+          src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
+          alt="bitwave sign OurAlley window of life"
+          height="92"
+          contain
+        />
       </div>
     </v-row>
 
