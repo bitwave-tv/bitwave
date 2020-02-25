@@ -6,6 +6,7 @@
       <div class="d-flex align-center">
         <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
         <v-img
+          v-show="!this.$vuetify.breakpoint.smAndDown"
           src="https://cdn.bitwave.tv/static/emotes/windowoflife-92.gif"
           alt="window of life smash"
           height="92"
@@ -13,6 +14,7 @@
         />
         <div class="font-weight-light display-1 white--text text-center mx-3">brick.of.life.🧱</div>
         <v-img
+          v-show="!this.$vuetify.breakpoint.smAndDown"
           src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
           alt="bitwave sign OurAlley window of life"
           height="92"
