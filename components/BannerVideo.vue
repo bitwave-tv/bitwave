@@ -50,7 +50,7 @@
         bottom
         right
         class="v-btn--example"
-        @click="() => setDisplayChat( true )"
+        @click="showChat"
       >
         <v-icon color="black">question_answer</v-icon>
       </v-btn>
@@ -93,6 +93,7 @@
         live: true,
         initialized: false,
         showPreroll: false,
+        player: null,
       };
     },
 
@@ -134,6 +135,11 @@
         if ( !this.initialized ) return;
         this.player.poster = this.poster;
         this.player.src( { src: this.src, type: this.type } );
+      },
+
+      showChat () {
+        this.setDisplayChat( true );
+        this.$analytics.logEvent( 'show_chat' );
       },
 
       updatePlayerSrc () {
