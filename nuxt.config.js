@@ -254,6 +254,7 @@ module.exports = {
     '@nuxtjs/toast',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
+    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
   ],
 
   /*
