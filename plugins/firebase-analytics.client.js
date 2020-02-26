@@ -2,6 +2,7 @@
 import * as firebase from 'firebase/app'
 
 import 'firebase/analytics'
+import 'firebase/performance'
 
 const firebaseConfig = {
   apiKey: "AIzaSyCgIwubBz-nTd0mof6l7eklzJk1evuwzhg",
@@ -20,6 +21,7 @@ if ( !firebase.apps.length ) {
 
 // Inject Firebase Analytics
 export default async ( ctx, inject ) => {
+  const defaultPerformance = firebase.performance();
   const analytics = firebase.analytics();
   inject( 'analytics', analytics );
 }
