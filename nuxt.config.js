@@ -18,7 +18,7 @@ module.exports = {
 
     IPINFO_TOKEN: process.env.IPINFO_TOKEN || '28731f83a6e092',
 
-    SSR_TIMEOUT: parseInt( process.env.SSR_TIMEOUT ) || 10 * 1000,
+    SSR_TIMEOUT: parseInt( process.env.SSR_TIMEOUT ) || 5 * 1000,
   },
 
   /*
@@ -254,7 +254,7 @@ module.exports = {
     '@nuxtjs/toast',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
-    // [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
+    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
   ],
 
   /*
