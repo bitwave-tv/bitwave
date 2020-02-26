@@ -280,8 +280,9 @@ export const actions = {
       }
 
       // cookie for global chat hydration flag
-      if ( cookies._bw_global !== undefined ) {
-        commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, cookies._bw_global );
+      const bwGlobal = cookies._bw_global;
+      if ( bwGlobal !== undefined ) {
+        commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, bwGlobal );
       }
     }
 
