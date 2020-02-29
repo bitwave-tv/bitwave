@@ -1,12 +1,5 @@
 <template>
-  <v-navigation-drawer
-    :value="value"
-    :mini-variant="miniVariant"
-    :clipped="false"
-    color="grey darken-4"
-    app
-    @input="$emit( 'input', $event )"
-  >
+
     <v-layout
       fill-height
       column
@@ -58,8 +51,8 @@
       </div>
 
       <!-- User Channels -->
-      <v-flex
-        class="hide-scrollbar"
+      <div
+        class="d-flex hide-scrollbar"
         style="overflow-y: auto; will-change: transform; overscroll-behavior-y: contain;"
       >
         <v-list
@@ -111,8 +104,8 @@
                 </v-badge>
               </v-list-item-avatar>
               <v-list-item-content class="py-0">
-                <v-list-item-title v-if="!miniVariant">{{ user.title }}</v-list-item-title>
-                <v-list-item-subtitle v-if="!miniVariant">{{ user.name }}</v-list-item-subtitle>
+                <v-list-item-title v-if="!collapsed">{{ user.title }}</v-list-item-title>
+                <v-list-item-subtitle v-if="!collapsed">{{ user.name }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </transition-group>
@@ -158,8 +151,8 @@
                   </v-avatar>
                 </v-list-item-avatar>
                 <v-list-item-content class="py-0">
-                  <v-list-item-title v-if="!miniVariant">{{ user.title }}</v-list-item-title>
-                  <v-list-item-subtitle v-if="!miniVariant">{{ user.name }}</v-list-item-subtitle>
+                  <v-list-item-title v-if="!collapsed">{{ user.title }}</v-list-item-title>
+                  <v-list-item-subtitle v-if="!collapsed">{{ user.name }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-lazy>
@@ -187,24 +180,9 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-flex>
+      </div>
     </v-layout>
 
-    <!-- Minify Panel -->
-    <template #append>
-      <div class="pa-2">
-        <v-btn
-          color="yellow"
-          block
-          outlined
-          small
-          @click.stop="miniVariant = !miniVariant"
-        >
-          <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
-        </v-btn>
-      </div>
-    </template>
-  </v-navigation-drawer>
 </template>
 
 <script>
@@ -213,16 +191,14 @@
   import { auth, db } from '@/plugins/firebase';
 
   export default {
-    name: 'UserList',
+    name: 'StreamerList',
 
     props: {
-      value: { type: Boolean },
+      collapsed: { type: Boolean },
     },
 
     data() {
       return {
-        miniVariant: true,
-
         items: [
           {
             icon   : 'whatshot',
@@ -289,20 +265,3 @@
     },
   }
 </script>
-
-<style lang='scss'>
-  .hide-scrollbar {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE 10+ */
-
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-  }
-
-  .offline {
-    -webkit-filter: grayscale(60%);
-    filter: grayscale(60%);
-  }
-</style>

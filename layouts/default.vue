@@ -53,7 +53,7 @@
     </v-app-bar>
 
     <!-- L-Nav Drawer -->
-    <user-list v-model="drawer" />
+    <sidebar v-model="drawer" />
 
     <!-- Content -->
     <v-content>
@@ -68,7 +68,7 @@
 
 <script>
   import User from '@/components/SubLayout/User'
-  import UserList from '@/components/UserList'
+  import sidebar from '@/components/SubLayout/sidebar'
   import Notifications from '@/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
   import SystemAlert from '@/components/Alerts/SystemAlert';
@@ -83,7 +83,7 @@
     components: {
       SystemAlert,
       User,
-      UserList,
+      sidebar,
       Notifications,
       StreamInfo,
       Fireworks,
