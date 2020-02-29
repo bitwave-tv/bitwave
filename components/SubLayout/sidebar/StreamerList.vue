@@ -52,7 +52,7 @@
 
       <!-- User Channels -->
       <div
-        class="d-flex hide-scrollbar"
+        class="d-flex flex-column flex-vertical hide-scrollbar"
         style="overflow-y: auto; will-change: transform; overscroll-behavior-y: contain;"
       >
         <v-list
