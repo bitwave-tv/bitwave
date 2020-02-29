@@ -1,7 +1,6 @@
 <template>
   <v-navigation-drawer
     color="grey darken-4"
-    :value="value"
     :mini-variant="collapsed"
     app
     @input="$emit( 'input', $event )"
