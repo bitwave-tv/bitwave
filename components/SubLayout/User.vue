@@ -17,7 +17,6 @@
           rounded
           fab
           small
-          :loading="loading"
         >
           <!-- Avatar with webp support -->
           <picture
@@ -185,9 +184,8 @@
 </template>
 
 <script>
-  import { auth } from '@/plugins/firebase.js';
-  import LoginDialog from '~/components/LoginDialog';
-  const BraintreeDropIn = () => import ( '~/components/Payment/braintree-drop-in' );
+  const LoginDialog = async () => await import( '~/components/LoginDialog' );
+  const BraintreeDropIn = async () => await import ( '~/components/Payment/braintree-drop-in' );
 
   import { mapGetters, mapActions } from 'vuex';
   import { VStore } from '@/store';
@@ -203,9 +201,7 @@
 
     data () {
       return {
-        unsubscribeUser: null,
         profileMenu: false,
-        loading: false,
       }
     },
 
@@ -213,11 +209,6 @@
       ...mapActions({
         logoutStore: VStore.$actions.logout,
       }),
-
-      async authenticated( user ) {
-        if ( user ) { /* user logged in */ }
-        this.loading = false;
-      },
 
       async logout () {
         this.$ga.event({
@@ -266,13 +257,7 @@
     },
 
     mounted() {
-      if ( !this.isAuth ) this.loading = true;
-      this.unsubAuthChanged = auth.onAuthStateChanged ( async user => await this.authenticated( user ) );
-    },
 
-    beforeDestroy() {
-      if ( this.unsubAuthChanged ) this.unsubAuthChanged();
-      if ( this.unsubscribeUser ) this.unsubscribeUser();
     },
   };
 </script>

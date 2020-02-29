@@ -32,7 +32,9 @@
 
     <!-- Content -->
     <v-content style="max-height: 100vh">
+
       <nuxt />
+
     </v-content>
 
   </v-app>
@@ -40,7 +42,7 @@
 
 <script>
   import Notifications from '~/components/Notifications'
-  import User from '~/components/User'
+  import User from '~/components/SubLayout/User'
 
   export default {
     components: {

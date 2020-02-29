@@ -67,7 +67,7 @@
 </template>
 
 <script>
-  import User from '@/components/User'
+  import User from '@/components/SubLayout/User'
   import UserList from '@/components/UserList'
   import Notifications from '@/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
