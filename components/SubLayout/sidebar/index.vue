@@ -1,5 +1,6 @@
 <template>
   <v-navigation-drawer
+    :value="value"
     color="grey darken-4"
     :mini-variant="collapsed"
     app
@@ -34,6 +35,10 @@
 
     components: {
       StreamerList,
+    },
+
+    props: {
+      value: { type: Boolean },
     },
 
     data() {
