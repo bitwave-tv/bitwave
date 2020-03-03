@@ -114,6 +114,17 @@
             },
           });
 
+          // Video Player Ready
+          this.player.ready( async () => {
+            // Restore Volume
+            try {
+              let volume = localStorage.getItem( 'volume' );
+              if ( volume !== null ) this.player.volume( volume );
+            } catch ( error ) {
+              console.warn( 'Failed to find prior volume level' ); // No volume value in memory
+            }
+          });
+
           this.player.on( 'ended', async () => {
             this.reloadPlayer();
             this.player.play();
@@ -124,6 +135,16 @@
           console.error( error );
           this.initialized = false;
         }
+
+        // Save volume on change
+        this.player.on( 'volumechange', () => {
+          if ( !this.initialized ) return;
+          const volume = this.player.volume();
+          const muted  = this.player.muted();
+          if ( typeof volume === 'undefined' || typeof muted === 'undefined' ) return;
+          localStorage.setItem( 'volume', volume );
+          localStorage.setItem( 'muted',  muted );
+        });
 
       },
 
