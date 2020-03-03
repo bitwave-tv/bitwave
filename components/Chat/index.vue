@@ -482,7 +482,7 @@
 
       async socketError ( error, reason ) {
         this.loading = true;
-        if ( process.env.APP_DEBUG )
+        if ( process.env.APP_DEBUG && process.env.APP_DEBUG === 'true' )
           this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
       },
 
