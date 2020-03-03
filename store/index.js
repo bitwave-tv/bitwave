@@ -2,6 +2,20 @@ import { auth, db } from '@/plugins/firebase.js';
 import axios from 'axios';
 import { Chat } from '@/store/chat';
 
+const logger = ( message, data ) => {
+  if ( process.client ) {
+    if ( data && typeof data === 'object' )
+      console.log( `%cSTORE:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
+    else
+      console.log( `%cSTORE:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+  } else {
+    if ( data && typeof data === 'object' )
+      console.log( `STORE: ${message} %o`, data );
+    else
+      console.log( `STORE: ${message}` );
+  }
+};
+
 let unsubscribeUser = null;
 
 
@@ -271,12 +285,12 @@ export const actions = {
         if ( cookies.auth && cookies.user ) {
           authUser = cookies.auth;
           user     = cookies.user;
-          console.log( `${user.username} logged in via nuxtServerInit: `, params );
+          logger( `${user.username} logged in via nuxtServerInit: `, params );
         } else {
-          console.log( `User is not logged in.`, params );
+          logger( `User is not logged in.`, params );
         }
       } catch ( error ) {
-        console.log( `ERROR: No valid cookie found.`, error );
+        logger( `ERROR: No valid cookie found.`, error );
       }
 
       // cookie for global chat hydration flag
@@ -364,17 +378,16 @@ export const actions = {
     const userdocRef = db.collection( 'users' ).doc( uid );
     unsubscribeUser = userdocRef.onSnapshot( async doc => {
       const data = doc.data();
-      if ( process.env.APP_DEBUG )  console.log( 'User updated', data );
+      if ( process.env.APP_DEBUG )  logger( 'User updated', data );
       commit( $mutations.setUser, data );
       this.$cookies.set( 'user',  data );
     });
 
-    if ( process.client )
-      console.log( `%cSTORE:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
+    if ( process.client ) logger( 'Logged in!', user );
   },
 
   async [$actions.logout] ({ dispatch, commit }) {
-    console.log( 'Logging Out...' );
+    logger( 'Logging Out...' );
     try {
       if ( unsubscribeUser ) {
         await unsubscribeUser();
@@ -393,7 +406,7 @@ export const actions = {
       // Triggers actions in child stores
       await dispatch( `${Chat.namespace}/${Chat.$actions.logout}` );
 
-      console.log( '%cSTORE:%c Logged Out', 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+      logger( 'Logged Out' );
     } catch ( error ) {
       console.log( `ERROR: ${error}` );
     }
@@ -453,12 +466,12 @@ export const actions = {
   },
 
   async [$actions.updateAlerts] ( { commit }, alerts ) {
-    console.log( 'Alerts updated!', alerts );
+    logger( 'Alerts updated!', alerts );
     commit( $mutations.setAlerts, alerts );
   },
 
   async [$actions.updateFeatureFlags] ( { commit }, featureFlags ) {
-    console.log( 'Feature Flags updated!', featureFlags );
+    logger( 'Feature Flags updated!', featureFlags );
     commit( $mutations.setFeatureFlags, featureFlags );
   },
 
