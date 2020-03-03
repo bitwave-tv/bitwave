@@ -424,8 +424,8 @@ export const actions = {
   },
 
   async [$actions.newVersionAvailable] ( { commit }, latestVersions ) {
-    const currentVersion = process.env.VERSION.split('.');
-    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.');
+    const currentVersion = process.env.VERSION.split('.').map( v => parseInt(v) );
+    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.').map( v => parseInt(v) );
 
     const checkNewVersion = ( currentVersion, newestVersion ) => {
       if ( currentVersion[0 ] <  newestVersion[0] )
@@ -444,7 +444,7 @@ export const actions = {
     const newVersion = checkNewVersion( currentVersion, newestVersion );
 
     if ( newVersion ) {
-      console.log( `An update is available! [${newVersion}]` );
+      console.log( `An update is available! current: [${currentVersion}] latest: [${newestVersion}]` );
       commit( $mutations.setNewVersion, newVersion );
       this.$toast.global.update( { message: `[ v${latestVersions[ process.env.BITWAVE_ENV ]} ] A new bitwave version is available` } );
     } else {
@@ -454,9 +454,7 @@ export const actions = {
 
   async [$actions.updateAlerts] ( { commit }, alerts ) {
     console.log( 'Alerts updated!', alerts );
-    setTimeout( () => {
-      commit( $mutations.setAlerts, alerts );
-    }, 1000);
+    commit( $mutations.setAlerts, alerts );
   },
 
   async [$actions.updateFeatureFlags] ( { commit }, featureFlags ) {
