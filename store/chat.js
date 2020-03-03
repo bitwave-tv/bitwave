@@ -2,6 +2,20 @@
 
 import jwt_decode from 'jwt-decode';
 
+const logger = ( message, data ) => {
+  if ( process.client ) {
+    if ( data && typeof data === 'object' )
+      console.log( `%cCHAT STORE:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
+    else
+      console.log( `%cCHAT STORE:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+  } else {
+    if ( data && typeof data === 'object' )
+      console.log( `CHAT STORE: ${message} %o`, data );
+    else
+      console.log( `CHAT STORE: ${message}` );
+  }
+};
+
 let loggingOut = false;
 
 const $states = {
@@ -282,7 +296,7 @@ export const actions = {
 
       await dispatch( $actions.updateChatToken, data.chatToken );
 
-      if ( process.env.APP_DEBUG ) console.log( `%cCHAT STORE:%c Set Chat Token.`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+      if ( process.env.APP_DEBUG ) logger( 'Set Chat Token' );
     } catch ( error ) {
       console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
     }
@@ -318,7 +332,7 @@ export const actions = {
   async [$actions.logout] ({ dispatch }) {
     // Prevent edge case where logout is called from multiple locations
     if ( loggingOut ) {
-      if ( process.env.APP_DEBUG ) console.log( `Logout is already in progress.` );
+      if ( process.env.APP_DEBUG ) logger( `Logout is already in progress.` );
       return;
     }
 
@@ -348,7 +362,7 @@ export const actions = {
       if ( global !== null ) commit( $mutations.setGlobal, global );
       else  commit( $mutations.setGlobal, false );
     } catch ( error ) {
-      console.log( 'No global chat option found.' );
+      logger ( 'No global chat option found.' );
     }
 
     // Timestamps
@@ -357,7 +371,7 @@ export const actions = {
       if ( showTimestamps !== null ) commit( $mutations.setTimestamps, showTimestamps );
       else commit( $mutations.setTimestamps, true );
     } catch ( error ) {
-      console.log( 'No showTimestamps option found.' );
+      logger ( 'No showTimestamps option found.' );
     }
 
     // Ignore users
@@ -366,7 +380,7 @@ export const actions = {
       if ( ignore !== null ) commit( $mutations.setUseIgnore, JSON.parse( ignore ) );
       else commit( $mutations.setUseIgnore, true );
     } catch ( error ) {
-      console.log( 'No ignore option found.' );
+      logger ( 'No ignore option found.' );
     }
 
     // Notifications
@@ -375,7 +389,7 @@ export const actions = {
       if ( notify !== null ) commit( $mutations.setNotify, notify );
       else commit( $mutations.setNotify, true );
     } catch ( error ) {
-      console.log ( 'No notification sound option found.' );
+      logger ( 'No notification sound option found.' );
     }
 
     // Autocomplete
@@ -384,7 +398,7 @@ export const actions = {
       if ( autocomplete !== null ) commit( $mutations.setAutocomplete, autocomplete );
       else commit( $mutations.setAutocomplete, true );
     } catch ( error ) {
-      console.log ( 'No autocomplete option found.' );
+      logger ( 'No autocomplete option found.' );
     }
 
     // Get ignore list
@@ -392,7 +406,7 @@ export const actions = {
       const ignores = localStorage.getItem( 'ignorelist' );
       if ( ignores !== null ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
     } catch ( error ) {
-      console.log( 'No ignore list found.' );
+      logger ( 'No ignore list found.' );
     }
 
     // TODO: Implement
