@@ -48,7 +48,7 @@
 
       <notifications />
 
-      <user class="ml-2" />
+      <user-menu class="ml-2" />
 
     </v-app-bar>
 
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-  import User from '@/components/SubLayout/User'
+  import UserMenu from '@/components/SubLayout/UserMenu'
   import sidebar from '@/components/SubLayout/sidebar'
   import Notifications from '@/components/Notifications'
   import StreamInfo from '@/components/StreamInfo';
@@ -82,7 +82,7 @@
 
     components: {
       SystemAlert,
-      User,
+      UserMenu,
       sidebar,
       Notifications,
       StreamInfo,

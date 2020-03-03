@@ -26,7 +26,7 @@
 
       <notifications />
 
-      <user class="ml-4" />
+      <user-menu class="ml-2" />
 
     </v-app-bar>
 
@@ -42,12 +42,12 @@
 
 <script>
   import Notifications from '~/components/Notifications'
-  import User from '~/components/SubLayout/User'
+  import UserMenu from '@/components/SubLayout/UserMenu'
 
   export default {
     components: {
       Notifications,
-      User,
+      UserMenu,
     },
 
     data () {
