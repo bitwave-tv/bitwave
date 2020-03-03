@@ -42,30 +42,7 @@
     <!-- Bottom Buttons -->
     <div class="d-flex align-center">
       <!-- Chat Settings -->
-      <v-menu
-        v-model="showChatSettings"
-        :close-on-content-click="false"
-        transition="slide-x-transition"
-        :max-width="320"
-        max-height="90vh"
-        top
-        right
-        offset-y
-      >
-        <template #activator="{ on }">
-          <v-btn
-            v-on="on"
-            small
-            icon
-          >
-            <v-icon>settings</v-icon>
-          </v-btn>
-        </template>
-        <chat-settings
-          class="mb-3"
-          @close="showChatSettings = false"
-        />
-      </v-menu>
+      <chat-settings />
 
       <!-- Chat Coin -->
       <v-menu
@@ -206,7 +183,6 @@
 
     data() {
       return {
-        showChatSettings: false,
         showChatCoins: false,
 
         messageBufferIndex: 0,

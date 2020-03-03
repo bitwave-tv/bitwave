@@ -1,0 +1,67 @@
+<template>
+  <v-menu
+    v-model="showChatSettings"
+    :close-on-content-click="false"
+    transition="slide-x-transition"
+    :max-width="320"
+    max-height="90vh"
+    top
+    right
+    offset-y
+  >
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        small
+        icon
+      >
+        <v-icon>settings</v-icon>
+      </v-btn>
+    </template>
+
+    <v-card class="mb-3">
+      <!-- Title Bar -->
+      <v-sheet
+        tile
+        color="yellow"
+        class="d-flex align-center justify-space-between pl-2"
+      >
+        <h5 class="black--text body-2">Chat Settings</h5>
+        <v-btn
+          color="black"
+          text
+          icon
+          pa-0
+          @click="close"
+        >
+          <v-icon color="black">close</v-icon>
+        </v-btn>
+      </v-sheet>
+      <settings-menu />
+    </v-card>
+  </v-menu>
+</template>
+
+<script>
+  const SettingsMenu = async () => await import( '@/components/Chat/ChatSettings/SettingsMenu' );
+
+  export default {
+    name: 'index',
+
+    components: {
+      SettingsMenu,
+    },
+
+    data() {
+      return {
+        showChatSettings: false,
+      };
+    },
+
+    methods: {
+      close () {
+        this.showChatSettings = false;
+      },
+    },
+  };
+</script>

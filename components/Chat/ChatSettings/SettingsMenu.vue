@@ -1,23 +1,5 @@
 <template>
-  <v-card>
-    <!-- Title Bar -->
-    <v-sheet
-      tile
-      color="yellow"
-      class="d-flex align-center justify-space-between pl-2"
-    >
-      <h5 class="black--text body-2">Chat Settings</h5>
-      <v-btn
-        color="black"
-        text
-        icon
-        pa-0
-        @click="closeMenu"
-      >
-        <v-icon color="black">close</v-icon>
-      </v-btn>
-    </v-sheet>
-
+  <div>
     <div class="px-3">
       <div class="d-flex">
         <v-switch
@@ -145,7 +127,7 @@
         />
       </v-list-item>
     </div>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -179,10 +161,6 @@
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
       }),
-
-      closeMenu() {
-        this.$emit( 'close' );
-      },
 
       updateSettings() {
         const settings = {};
