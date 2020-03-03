@@ -296,7 +296,7 @@ export const actions = {
 
       await dispatch( $actions.updateChatToken, data.chatToken );
 
-      if ( process.env.APP_DEBUG ) logger( 'Set Chat Token' );
+      if ( process.env.APP_DEBUG ) logger ( 'Set Chat Token' );
     } catch ( error ) {
       console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
     }
@@ -332,7 +332,7 @@ export const actions = {
   async [$actions.logout] ({ dispatch }) {
     // Prevent edge case where logout is called from multiple locations
     if ( loggingOut ) {
-      if ( process.env.APP_DEBUG ) logger( `Logout is already in progress.` );
+      if ( process.env.APP_DEBUG ) logger ( `Logout is already in progress.` );
       return;
     }
 
