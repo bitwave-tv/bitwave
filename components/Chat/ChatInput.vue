@@ -377,10 +377,6 @@
           : '';
       },
     },
-
-    async created () {
-      // await this.updateEmoteList();
-    },
   }
 </script>
 

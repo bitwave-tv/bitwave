@@ -312,7 +312,7 @@ export const actions = {
     ];
 
     // Hydrate emotes for logged in users
-    if ( authUser && user ) runParallel.push( dispatch( `${Chat.namespace}/${Chat.$actions.updateEmoteList}` ) );
+    // if ( authUser && user ) runParallel.push( dispatch( `${Chat.namespace}/${Chat.$actions.updateEmoteList}` ) );
 
     // Run all our API actions in parallel
     await Promise.all( runParallel );
