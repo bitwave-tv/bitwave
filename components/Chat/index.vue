@@ -205,6 +205,7 @@
     const dt1 = jwt_decode( t1 );
     const dt2 = jwt_decode( t2 );
     return dt1.user.avi === dt2.user.avi
+      && dt1.user.badge === dt2.user.badge
       && dt1.user.name === dt2.user.name
       && dt1.user.color === dt2.user.color
       && dt1.user.userColor === dt2.user.userColor;
@@ -304,6 +305,8 @@
 
         adminActionsMenu: false,
         overflowMenu: false,
+
+        chatBadge: true,
       }
     },
 
@@ -646,9 +649,10 @@
         if ( !this.getMessage || this.getMessage.length > 300 ) return false;
 
         const msg = {
-          message : this.getMessage,
-          channel : this.page,
-          global  : this.global,
+          message   : this.getMessage,
+          channel   : this.page,
+          global    : this.global,
+          showBadge : this.chatBadge,
         };
 
         const pattern = /(?:^\/)(\w+)(?:\s+(\S+))?(?:\s+(.*))?/;
@@ -731,6 +735,10 @@
               const msgToPin = msg.message.replace(/\/pin\s/i, '');
               console.log( `User is ${this.isChannelOwner ? '' : 'not'} owner. '${msgToPin}'` );
               this.createPinnedMessage( msgToPin );
+              break;
+            case 'badge':
+              this.chatBadge = !this.chatBadge;
+              await this.insertMessage( `Badge ${this.chatBadge ? 'on' : 'off'}` );
               break;
             case 'skip':
             case 's':
