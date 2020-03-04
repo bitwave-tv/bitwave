@@ -20,6 +20,7 @@
         >
           <chat-message
             v-if="msg.username !== ( index && messages[ index - 1 ].username )"
+            :badge="msg.badge"
             :username="msg.username"
             :display-name="msg.username"
             :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
@@ -179,11 +180,17 @@
       },
 
       getTime ( timestamp ) {
-        return this.showTimestamps ? `[${moment( timestamp ).format( 'HH:mm' )}]` : '';
+        if ( !this.showTimestamps ) return { short: null, long: null };
+        return {
+          short: `[${moment( timestamp ).format( 'HH:mm' )}]`,
+          long: `sent: ${moment( timestamp ).format( 'YYYY.MM.DD HH:mm:ss' )}`,
+        }
       },
 
       getGlobalTag ( global ) {
-        return this.global ? `[${global ? 'G' : global === false ? 'L' : 'U'}]` : '';
+        if ( typeof global !== 'boolean' ) return null;
+        // use this.global to hide for local chatters
+        return `[${global ? 'G' : 'L' }]`;
       },
 
       onScrollUp ( scrollPosition ) {

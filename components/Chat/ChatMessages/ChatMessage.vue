@@ -9,8 +9,8 @@
     >
       <!-- Todo: add crossorigin -->
       <img
-        v-if="!!props.avatar"
-        :src="`${props.avatar}`"
+        v-if="props.avatar"
+        :src="props.avatar"
         :alt="props.username"
         :key="props.username"
       >
@@ -35,12 +35,20 @@
       <!-- Message Header -->
       <div class="d-flex align-center">
 
-        <!-- Timestamp & Username -->
+        <!-- Timestamp & Global / Local tag -->
         <div class="bw-meta subtitle-2 flex-shrink-0">
-          <span class="time">{{ props.timestamp }}</span>
-          <span class="global">{{ props.global }}</span>
+          <span class="time" :title="props.timestamp.long">{{ props.timestamp.short }}</span>
+          <span class="global" :title="`${props.global ? 'global' : 'local'} chat`">{{ props.global }}</span>
         </div>
 
+        <!-- User Badge -->
+        <div
+          v-show="props.badge"
+          class="badge pl-1"
+          v-html="props.badge"
+        ></div>
+
+        <!-- Username -->
         <div
           class="username text-truncate flex-grow-1 subtitle-2 pl-1"
           :style="props.userStyling"
@@ -52,7 +60,7 @@
           :to="props.channel"
           no-prefetch
         >
-          <kbd>{{ props.channel }}</kbd>
+          <kbd :title="props.channel">{{ props.channel }}</kbd>
         </nuxt-link>
       </div>
 
@@ -69,6 +77,7 @@
 
     props: {
       avatar: {},
+      badge: { type: String },
       color: {},
       message: {
         type: String,
@@ -84,7 +93,7 @@
         type: String,
       },
       timestamp: {
-        type: String,
+        type: Object,
       },
       global: {
         type: Boolean|undefined,
