@@ -15,7 +15,6 @@
         />
         <div class="font-weight-light title white--text text-center mx-3"><span class="headline font-weight-regular blue--text">#</span> bitwave <span class="headline font-weight-regular red--text">4</span> bloomberg</div>
         <v-img
-          v-show="!this.$vuetify.breakpoint.smAndDown"
           src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
           alt="bitwave sign OurAlley window of life"
           height="92"
