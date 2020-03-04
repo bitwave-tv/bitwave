@@ -10,6 +10,7 @@
     <v-sheet
       id="poll-body"
       class="pa-3"
+      color="grey darken-4"
     >
 
       <!-- Poll Title -->

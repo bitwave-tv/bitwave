@@ -45,6 +45,8 @@ const $states = {
   displayName : 'DISPLAY_NAME',
   displayChat : 'DISPLAY_CHAT',
   chatWindow  : 'CHAT_WINDOW',
+
+  pinnedMessage : 'PINNED_MESSAGE',
 };
 
 const $getters = {
@@ -81,6 +83,8 @@ const $mutations = {
   setDisplayName : 'SET_DISPLAY_NAME',
   setDisplayChat : 'SET_DISPLAY_CHAT',
   setChatWindow  : 'SET_CHAT_WINDOW',
+
+  setPinnedMessage : 'SET_PINNED_MESSAGE',
 };
 
 const $actions = {
@@ -122,6 +126,8 @@ export const state = () => ({
   [$states.displayName] : '',
   [$states.displayChat] : true,
   [$states.chatWindow]  : null,
+
+  [$states.pinnedMessage] : null,
 });
 
 
@@ -252,6 +258,11 @@ export const mutations = {
   // Chat popout window
   [$mutations.setChatWindow] ( state, data ) {
     state[$states.chatWindow] = data;
+  },
+
+  // Pinned message
+  [$mutations.setPinnedMessage] ( state, data ) {
+    state[$states.pinnedMessage] = data;
   },
 };
 

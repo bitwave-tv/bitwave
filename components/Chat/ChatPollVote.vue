@@ -10,6 +10,8 @@
       id="poll-vote-body"
       class="pa-2 flex-grow-1"
       tile
+      color="blue-grey darken-4"
+      color1="rgba(.2,.2,.2,.8)"
     >
       <div class="d-flex align-center">
         <v-progress-circular
@@ -23,7 +25,16 @@
           class="d-flex mx-2 flex-grow-1"
           style="width: 0"
         >
-          <h3 class="d-inline-block" :style="{ display: '-webkit-box', '-webkit-line-clamp': showOptions ? '10' : '1', '-webkit-box-orient': 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }">
+          <h3
+            class="d-inline-block font-weight-regular"
+            :style="{
+              display: '-webkit-box',
+              '-webkit-line-clamp': showOptions ? '10' : '1',
+              '-webkit-box-orient': 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }"
+          >
             {{ pollData.title }}
           </h3>
 

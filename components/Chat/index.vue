@@ -29,7 +29,7 @@
       <div class="d-flex">
 
         <!-- Create Poll Button -->
-        <div v-if="page.toLowerCase() === username.toLowerCase()">
+        <div v-if="isChannelOwner">
           <v-menu
             v-model="showPoll"
             :close-on-content-click="false"
@@ -110,8 +110,11 @@
 
     </v-sheet>
 
-    <!-- Show Poll to Users -->
-    <v-flex id="user-chat-poll" style="position: relative;">
+
+    <!-- TODO: move structure and logic to subcomponent -->
+    <add-ons style="position: relative;">
+
+      <!-- Show Poll to Users -->
       <v-slide-x-reverse-transition>
         <chat-poll-vote
           v-if="showPollClient"
@@ -122,7 +125,9 @@
           @destroy="destroyPoll"
         />
       </v-slide-x-reverse-transition>
-    </v-flex>
+
+    </add-ons>
+
 
     <v-slide-y-transition mode="out-in">
       <chat-rate
@@ -137,6 +142,7 @@
         :stats="viewStats"
       />
     </v-slide-y-transition>
+
 
     <!-- Chat Messages -->
     <chat-messages
@@ -165,12 +171,13 @@
 
   import socketio from 'socket.io-client';
 
+  import AddOns from '@/components/Chat/AddOns';
   import ChatInput from '@/components/Chat/ChatInput';
   import ChatMessages from '@/components/Chat/ChatMessages';
   import ChatPoll from '@/components/Chat/ChatPoll';
-  import ChatPollVote from '@/components/Chat/ChatPollVote';
   import ViewerList from '@/components/Chat/ViewerList';
 
+  const ChatPollVote = async () => await import ( '@/components/Chat/ChatPollVote' );
   const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
   const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
   const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
@@ -186,6 +193,7 @@
     sanitize,
     stripHTML
   } from '@/assets/js/ChatHelpers';
+  import { ChatConfig } from '@/store/channel/chat-config';
 
   // Creates server map for switching chat servers
   const chatServers = new Map([
@@ -212,12 +220,13 @@
     },
 
     components: {
-      ChatOverflowMenu,
+      AddOns,
       ChatInput,
       ChatMessages,
       ChatPoll,
-      ChatPollVote,
       ViewerList,
+      ChatOverflowMenu,
+      ChatPollVote,
       ChatRate,
       ViewRate,
       ChatAdminMenu,
@@ -718,6 +727,11 @@
                 eventAction   : 'ignorelist',
               }); // Analytics
               break;
+            case 'pin':
+              const msgToPin = msg.message.replace(/\/pin\s/i, '');
+              console.log( `User is ${this.isChannelOwner ? '' : 'not'} owner. '${msgToPin}'` );
+              this.createPinnedMessage( msgToPin );
+              break;
             case 'skip':
             case 's':
               speechSynthesis.cancel(); // Skip TTS
@@ -996,26 +1010,32 @@
         }
       },
 
-      ...mapMutations({
+      ...mapMutations ({
         setChatToken: VStore.$mutations.setChatToken,
       }),
 
-      ...mapMutations (Chat.namespace, {
+      ...mapMutations ( Chat.namespace, {
         setIgnoreList     : Chat.$mutations.setIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
         appendChatMessage : Chat.$mutations.appendMessage,
+        setPinnedMessage  : Chat.$mutations.setPinnedMessage,
       }),
 
-      ...mapActions({
+      ...mapActions ({
         updateViewers: VStore.$actions.updateViewers,
       }),
 
-      ...mapActions(Chat.namespace, {
+      ...mapActions ( Chat.namespace, {
         loadSettings : Chat.$actions.loadSettings,
         initChat : Chat.$actions.init,
         logoutChat : Chat.$actions.logout,
         updateChatToken : Chat.$actions.updateChatToken,
         exchangeIdTokenChatToken: Chat.$actions.exchangeIdTokenChatToken,
+      }),
+
+      ...mapActions ( ChatConfig.namespace, {
+        loadChatConfig      : ChatConfig.$actions.loadConfig,
+        createPinnedMessage : ChatConfig.$actions.createPinnedMessage,
       }),
 
     },
@@ -1029,7 +1049,7 @@
         getChannelViews : VStore.$getters.getChannelViews,
       }),
 
-      ...mapState (Chat.namespace, {
+      ...mapState ( Chat.namespace, {
         global            : Chat.$states.global,
         showTimestamps    : Chat.$states.timestamps,
         getUseTts         : Chat.$states.useTts,
@@ -1048,6 +1068,10 @@
 
       username () {
         return this.displayName || this._username || 'user';
+      },
+
+      isChannelOwner () {
+        return this.page.toLowerCase() === this.username.toLowerCase();
       },
 
       page () {
@@ -1102,9 +1126,6 @@
         console.log( 'No ignore channel list found.' );
       }
 
-      // Listen for new polls
-      this.subscribeToPoll( this.page );
-
       // Stat tracking interval
       this.statInterval = setInterval( () => this.onStatTick(), 1000 );
 
@@ -1115,6 +1136,12 @@
       // Hydrate chat from SSR or API
       if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
       else await this.httpHydrate();
+
+      // Listen for new polls
+      this.subscribeToPoll( this.page );
+
+      // Get channel chat configuration
+      // this.loadChatConfig( this.page );
     },
 
     beforeDestroy () {
