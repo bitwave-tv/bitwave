@@ -17,6 +17,7 @@
             router
             exact
             @click="onClick"
+            no-prefetch
           >
             <v-list-item-action class="my-1">
               <v-avatar
@@ -44,6 +45,7 @@
           tile
           block
           @click="onClick"
+          no-prefetch
         >
           STREAM<br>
           HERE
@@ -79,6 +81,7 @@
               router
               exact
               @click="onClick"
+              no-prefetch
             >
               <v-list-item-avatar
                 :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
@@ -135,6 +138,7 @@
                 router
                 exact
                 @click="onClick"
+                no-prefetch
               >
                 <v-list-item-avatar
                   color="#000000"
@@ -165,6 +169,7 @@
             router
             exact
             @click="onClick"
+            no-prefetch
           >
             <v-list-item-avatar>
               <v-avatar

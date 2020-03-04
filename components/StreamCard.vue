@@ -1,8 +1,9 @@
 <template>
   <div>
     <v-card
-      :to="to"
       class="stream-card"
+      :to="to"
+      no-prefetch
     >
       <!-- Thumbnail -->
       <v-img
