@@ -393,7 +393,7 @@
           }
 
           // Check if reconnection required
-          if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username || lastUser.color !== user.color ) {
+          if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username || lastUser.color !== user.color || lastUser.badge !== user.badge ) {
             const oldToken = this.getChatToken;
 
             // Swap ID token for Chat Token

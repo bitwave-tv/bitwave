@@ -44,7 +44,7 @@
         <!-- User Badge -->
         <div
           v-show="props.badge"
-          class="badge pl-1"
+          class="badge pl-1 d-flex align-center"
           v-html="props.badge"
         ></div>
 
