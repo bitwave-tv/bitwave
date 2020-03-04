@@ -4,18 +4,19 @@
     <!-- Site Banner -->
     <v-row class="justify-center">
       <div class="d-flex align-center">
+        <!-- Font sizes: display4-1, headline, title, subtitle 1/2, body 1/2, caption, overline -->
         <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
         <v-img
           v-show="!this.$vuetify.breakpoint.smAndDown"
-          src="https://cdn.bitwave.tv/static/emotes/windowoflife-92.gif"
-          alt="window of life smash"
+          src="https://cdn.bitwave.tv/static/img/bloomberg-92.png"
+          alt="Michael Bloomberg"
           height="92"
           contain
         />
-        <div class="font-weight-light display-1 white--text text-center mx-3">brick.of.life.🧱</div>
+        <div class="font-weight-light title white--text text-center mx-3"><span class="headline font-weight-regular blue--text">#</span> bitwave <span class="headline font-weight-regular red--text">4</span> bloomberg</div>
         <v-img
           v-show="!this.$vuetify.breakpoint.smAndDown"
-          src="https://cdn.bitwave.tv/static/emotes/sign3.gif"
+          src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
           alt="bitwave sign OurAlley window of life"
           height="92"
           contain
