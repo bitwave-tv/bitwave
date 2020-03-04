@@ -13,7 +13,14 @@
           height="92"
           contain
         />
-        <div class="font-weight-light title white--text text-center mx-3"><span class="headline font-weight-regular blue--text">#</span> bitwave <span class="headline font-weight-regular red--text">4</span> bloomberg</div>
+        <div class="font-weight-light title white--text text-center mx-3 d-flex flex-column">
+          <div class="grey--text">
+            <s><span class="headline font-weight-regular blue--text">#</span> bitwave <span class="headline font-weight-regular red--text">4</span> bloomberg</s>
+            <span class="overline font-weight-light white--text">(oops)</span>
+          </div>
+          Advertising Space For Sale
+          <span class="overline grey--text">Results may vary.</span>
+        </div>
         <v-img
           src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
           alt="bitwave sign OurAlley window of life"
