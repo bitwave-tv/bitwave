@@ -97,7 +97,7 @@
   import socketio from 'socket.io-client';
   import moment from 'moment';
 
-  import ChatMessage from '@/components/Chat/ChatMessage'
+  import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
 
   export default {
     name: 'chat-overlay',

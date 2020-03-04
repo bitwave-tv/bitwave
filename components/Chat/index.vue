@@ -172,8 +172,8 @@
   import socketio from 'socket.io-client';
 
   import AddOns from '@/components/Chat/AddOns';
-  import ChatInput from '@/components/Chat/ChatInput';
   import ChatMessages from '@/components/Chat/ChatMessages';
+  import ChatInput from '@/components/Chat/ChatInput';
   import ChatPoll from '@/components/Chat/ChatPoll';
   import ViewerList from '@/components/Chat/ViewerList';
 
