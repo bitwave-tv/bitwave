@@ -165,6 +165,10 @@
       label: 'Message Stats',
       value: '/stats ',
     },
+    {
+      label: 'Toggle User Badge (if available)',
+      value: '/badge ',
+    },
   ];
 
   export default {
