@@ -305,8 +305,6 @@
 
         adminActionsMenu: false,
         overflowMenu: false,
-
-        chatBadge: true,
       }
     },
 
@@ -737,7 +735,7 @@
               this.createPinnedMessage( msgToPin );
               break;
             case 'badge':
-              this.chatBadge = !this.chatBadge;
+              this.setChatBadge( !this.chatBadge );
               await this.insertMessage( `Badge ${this.chatBadge ? 'on' : 'off'}` );
               break;
             case 'skip':
@@ -1027,6 +1025,7 @@
         setMessage        : Chat.$mutations.setMessage,
         appendChatMessage : Chat.$mutations.appendMessage,
         setPinnedMessage  : Chat.$mutations.setPinnedMessage,
+        setChatBadge      : Chat.$mutations.setShowBadge,
       }),
 
       ...mapActions ({
@@ -1072,6 +1071,8 @@
 
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,
+
+        chatBadge         : Chat.$states.showBadge,
       }),
 
       username () {

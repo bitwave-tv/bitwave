@@ -47,6 +47,8 @@ const $states = {
   chatWindow  : 'CHAT_WINDOW',
 
   pinnedMessage : 'PINNED_MESSAGE',
+
+  showBadge : 'SHOW_BADGE',
 };
 
 const $getters = {
@@ -85,6 +87,8 @@ const $mutations = {
   setChatWindow  : 'SET_CHAT_WINDOW',
 
   setPinnedMessage : 'SET_PINNED_MESSAGE',
+
+  setShowBadge : 'SET_SHOW_BADGE',
 };
 
 const $actions = {
@@ -128,6 +132,8 @@ export const state = () => ({
   [$states.chatWindow]  : null,
 
   [$states.pinnedMessage] : null,
+
+  [$states.showBadge] : true,
 });
 
 
@@ -263,6 +269,12 @@ export const mutations = {
   // Pinned message
   [$mutations.setPinnedMessage] ( state, data ) {
     state[$states.pinnedMessage] = data;
+  },
+
+  // Pinned message
+  [$mutations.setShowBadge] ( state, data ) {
+    state[$states.showBadge] = JSON.parse( data );
+    localStorage.setItem( 'showbadge', data );
   },
 };
 
@@ -416,6 +428,14 @@ export const actions = {
     try {
       const ignores = localStorage.getItem( 'ignorelist' );
       if ( ignores !== null ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
+    } catch ( error ) {
+      logger ( 'No ignore list found.' );
+    }
+
+    // Get ignore list
+    try {
+      const showbadge = localStorage.getItem( 'showbadge' );
+      if ( showbadge !== null ) commit( $mutations.setShowBadge, JSON.parse( showbadge ) );
     } catch ( error ) {
       logger ( 'No ignore list found.' );
     }
