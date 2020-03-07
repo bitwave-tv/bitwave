@@ -6,27 +6,26 @@
       <div class="d-flex align-center">
         <!-- Font sizes: display4-1, headline, title, subtitle 1/2, body 1/2, caption, overline -->
         <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
-        <v-img
+        <!--<v-img
           v-show="!this.$vuetify.breakpoint.smAndDown"
           src="https://cdn.bitwave.tv/static/img/bloomberg-92.png"
           alt="Michael Bloomberg"
           height="92"
           contain
-        />
+        />-->
         <div class="font-weight-light title white--text text-center mx-3 d-flex flex-column">
+          [bitwave.tv]
           <div class="grey--text">
-            <s><span class="headline font-weight-regular blue--text">#</span> bitwave <span class="headline font-weight-regular red--text">4</span> bloomberg</s>
-            <span class="overline font-weight-light white--text">(oops)</span>
+            Supporting Freedom of Expression
           </div>
-          Advertising Space For Sale
-          <span class="overline grey--text">Results may vary.</span>
+          <span class="overline grey--text"></span>
         </div>
-        <v-img
+        <!--<v-img
           src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
           alt="bitwave sign OurAlley window of life"
           height="92"
           contain
-        />
+        />-->
       </div>
     </v-row>
 
