@@ -80,46 +80,6 @@
           </v-card>
         </v-col>
 
-        <!-- Dropped Frames Graph -->
-        <v-col
-          v-if="false"
-          cols="12"
-          md="6"
-        >
-          <v-card color="grey darken-4">
-            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              Player: Dropped Frames %
-            </div>
-            <v-sparkline
-              :value="graphVideoPlaybackQuality"
-              :gradient="gradient"
-              :smooth="radius || false"
-              :padding="padding"
-              :line-width="width"
-              :type="type"
-              stroke-linecap="round"
-              gradient-direction="top"
-            />
-            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
-              <template
-                v-if="videoPlaybackQuality.length > 2"
-                v-for="( stat, name, index ) in videoPlaybackQuality[videoPlaybackQuality.length - 1]"
-              >
-                <div>
-                  <span class="grey--text mr-1">{{ name }}</span>
-                  <span class="body-2">{{ stat }}</span>
-                </div>
-                <v-divider
-                  v-if="index !== Object.keys(videoPlaybackQuality[videoPlaybackQuality.length - 1]).length - 1"
-                  color="orange"
-                  vertical
-                  class="mx-1"
-                />
-              </template>
-            </div>
-          </v-card>
-        </v-col>
-
         <!-- New Chart.js Dropped Frames Graph -->
         <v-col
           cols="12"
@@ -192,75 +152,6 @@
           </v-card>
         </v-col>
 
-        <!-- Chart.js Graph -->
-        <v-col
-          v-if="false"
-          cols="12"
-          md="6"
-        >
-          <v-card color="grey darken-4">
-            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              {{ streamer }}: Target Size per Frame
-            </div>
-            <basic-line
-              :points="points"
-              :options="chartOptions"
-              :height="100"
-            />
-            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
-              <template
-                v-if="hlsGraphStats.length > 2"
-                v-for="( stat, name, index ) in hlsGraphStats[hlsGraphStats.length - 1]"
-              >
-                <div>
-                  <span class="grey--text mr-1">{{ name }}</span>
-                  <span class="body-2">{{ stat }}</span>
-                </div>
-                <v-divider
-                  v-if="index !== Object.keys(hlsGraphStats[hlsGraphStats.length - 1]).length - 1"
-                  color="orange"
-                  vertical
-                  class="mx-1"
-                />
-              </template>
-            </div>
-          </v-card>
-        </v-col>
-
-        <!-- Chart.js Graph -->
-        <v-col
-          v-if="false"
-          cols="12"
-          md="6"
-        >
-          <v-card color="grey darken-4">
-            <div class="chart-val grey--text text-weight-thin overline text-center py-2">
-              NEW! Player: Detected Bandwidth (estimate)
-            </div>
-            <basic-line
-              :points="points2"
-              :options="chartOptions"
-              :height="100"
-            />
-            <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center pa-2">
-              <template
-                v-for="( stat, name, index ) in data[data.length - 1]"
-              >
-                <div>
-                  <span class="grey--text mr-1">{{ name }}</span>
-                  <span class="body-2">{{ stat }}</span>
-                </div>
-                <v-divider
-                  v-if="index !== 5 - 1"
-                  color="orange"
-                  vertical
-                  class="mx-1"
-                />
-              </template>
-            </div>
-          </v-card>
-        </v-col>
-
         <!-- Video.js Output Log -->
         <v-col
           cols="12"
@@ -308,7 +199,7 @@
       <div class="overline mt-2">Note: this only works for streams on the bitwave / bitrave server.</div>
     </v-alert>
 
-    <v-card class="mx-2 pa-3">
+    <v-card class="my-3 mx-2 pa-3">
       <div class="white--text title">Experimental Player Settings</div>
       <div>
         Attempt to keep player as live as possible by preferring to <i>skip</i> to live
