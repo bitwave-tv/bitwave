@@ -271,7 +271,7 @@
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
           plugins: { qualityLevels: {} },
           poster: this.poster,
-          inactivityTimeout: 1000,
+          inactivityTimeout: 2000,
           suppressNotSupportedError: true,
           userActions: {
             hotkeys: true,
@@ -409,6 +409,27 @@
 
         // Add event listener by default in case user loads with cursor over stream
         volumeControlElement.addEventListener( 'wheel', handleVolumeScroll );
+
+
+
+        //---------------------------
+        // UX Tweaks & Enhancements
+        //---------------------------
+
+        // Prevent volume bar from pushing around the live button
+        const controlBar = this.player.controlBar;
+        const removeHover = el => el.removeClass( 'vjs-hover' );
+        const removeVolumePanelHover = () => removeHover( controlBar.volumePanel );
+        // disable default behavior
+        controlBar.volumePanel.off( 'mouseout' );
+        // reset on control bar mouse out
+        controlBar.on( 'mouseleave', removeVolumePanelHover );
+        // reset when mouseover spacer
+        controlBar.customControlSpacer.on( 'mouseenter', removeVolumePanelHover );
+
+        // remove UI instantly when mouse leaves player
+        this.player.on( 'mouseleave', () => this.player.userActive(false) );
+        //--------------------------------------------------------------------
 
 
         // Save volume on change

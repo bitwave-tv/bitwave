@@ -73,13 +73,38 @@
     width: 125%;
     font-size: 10px;
   }
+
+  // Volume slider
+  .vjs-volume-panel {
+    &.vjs-control {
+      transition: .2s;
+    }
+
+    .vjs-volume-control.vjs-volume-horizontal {
+      transition: .2s;
+    }
+  }
 }
 
-// Tooltips
+
+// Tooltip
 .vjs-mouse-display .vjs-time-tooltip {
   color: #ffeb3b;
 }
 
+// Tooltip
+.video-js {
+  .vjs-progress-control{
+    .vjs-play-progress {
+      .vjs-time-tooltip {
+        display: none;
+      }
+    }
+  }
+}
+
+
+// Transitions control bar between active / inactive
 .vjs-has-started {
   .vjs-control-bar {
     transform: translateY(0);
@@ -89,10 +114,24 @@
   &.vjs-user-inactive.vjs-playing {
     .vjs-control-bar {
       transform: translateY(127%);
-      transition: .5s;
+      transition: .3s;
     }
   }
 }
+
+
+// Button glow
+.video-js {
+  .vjs-control {
+    &:focus:before,
+    &:hover:before,
+    &:focus {
+      // Disable builtin button glow
+      text-shadow: none;
+    }
+  }
+}
+
 
 a {
   color: yellow;
