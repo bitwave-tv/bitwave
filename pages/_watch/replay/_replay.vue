@@ -495,8 +495,8 @@
           : null;
 
         // Stream media
-        const url  = `https://${data.server}/rec${data.url}`;
-        const type = 'video/mp4'; // data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+        const url  = data.url;
+        const type = 'video/mp4';
 
         this.setSource({ url, type });
 
