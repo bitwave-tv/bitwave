@@ -38,8 +38,8 @@
           show-arrows
         >
           <v-tab>Description</v-tab>
-          <v-tab>Archives</v-tab>
-          <v-tab v-if="featureFlag">Stream Stats</v-tab>
+          <v-tab>Replays</v-tab>
+          <v-tab>Stream Stats</v-tab>
         </v-tabs>
       </template>
     </v-toolbar>
@@ -206,7 +206,7 @@
     },
 
     methods: {
-      updateLasteStreamed () {
+      updateLastStreamedAt () {
         if ( this.timestamp ) {
           try {
             this.lastStreamed = timeAgo( this.timestamp );
@@ -251,13 +251,13 @@
 
     watch: {
       timestamp: function ( val, oldVal ) {
-        this.updateLasteStreamed();
+        this.updateLastStreamedAt();
       }
     },
 
     mounted () {
-      this.updateLasteStreamed();
-      this.updateInterval = setInterval( this.updateLasteStreamed, 60 * 1000 );
+      this.updateLastStreamedAt();
+      this.updateInterval = setInterval( this.updateLastStreamedAt, 60 * 1000 );
     },
 
     beforeDestroy() {
