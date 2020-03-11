@@ -6,7 +6,7 @@
         <!-- Bitrate Graph -->
         <v-col
           cols="12"
-          md="6"
+          lg="6"
         >
           <v-card color="grey darken-4">
             <div class="chart-val grey--text text-weight-thin overline text-center py-2">
@@ -45,7 +45,7 @@
         <!-- Packet Size Graph -->
         <v-col
           cols="12"
-          md="6"
+          lg="6"
         >
           <v-card color="grey darken-4">
             <div class="chart-val grey--text text-weight-thin overline text-center py-2">
