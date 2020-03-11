@@ -120,7 +120,8 @@ export const getters = {
 
   [$getters.isStreamer] : state => {
     return state[$states.user]
-      && state[$states.user].hasOwnProperty( 'streamkey' );
+      && state[$states.user]
+        .hasOwnProperty( 'streamkey' );
   },
 
   [$getters.getAuth] : state => {
@@ -149,13 +150,15 @@ export const getters = {
 
   [$getters.getStreamKey] ( state ) {
     return state[$states.user]
-      ? state[$states.user].hasOwnProperty( 'streamkey' )
+      ? state[$states.user]
+        .hasOwnProperty( 'streamkey' )
         ? state[$states.user].streamkey
         : null
       : null;
   },
 
   [$getters.getSidebarData] ( state ) {
+    if ( !state[$states.sidebarData] ) return [];
     return state[$states.sidebarData].slice( 0, 25 );
   },
 
@@ -180,9 +183,14 @@ export const getters = {
   // Get Channel Viewer Data
   [$getters.getChannelViews] ( state ) {
     return channel => {
-      if ( !channel ) return 0;
-      const c = state[$states.channelsViewers].find( c => c.channel.toLowerCase() === channel.toLowerCase() );
-      return  c && c.viewCount || 0;
+      if ( !channel && state[$states.channelsViewers] ) return 0;
+      try {
+        const c = state[$states.channelsViewers].find( c => c.channel.toLowerCase() === channel.toLowerCase() );
+        return  c && c.viewCount || 0;
+      } catch ( error ) {
+        console.warn( error );
+        return 0;
+      }
     }
   },
 
@@ -430,9 +438,11 @@ export const actions = {
   async [$actions.fetchSidebarData] ({ commit }) {
     try {
       const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/live' );
-      commit ( $mutations.setSidebarData, data.users );
+      if ( data && data.hasOwnProperty( 'users' ) ) {
+        commit ( $mutations.setSidebarData, data.users );
+      }
     } catch ( error ) {
-      console.error( `${error.message}: Failed to update user list.`, error );
+      console.warn( `${error.message}: Failed to update user list.`, error );
     }
   },
 
@@ -479,20 +489,24 @@ export const actions = {
     const updateChannelViewers = async () => {
       try {
         const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/channels', { progress: false } );
-        commit( $mutations.setChannelViewers,  data.data );
+        if ( data && data.success ) {
+          commit( $mutations.setChannelViewers,  data.data );
+        }
       } catch ( error ) {
-        console.log( `Failed to hydrate channels` );
-        console.log( error );
+        console.warn( `Failed to hydrate channels` );
+        console.warn( error );
       }
     };
 
     const updateUserList = async () => {
       try {
         const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/users', { progress: false } );
-        commit( $mutations.setUserList, data.data );
+        if ( data && data.success ) {
+          commit( $mutations.setUserList, data.data );
+        }
       } catch ( error ) {
-        console.log( `Failed to hydrate userlist` );
-        console.log( error );
+        console.warn( `Failed to hydrate userlist` );
+        console.warn( error );
       }
     };
 
