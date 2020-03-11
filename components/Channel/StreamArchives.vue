@@ -42,8 +42,7 @@
           <!-- Download Link -->
           <template v-slot:item.url="{ item }">
             <v-btn
-              :href="item.url"
-              target="_blank"
+              :to="item.link"
               class="text-truncate text-none font-weight-regular px-0"
               text
               small
@@ -51,7 +50,7 @@
               :style="{ textDecoration: item.deleted ? 'line-through' : 'none' }"
               :disabled="item.deleted"
             >
-              {{ item.url }}
+              {{ item.id }}
             </v-btn>
           </template>
 
@@ -327,6 +326,7 @@
               type: data.type,
               deleted: data.deleted,
               loading: false,
+              link: `/${this.streamer}/replay/${doc.id}`,
             }
           });
           this.processing = false;
