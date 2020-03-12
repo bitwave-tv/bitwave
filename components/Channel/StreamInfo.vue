@@ -37,9 +37,9 @@
           class="no-focus"
           show-arrows
         >
-          <v-tab>Description</v-tab>
+          <v-tab>{{ replay ? 'Summary' : 'Description' }}</v-tab>
           <v-tab>Replays</v-tab>
-          <v-tab>Stream Stats</v-tab>
+          <v-tab v-if="featureFlag && !replay">Stream Stats</v-tab>
         </v-tabs>
       </template>
     </v-toolbar>
@@ -117,9 +117,20 @@
         >
           <!-- Stream Description -->
           <vue-markdown
-            v-if="description"
+            v-if="description && !replay"
             :source="description"
           />
+          <!-- Replay Info Alert -->
+          <v-alert
+            class="mt-4"
+            color="blue darken-2"
+            dark
+            icon="important_devices"
+            prominent
+          >
+            <div class="headline"><span class="font-weight-light">hi,</span> Stream Replays are in <b>beta</b>.</div>
+            <div>additional data and functionality coming soon™</div>
+          </v-alert>
         </div>
       </v-tab-item>
 
@@ -136,7 +147,7 @@
 
       <!-- Debug Stream -->
       <v-tab-item
-        v-if="featureFlag"
+        v-if="featureFlag && !replay"
       >
         <div
           style="min-height: 500px"
