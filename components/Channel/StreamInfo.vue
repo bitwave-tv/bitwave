@@ -6,11 +6,11 @@
       color="grey darken-4"
       dense
     >
-      <!-- Live Indicator -->
+      <!-- Live / Replay / Offline Indicator -->
       <v-chip
         class="flex-shrink-0"
         :class="{ blink: live }"
-        :color="live ? 'red' : 'grey'"
+        :color="live ? 'red' : replay ? 'blue' : 'grey'"
         label
         outlined
         small
@@ -21,7 +21,7 @@
           size="10"
           class="mr-2"
         >lens</v-icon>
-        {{ live ? 'LIVE' : 'offline' }}
+        {{ live ? 'LIVE' : replay ? 'REPLAY' : 'offline' }}
       </v-chip>
 
       <!-- Stream Title -->
@@ -37,17 +37,27 @@
           class="no-focus"
           show-arrows
         >
-          <v-tab>Description</v-tab>
-          <v-tab>Archives</v-tab>
-          <v-tab v-if="featureFlag">Stream Stats</v-tab>
+          <v-tab>{{ replay ? 'Summary' : 'Description' }}</v-tab>
+          <v-tab>Replays</v-tab>
+          <v-tab v-if="featureFlag && !replay">Stream Stats</v-tab>
         </v-tabs>
       </template>
     </v-toolbar>
 
     <!-- Stream Actions -->
     <div class="d-flex flex-shrink-0 align-center flex-wrap px-3 py-2">
-      <div class="caption grey--text my-2">
-        <div class="d-inline-block">{{ live ? 'Started Streaming: ' : 'Last Streamed: ' }}</div>
+      <div
+        class="caption grey--text my-2"
+        :title="timestamp"
+      >
+        <v-icon
+          v-show="replay"
+          size="16"
+          color="grey"
+        >restore</v-icon>
+        <div class="d-inline-block">
+          {{ live ? 'Started Streaming: ' : replay ? 'Streamed: ' : 'Last Streamed: ' }}
+        </div>
         <v-fade-transition mode="out-in">
           <div
             class="d-inline-block"
@@ -57,7 +67,9 @@
           </div>
         </v-fade-transition>
       </div>
+
       <v-spacer />
+
       <div class="d-flex">
         <restream-dialog
           v-if="channelOwner"
@@ -83,6 +95,7 @@
           <v-icon>timeline</v-icon>
         </v-btn>
       </div>
+
       <ShareStream :user="name" />
     </div>
 
@@ -104,9 +117,20 @@
         >
           <!-- Stream Description -->
           <vue-markdown
-            v-if="description"
+            v-if="description && !replay"
             :source="description"
           />
+          <!-- Replay Info Alert -->
+          <v-alert
+            class="mt-4"
+            color="blue darken-2"
+            dark
+            icon="important_devices"
+            prominent
+          >
+            <div class="headline"><span class="font-weight-light">hi,</span> Stream Replays are in <b>beta</b>.</div>
+            <div>additional data and functionality coming soon™</div>
+          </v-alert>
         </div>
       </v-tab-item>
 
@@ -123,7 +147,7 @@
 
       <!-- Debug Stream -->
       <v-tab-item
-        v-if="featureFlag"
+        v-if="featureFlag && !replay"
       >
         <div
           style="min-height: 500px"
@@ -195,18 +219,19 @@
       nsfw:  { type: Boolean },
       description: { type: String },
       timestamp: { type: Date },
+      replay: { type: Boolean },
     },
 
     data () {
       return {
         tabData: null,
-        lastStreamed: 'Unknown',
+        lastStreamed: '• • •',
         updateInterval: null,
       };
     },
 
     methods: {
-      updateLasteStreamed () {
+      updateLastStreamedAt () {
         if ( this.timestamp ) {
           try {
             this.lastStreamed = timeAgo( this.timestamp );
@@ -214,7 +239,7 @@
             this.lastStreamed = 'now';
           }
         } else {
-          this.lastStreamed = 'Unknown';
+          this.lastStreamed = '• • •';
         }
       },
     },
@@ -251,13 +276,13 @@
 
     watch: {
       timestamp: function ( val, oldVal ) {
-        this.updateLasteStreamed();
+        this.updateLastStreamedAt();
       }
     },
 
     mounted () {
-      this.updateLasteStreamed();
-      this.updateInterval = setInterval( this.updateLasteStreamed, 60 * 1000 );
+      this.updateLastStreamedAt();
+      this.updateInterval = setInterval( this.updateLastStreamedAt, 60 * 1000 );
     },
 
     beforeDestroy() {
