@@ -27,7 +27,7 @@ const getDuration = ( timeAgoInSeconds ) => {
 // Calculate
 const timeAgo = ( date ) => {
   const timeAgoInSeconds = Math.floor( ( new Date() - new Date( date ) ) / 1000 );
-  if ( !timeAgoInSeconds && timeAgoInSeconds > 0 ) return 'Unknown';
+  if ( !timeAgoInSeconds && timeAgoInSeconds > 0 ) return null;
   const { interval, epoch } = getDuration( timeAgoInSeconds );
   const suffix = interval === 1 ? '' : 's';
   return `${interval} ${epoch}${suffix} ago`;

@@ -146,6 +146,17 @@
       </v-btn>
     </v-fab-transition>
 
+
+    <!-- Stream Info -->
+    <stream-info
+      :name="name"
+      :title="title"
+      :nsfw="nsfw"
+      :description="description"
+      :timestamp="timestamp"
+      replay
+    />
+
   </div>
 </template>
 
@@ -159,6 +170,7 @@
 
   import Chat from '~/components/Chat';
   import FollowButton from '@/components/FollowButton';
+  import StreamInfo from '@/components/Channel/StreamInfo';
 
   import { Chat as ChatStore } from '@/store/chat';
   import { VStore } from '@/store';
@@ -197,6 +209,7 @@
     components: {
       Stickers,
       KickStreamButton,
+      StreamInfo,
       FollowButton,
       Chat,
     },
@@ -463,31 +476,33 @@
         if ( this.player ) this.player.dispose();
       },
 
-      getStreamData () {
-        this.streamDataListener = db
+      async getStreamData () {
+        const archiveData = await db
           .collection( 'archives' )
           .doc( this.$route.params.replay )
-          .onSnapshot(
-            async doc => await this.streamDataChanged( doc.data() ),
-            error => console.warn( error )
-          );
+          .get();
+
+        if ( !archiveData.exists ) {
+          console.warn( `Archive does not exist!` );
+          return;
+        }
+
+        // Process stream data
+        await this.streamDataChanged( archiveData.data() );
       },
 
       async streamDataChanged ( data ) {
         // Streamer user properties
         // this.name   = data.user.name;
         // this.avatar = data.user.avatar;
-        // this.owner  = data.owner;
-
-        this.name   = data.name;
+        this.owner  = data.owner;
 
         // Grab Stream Data
-        this.title       = data.title;
-        // this.description = data.description;
+        this.name   = data.name;
+        this.title  = data.title;
 
         // Stream properties
         this.nsfw  = data.nsfw;
-        const live = true; //data.live;
 
         // Process timestamp
         this.timestamp = data.timestamp
@@ -501,26 +516,9 @@
         this.setSource({ url, type });
 
         // Cover image
-        // if ( live ) this.poster = data.thumbnail;
+        // this.poster = data.thumbnail;
 
-        // Detect offline stream
-        // if ( !this.live && !live ) console.debug( 'User is offline' );
-
-        // Detect user going LIVE
-        // else if ( !this.live && live ) {
-          // immediately set to LIVE state
-          // this.live = live;
-
-          // console.log( 'Livestream starting' );
-          // if ( this.offlineResetInterval ) clearInterval( this.offlineResetInterval );
-
-          // Load and Play stream
-          // this.setSource({ url, type });
-        // }
-
-        // Detect source change
-
-        this.live = live;
+        this.live = true;
       },
 
       reloadPlayer () {
@@ -646,7 +644,8 @@
 
       this.playerInitialize();
 
-      this.getStreamData(); // Get stream data
+      // Get stream data
+      await this.getStreamData();
 
       this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
