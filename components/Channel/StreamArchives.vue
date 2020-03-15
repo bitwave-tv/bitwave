@@ -445,6 +445,7 @@
       },
 
       async updateToken () {
+        if ( !auth.currentUser ) return;
         const token = await auth.currentUser.getIdToken( true );
         this.$axios.setToken( token, 'Bearer' );
       },
