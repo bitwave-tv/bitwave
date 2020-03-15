@@ -60,7 +60,7 @@
           <video
             playsinline
             id="streamplayer"
-            class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
+            class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9 bw-vjs-replay"
             controls
             :autoplay="live || !disableBumps"
             preload="auto"
@@ -267,6 +267,12 @@
           poster: this.poster,
           inactivityTimeout: 2000,
           suppressNotSupportedError: true,
+          controlBar: {
+            // currentTimeDisplay : true,
+            // timeDivider: true,
+            // durationDisplay: true,
+            remainingTimeDisplay: false,
+          },
           userActions: {
             hotkeys: true,
           },
@@ -693,5 +699,21 @@
     transform: translateY( -100% );
     transition: .1s;
     background-color: rgba(0,0,0,.75);
+  }
+
+  .video-js.bw-vjs-replay {
+    .vjs-time-control {
+      display: flex;
+      font-size: 14px;
+      line-height: 1em;
+      align-items: center;
+      min-width: 0;
+      padding-left: .5rem;
+      padding-right: .5rem;
+    }
+
+    .vjs-time-divider {
+      padding: 0;
+    }
   }
 </style>
