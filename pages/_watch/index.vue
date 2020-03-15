@@ -273,6 +273,12 @@
           poster: this.poster,
           inactivityTimeout: 2000,
           suppressNotSupportedError: true,
+          controlBar: {
+            currentTimeDisplay : false,
+            timeDivider: false,
+            durationDisplay: false,
+            remainingTimeDisplay: false,
+          },
           userActions: {
             hotkeys: true,
           },

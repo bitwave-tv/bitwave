@@ -107,13 +107,15 @@
 // Transitions control bar between active / inactive
 .vjs-has-started {
   .vjs-control-bar {
-    transform: translateY(0);
+    //transform: translateY(0);
+    opacity: 1;
     transition: .3s;
   }
 
   &.vjs-user-inactive.vjs-playing {
     .vjs-control-bar {
-      transform: translateY(127%);
+      //transform: translateY(127%);
+      opacity: 0;
       transition: .3s;
     }
   }
