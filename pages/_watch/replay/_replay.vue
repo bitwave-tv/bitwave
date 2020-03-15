@@ -148,12 +148,14 @@
 
 
     <!-- Stream Info -->
-    <stream-info
+    <replay-info
+      :archive-id="$route.params.replay"
       :name="name"
       :title="title"
       :nsfw="nsfw"
       :description="description"
       :timestamp="timestamp"
+      @update="replayUpdated"
       replay
     />
 
@@ -170,7 +172,7 @@
 
   import Chat from '~/components/Chat';
   import FollowButton from '@/components/FollowButton';
-  import StreamInfo from '@/components/Channel/StreamInfo';
+  import ReplayInfo from '@/components/Replay/ReplayInfo';
 
   import { Chat as ChatStore } from '@/store/chat';
   import { VStore } from '@/store';
@@ -209,7 +211,7 @@
     components: {
       Stickers,
       KickStreamButton,
-      StreamInfo,
+      ReplayInfo,
       FollowButton,
       Chat,
     },
@@ -256,7 +258,7 @@
 
         // Create video.js player
         this.player = videojs( 'streamplayer', {
-          liveui: true,
+          liveui: false,
           fluid: true,
           fill: false,
           // aspectRation: '16:9',
@@ -560,6 +562,10 @@
         } catch ( error ) {
           console.error( error.message );
         }
+      },
+
+      replayUpdated ( replayData ) {
+        this.title  = replayData.title;
       },
     },
 
