@@ -190,7 +190,7 @@
       return {
         title: `${this.name} - [bitwave.tv]`,
         link: [
-          { rel: 'canonical', href: `https://bitwave.tv/${this.name}` },
+          { rel: 'canonical', href: `https://bitwave.tv/${this.name}/replay/${this.archiveId}` },
         ],
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
@@ -202,7 +202,7 @@
           { name: 'twitter:card',        content: 'summary_large_image' },
           { name: 'twitter:site',        content: '@BitwaveTV' },
           { name: 'twitter:title',       content: ( this.title || '' ).substring( 0,  70 ) },
-          { name: 'twitter:description', content: ( this.description  || '' ).substring( 0, 200 ) },
+          { name: 'twitter:description', content: ( this.description  || `${this.name}'s stream replay.` ).substring( 0, 200 ) },
           { name: 'twitter:image',       content: this.poster },
         ],
       }
@@ -487,7 +487,7 @@
       async getStreamData () {
         const archiveData = await db
           .collection( 'archives' )
-          .doc( this.$route.params.replay )
+          .doc( this.archiveId )
           .get();
 
         if ( !archiveData.exists ) {
@@ -623,6 +623,10 @@
             ? '50%'
             : '0'
           : '450px';
+      },
+
+      archiveId () {
+        return this.$route.params.replay;
       },
     },
 

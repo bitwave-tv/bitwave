@@ -44,7 +44,7 @@
       </template>
     </v-toolbar>
 
-    <!-- Stream Actions -->
+    <!-- Replay Actions -->
     <div class="d-flex flex-shrink-0 align-center flex-wrap px-3 py-2">
       <div
         class="caption grey--text my-2"
@@ -93,7 +93,7 @@
 
     <v-divider />
 
-    <!-- Stream Data -->
+    <!-- Replay Data -->
     <v-tabs-items
       v-model="tabData"
       style="background: transparent"
@@ -107,14 +107,9 @@
           class="pa-3"
           style="min-height: 750px"
         >
-          <!-- Stream Description -->
-          <vue-markdown
-            v-if="description && !replay"
-            :source="description"
-          />
           <!-- Replay Info Alert -->
           <v-alert
-            class="mt-4"
+            class="mt-2"
             color="blue darken-2"
             dark
             icon="important_devices"
@@ -123,6 +118,10 @@
             <div class="headline"><span class="font-weight-light">hi,</span> Stream Replays are in <b>beta</b>.</div>
             <div>additional data and functionality coming soon™</div>
           </v-alert>
+
+          <!-- Replay Comments -->
+          <replay-comments />
+
         </div>
       </v-tab-item>
 
@@ -178,11 +177,13 @@
 </template>
 
 <script>
+  import { timeAgo } from '@/assets/js/time-ago';
+
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
   import VueMarkdown from '@/components/VueMarkdown';
-  import { timeAgo } from '@/assets/js/time-ago';
+  import ReplayComments from '@/components/Replay/ReplayComments';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = async () => await import ( '@/components/ShareStream' );
@@ -196,8 +197,9 @@
     name: 'StreamInfo',
 
     components: {
-      StreamArchives,
+      ReplayComments,
       VueMarkdown,
+      StreamArchives,
       ShareStream,
       EditReplayButton,
       RestreamDialog,
