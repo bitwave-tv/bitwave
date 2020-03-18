@@ -120,7 +120,9 @@
           </v-alert>
 
           <!-- Replay Comments -->
-          <replay-comments />
+          <replay-comments
+            :archive-id="archiveId"
+          />
 
         </div>
       </v-tab-item>
