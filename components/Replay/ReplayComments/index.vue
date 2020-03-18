@@ -101,8 +101,15 @@
       cancelComment () {
         this.userComment = '';
         this.showSubmit = false;
+
+        this.$analytics.logEvent( 'cancel_comment' );
+        this.$ga.event({
+          eventCategory : 'replay',
+          eventAction   : 'cancel comment',
+        });
       },
 
+      // TODO: add error handling and error alerts
       async addComment () {
         if ( !this.archiveId ) return console.log( `No Archive ID!` );
         if ( !this.userComment || this.userComment.length < 1 ) return console.log( `No user comment!` );
@@ -133,6 +140,12 @@
         ];
 
         this.submittingComment = false;
+
+        this.$analytics.logEvent( 'add_comment' );
+        this.$ga.event({
+          eventCategory : 'replay',
+          eventAction   : 'add comment',
+        });
       },
 
       async getComments () {
@@ -171,7 +184,7 @@
       async onLoadMore () {
       //
          if ( !this.archiveId ) return console.log( `No Archive ID!` );
-         if ( this.loadingMoreComments ) return console.log( `Already loading!` )
+         if ( this.loadingMoreComments ) return console.log( `Already loading!` );
 
          this.loadingMoreComments = true;
 
@@ -201,6 +214,12 @@
         this.loadingMoreComments = false;
 
         if ( commentQuery.size < 5 ) this.allCommentsLoaded = true;
+
+        this.$analytics.logEvent( 'load_more_comments' );
+        this.$ga.event({
+          eventCategory : 'replay',
+          eventAction   : 'load more comments',
+        });
       }
     },
 
