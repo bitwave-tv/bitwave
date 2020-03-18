@@ -8,28 +8,30 @@
     </div>
 
     <!-- Comment Input -->
-    <div>
+    <div v-if="user">
       <v-text-field
         label="Add a comment..."
         @focus="showSubmit = true"
       ></v-text-field>
-      <div
-        v-if="showSubmit"
-        class="d-flex justify-end"
-      >
-        <v-btn
-          text
+      <v-expand-transition>
+        <div
+          v-if="showSubmit"
+          class="d-flex justify-end"
         >
-          cancel
-        </v-btn>
-        <v-btn
-          tile
-          color="primary"
-          class="black--text"
-        >
-          submit
-        </v-btn>
-      </div>
+          <v-btn
+            text
+          >
+            cancel
+          </v-btn>
+          <v-btn
+            tile
+            color="primary"
+            class="black--text"
+          >
+            submit
+          </v-btn>
+        </div>
+      </v-expand-transition>
     </div>
 
     <!-- Comments Display -->
@@ -60,6 +62,9 @@
   import { db } from '@/plugins/firebase';
 
   import comment from '@/components/Replay/ReplayComments/comment';
+
+  import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     name: 'index',
@@ -116,7 +121,9 @@
     },
 
     computed: {
-
+      ...mapGetters({
+        user : VStore.$getters.getUser,
+      }),
     },
 
     async mounted () {
