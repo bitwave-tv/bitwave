@@ -10,7 +10,9 @@
     <!-- Comment Input -->
     <div v-if="user">
       <v-text-field
+        v-model="userComment"
         label="Add a comment..."
+        :loading="submittingComment"
         @focus="showSubmit = true"
       ></v-text-field>
       <v-expand-transition>
@@ -20,6 +22,8 @@
         >
           <v-btn
             text
+            :disabled="submittingComment"
+            @click="cancelComment"
           >
             cancel
           </v-btn>
@@ -27,6 +31,8 @@
             tile
             color="primary"
             class="black--text"
+            :disabled="submittingComment"
+            @click="addComment"
           >
             submit
           </v-btn>
@@ -52,7 +58,10 @@
         color="primary"
         outlined
         small
-      >Load More</v-btn>
+        :loading="loadingMoreComments"
+        :disabled="allCommentsLoaded"
+        @click="onLoadMore"
+      >{{ allCommentsLoaded ? 'No More Comments' : 'Load More' }}</v-btn>
     </div>
 
   </div>
@@ -81,10 +90,51 @@
       return {
         comments: [],
         showSubmit: false,
+        userComment: '',
+        submittingComment: false,
+        loadingMoreComments: false,
+        allCommentsLoaded: false,
       };
     },
 
     methods: {
+      cancelComment () {
+        this.userComment = '';
+        this.showSubmit = false;
+      },
+
+      async addComment () {
+        if ( !this.archiveId ) return console.log( `No Archive ID!` );
+        if ( !this.userComment || this.userComment.length < 1 ) return console.log( `No user comment!` );
+
+        this.submittingComment = true;
+
+        const commentData = {
+          _username: this.user.username.toLowerCase(),
+          name: this.user.username,
+          owner: this.user.uid,
+          text: this.userComment,
+          timestamp: new Date(),
+        };
+
+        const commentRef = db
+          .collection( 'archives' )
+          .doc( this.archiveId )
+          .collection( 'comments' );
+
+        const commentId = ( await commentRef.add( commentData ) ).id;
+
+        this.comments = [
+          {
+            id: commentId,
+            ...commentData,
+          },
+          ...this.comments,
+        ];
+
+        this.submittingComment = false;
+      },
+
       async getComments () {
         if ( !this.archiveId ) return console.log( `No Archive ID!` );
 
@@ -116,8 +166,42 @@
             timestamp: comment.timestamp.toDate(),
           }
         });
-        console.log( this.comments );
       },
+
+      async onLoadMore () {
+      //
+         if ( !this.archiveId ) return console.log( `No Archive ID!` );
+         if ( this.loadingMoreComments ) return console.log( `Already loading!` )
+
+         this.loadingMoreComments = true;
+
+         const offset = this.comments[ this.comments.length - 1 ].timestamp;
+
+        const commentQuery = await db
+          .collection( 'archives' )
+          .doc( this.archiveId )
+          .collection( 'comments' )
+          .orderBy('timestamp', 'desc' )
+          .startAfter( offset )
+          .limit( 5 )
+          .get();
+
+        commentQuery.docs.map( doc => {
+          const comment = doc.data();
+          this.comments.push({
+            id: doc.id,
+            _username: comment._username,
+            name: comment.name,
+            owner: comment.owner,
+            text: comment.text,
+            timestamp: comment.timestamp.toDate(),
+          });
+        });
+
+        this.loadingMoreComments = false;
+
+        if ( commentQuery.size < 5 ) this.allCommentsLoaded = true;
+      }
     },
 
     computed: {
