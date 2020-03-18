@@ -432,6 +432,12 @@
         //--------------------------------------------------------------------
 
 
+        if ( this.jumpToTimestamp && this.jumpToTimestamp > 0 ) {
+          const onLoadedMetadata = () => this.player.currentTime( this.jumpToTimestamp );
+          this.player.on( 'loadedmetadata', onLoadedMetadata );
+        }
+
+
         // Save volume on change
         this.player.on( 'volumechange', () => {
           if ( !this.initialized ) return;
@@ -627,6 +633,12 @@
 
       archiveId () {
         return this.$route.params.replay;
+      },
+
+      jumpToTimestamp () {
+        const t = this.$route.query.t;
+        const timeInSeconds = parseInt( t );
+        return timeInSeconds;
       },
     },
 
