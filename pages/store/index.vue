@@ -28,7 +28,7 @@
               <div class="d-flex flex-column justify-space-between align-center">
                 <div>
                   <input type="hidden" name="on0" value="Quantity">
-                  Quantity
+                  Quantity (click dropdown below to modify)
                 </div>
                 <div class="wrap my-3">
                   <div class="select">
