@@ -117,7 +117,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      max-width: 75px;
+      max-width: 90px;
     }
 
     .v-avatar {
