@@ -204,6 +204,7 @@
           .get();
 
         if ( commentQuery.empty ) {
+          this.allCommentsLoaded = true;
           return console.log( `No comments!` );
         }
 
@@ -223,6 +224,8 @@
             timestamp: comment.timestamp.toDate(),
           }
         });
+
+        if ( this.comments.length < 5 ) this.allCommentsLoaded = true;
       },
 
       async onLoadMore () {
