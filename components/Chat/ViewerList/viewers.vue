@@ -21,7 +21,7 @@
       </v-btn>
     </v-sheet>
 
-    <div class="elevation-3 pa-3 grey darken-4" style="border-bottom: solid 1px #111;">
+    <div class="elevation-3 pa-3 grey darken-4">
       <!-- Filter viewers -->
       <v-text-field
         label="Filter..."
@@ -45,6 +45,8 @@
         class="px-2"
       />
     </div>
+
+    <hr class="primary">
 
     <!-- removed -> will-change: transform; -->
     <div style="max-height: 65vh; overflow: auto; overscroll-behavior: contain;">
