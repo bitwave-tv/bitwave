@@ -39,12 +39,18 @@
             <div class="text-center">{{ header.text }}</div>
           </template>
 
-          <!-- Download Link -->
+          <!-- Stream Date -->
+          <template v-slot:item.timeAgo="{ item }">
+            <div class="overline text-no-wrap">{{ item.timeAgo }}</div>
+          </template>
+
+          <!-- Replay Link -->
           <template v-slot:item.url="{ item }">
             <v-btn
               :to="item.link"
-              class="text-truncate text-none font-weight-regular px-0"
+              class="text-truncate text-none font-weight-regular my-1"
               text
+              tile
               small
               color="blue"
               :style="{ textDecoration: item.deleted ? 'line-through' : 'none' }"
@@ -64,7 +70,8 @@
               @save="saveArchiveEdit( item )"
               @cancel="cancelArchiveEdit"
             >
-              {{ item.title }}
+              <span class="overline">[{{ item.duration }}]</span>
+              <span class="">{{ item.title }}</span>
               <template v-slot:input>
                 <v-text-field
                   v-model="item.title"
@@ -74,6 +81,17 @@
                 />
               </template>
             </v-edit-dialog>
+          </template>
+
+          <!-- Stream Title -->
+          <template
+            v-if="!channelOwner"
+            v-slot:item.title="{ item }"
+          >
+            <div>
+              <span class="overline">[{{ item.duration }}]</span>
+              <span class="">{{ item.title }}</span>
+            </div>
           </template>
 
           <!-- Action Items -->
@@ -221,18 +239,21 @@
             align: 'left',
             sortable: true,
             value: 'title',
+            width: '100%',
           },
           {
             text: 'Streamed',
             align: 'right',
             sortable: true,
             value: 'timeAgo',
+            // width: '100%',
           },
           {
             text: 'Replay Link',
-            align: 'right',
+            align: 'center',
             sortable: false,
             value: 'url',
+            width: '1%',
           },
         ],
       };
@@ -277,6 +298,7 @@
               type: data.type,
               deleted: data.deleted,
               loading: false,
+              duration: this.createTimecode( data.duration ),
             }
           });
 
@@ -327,6 +349,7 @@
               deleted: data.deleted,
               loading: false,
               link: `/${this.streamer}/replay/${doc.id}`,
+              duration: this.createTimecode( data.duration ),
             }
           });
           this.processing = false;
@@ -448,6 +471,13 @@
         if ( !auth.currentUser ) return;
         const token = await auth.currentUser.getIdToken( true );
         this.$axios.setToken( token, 'Bearer' );
+      },
+
+      createTimecode ( duration ) {
+        // Create time-code
+        const d = new Date( 0 );
+        d.setSeconds( duration );
+        return d.toISOString().substr( 11, 5 );
       },
 
     },

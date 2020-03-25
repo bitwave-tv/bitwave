@@ -508,7 +508,7 @@
       async streamDataChanged ( data ) {
         // Streamer user properties
         // this.name   = data.user.name;
-        // this.avatar = data.user.avatar;
+        this.avatar = data.user.avatar;
         this.owner  = data.owner;
 
         // Grab Stream Data
