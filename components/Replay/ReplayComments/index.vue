@@ -2,36 +2,80 @@
   <div>
 
     <!-- Comment Header -->
-    <div class="mb-3">
+    <div class="mb-1">
       <div class="px-1 title grey--text"><span class="white--text">{{ comments.length }}</span> Comments</div>
-      <hr class="grey" />
+<!--      <hr class="grey" />-->
     </div>
 
     <!-- Comment Input -->
     <div v-if="user">
-      <v-text-field
-        v-model="userComment"
-        label="Add a comment..."
-        :loading="submittingComment"
-        @focus="showSubmit = true"
-      ></v-text-field>
+      <div class="d-flex align-center">
+
+        <!-- Avatar with webp support -->
+        <picture
+          v-if="avatar"
+          class="v-avatar ml-0 mr-4"
+          style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+        >
+          <source
+            v-if="avatars"
+            :srcset="`${avatars.webp}`"
+            type="image/webp"
+          >
+          <img
+            :src="`${avatar}`"
+            :alt="username"
+          >
+        </picture><!-- Fallback when we don't have a user avatar -->
+        <v-avatar
+          v-else
+          class="mr-4"
+          size="40"
+          color="grey darken-4"
+        >
+          <!-- Troll Hazzy -->
+          <img
+            src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
+            alt="hazmat suit trolll"
+            crossorigin
+          >
+          <!--<v-icon v-else>person</v-icon>-->
+        </v-avatar>
+
+        <!-- Comment input -->
+        <v-text-field
+          v-model="userComment"
+          label="Add a comment..."
+          :loading="submittingComment"
+          :counter="5000"
+          hide-details
+          clearable
+          @focus="showSubmit = true"
+          class="mb-2"
+        ></v-text-field>
+
+      </div>
+
       <v-expand-transition>
         <div
           v-if="showSubmit"
           class="d-flex justify-end"
         >
           <v-btn
+            small
             text
             :disabled="submittingComment"
             @click="cancelComment"
+            class="mr-2"
           >
             cancel
           </v-btn>
           <v-btn
+            small
             tile
             color="primary"
             class="black--text"
-            :disabled="submittingComment"
+            :disabled="!userComment || submittingComment"
             @click="addComment"
           >
             submit
@@ -226,7 +270,18 @@
     computed: {
       ...mapGetters({
         user : VStore.$getters.getUser,
+        username : VStore.$getters.getUsername,
       }),
+
+      avatar () {
+        if ( this.user ) return this.user.avatar;
+        else return false;
+      },
+
+      avatars () {
+        if ( this.user ) return this.user.avatars;
+        else return false;
+      },
     },
 
     async mounted () {
