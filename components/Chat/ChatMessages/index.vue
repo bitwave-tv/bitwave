@@ -12,18 +12,38 @@
         :duration="150"
         tag="div"
       >
+        <!-- Skeleton placeholders (for SSR) -->
+        <v-sheet
+          v-if="!messages"
+          v-for="i in 5"
+          :key="i"
+          color="grey darken-4"
+          class="mx-3 mt-3 mb-3 pa-2"
+        >
+          <v-skeleton-loader
+            ref="skeleton"
+            :boilerplate="false"
+            :type="`avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
+            class="d-flex"
+            dark
+          ></v-skeleton-loader>
+        </v-sheet>
+
+        <!-- Chat Messages -->
         <div
           v-if="messages"
           v-for="( msg, index ) in messages"
           :key="msg._id"
           class="pb-1 pl-3 pr-1"
         >
+          <!-- Regular chat message -->
           <chat-message
             v-if="msg.username !== ( index && messages[ index - 1 ].username )"
             :badge="msg.badge"
             :username="msg.username"
             :display-name="msg.username"
             :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
+            :route-prefix="routePrefix"
             :channel="msg.channel"
             :timestamp="getTime( msg.timestamp )"
             :avatar="msg.avatar"
@@ -49,22 +69,6 @@
             ></div>
           </div>
         </div>
-
-        <v-sheet
-          v-if="!messages"
-          v-for="i in 5"
-          :key="i"
-          color="grey darken-4"
-          class="mx-3 mt-3 mb-3 pa-2"
-        >
-          <v-skeleton-loader
-            ref="skeleton"
-            :boilerplate="false"
-            :type="`avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
-            class="d-flex"
-            dark
-          ></v-skeleton-loader>
-        </v-sheet>
 
       </transition-group>
     </div>
@@ -116,6 +120,8 @@
         atBottom: true,
 
         scrollInterval: null,
+
+        routePrefix: '',
       }
     },
 
@@ -255,6 +261,16 @@
       this.chatContainer = this.$refs.scroller;
       // this.$nextTick( () => this.jumpToBottom() );
       this.chatContainer.addEventListener( 'scroll', this.onScroll, { passive: true } );
+
+      // Properly route users
+      if ( this.$route.path.startsWith( '/chat' ) ) {
+        this.routePrefix =
+          this.$route.path === '/chat'
+            ? '/chat/'
+            : '';
+      } else {
+        this.routePrefix = '/';
+      }
     },
 
     beforeDestroy () {

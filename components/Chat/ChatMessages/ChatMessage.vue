@@ -57,7 +57,7 @@
 
         <!-- Room Label -->
         <nuxt-link
-          :to="props.channel"
+          :to="props.routePrefix + props.channel"
           no-prefetch
         >
           <kbd :title="props.channel">{{ props.channel }}</kbd>
@@ -89,6 +89,7 @@
         type: String,
       },
       userStyling: {},
+      routePrefix: { type: String },
       channel: {
         type: String,
       },
