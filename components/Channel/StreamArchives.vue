@@ -10,7 +10,7 @@
         <v-spacer/>
       </div>
 
-      <!-- Stream Archives Data Table -->
+      <!-- Stream Replays Data Table -->
       <v-card>
         <v-data-table
           light
@@ -18,7 +18,7 @@
           :items="archives"
           :loading="processing && !loaded"
           loading-text="Loading... Please wait"
-          no-data-text="No archives found"
+          no-data-text="No replays found"
           :footer-props="footerProps"
           :page.sync="page"
           @pagination="onPaginate"
@@ -96,15 +96,15 @@
                   <v-icon>delete</v-icon>
                 </v-btn>
               </template>
-              <span>Delete Archive</span>
+              <span>Delete Replay</span>
             </v-tooltip>
           </template>
 
-          <!-- Switch Visibility of Deleted Archives -->
+          <!-- Switch Visibility of Deleted Replays -->
           <template v-slot:body.append>
             <v-switch
               v-model="showDeletedArchives"
-              label="Show Deleted Archives"
+              label="Show Deleted Replays"
               class="pa-3 mt-0"
               hide-details
               dense
@@ -120,7 +120,7 @@
       <div class="mt-4">
         <div class="grey--text caption">
           <strong>Warning:</strong>
-          Once an archive has been deleted, it <em>cannot</em> be recovered.
+          Once a replay has been deleted, it <em>cannot</em> be recovered.
           All data is immediately removed.
           <br>
           No efforts will be made to recover lost streams due to incompetence.
@@ -152,7 +152,7 @@
 
           <v-card-text class="pb-0">
             <div>
-              Are you sure you want to delete this archive?
+              Are you sure you want to delete this replay?
             </div>
           </v-card-text>
 
@@ -229,7 +229,7 @@
             value: 'timeAgo',
           },
           {
-            text: 'Download Link',
+            text: 'Replay Link',
             align: 'right',
             sortable: false,
             value: 'url',

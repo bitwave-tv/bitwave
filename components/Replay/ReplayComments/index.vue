@@ -8,7 +8,10 @@
     </div>
 
     <!-- Comment Input -->
-    <div v-if="user">
+    <div
+      v-if="user"
+      class="mb-3"
+    >
       <div class="d-flex align-center">
 
         <!-- Avatar with webp support -->
