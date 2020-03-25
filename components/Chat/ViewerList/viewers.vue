@@ -37,12 +37,13 @@
       <!-- Show all viewers toggle -->
       <v-switch
         v-model="showAll"
-        :label="`Show all viewers (${getUserList.length})`"
+        :label="`Show all viewers (${showAll ? getUserList.length : getChannelViews( page )})`"
         color="yellow"
         hide-details
         dense
         inset
         class="px-2"
+        @change="filterViewerList"
       />
     </div>
 
