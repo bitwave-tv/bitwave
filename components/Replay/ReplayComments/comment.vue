@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="d-flex">
-      <div>{{ username }}</div>
-      <div class="grey--text mx-1" :title="timestamp">{{ humanTimestamp }}</div>
+    <div class="d-flex align-end">
+      <div class="font-weight-bold">{{ username }}</div>
+      <div class="grey--text mx-1 caption" :title="timestamp">{{ humanTimestamp }}</div>
     </div>
     <div class="d-flex">{{ text }}</div>
   </div>

@@ -14,7 +14,7 @@
         :label="`Chat as ${username}...`"
         :loading="loading"
         :disabled="loading"
-        color="yellow"
+        color="primary"
         autocomplete="new-chat-message"
         autocorrect="off"
         autocapitalize="off"

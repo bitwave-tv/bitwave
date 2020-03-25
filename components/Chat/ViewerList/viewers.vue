@@ -9,7 +9,7 @@
       color="yellow"
       class="d-flex align-center justify-space-between pl-2"
     >
-      <h5 class="black--text body-2">Live Viewers ({{ getUserList.length }})</h5>
+      <h5 class="black--text body-2">Live Viewers</h5>
       <v-btn
         color="black"
         text
@@ -21,69 +21,79 @@
       </v-btn>
     </v-sheet>
 
-    <div class="elevation-3 pa-3" style="border-bottom: solid 1px #111;">
+    <div class="elevation-3 pa-3 grey darken-4" style="border-bottom: solid 1px #111;">
+      <!-- Filter viewers -->
+      <v-text-field
+        label="Filter..."
+        color="primary"
+        single-line
+        outlined
+        hide-details
+        dense
+        clearable
+        @input="filterViewerList"
+      />
+
+      <!-- Show all viewers toggle -->
       <v-switch
         v-model="showAll"
-        label="Show All Viewers"
-        class="mt-0"
+        :label="`Show all viewers (${getUserList.length})`"
         color="yellow"
         hide-details
         dense
         inset
+        class="px-2"
       />
     </div>
 
-    <div style="max-height: 65vh; overflow: auto; overscroll-behavior: contain; will-change: transform;">
+    <!-- removed -> will-change: transform; -->
+    <div style="max-height: 65vh; overflow: auto; overscroll-behavior: contain;">
       <v-list
         dense
         class="py-0"
       >
-        <template
-          v-if="showViewers && viewerList.length > 0"
-          v-for="viewer in viewerList"
+        <v-lazy
+          min-height="56"
+          v-for="viewer in filteredViewerList"
+          :key="viewer.data.username"
         >
-          <v-lazy
-            min-height="56"
-            :key="viewer.data.username"
+          <v-list-item
+            class="pl-3"
+            :to="`${viewer.data.page}`"
           >
-            <v-list-item
-              class="pl-3"
-              :to="`${viewer.data.page}`"
+            <picture
+              v-if="!!viewer.data.avatar"
+              class="v-avatar v-list-item__avatar ml-0 mr-3"
+              style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
             >
-              <picture
-                v-if="!!viewer.data.avatar"
-                class="v-avatar v-list-item__avatar ml-0 mr-3"
-                style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+              <source
+                v-if="viewer.data.avatars"
+                :srcset="`${viewer.data.avatars.webp}`"
+                type="image/webp"
               >
-                <source
-                  v-if="viewer.data.avatars"
-                  :srcset="`${viewer.data.avatars.webp}`"
-                  type="image/webp"
-                >
-                <img
-                  :src="`${viewer.data.avatar}`"
-                  :alt="viewer.data.username"
-                >
-              </picture>
-              <v-list-item-avatar
-                v-else
-                class="mr-3"
+              <img
+                :src="`${viewer.data.avatar}`"
+                :alt="viewer.data.username"
               >
-                <v-icon
-                  :style="{ background: viewer.data.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.data.color && 'black' }"
-                >person</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{ viewer.data.username }}</v-list-item-title>
-                <v-list-item-subtitle>
-                  <span>Watching: {{ viewer.data.page }}</span>
-                  <span class="yellow--text">{{ getChannelViews( viewer.data.page).toString().padStart(2, '0') }}</span>
-                  <span v-if="viewer.watching.length > 1" >{{ `and ${viewer.watching.length - 1} other${viewer.watching.length - 1 > 1 ? 's' : ''}` }}</span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-lazy>
-        </template>
+            </picture>
+            <v-list-item-avatar
+              v-else
+              class="mr-3"
+            >
+              <v-icon
+                :style="{ background: viewer.data.color || 'radial-gradient( yellow, #ff9800 )', color: !viewer.data.color && 'black' }"
+              >person</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ viewer.data.username }}</v-list-item-title>
+              <v-list-item-subtitle>
+                <span>Watching: {{ viewer.data.page }}</span>
+                <span class="yellow--text">{{ getChannelViews( viewer.data.page).toString().padStart(2, '0') }}</span>
+                <span v-if="viewer.watching.length > 1" >{{ `and ${viewer.watching.length - 1} other${viewer.watching.length - 1 > 1 ? 's' : ''}` }}</span>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-lazy>
 
         <v-sheet
           v-if="!showViewers"
@@ -121,12 +131,29 @@
       return {
         showViewers: false,
         showAll: true,
+        filter: '',
+        filteredViewerList: [],
       };
     },
 
     methods: {
       close () {
         this.$emit( 'close' );
+      },
+
+      filterViewerList ( filter ) {
+        this.filteredViewerList = this.viewerList.filter( viewer => {
+          // Filter by username
+          if ( filter && filter.length > 0 )
+            return viewer.data.username.toLowerCase().includes( filter.toLowerCase() );
+
+          // Hide users in different channels
+          if ( !this.showAll )
+            return viewer.watching.includes( this.page.toLowerCase() );
+
+          // Default true
+          return true;
+        });
       },
     },
 
@@ -138,16 +165,15 @@
 
       viewerList () {
         if ( !this.showViewers ) return [];
-        return this.getUserList.filter( viewer => {
-          return this.showAll
-            ? viewer
-            : viewer.watching.includes( this.page.toLowerCase() );
-        });
+        return this.getUserList;
       },
     },
 
     mounted() {
-      setTimeout( () => this.showViewers = true, 500 );
+      setTimeout( () => {
+        this.showViewers = true;
+        this.filterViewerList();
+      }, 500 );
     },
 
     beforeDestroy() {
