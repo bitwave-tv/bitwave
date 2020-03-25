@@ -188,6 +188,10 @@
 
         this.submittingComment = false;
 
+        // Reset input
+        this.userComment = '';
+        this.showSubmit = false;
+
         this.$analytics.logEvent( 'add_comment' );
         this.$ga.event({
           eventCategory : 'replay',
