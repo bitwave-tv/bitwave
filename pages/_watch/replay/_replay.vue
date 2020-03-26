@@ -194,7 +194,7 @@
         ],
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: (this.description || '').substring( 0, 200 ) },
+          { name: 'og:description', hid: 'og:description', content: ( this.description || `${this.name}'s stream replay.` ).substring( 0, 200 ) },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
           { name: 'author',         content: this.name },
           { name: 'description',    hid: 'description',    content: (this.name || '').substring( 0, 200 ) },
@@ -250,6 +250,78 @@
         // Chat hydrated data defaults
         chatMessages: null,
       }
+    },
+
+    async asyncData ( { $axios, store, params, error } ) {
+      // Timeout to prevent SSR from locking up
+      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
+      const getReplayHydration = async id => {
+        let replayData;
+
+        // Attempt to load via API server
+        try {
+          const { data } = await $axios.getSSR( `https://api.bitwave.tv/v1/replays/${id}`, { timeout } );
+
+          console.log( data );
+
+          // Simple response validation
+          if ( data && data.success ) {
+            replayData = data.data;
+          }
+        }
+
+          // API server failed
+        catch ( error ) {
+          console.error( error.message );
+
+          // API failed with 404, but server did not fail with 5xx
+          if ( error.response && error.response.status === 404 ) {
+            console.error( `API server reponded with 404` );
+            return {
+              success: false,
+              error: { statusCode: 404, message: `Could not find channel.` },
+            };
+          }
+        }
+
+        // API server failed unexpectedly 5xx - Attempt to load from database
+        if ( !replayData ) {
+          console.log( `API server failed!` );
+          return {
+            success: false,
+            error: { statusCode: 500, message: `API request failed.` },
+          };
+        }
+
+        // return results
+        const name = replayData.user && replayData.user.name;
+        const title = replayData.title;
+        const nsfw = replayData.nsfw;
+
+        return {
+          success: true,
+          data: {
+            name,
+            title,
+            nsfw,
+          },
+        }
+
+      };
+
+      const result = await getReplayHydration( params.replay );
+
+      if ( result.success ) {
+        return result.data;
+      } else {
+        return {
+          name: 'SSR Error',
+          title: 'SSR Error',
+          nsfw: false,
+        };
+      }
+
     },
 
     methods: {
