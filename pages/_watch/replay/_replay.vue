@@ -194,15 +194,15 @@
         ],
         meta: [
           { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: ( this.description || `${this.name}'s stream replay.` ).substring( 0, 200 ) },
+          { name: 'og:description', hid: 'og:description', content: ( this.description || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
           { name: 'og:image',       hid:'og:image',        content: this.poster},
           { name: 'author',         content: this.name },
-          { name: 'description',    hid: 'description',    content: (this.name || '').substring( 0, 200 ) },
+          { name: 'description',    hid: 'description',    content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
           { name: 'profile:username',    content: this.name },
           { name: 'twitter:card',        content: 'summary_large_image' },
           { name: 'twitter:site',        content: '@BitwaveTV' },
           { name: 'twitter:title',       content: ( this.title || '' ).substring( 0,  70 ) },
-          { name: 'twitter:description', content: ( this.description  || `${this.name}'s stream replay.` ).substring( 0, 200 ) },
+          { name: 'twitter:description', content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
           { name: 'twitter:image',       content: this.poster },
         ],
       }
@@ -316,7 +316,7 @@
         return result.data;
       } else {
         return {
-          name: 'SSR Error',
+          name: params.watch,
           title: 'SSR Error',
           nsfw: false,
         };
