@@ -122,6 +122,8 @@
           <!-- Replay Comments -->
           <replay-comments
             :archive-id="archiveId"
+            :comment-count="commentCount"
+            @click:timestamp="timestamp => $emit( 'click:timestamp', timestamp )"
           />
 
         </div>
@@ -217,6 +219,7 @@
       description: { type: String },
       timestamp: { type: Date },
       replay: { type: Boolean },
+      commentCount: { type: Number },
     },
 
     data () {

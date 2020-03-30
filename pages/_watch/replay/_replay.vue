@@ -155,7 +155,9 @@
       :nsfw="nsfw"
       :description="description"
       :timestamp="timestamp"
+      :comment-count="commentCount"
       @update="replayUpdated"
+      @click:timestamp="onClickTimestamp"
       replay
     />
 
@@ -246,6 +248,7 @@
         url: null,
         type: null,
         timestamp: null,
+        commentCount: 0,
 
         // Chat hydrated data defaults
         chatMessages: null,
@@ -592,6 +595,7 @@
 
         // Stream properties
         this.nsfw  = data.nsfw;
+        this.commentCount = data.commentCount;
 
         // Process timestamp
         this.timestamp = data.timestamp
@@ -623,6 +627,10 @@
 
       onOrientationChange () {
         this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+      },
+
+      onClickTimestamp () {
+        this.player.currentTime( this.jumpToTimestamp );
       },
 
       showChat () {
@@ -730,6 +738,11 @@
           this.type = newSource.type;
           this.reloadPlayer();
         }
+      },
+
+      '$route.query.t' ( newTimestamp ) {
+        if ( this.player )
+          this.player.currentTime( this.jumpToTimestamp );
       },
     },
 

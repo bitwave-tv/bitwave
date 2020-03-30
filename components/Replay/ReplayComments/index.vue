@@ -3,14 +3,19 @@
 
     <!-- Comment Header -->
     <div class="mb-1">
-      <div class="px-1 title grey--text"><span class="white--text">{{ comments.length }}</span> Comments</div>
-<!--      <hr class="grey" />-->
+      <div class="px-1 subtitle-2 grey--text">
+        Showing
+        <span class="subtitle-1 white--text">{{ comments.length }}</span>
+        of
+        <span class="subtitle-1 white--text">{{ commentCount }}</span>
+        comments
+      </div>
     </div>
 
     <!-- Comment Input -->
     <div
       v-if="user"
-      class="mb-3"
+      class="mb-4"
     >
       <div class="d-flex align-center">
 
@@ -18,7 +23,7 @@
         <picture
           v-if="avatar"
           class="v-avatar ml-0 mr-4"
-          style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+          style="height: 38px; min-width: 40px; width: 40px; background: #212121;"
         >
           <source
             v-if="avatars"
@@ -48,6 +53,7 @@
         <!-- Comment input -->
         <v-text-field
           v-model="userComment"
+          ref="commentInput"
           label="Add a comment..."
           :loading="submittingComment"
           :counter="5000"
@@ -86,17 +92,38 @@
         </div>
       </v-expand-transition>
     </div>
+    <!-- Sign up banner -->
+    <div
+      v-else
+      class="mb-4"
+    >
+      <v-alert
+        class="mt-2"
+        color="red"
+        dark
+        icon="warning"
+      >
+        You must be logged in to leave a comment!
+      </v-alert>
+    </div>
 
     <!-- Comments Display -->
-    <div class="mb-3">
-      <comment
+    <div class="mb-4">
+      <template
         v-for="comment in comments"
-        :key="comment.id"
-        :username="comment.name"
-        :timestamp="comment.timestamp"
-        :text="comment.text"
-        class="mb-3"
-      />
+      >
+        <comment
+          v-if="comment.hasOwnProperty( 'content' ) && comment.content"
+          :key="comment.id"
+          :content="comment.content"
+          :username="comment.name"
+          :avatar="comment.user.avatar"
+          :timestamp="comment.timestamp"
+          class="mb-3"
+          @reply="replyTo"
+          @click:timestamp="timestamp => $emit( 'click:timestamp', timestamp )"
+        />
+      </template>
     </div>
 
     <!-- Load More Comments -->
@@ -115,12 +142,12 @@
 </template>
 
 <script>
-  import { db } from '@/plugins/firebase';
-
-  import comment from '@/components/Replay/ReplayComments/comment';
+  import { auth, db } from '@/plugins/firebase';
 
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
+
+  import comment from '@/components/Replay/ReplayComments/comment';
 
   export default {
     name: 'index',
@@ -131,6 +158,7 @@
 
     props: {
       archiveId: { type: String },
+      commentCount: { type: Number },
     },
 
     data () {
@@ -145,6 +173,11 @@
     },
 
     methods: {
+      replyTo ( username ) {
+        this.userComment += `@${username} `;
+        this.$nextTick( () => this.$refs.commentInput.focus() );
+      },
+
       cancelComment () {
         this.userComment = '';
         this.showSubmit = false;
@@ -163,28 +196,35 @@
 
         this.submittingComment = true;
 
-        const commentData = {
-          _username: this.user.username.toLowerCase(),
-          name: this.user.username,
-          owner: this.user.uid,
-          text: this.userComment,
-          timestamp: new Date(),
+        await this.updateToken();
+
+        const payload = {
+          user: this.user.username,
+          comment: this.userComment,
         };
 
-        const commentRef = db
-          .collection( 'archives' )
-          .doc( this.archiveId )
-          .collection( 'comments' );
+        try {
+          const { data } = await this.$axios.post(
+            `https://api.bitwave.tv/v1/replays/${this.archiveId}/comments`,
+            payload,
+          );
+          if ( data.success ) {
+            this.$toast.success( `Successfully posted comment!`, { icon: 'done', duration: 5000, position: 'top-center' } );
 
-        const commentId = ( await commentRef.add( commentData ) ).id;
-
-        this.comments = [
-          {
-            id: commentId,
-            ...commentData,
-          },
-          ...this.comments,
-        ];
+            // Add new comment to page without re-retching data
+            this.comments = [
+              {
+                id: data.data.id,
+                ...data.data,
+              },
+              ...this.comments,
+            ];
+          } else {
+            this.$toast.error( data, { icon: 'error', duration: 5000, position: 'top-center' } );
+          }
+        } catch ( error ) {
+          this.$toast.error( error.message, { icon: 'error', duration: 5000, position: 'top-center' } );
+        }
 
         this.submittingComment = false;
 
@@ -222,13 +262,17 @@
       async onCommentsLoaded ( commentDocs ) {
         this.comments = commentDocs.map( doc => {
           const comment = doc.data();
+          const content = comment.content || [{ type: 'text', value: comment.text }];
+          const user = comment.user || { name: comment.name, avatar: null, avatars: null };
           return {
             id: doc.id,
             _username: comment._username,
             name: comment.name,
             owner: comment.owner,
-            text: comment.text,
             timestamp: comment.timestamp.toDate(),
+            user: user,
+            text: comment.text,
+            content: content,
           }
         });
 
@@ -236,7 +280,6 @@
       },
 
       async onLoadMore () {
-      //
          if ( !this.archiveId ) return console.log( `No Archive ID!` );
          if ( this.loadingMoreComments ) return console.log( `Already loading!` );
 
@@ -255,13 +298,17 @@
 
         commentQuery.docs.map( doc => {
           const comment = doc.data();
+          const content = comment.content || [{ type: 'text', value: comment.text }];
+          const user = comment.user || { name: comment.name, avatar: null, avatars: null };
           this.comments.push({
             id: doc.id,
             _username: comment._username,
             name: comment.name,
             owner: comment.owner,
-            text: comment.text,
             timestamp: comment.timestamp.toDate(),
+            user: user,
+            text: comment.text,
+            content: content,
           });
         });
 
@@ -274,7 +321,12 @@
           eventCategory : 'replay',
           eventAction   : 'load more comments',
         });
-      }
+      },
+
+      async updateToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
     },
 
     computed: {
