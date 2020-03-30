@@ -25,7 +25,7 @@
           <div class="d-flex">
             <v-btn
               class="mr-2"
-              color="yellow"
+              color="primary"
               to="/profile"
               depressed
               light
@@ -34,7 +34,7 @@
               Edit Profile
             </v-btn>
             <v-btn
-              color="yellow"
+              color="primary"
               to="/profile"
               outlined
             >
@@ -67,7 +67,7 @@
 
               <v-card-actions>
                 <v-btn
-                  color="yellow"
+                  color="primary"
                   :disabled="alert.type === 'error'"
                   :light="alert.type !== 'error'"
                   @click="requestKey"
@@ -76,7 +76,7 @@
                 </v-btn>
                 <v-btn
                   v-if="alert.type === 'error'"
-                  color="yellow"
+                  color="primary"
                   :to="buttonLink"
                   outlined
                 >
@@ -148,7 +148,7 @@
                   class="ma-2"
                   href="https://obsproject.com/download"
                   target="_blank"
-                  color="yellow"
+                  color="primary"
                   outlined
                   light
                   :block="$vuetify.breakpoint.smAndDown"

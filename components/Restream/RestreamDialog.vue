@@ -7,7 +7,7 @@
           class="mr-3"
           small
           outlined
-          color="yellow"
+          color="primary"
           @click="showRestreamDialog = true"
         >
           restream
@@ -27,7 +27,7 @@
       >
         <v-sheet
           tile
-          color="yellow"
+          color="primary"
           class="pa-2 d-flex justify-space-between align-center"
         >
           <h4 class="black--text body-1">
@@ -52,7 +52,7 @@
             <v-select
               class="mb-5"
               :items="streamingPlatforms"
-              color="yellow"
+              color="primary"
               label="Streaming Services"
               outlined
               single-line
@@ -65,7 +65,7 @@
 
             <v-text-field
               v-model="restreamData.server"
-              color="yellow"
+              color="primary"
               label="Stream Server"
               outlined
               clearable
@@ -82,7 +82,7 @@
 
             <v-text-field
               v-model="restreamData.streamkey"
-              color="yellow"
+              color="primary"
               label="Stream Key"
               outlined
               clearable
@@ -147,7 +147,7 @@
             <div class="mb-3 d-flex justify-center">
               <v-btn
                 class="mx-3"
-                color="yellow"
+                color="primary"
                 light
                 :loading="creatingRestreamer"
                 @click="createRestreamer"
@@ -178,7 +178,7 @@
           <div class="d-flex align-center mt-3">
             <v-btn
               class="mr-2 black--text"
-              color="yellow"
+              color="primary"
               small
               target="_blank"
               href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
@@ -214,7 +214,7 @@
         <v-card>
 
           <v-sheet
-            color="yellow"
+            color="primary"
             class="pa-2 d-flex justify-space-between align-center"
           >
             <h4 class="black--text body-1">
@@ -232,14 +232,14 @@
 
             <v-btn
               class="mr-2"
-              color="yellow"
+              color="primary"
               outlined
               @click="showExitConfirm = false"
             >
               No
             </v-btn>
             <v-btn
-              color="yellow"
+              color="primary"
               light
               @click="forceQuit"
             >

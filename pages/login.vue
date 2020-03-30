@@ -23,7 +23,7 @@
       <v-flex xs12 md8 lg6 xl4>
         <v-card class="my-3" color="grey darken-4">
 
-          <v-sheet color="yellow" class="d-flex align-center pa-3 black--text">
+          <v-sheet color="primary" class="d-flex align-center pa-3 black--text">
             <v-icon class="mr-2" large color="black">ondemand_video</v-icon>
             <h2>
               [bitwave.tv] {{ signUp ? 'Register' : 'Login' }}
@@ -92,7 +92,7 @@
               <v-checkbox
                 v-if="signUp"
                 label=" I confirm that I am eighteen (18) years of age or older."
-                color="yellow"
+                color="primary"
                 class="pt-0 mt-0 mb-3"
                 :rules="[ val => val || 'You must be 18 to use this site!' ]"
                 :disabled="loading"
@@ -101,7 +101,7 @@
               <v-btn
                 v-if="!signUp"
                 block
-                color="yellow"
+                color="primary"
                 class="black--text"
                 :loading="loading"
                 type="submit"
@@ -113,7 +113,7 @@
               <v-btn
                 v-if="signUp"
                 block
-                color="yellow"
+                color="primary"
                 class="black--text"
                 :loading="loading"
                 type="submit"
@@ -128,7 +128,7 @@
                 v-model="shouldStayLoggedIn"
                 label="Stay logged in?"
                 hide-details
-                color="yellow"
+                color="primary"
                 class="pt-0 mb-3"
                 :disabled="loading"
               />
@@ -152,13 +152,13 @@
               small
               href="#"
               text
-              color="yellow"
+              color="primary"
               @click="resetPassword(user.email)"
             >Forgot Password?</v-btn>
             <v-spacer />
             <v-btn
               small
-              color="yellow"
+              color="primary"
               outlined
               @click="switchForm"
             >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>

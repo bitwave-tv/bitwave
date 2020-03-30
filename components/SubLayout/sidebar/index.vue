@@ -13,7 +13,7 @@
     <template #append>
       <div class="pa-2">
         <v-btn
-          color="yellow"
+          color="primary"
           block
           outlined
           small

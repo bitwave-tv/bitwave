@@ -4,7 +4,7 @@
     <v-card-text>TODO: Implement.</v-card-text>
     <v-card-actions>
       <v-btn
-        color="yellow"
+        color="primary"
         light
         @click="view"
       >

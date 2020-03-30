@@ -17,7 +17,7 @@
 
       <v-card>
         <v-card-title
-          class="title yellow black--text pa-1 mb-3"
+          class="title primary black--text pa-1 mb-3"
           primary-title
         >
           <div>
@@ -111,7 +111,7 @@
           <span>Livestream:</span>
           <v-spacer />
           <v-btn
-            color="yellow"
+            color="primary"
             small
             outlined
             @click="kickStreamer( false )"

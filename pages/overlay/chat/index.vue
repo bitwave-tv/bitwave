@@ -16,7 +16,7 @@
           <template #activator="{ on }">
             <v-btn
               v-on="on"
-              color="yellow"
+              color="primary"
               :loading="loading"
               outlined
               :disabled="overlays.length >= 10"

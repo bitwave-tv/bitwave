@@ -31,7 +31,7 @@
               <v-text-field
                 v-model="streamData.title"
                 label="Stream Title"
-                color="yellow"
+                color="primary"
                 outlined
                 hide-details
                 :loading="streamDataLoading || saveLoading"
@@ -44,7 +44,7 @@
                 name="input-7-1"
                 outlined
                 hide-details
-                color="yellow"
+                color="primary"
                 label="Stream Description (markdown supported)"
                 auto-grow
                 @input="showSave = true"
@@ -54,7 +54,7 @@
               <v-switch
                 v-model="streamData.nsfw"
                 label="NSFW"
-                color="yellow"
+                color="primary"
                 hide-details
                 dense
                 inset
@@ -65,7 +65,7 @@
               <v-switch
                 v-model="streamData.archive"
                 label="Archive"
-                color="yellow"
+                color="primary"
                 hide-details
                 dense
                 inset
@@ -77,7 +77,7 @@
               <v-btn
                 :disabled="!showSave"
                 :loading="saveLoading"
-                color="yellow"
+                color="primary"
                 outlined
                 @click="updateStreamData"
               >save</v-btn>
@@ -105,7 +105,7 @@
                 class="mb-3"
                 value="rtmp://stream.bitwave.tv/live"
                 label="Stream URL"
-                color="yellow"
+                color="primary"
                 readonly
                 outlined
                 hide-details
@@ -117,7 +117,7 @@
                 v-model="streamData.key"
                 ref="streamkeyinput"
                 label="Stream Key"
-                color="yellow"
+                color="primary"
                 readonly
                 outlined
                 :messages="keyMessage"
@@ -132,14 +132,14 @@
             <v-layout>
               <v-spacer/>
               <v-btn
-                color="yellow"
+                color="primary"
                 outlined
                 :loading="keyLoading"
                 @click="resetStreamKey"
                 class="mr-2"
               >Reset</v-btn>
               <v-btn
-                color="yellow"
+                color="primary"
                 class="black--text"
                 :loading="keyLoading"
                 @click="copyToClipboard"

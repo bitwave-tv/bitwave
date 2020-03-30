@@ -2,7 +2,7 @@
   <div class="d-flex">
 
     <!-- Yellow Sidebar -->
-    <v-sheet color="yellow" tile>
+    <v-sheet color="primary" tile>
       <div style="width:8px;"></div>
     </v-sheet>
 
@@ -19,7 +19,7 @@
         v-model="title"
         label="Poll Title"
         placeholder="[bitwave.tv]"
-        color="yellow"
+        color="primary"
         hide-details
         clearable
       />
@@ -32,7 +32,7 @@
         <v-text-field
           v-model="option.label"
           :label="`Option ${index}...`"
-          color="yellow"
+          color="primary"
           class="pt-0"
           single-line
           hide-details
@@ -45,7 +45,7 @@
               class="black--text"
               outlined
               tabindex="-1"
-              color="yellow"
+              color="primary"
               :disabled="!index"
               @click="options.splice(index, 1)"
             >
@@ -57,7 +57,7 @@
               light
               outlined
               tabindex="-1"
-              color="yellow"
+              color="primary"
               @click="options.push({label:'', votes: 0})"
             >
               <v-icon>add</v-icon>
@@ -70,7 +70,7 @@
         <v-switch
           v-model="allowTrollVotes"
           class="my-2"
-          color="yellow"
+          color="primary"
           label="Allow Troll Votes"
           hide-details
           dense
@@ -84,7 +84,7 @@
           v-model="time"
           hide-details
           label="Time (minutes)"
-          color="yellow"
+          color="primary"
           type="number"
           step="0.25"
           append-icon="access_time"
@@ -98,7 +98,7 @@
         >cancel</v-btn>
         <v-btn
           small
-          color="yellow"
+          color="primary"
           class="black--text body-2 ml-2"
           depressed
           @click="createPoll"

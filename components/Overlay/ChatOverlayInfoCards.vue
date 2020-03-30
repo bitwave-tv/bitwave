@@ -26,7 +26,7 @@
           {{ overlay.title }}
           <v-btn
             class="ml-1"
-            color="yellow"
+            color="primary"
             text
             small
             @click="copyLink( overlay.id )"
@@ -45,7 +45,7 @@
           <div>
             <v-chip
               class="mr-1 my-1"
-              color="yellow"
+              color="primary"
               outlined
               small
             >
@@ -89,7 +89,7 @@
         <!-- Overlay actions -->
         <v-card-actions>
           <v-btn
-            color="yellow"
+            color="primary"
             text
             :href="`/overlay/chat/${overlay.id}`"
             target="_blank"
@@ -99,7 +99,7 @@
 
           <!-- Open edit dialog -->
           <v-btn
-            color="yellow"
+            color="primary"
             text
             @click="editOverlay( overlay.id )"
           >
@@ -108,7 +108,7 @@
 
           <v-spacer/>
           <v-btn
-            color="yellow"
+            color="primary"
             text
             @click="deleteOverlay(overlay)"
           >

@@ -3,7 +3,7 @@
     <!-- Title Bar -->
     <v-sheet
       tile
-      color="yellow"
+      color="primary"
       class="d-flex align-center justify-space-between pl-2"
     >
       <h5 class="black--text body-2">
@@ -25,7 +25,7 @@
 
       <v-btn
         class="d-flex mb-3"
-        color="yellow"
+        color="primary"
         light
         block
         @click.prevent="showSystemAlertDialog = true"
@@ -35,7 +35,7 @@
 
       <v-btn
         class="d-flex"
-        color="yellow"
+        color="primary"
         light
         block
         @click.prevent="showFireworksDialog = true"
@@ -56,7 +56,7 @@
         <!-- Title Bar -->
         <v-sheet
           tile
-          color="yellow"
+          color="primary"
           class="pa-2 d-flex justify-space-between align-center"
         >
           <h4 class="black--text body-1">
@@ -94,7 +94,7 @@
             </v-btn>
 
             <v-btn
-              color="yellow"
+              color="primary"
               light
               @click="createSystemAlert"
             >
@@ -115,7 +115,7 @@
         <!-- Title Bar -->
         <v-sheet
           tile
-          color="yellow"
+          color="primary"
           class="pa-2 d-flex justify-space-between align-center"
         >
           <h4 class="black--text body-1">
@@ -161,7 +161,7 @@
             </v-btn>
 
             <v-btn
-              color="yellow"
+              color="primary"
               light
               @click="createFireworks"
             >

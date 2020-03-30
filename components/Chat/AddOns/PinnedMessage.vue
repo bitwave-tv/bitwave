@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex poll-vote">
     <v-sheet
-      color="yellow"
+      color="primary"
       width="8px"
       tile
     />
@@ -32,7 +32,7 @@
         <v-btn
           small
           style="min-width: 0"
-          color="yellow"
+          color="primary"
           class=""
           outlined
           light

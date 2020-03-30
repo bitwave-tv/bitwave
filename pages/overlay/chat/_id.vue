@@ -12,7 +12,7 @@
         class="d-flex align-center justify-center mt-5 fill-height"
       >
         <v-progress-circular
-          color="yellow"
+          color="primary"
           class="circular mr-3"
           indeterminate
           :size="50"

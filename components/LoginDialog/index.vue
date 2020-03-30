@@ -7,7 +7,7 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-on="on"
-          color="yellow"
+          color="primary"
           class="black--text"
           small
         >
@@ -19,7 +19,7 @@
 
         <v-sheet
           tile
-          color="yellow"
+          color="primary"
           class="d-flex align-center pa-3 black--text"
         >
           <v-icon class="mr-2" color="black">ondemand_video</v-icon>
@@ -93,7 +93,7 @@
             <v-checkbox
               v-if="signUp"
               label=" I confirm that I am eighteen (18) years of age or older."
-              color="yellow"
+              color="primary"
               class="pt-0 mt-0 mb-3"
               :rules="[ val => val || 'You must be 18 to use this site!' ]"
               :disabled="loading"
@@ -102,7 +102,7 @@
             <v-btn
               v-if="!signUp"
               block
-              color="yellow"
+              color="primary"
               class="black--text"
               :loading="loading"
               type="submit"
@@ -114,7 +114,7 @@
             <v-btn
               v-if="signUp"
               block
-              color="yellow"
+              color="primary"
               class="black--text"
               :loading="loading"
               type="submit"
@@ -129,7 +129,7 @@
               v-model="shouldStayLoggedIn"
               label="Stay logged in?"
               hide-details
-              color="yellow"
+              color="primary"
               class="pt-0"
               :disabled="loading"
             />
@@ -160,12 +160,12 @@
           <v-spacer/>
           <v-btn
             small
-            color="yellow"
+            color="primary"
             outlined
             @click="switchForm"
           >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
           <v-btn
-            color="yellow"
+            color="primary"
             text
             @click="show = false"
           >CANCEL</v-btn>

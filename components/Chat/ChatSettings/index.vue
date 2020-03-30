@@ -23,7 +23,7 @@
       <!-- Title Bar -->
       <v-sheet
         tile
-        color="yellow"
+        color="primary"
         class="d-flex align-center justify-space-between pl-2"
       >
         <h5 class="black--text body-2">Chat Settings</h5>

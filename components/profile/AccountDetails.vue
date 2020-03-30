@@ -50,7 +50,7 @@
                 large
                 class="flex-shrink-1 ml-2"
                 :loading="uploadingAvatar"
-                color="yellow"
+                color="primary"
                 outlined
                 :disabled="!imageFile"
                 @click="uploadFile"
@@ -139,7 +139,7 @@
                   <div class="d-flex mb-3">
                     <v-spacer />
                     <v-btn
-                      color="yellow"
+                      color="primary"
                       class="mr-2 black--text"
                       :loading="savingProfile"
                       type="submit"
@@ -164,13 +164,13 @@
             <div class="d-flex">
               <v-spacer />
               <v-btn
-                :color="editProfile ? 'red' : 'yellow'"
-                :light="!editProfile"
+                :color="editProfile ? 'error' : 'primary'"
+                :class="{ 'black--text': !editProfile }"
                 class="mr-2"
                 @click="toggleEdit"
               >{{ editProfile ? 'Cancel' : 'Edit' }}</v-btn>
               <v-btn
-                color="yellow"
+                color="primary"
                 @click="logout"
                 class="black--text"
               >Logout</v-btn>

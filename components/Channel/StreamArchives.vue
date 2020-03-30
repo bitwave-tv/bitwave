@@ -153,7 +153,7 @@
       >
         <v-card>
           <v-sheet
-            color="yellow"
+            color="primary"
             class="pa-2 d-flex justify-space-between align-center"
           >
             <h4 class="black--text body-1 font-weight-bold">
@@ -177,7 +177,7 @@
           <v-card-actions class="justify-end pa-3">
             <v-btn
               class="mr-2"
-              color="yellow"
+              color="primary"
               outlined
               small
               @click="confirm( false )"

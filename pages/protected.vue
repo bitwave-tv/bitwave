@@ -12,7 +12,7 @@
     </v-alert>
     <div>
       <v-btn
-        color="yellow"
+        color="primary"
         light
       >
         Homepage

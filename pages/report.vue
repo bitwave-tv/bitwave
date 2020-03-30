@@ -23,7 +23,7 @@
                     v-model="name"
                     label="legal name"
                     name="name"
-                    color="yellow"
+                    color="primary"
                     required
                     :rules="[ rules.required ]"
                     :loading="submitting"
@@ -36,7 +36,7 @@
                     label="email"
                     name="_replyto"
                     type="email"
-                    color="yellow"
+                    color="primary"
                     required
                     :rules="[ rules.required, rules.email ]"
                     :loading="submitting"
@@ -49,7 +49,7 @@
                     name="report"
                     outline
                     label="message"
-                    color="yellow"
+                    color="primary"
                     required
                     :rules="[ rules.required ]"
                     :loading="submitting"

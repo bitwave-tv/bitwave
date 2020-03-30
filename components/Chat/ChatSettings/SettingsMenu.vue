@@ -5,7 +5,7 @@
         <v-switch
           v-model="globalChat"
           label="Global Chat"
-          color="yellow"
+          color="primary"
           hide-details
           dense
           inset
@@ -14,7 +14,7 @@
           v-model="showTimestamps"
           class="ml-3"
           label="Timestamps"
-          color="yellow"
+          color="primary"
           hide-details
           dense
           inset
@@ -25,7 +25,7 @@
         v-model="useIgnore"
         label="Ignore Users"
         class="mb-2"
-        color="yellow"
+        color="primary"
         hide-details
         dense
         inset
@@ -35,7 +35,7 @@
         v-model="notificationSound"
         label="Notification Sounds"
         class="mb-2"
-        color="yellow"
+        color="primary"
         hide-details
         dense
         inset
@@ -45,7 +45,7 @@
         v-model="autocomplete"
         label="Autocomplete"
         class="mb-2"
-        color="yellow"
+        color="primary"
         hide-details
         dense
         inset
@@ -62,7 +62,7 @@
           v-model="useTts"
           label="Use TTS"
           class="d-block mt-0 pt-0"
-          color="yellow"
+          color="primary"
           hide-details
           dense
           inset
@@ -72,7 +72,7 @@
           :disabled="!useTts"
           label="Troll TTS"
           class="d-block mt-0 pt-0"
-          color="yellow"
+          color="primary"
           hide-details
           dense
           inset

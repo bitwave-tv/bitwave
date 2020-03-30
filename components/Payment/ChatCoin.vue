@@ -3,7 +3,7 @@
     <!-- Title Bar -->
     <v-sheet
       tile
-      color="yellow"
+      color="primary"
       class="d-flex align-center justify-space-between pl-2"
     >
       <h5 class="black--text body-2">
@@ -25,7 +25,7 @@
 
       <v-btn
         class="d-flex mb-3"
-        color="yellow"
+        color="primary"
         light
         block
         @click.prevent="openBuyMenu ( '500', 5 )"
@@ -35,7 +35,7 @@
 
       <v-btn
         class="d-flex mb-3"
-        color="yellow"
+        color="primary"
         light
         block
         @click.prevent="openBuyMenu ( '1000', 10 )"
@@ -56,7 +56,7 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
-          color="yellow"
+          color="primary"
           class="black--text"
           v-on="on"
           block
@@ -69,7 +69,7 @@
 
       <v-card colr="grey darken-4">
         <v-card-title
-          class="title yellow black--text"
+          class="title primary black--text"
           primary-title
         >
           Buy Coins

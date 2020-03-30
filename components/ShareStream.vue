@@ -25,7 +25,7 @@
 
       <v-sheet
         tile
-        color="yellow"
+        color="primary"
         class="pa-2 d-flex justify-space-between align-center"
       >
         <h4 class="black--text body-1">

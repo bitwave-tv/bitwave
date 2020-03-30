@@ -33,7 +33,7 @@
       <v-card>
         <v-sheet
           tile
-          color="yellow"
+          color="primary"
           class="pl-2 d-flex justify-space-between align-center"
         >
           <h5 class="black--text body-2">

@@ -72,9 +72,8 @@
               v-on="on"
               :style="{ 'min-width': '40px' }"
               small
-              :light="isAdmin"
-              color="yellow"
-              class="ml-2 px-0"
+              color="primary"
+              class="ml-2 px-0 black--text"
               :disabled="!isAdmin"
               @click="scrollToBottom(true)"
             >

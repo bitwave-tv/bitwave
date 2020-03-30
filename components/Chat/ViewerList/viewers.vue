@@ -6,7 +6,7 @@
     <!-- Header -->
     <v-sheet
       tile
-      color="yellow"
+      color="primary"
       class="d-flex align-center justify-space-between pl-2"
     >
       <h5 class="black--text body-2">Live Viewers</h5>
@@ -38,7 +38,7 @@
       <v-switch
         v-model="showAll"
         :label="`Show all viewers (${showAll ? getUserList.length : getChannelViews( page )})`"
-        color="yellow"
+        color="primary"
         hide-details
         dense
         inset

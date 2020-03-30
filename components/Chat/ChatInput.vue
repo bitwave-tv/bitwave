@@ -86,7 +86,7 @@
         :disabled="loading"
         :light="!loading"
         small
-        color="yellow black--text"
+        color="primary black--text"
         class="px-2"
         @click="sendMessage"
       >

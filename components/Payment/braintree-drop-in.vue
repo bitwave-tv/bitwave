@@ -6,7 +6,7 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
-          color="yellow"
+          color="primary"
           class="black--text"
           v-on="on"
           block
@@ -19,7 +19,7 @@
 
       <v-card colr="grey darken-4">
         <v-card-title
-          class="title yellow black--text"
+          class="title primary black--text"
           primary-title
         >
           $5 - Purchase chat color

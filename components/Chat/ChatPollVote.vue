@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex poll-vote">
     <v-sheet
-      color="yellow"
+      color="primary"
       width="8px"
       tile
     />
@@ -19,7 +19,7 @@
           :rotate="-90"
           :value="timeLeft"
           :indeterminate="timeLeft > 100"
-          color="yellow"
+          color="primary"
         />
         <div
           class="d-flex mx-2 flex-grow-1"
@@ -42,7 +42,7 @@
         <v-btn
           small
           style="min-width: 0"
-          color="yellow"
+          color="primary"
           class=""
           outlined
           light
@@ -64,7 +64,7 @@
           block
           class="v-btn-ellipsis"
           light
-          color="yellow"
+          color="primary"
           :disabled="voted"
           @click="vote( index )"
         >
@@ -84,7 +84,7 @@
           <!-- Vote Count chip -->
           <v-chip
             class="flex-shrink-0 mr-1"
-            color="yellow"
+            color="primary"
             outlined
             label
             small
@@ -107,7 +107,7 @@
             <!-- Progress bar -->
             <v-progress-linear
               :value="val.votes / ( pollData.voteCount || 1 ) * 100"
-              color="yellow"
+              color="primary"
             />
 
           </div>
@@ -130,7 +130,7 @@
           :disabled="showResults"
           small
           outlined
-          color="yellow"
+          color="primary"
           class="black--text ml-2"
           @click="endPoll"
         >

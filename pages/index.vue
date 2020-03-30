@@ -74,7 +74,7 @@
               <v-btn
                 small
                 outlined
-                color="yellow"
+                color="primary"
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
                 target="_blank"
                 class="my-1 mr-1"
@@ -195,7 +195,7 @@
             <v-spacer/>
             <v-btn
               small
-              color="yellow"
+              color="primary"
               text
               nuxt
               to="/login"
@@ -203,7 +203,7 @@
             <v-btn
               class="black--text"
               small
-              color="yellow"
+              color="primary"
               nuxt
               to="/login"
             >Register</v-btn>

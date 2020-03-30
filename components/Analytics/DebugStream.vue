@@ -213,7 +213,7 @@
       <v-switch
         v-model="pinToLive"
         label="Keep Stream Live"
-        color="yellow"
+        color="primary"
         hide-details
         dense
         inset
@@ -221,7 +221,7 @@
       <v-switch
         v-model="disableAutoplayBumps"
         label="Disable autoplay for offline bumps"
-        color="yellow"
+        color="primary"
         hide-details
         dense
         inset

@@ -13,7 +13,7 @@
               <v-col shrink>
                 <v-progress-circular
                   indeterminate
-                  color="yellow"
+                  color="primary"
                 />
               </v-col>
               <v-flex>Loading...</v-flex>

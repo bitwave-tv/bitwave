@@ -43,7 +43,7 @@
     <v-fab-transition>
       <v-btn
         v-show="!displayChat"
-        color="yellow"
+        color="primary"
         fixed
         fab
         dark

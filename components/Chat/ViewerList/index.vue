@@ -9,7 +9,7 @@
     <template #activator="{ on }">
       <v-chip
         v-on="on"
-        color="yellow"
+        color="primary"
         text-color="black"
       >
         {{ channelViewCount }}

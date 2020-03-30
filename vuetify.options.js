@@ -10,7 +10,7 @@ export default {
   theme: {
     dark: true,
     themes: {
-      dark: {
+      dark: { // swap primary to #13a9fe
         primary:   colors.yellow.base, // #ffeb3b
         secondary: colors.grey.darken3, // #424242
         accent:    colors.yellow.accent1, // #82B1FF
