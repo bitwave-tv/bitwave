@@ -44,10 +44,10 @@
               :id="replay.id"
               :link="replay.link"
               :duration="replay.duration"
-              :thumbnail="undefined"
+              :thumbnails="replay.thumbnails"
               :nsfw="replay.nsfw"
               :title="replay.title"
-              :username="replay.user && replay.user.name || streamer"
+              :username="replay.user && replay.user.name || replay.name"
               :comment-count="replay.commentCount"
               :views="replay.views || 0"
               :timestamp="replay.timestamp.toDate()"
@@ -139,6 +139,7 @@
               duration: this.createTimecode( data.duration ),
               commentCount: data.commentCount || 0,
               user: data.user,
+              thumbnails: data.thumbnails,
             }
           });
           this.processing = false;

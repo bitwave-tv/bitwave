@@ -30,7 +30,7 @@
               :id="replay.id"
               :link="replay.link"
               :duration="replay.duration"
-              :thumbnail="undefined"
+              :thumbnails="replay.thumbnails"
               :nsfw="replay.nsfw"
               :title="replay.title"
               :username="replay.user && replay.user.name || streamer"
@@ -394,6 +394,7 @@
               duration: this.createTimecode( data.duration ),
               commentCount: data.commentCount || 0,
               user: data.user,
+              thumbnails: data.thumbnails,
             }
           });
           this.processing = false;
@@ -523,10 +524,6 @@
         const mm = Math.floor(( duration % 3600 ) / 60).toString().padStart( 2, '0' );
         const ss = Math.floor( duration % 60 ).toString().padStart( 2, '0' );
         return `${hh}:${mm}:${ss}`;
-
-        // const d = new Date( 0 );
-        // d.setSeconds( duration );
-        // return d.toISOString().substr( 11, 8 );
       },
 
     },

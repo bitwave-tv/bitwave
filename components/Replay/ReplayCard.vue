@@ -8,7 +8,7 @@
       <div class="replay-thumbnail">
         <!-- Thumbnail -->
         <v-img
-          :src="thumbnail"
+          :src="getRandomThumbnail( thumbnails )"
           :key="id"
           lazy-src="https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg"
           :aspect-ratio="16/9"
@@ -117,7 +117,7 @@
       id           : { type: String },
       link         : { type: String },
       duration     : { type: String },
-      thumbnail    : { type: String, default: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg' },
+      thumbnails   : { type: Array },
       nsfw         : { type: Boolean },
       title        : { type: String },
       username     : { type: String },
@@ -129,6 +129,13 @@
 
     data () {
       return {}
+    },
+
+    methods: {
+      getRandomThumbnail ( thumbnails ) {
+        if ( !thumbnails || !thumbnails.length ) return 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
+        return thumbnails[ Math.floor( Math.random() * thumbnails.length ) ];
+      },
     },
   }
 </script>
