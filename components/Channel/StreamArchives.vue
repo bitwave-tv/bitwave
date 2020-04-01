@@ -247,7 +247,11 @@
 
   export default {
     name: 'StreamArchives',
-    components: { ReplayCard },
+
+    components: {
+      ReplayCard
+    },
+
     props: {
       streamer: { type: String },
     },
