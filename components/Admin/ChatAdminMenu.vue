@@ -25,8 +25,7 @@
 
       <v-btn
         class="d-flex mb-3"
-        color="primary"
-        light
+        color="primary black--text"
         block
         @click.prevent="showSystemAlertDialog = true"
       >
@@ -35,8 +34,7 @@
 
       <v-btn
         class="d-flex"
-        color="primary"
-        light
+        color="primary black--text"
         block
         @click.prevent="showFireworksDialog = true"
       >
@@ -94,8 +92,7 @@
             </v-btn>
 
             <v-btn
-              color="primary"
-              light
+              color="primary black--text"
               @click="createSystemAlert"
             >
               Create
@@ -161,8 +158,7 @@
             </v-btn>
 
             <v-btn
-              color="primary"
-              light
+              color="primary black--text"
               @click="createFireworks"
             >
               Create

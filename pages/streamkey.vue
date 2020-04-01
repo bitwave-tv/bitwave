@@ -25,10 +25,9 @@
           <div class="d-flex">
             <v-btn
               class="mr-2"
-              color="primary"
+              color="primary black--text"
               to="/profile"
               depressed
-              light
             >
               <v-icon class="mr-2">account_circle</v-icon>
               Edit Profile
