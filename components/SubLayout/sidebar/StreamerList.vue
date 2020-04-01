@@ -21,11 +21,11 @@
           >
             <v-list-item-action class="my-1">
               <v-avatar
-                color="#eee"
-                size="40"
-                class="blue--text"
+                size="42"
+                tile
               >
-                <v-icon light :size="item.size" >{{ item.icon }}</v-icon>
+                <v-img src="/icon.png"></v-img>
+                <!--<v-icon light :size="item.size" >{{ item.icon }}</v-icon>-->
               </v-avatar>
             </v-list-item-action>
             <v-list-item-content class="py-0">
