@@ -132,10 +132,10 @@
         color="primary"
         outlined
         small
-        :loading="loadingMoreComments"
+        :loading="loadingComments"
         :disabled="allCommentsLoaded"
         @click="onLoadMore"
-      >{{ allCommentsLoaded ? 'No More Comments' : 'Load More' }}</v-btn>
+      >{{ allCommentsLoaded ? commentCount === 0 ? 'No Comments' : 'No More Comments' : 'Load More' }}</v-btn>
     </div>
 
   </div>
@@ -167,7 +167,7 @@
         showSubmit: false,
         userComment: '',
         submittingComment: false,
-        loadingMoreComments: false,
+        loadingComments: true,
         allCommentsLoaded: false,
       };
     },
@@ -250,6 +250,8 @@
           .limit( 5 )
           .get();
 
+        this.loadingComments = false;
+
         if ( commentQuery.empty ) {
           this.allCommentsLoaded = true;
           return console.log( `No comments!` );
@@ -281,9 +283,9 @@
 
       async onLoadMore () {
          if ( !this.archiveId ) return console.log( `No Archive ID!` );
-         if ( this.loadingMoreComments ) return console.log( `Already loading!` );
+         if ( this.loadingComments ) return console.log( `Already loading!` );
 
-         this.loadingMoreComments = true;
+         this.loadingComments = true;
 
          const offset = this.comments[ this.comments.length - 1 ].timestamp;
 
@@ -312,7 +314,7 @@
           });
         });
 
-        this.loadingMoreComments = false;
+        this.loadingComments = false;
 
         if ( commentQuery.size < 5 ) this.allCommentsLoaded = true;
 
