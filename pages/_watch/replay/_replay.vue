@@ -19,7 +19,7 @@
               :src="`${avatar}`"
               :alt="name"
             />
-            <v-icon v-else>warning</v-icon>
+            <v-icon v-else>account_circle</v-icon>
           </v-avatar>
           <div class="mx-2">{{ name }}</div>
         </div>
@@ -35,7 +35,9 @@
             v-if="isAdmin"
             :streamer="name"
           />
-          <FollowButton :streamer-id="owner" />
+          <FollowButton
+            :streamer-id="owner"
+          />
         </div>
       </div>
     </v-sheet>

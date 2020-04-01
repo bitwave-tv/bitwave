@@ -69,21 +69,22 @@
         </div>
       </div>
 
-      <!-- Card Data -->
+      <!-- Replay Data -->
       <div
         class="pa-2"
       >
-        <!-- Stream Data -->
+        <!-- Replay Title -->
         <div
           class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0"
           :title="title"
-        >
-          {{ title }}
-        </div>
+        >{{ title }}</div>
+
         <div class="caption d-flex align-center">
 
+          <!-- Streamer Username -->
           <div class="d-block text-truncate">{{ username }}</div>
 
+          <!-- NSFW Indicator -->
           <template v-if="nsfw">
             <v-divider vertical class="mx-2"/>
             <div class="d-flex align-center">
@@ -91,7 +92,8 @@
             </div>
           </template>
 
-          <template v-if="true">
+          <!-- Comment Count -->
+          <template>
             <v-spacer/>
             <div
               :title="`${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}`"

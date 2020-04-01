@@ -27,7 +27,6 @@
             xl="3"
           >
             <replay-card
-              v-if="!replay.deleted"
               :id="replay.id"
               :link="replay.link"
               :duration="replay.duration"
