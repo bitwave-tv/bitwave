@@ -2,7 +2,7 @@
     <div class="px-3 mb-4 mt-3">
 
       <!-- Banner Message -->
-      <div class="d-flex flex-shrink-0 align-center flex-wrap mb-5 mt-0 ml-5">
+      <div class="d-flex flex-shrink-0 align-center flex-wrap mt-0 ml-5">
         <div class="d-inline-block subtitle">
           Replays will be available for up to <strong class="title">7</strong> days.
           <div class="overline grey--text">unless we start to run out of server space</div>
@@ -10,130 +10,168 @@
         <v-spacer/>
       </div>
 
-      <!-- Stream Replays Data Table -->
-      <v-card>
-        <v-data-table
-          light
-          :headers="smartHeader"
-          :items="archives"
-          :loading="processing && !loaded"
-          loading-text="Loading... Please wait"
-          no-data-text="No replays found"
-          :footer-props="footerProps"
-          :page.sync="page"
-          @pagination="onPaginate"
+      <!-- Stream Replay Cards-->
+      <div>
+        <transition-group
+          tag="div"
+          class="row flex-wrap"
+          name="fade-transition"
         >
-
-          <!-- Progress Bar -->
-          <template v-slot:progress>
-            <v-expand-transition>
-              <v-progress-linear
-                color="blue"
-                indeterminate
-              />
-            </v-expand-transition>
-          </template>
-
-          <!-- Action Buttons header -->
-          <template v-slot:header.action="{ header }">
-            <div class="text-center">{{ header.text }}</div>
-          </template>
-
-          <!-- Stream Date -->
-          <template v-slot:item.timeAgo="{ item }">
-            <div class="overline text-no-wrap">{{ item.timeAgo }}</div>
-          </template>
-
-          <!-- Replay Link -->
-          <template v-slot:item.url="{ item }">
-            <v-btn
-              :to="item.link"
-              class="text-truncate text-none font-weight-regular my-1"
-              text
-              tile
-              small
-              color="blue"
-              :style="{ textDecoration: item.deleted ? 'line-through' : 'none' }"
-              :disabled="item.deleted"
-            >
-              {{ item.id }}
-            </v-btn>
-          </template>
-
-          <!-- Edit Stream Title -->
-          <template
-            v-if="channelOwner"
-            v-slot:item.title="{ item }"
+          <v-col
+            v-for="replay in replayCards"
+            :key="replay.id"
+            cols="12"
+            sm="6"
+            md="6"
+            lg="4"
+            xl="3"
           >
-            <v-edit-dialog
-              :return-value.sync="item.title"
-              @save="saveArchiveEdit( item )"
-              @cancel="cancelArchiveEdit"
-            >
-              <span class="overline">[{{ item.duration }}]</span>
-              <span class="">{{ item.title }}</span>
-              <template v-slot:input>
-                <v-text-field
-                  v-model="item.title"
-                  label="Edit Stream Title"
-                  single-line
-                  counter
-                />
-              </template>
-            </v-edit-dialog>
-          </template>
-
-          <!-- Stream Title -->
-          <template
-            v-if="!channelOwner"
-            v-slot:item.title="{ item }"
-          >
-            <div>
-              <span class="overline">[{{ item.duration }}]</span>
-              <span class="">{{ item.title }}</span>
-            </div>
-          </template>
-
-          <!-- Action Items -->
-          <template v-slot:item.action="{ item }">
-            <v-tooltip
-              open-delay="1000"
-              left
-              transition="slide-x-transition"
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  v-on="on"
-                  class="mr-3"
-                  icon
-                  color="red"
-                  :loading="item.loading"
-                  :disabled="item.deleted"
-                  @click="deleteArchive( item )"
-                >
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </template>
-              <span>Delete Replay</span>
-            </v-tooltip>
-          </template>
-
-          <!-- Switch Visibility of Deleted Replays -->
-          <template v-slot:body.append>
-            <v-switch
-              v-model="showDeletedArchives"
-              label="Show Deleted Replays"
-              class="pa-3 mt-0"
-              hide-details
-              dense
-              inset
-              color="blue"
-              @change="toggleShowDeletedArchives"
+            <replay-card
+              v-if="!replay.deleted"
+              :id="replay.id"
+              :link="replay.link"
+              :duration="replay.duration"
+              :thumbnail="undefined"
+              :nsfw="replay.nsfw"
+              :title="replay.title"
+              :username="replay.user && replay.user.name || streamer"
+              :comment-count="replay.commentCount"
+              :views="replay.views || 0"
+              :timestamp="replay.timestamp.toDate()"
+              :time-ago="replay.timeAgo"
             />
-          </template>
+          </v-col>
+        </transition-group>
+      </div>
 
-        </v-data-table>
-      </v-card>
+      <!-- Stream Replays Data Table -->
+      <div class="mt-5">
+        <div class="title ml-5 mb-3">Replay List</div>
+        <v-card>
+          <v-data-table
+            light
+            :headers="smartHeader"
+            :items="archives"
+            :loading="processing && !loaded"
+            loading-text="Loading... Please wait"
+            no-data-text="No replays found"
+            :footer-props="footerProps"
+            :page.sync="page"
+            @pagination="onPaginate"
+          >
+
+            <!-- Progress Bar -->
+            <template v-slot:progress>
+              <v-expand-transition>
+                <v-progress-linear
+                  color="blue"
+                  indeterminate
+                />
+              </v-expand-transition>
+            </template>
+
+            <!-- Action Buttons header -->
+            <template v-slot:header.action="{ header }">
+              <div class="text-center">{{ header.text }}</div>
+            </template>
+
+            <!-- Stream Date -->
+            <template v-slot:item.timeAgo="{ item }">
+              <div class="overline text-no-wrap">{{ item.timeAgo }}</div>
+            </template>
+
+            <!-- Replay Link -->
+            <template v-slot:item.url="{ item }">
+              <v-btn
+                :to="item.link"
+                class="text-truncate text-none font-weight-regular my-1"
+                text
+                tile
+                small
+                color="blue"
+                :style="{ textDecoration: item.deleted ? 'line-through' : 'none' }"
+                :disabled="item.deleted"
+              >
+                {{ item.id }}
+              </v-btn>
+            </template>
+
+            <!-- Edit Stream Title -->
+            <template
+              v-if="channelOwner"
+              v-slot:item.title="{ item }"
+            >
+              <v-edit-dialog
+                :return-value.sync="item.title"
+                @save="saveArchiveEdit( item )"
+                @cancel="cancelArchiveEdit"
+              >
+                <span class="overline">[{{ item.duration }}]</span>
+                <span class="">{{ item.title }}</span>
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="item.title"
+                    label="Edit Stream Title"
+                    single-line
+                    counter
+                  />
+                </template>
+              </v-edit-dialog>
+            </template>
+
+            <!-- Stream Title -->
+            <template
+              v-if="!channelOwner"
+              v-slot:item.title="{ item }"
+            >
+              <div>
+                <span class="overline">[{{ item.duration }}]</span>
+                <span class="">{{ item.title }}</span>
+              </div>
+            </template>
+
+            <!-- Action Items -->
+            <template v-slot:item.action="{ item }">
+              <v-tooltip
+                open-delay="1000"
+                left
+                transition="slide-x-transition"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    class="mr-3"
+                    icon
+                    color="red"
+                    :loading="item.loading"
+                    :disabled="item.deleted"
+                    @click="deleteArchive( item )"
+                  >
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </template>
+                <span>Delete Replay</span>
+              </v-tooltip>
+            </template>
+
+            <!-- Switch Visibility of Deleted Replays -->
+            <template v-slot:body.append>
+              <v-switch
+                v-model="showDeletedArchives"
+                label="Show Deleted Replays"
+                class="pa-3 mt-0"
+                hide-details
+                dense
+                inset
+                color="blue"
+                @change="toggleShowDeletedArchives"
+              />
+            </template>
+
+          </v-data-table>
+        </v-card>
+      </div>
+
 
       <div class="mt-4">
         <div class="grey--text caption">
@@ -205,11 +243,12 @@
 
   import { auth, db } from '@/plugins/firebase.js';
   import { timeAgo } from '@/assets/js/time-ago';
+  import ReplayCard from '@/components/Replay/ReplayCard';
 
 
   export default {
     name: 'StreamArchives',
-
+    components: { ReplayCard },
     props: {
       streamer: { type: String },
     },
@@ -350,6 +389,8 @@
               loading: false,
               link: `/${this.streamer}/replay/${doc.id}`,
               duration: this.createTimecode( data.duration ),
+              commentCount: data.commentCount || 0,
+              user: data.user,
             }
           });
           this.processing = false;
@@ -474,10 +515,15 @@
       },
 
       createTimecode ( duration ) {
-        // Create time-code
-        const d = new Date( 0 );
-        d.setSeconds( duration );
-        return d.toISOString().substr( 11, 5 );
+        // Create timecode
+        const hh = Math.floor( duration / 3600 ).toString().padStart( 2, '0' );
+        const mm = Math.floor(( duration % 3600 ) / 60).toString().padStart( 2, '0' );
+        const ss = Math.floor( duration % 60 ).toString().padStart( 2, '0' );
+        return `${hh}:${mm}:${ss}`;
+
+        // const d = new Date( 0 );
+        // d.setSeconds( duration );
+        // return d.toISOString().substr( 11, 8 );
       },
 
     },
@@ -499,6 +545,12 @@
       channelOwner () {
         if ( !this.username ) return false;
         return this.streamer.toLowerCase() === this.username.toLowerCase();
+      },
+
+      replayCards () {
+        return this.archives
+          .filter( a => !a.deleted )
+          .slice( 0, 10 );
       },
     },
 
