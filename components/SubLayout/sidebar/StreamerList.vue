@@ -10,7 +10,7 @@
           dense
         >
           <v-list-item
-            class="py-1"
+            class="mt-1"
             v-for="( item, i ) in items"
             :key="i"
             :to="item.to"
@@ -49,6 +49,21 @@
         >
           STREAM<br>
           HERE
+        </v-btn>
+      </div>
+
+      <div class="mt-1">
+        <v-btn
+          class="text-center py-2"
+          style="height: auto;"
+          to="/replays"
+          text
+          tile
+          block
+          @click="onClick"
+          no-prefetch
+        >
+          Replays
         </v-btn>
       </div>
 
