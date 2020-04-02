@@ -67,6 +67,21 @@
         </v-btn>
       </div>
 
+      <div class="mt-1">
+        <v-btn
+          class="text-center py-2"
+          style="height: auto;"
+          to="/store"
+          text
+          tile
+          block
+          @click="onClick"
+          no-prefetch
+        >
+          Store
+        </v-btn>
+      </div>
+
       <!-- User Channels -->
       <div
         class="d-flex flex-column flex-vertical hide-scrollbar"
