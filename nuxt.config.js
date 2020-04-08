@@ -331,7 +331,7 @@ module.exports = {
 
     extractCSS: true,
 
-    parallel: process.env.APP_DEBUG === 'true',
+    // parallel: process.env.APP_DEBUG === 'true',
 
     extend ( config, ctx ) {
 
