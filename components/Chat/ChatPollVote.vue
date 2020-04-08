@@ -64,7 +64,7 @@
           block
           class="v-btn-ellipsis"
           light
-          color="primary"
+          color="primary black--text"
           :disabled="voted"
           @click="vote( index )"
         >
