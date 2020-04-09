@@ -131,7 +131,7 @@
           small
           outlined
           color="primary"
-          class="black--text ml-2"
+          class="ml-2"
           @click="endPoll"
         >
           Finish
