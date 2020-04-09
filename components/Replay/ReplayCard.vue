@@ -9,11 +9,11 @@
       <div class="replay-thumbnail">
         <!-- Thumbnail -->
         <v-img
-          :src="getRandomThumbnail( thumbnails )"
-          :key="id"
+          :src="thumbnail || getRandomThumbnail( thumbnails )"
+          :key="thumbnail || id"
           lazy-src="https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg"
           :aspect-ratio="16/9"
-          :class="{ 'blur': nsfw }"
+          :class="{ 'blur': blur }"
         />
 
         <!-- View Counter -->
@@ -118,6 +118,7 @@
       id           : { type: String },
       link         : { type: String },
       duration     : { type: String },
+      thumbnail    : { type: String },
       thumbnails   : { type: Array },
       nsfw         : { type: Boolean },
       title        : { type: String },
@@ -126,11 +127,14 @@
       views        : { type: Number, default: 0 },
       timestamp    : { type: Date },
       timeAgo      : { type: String },
+      blur         : { type: Boolean, default: true },
     },
 
     data () {
       return {}
     },
+
+    computed: {},
 
     methods: {
       getRandomThumbnail ( thumbnails ) {
@@ -149,6 +153,7 @@
 
   .replay-thumbnail {
     position: relative;
+    background-color: black;
 
     .view-counter {
       position: absolute;
