@@ -4,15 +4,16 @@
       class="stream-card"
       :to="link"
       no-prefetch
+      color="primary"
     >
       <div class="replay-thumbnail">
         <!-- Thumbnail -->
         <v-img
-          :src="getRandomThumbnail( thumbnails )"
-          :key="id"
+          :src="thumbnail || getRandomThumbnail( thumbnails )"
+          :key="thumbnail || id"
           lazy-src="https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg"
           :aspect-ratio="16/9"
-          :class="{ 'blur': nsfw }"
+          :class="{ 'blur': blur }"
         />
 
         <!-- View Counter -->
@@ -75,7 +76,7 @@
       >
         <!-- Replay Title -->
         <div
-          class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0"
+          class="body-1 font-weight-bold text-truncate text-no-wrap primary---text mb-0"
           :title="title"
         >{{ title }}</div>
 
@@ -88,7 +89,7 @@
           <template v-if="nsfw">
             <v-divider vertical class="mx-2"/>
             <div class="d-flex align-center">
-              <div class="red--text">NSFW</div>
+              <div class="red--text font-weight-bold">NSFW</div>
             </div>
           </template>
 
@@ -117,6 +118,7 @@
       id           : { type: String },
       link         : { type: String },
       duration     : { type: String },
+      thumbnail    : { type: String },
       thumbnails   : { type: Array },
       nsfw         : { type: Boolean },
       title        : { type: String },
@@ -125,11 +127,14 @@
       views        : { type: Number, default: 0 },
       timestamp    : { type: Date },
       timeAgo      : { type: String },
+      blur         : { type: Boolean, default: true },
     },
 
     data () {
       return {}
     },
+
+    computed: {},
 
     methods: {
       getRandomThumbnail ( thumbnails ) {
@@ -148,6 +153,7 @@
 
   .replay-thumbnail {
     position: relative;
+    background-color: black;
 
     .view-counter {
       position: absolute;

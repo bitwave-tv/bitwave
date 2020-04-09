@@ -3,7 +3,7 @@
     <!-- Stream Title, Status -->
     <v-toolbar
       class="elevation-2"
-      color="grey darken-4"
+      color="accentwave"
       dense
     >
       <!-- Live / Replay / Offline Indicator -->
@@ -71,18 +71,18 @@
       <v-spacer />
 
       <div class="d-flex">
-        <restream-dialog
-          v-if="channelOwner"
-          :username="name"
-          :owner="uid"
-          :live="live"
-        />
         <edit-stream-data
           v-if="channelOwner"
           :username="username"
           :title="title"
           :description="description"
           :nsfw="nsfw"
+        />
+        <restream-dialog
+          v-if="channelOwner"
+          :username="name"
+          :owner="uid"
+          :live="live"
         />
         <v-btn
           v-if="false"
@@ -120,17 +120,6 @@
             v-if="description && !replay"
             :source="description"
           />
-          <!-- Replay Info Alert -->
-          <v-alert
-            class="mt-4"
-            color="blue darken-2"
-            dark
-            icon="important_devices"
-            prominent
-          >
-            <div class="headline"><span class="font-weight-light">hi,</span> Stream Replays are in <b>beta</b>.</div>
-            <div>additional data and functionality coming soon™</div>
-          </v-alert>
         </div>
       </v-tab-item>
 

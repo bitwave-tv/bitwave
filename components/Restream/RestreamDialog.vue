@@ -7,14 +7,14 @@
           class="mr-3"
           small
           outlined
-          color="primary"
+          color="accent"
           @click="showRestreamDialog = true"
         >
           restream
-          <v-icon class="ml-1">call_split</v-icon>
+          <!--<v-icon class="ml-1">call_split</v-icon>-->
         </v-btn>
       </template>
-      <span>Restream</span>
+      <span>Restream to another platform</span>
     </v-tooltip>
 
     <v-dialog

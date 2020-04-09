@@ -1,224 +1,125 @@
 <template>
-
-    <v-layout
-      fill-height
-      column
+  <!-- User Channels -->
+  <div
+    class="d-flex flex-column flex-vertical hide-scrollbar"
+    style="overflow-y: auto; will-change: transform; overscroll-behavior-y: contain;"
+  >
+    <v-list
+      class="pt-0"
+      dense
     >
-      <v-flex shrink>
-        <v-list
-          class="py-0"
-          dense
-        >
-          <v-list-item
-            class="mt-1"
-            v-for="( item, i ) in items"
-            :key="i"
-            :to="item.to"
-            router
-            exact
-            @click="onClick"
-            no-prefetch
-          >
-            <v-list-item-action class="my-1">
-              <v-avatar
-                size="42"
-                tile
-              >
-                <v-img src="/icon.png"></v-img>
-                <!--<v-icon light :size="item.size" >{{ item.icon }}</v-icon>-->
-              </v-avatar>
-            </v-list-item-action>
-            <v-list-item-content class="py-0">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-              <v-list-item-subtitle>[bitwave.tv]</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-flex>
 
-      <div class="mt-1">
-        <v-btn
-          class="text-center py-2"
-          style="height: auto;"
-          to="/streamkey"
-          text
-          tile
-          block
-          @click="onClick"
-          no-prefetch
-        >
-          STREAM<br>
-          HERE
-        </v-btn>
-      </div>
+      <div class="overline text-center grey--text my-1 tight--text">LIVE NOW</div>
 
-      <div class="mt-1">
-        <v-btn
-          class="text-center py-2"
-          style="height: auto;"
-          to="/replays"
-          text
-          tile
-          block
-          @click="onClick"
-          no-prefetch
-        >
-          Replays
-        </v-btn>
-      </div>
-
-      <div class="mt-1">
-        <v-btn
-          class="text-center py-2"
-          style="height: auto;"
-          to="/store"
-          text
-          tile
-          block
-          @click="onClick"
-          no-prefetch
-        >
-          Store
-        </v-btn>
-      </div>
-
-      <!-- User Channels -->
-      <div
-        class="d-flex flex-column flex-vertical hide-scrollbar"
-        style="overflow-y: auto; will-change: transform; overscroll-behavior-y: contain;"
+      <!-- List of streams live now -->
+      <transition-group
+        name="fade-transition"
+        tag="div"
       >
-        <v-list
-          class="pt-0"
-          dense
+        <v-list-item
+          v-for="( user ) in sidebarData"
+          :key="user.owner"
+          :to="user.to"
+          class="py-1"
+          router
+          exact
+          @click="onClick"
+          no-prefetch
+          :title="`${user.nsfw ? '(NSFW) ' : ''}${user.name}`"
         >
-
-          <div
-            class="overline text-center grey--text mt-1 mb-1"
+          <v-list-item-avatar
+            :color="user.live ? user.nsfw ? '#ff4b66' : '#13a9fe' : '#000'"
+            class="my-1"
           >
-            LIVE NOW
-          </div>
-
-          <!-- List of streams live now -->
-          <transition-group
-            name="fade-transition"
-            tag="div"
-          >
-            <v-list-item
-              v-for="( user ) in sidebarData"
-              :key="user.owner"
-              :to="user.to"
-              class="py-1"
-              router
-              exact
-              @click="onClick"
-              no-prefetch
-              :title="`${user.nsfw ? '(NSFW) ' : ''}${user.name}`"
+            <v-avatar
+              :size="user.live ? user.nsfw ? 34 : 34 : 38"
             >
-              <v-list-item-avatar
-                :color="user.live ? user.nsfw ? '#ff9800' : '#0f0' : '#000'"
-                class="my-1"
-              >
-                <v-badge
-                  v-model="user.live && user.nsfw"
-                  :color="!!user.nsfw ? 'orange' : 'green'"
-                  overlap
-                >
-                  <template v-slot:badge>
-                    <v-icon small>flag</v-icon>
-                  </template>
-                  <v-avatar
-                    :size="user.live ? 36 : 40"
-                  >
-                    <img
-                      :class="{ offline : !user.live }"
-                      :src="`${user.avatar}`"
-                      :alt="user.name"
-                    />
-                  </v-avatar>
-                </v-badge>
-              </v-list-item-avatar>
-              <v-list-item-content class="py-0">
-                <v-list-item-title v-if="!collapsed">{{ user.title }}</v-list-item-title>
-                <v-list-item-subtitle v-if="!collapsed">{{ user.name }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </transition-group>
+              <img
+                :class="{ offline : !user.live }"
+                :src="`${user.avatar}`"
+                :alt="user.name"
+              />
+            </v-avatar>
+          </v-list-item-avatar>
+          <v-list-item-content class="py-0">
+            <v-list-item-title v-if="!collapsed">{{ user.title }}</v-list-item-title>
+            <v-list-item-subtitle v-if="!collapsed">{{ user.name }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </transition-group>
 
-          <v-slide-x-transition>
-            <div
-              v-if="uid && following.length > 0"
-              class="overline text-center grey--text mt-3 mb-1"
-            >
-              FOLLOWING
-            </div>
-          </v-slide-x-transition>
+      <v-slide-x-transition>
+        <div
+          v-if="uid && following.length > 0"
+          class="overline text-center grey--text mt-3 mb-1 tight--text"
+        >FOLLOWING</div>
+      </v-slide-x-transition>
 
-          <!-- List of streams following  -->
-          <template
-            v-if="uid"
-            v-for="( user ) in following"
-          >
-            <v-lazy
-              min-height="56"
-              :key="`${user.owner}-offline`"
-              transition="slide-x-transition"
-            >
-              <v-list-item
-                class="py-1"
-                :to="user.to"
-                router
-                exact
-                @click="onClick"
-                no-prefetch
-                :title="`${user.name}`"
-              >
-                <v-list-item-avatar
-                  color="#000000"
-                  class="my-1"
-                >
-                  <v-avatar
-                    :size="40"
-                  >
-                    <img
-                      :class="{ offline : !user.live }"
-                      :src="`${user.avatar}`"
-                      :alt="user.name"
-                    >
-                  </v-avatar>
-                </v-list-item-avatar>
-                <v-list-item-content class="py-0">
-                  <v-list-item-title v-if="!collapsed">{{ user.title }}</v-list-item-title>
-                  <v-list-item-subtitle v-if="!collapsed">{{ user.name }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-lazy>
-          </template>
-
-          <!-- Search All Streamers -->
+      <!-- List of streams following  -->
+      <template
+        v-if="uid"
+        v-for="( user ) in following"
+      >
+        <v-lazy
+          min-height="56"
+          :key="`${user.owner}-offline`"
+          transition="slide-x-transition"
+        >
           <v-list-item
-            class="py-0"
-            to="/streamers"
+            class="py-1"
+            :to="user.to"
             router
             exact
             @click="onClick"
             no-prefetch
+            :title="`${user.name}`"
           >
-            <v-list-item-avatar>
+            <v-list-item-avatar
+              color="#000000"
+              class="my-1"
+            >
               <v-avatar
-                color="#eee"
-                size="40"
-                class="blue--text"
+                :size="40"
               >
-                <v-icon light>search</v-icon>
+                <img
+                  :class="{ offline : !user.live }"
+                  :src="`${user.avatar}`"
+                  :alt="user.name"
+                >
               </v-avatar>
             </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>View All</v-list-item-title>
+            <v-list-item-content class="py-0">
+              <v-list-item-title v-if="!collapsed">{{ user.title }}</v-list-item-title>
+              <v-list-item-subtitle v-if="!collapsed">{{ user.name }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-        </v-list>
-      </div>
-    </v-layout>
+        </v-lazy>
+      </template>
+
+      <!-- Search All Streamers -->
+      <v-list-item
+        class="py-0"
+        to="/streamers"
+        router
+        exact
+        @click="onClick"
+        no-prefetch
+      >
+        <v-list-item-avatar>
+          <v-avatar
+            color="#eee"
+            size="40"
+            class="blue--text"
+          >
+            <v-icon light>search</v-icon>
+          </v-avatar>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>View All</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </div>
 
 </template>
 
@@ -302,3 +203,11 @@
     },
   }
 </script>
+
+<style lang="scss">
+  .v-application {
+    .tight--text {
+      letter-spacing: 0 !important;
+    }
+  }
+</style>

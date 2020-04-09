@@ -1,8 +1,8 @@
 <template>
   <v-card class="mt-3">
-    <div style="border-top: solid 3px #ffeb3b;">
+    <div style="border-top: solid 3px #ac4efe;">
 
-      <v-sheet color="grey darken-4">
+      <v-sheet>
         <v-list
           dense
           :style="{ background: 'transparent' }"

@@ -3,18 +3,17 @@
     <v-btn
       v-if="isAuth"
       small
-      class="black--text"
       :outlined="following || !streamerId"
       :loading="loading || disabled"
       :disabled="!isAuth"
-      color="primary"
+      color="primary black--text"
       @click="onFollowClick"
     >
       {{ following ? `following (${followCount})` : `follow (${followCount})` }}
     </v-btn>
     <div
       v-else
-      class="body-2 primary--text text-uppercase"
+      class="body-2 primary--text text-uppercase font-weight-bold"
     >
       {{ `${followCount} Followers` }}
     </div>

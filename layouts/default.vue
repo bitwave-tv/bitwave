@@ -21,7 +21,7 @@
       dark
       dense
       fixed
-      color="#212121"
+      color="accentwave"
     >
       <v-btn
         icon

@@ -70,6 +70,7 @@
 
       <v-spacer />
 
+      <!-- Edit Replay Dialog -->
       <div class="d-flex">
         <edit-replay-button
           v-if="channelOwner"
@@ -88,7 +89,11 @@
         </v-btn>
       </div>
 
-      <ShareStream :user="name" />
+      <!-- Share Replay Dialog -->
+      <share-replay
+        :user="name"
+        :replay-id="archiveId"
+      />
     </div>
 
     <v-divider />
@@ -188,6 +193,7 @@
 
   import VueMarkdown from '@/components/VueMarkdown';
   import ReplayComments from '@/components/Replay/ReplayComments';
+  import ShareReplay from '@/components/Replay/ShareReplay';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = async () => await import ( '@/components/ShareStream' );
@@ -201,6 +207,7 @@
     name: 'StreamInfo',
 
     components: {
+      ShareReplay,
       ReplayComments,
       VueMarkdown,
       StreamArchives,

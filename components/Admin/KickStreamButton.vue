@@ -11,7 +11,7 @@
           class="mr-2"
           small
         >
-          admin
+          Admin
         </v-btn>
       </template>
 

@@ -1,4 +1,22 @@
 <template>
+  <div class="text-center">
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-on="on"
+          class="mr-3"
+          outlined
+          small
+          color="accent"
+          @click="editReplay = true"
+        >
+          <template v-if="$vuetify.breakpoint.smAndDown"><v-icon small class="ml-1">edit</v-icon></template>
+          <template v-else>Edit</template>
+        </v-btn>
+      </template>
+      <span>Edit your replay</span>
+    </v-tooltip>
+
     <v-dialog
       v-model="editReplay"
       transition="fade-transition"
@@ -6,23 +24,12 @@
       @click:outside="cancel"
       persistent
     >
-      <template #activator="{ on }">
-        <v-btn
-          v-on="on"
-          class="mr-3"
-          outlined
-          small
-          color="primary"
-        >
-          edit
-          <v-icon small class="ml-1">edit</v-icon>
-        </v-btn>
-      </template>
-
+      <!-- Edit Dialog -->
       <v-card
         color="grey darken-4"
         :loading="saveLoading || showExitConfirm"
       >
+        <!-- Title Bar -->
         <v-sheet
           tile
           color="primary"
@@ -141,6 +148,7 @@
       </v-dialog>
 
     </v-dialog>
+  </div>
 </template>
 
 <script>

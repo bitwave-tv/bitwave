@@ -4,6 +4,7 @@
       class="stream-card"
       :to="to"
       no-prefetch
+      color="accentwave"
     >
       <!-- Thumbnail -->
       <v-img
@@ -11,7 +12,8 @@
         :key="image"
         lazy-src="https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg"
         :aspect-ratio="16/9"
-        :class="{ 'blur': live && nsfw }"
+        class="stream-card-thumbnail"
+        :class="{ 'blur': blurImage, 'no-blur': !blurImage }"
       />
 
       <!-- View Counter -->
@@ -23,7 +25,7 @@
         >
           <div v-if="live" class="d-flex align-center">
             <div class="white--text">{{ viewers <= 1 ? '🌊' : viewers }}</div>
-            <v-icon v-show="viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
+            <v-icon v-show="viewers > 1" color="secondary" class="ml-2" small>visibility</v-icon>
           </div>
           <div v-else class="d-flex align-center">
             <div class="grey--text mr-2">OFFLINE</div>
@@ -35,7 +37,7 @@
       <!-- Card Data -->
       <div class="pa-2">
         <!-- Stream Data -->
-        <div class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0">
+        <div class="body-1 font-weight-bold text-truncate text-no-wrap mb-0">
           {{ title }}
         </div>
         <div class="caption d-flex align-center">
@@ -45,7 +47,7 @@
           <template v-if="nsfw">
             <v-divider vertical class="mx-2"/>
             <div class="d-flex align-center">
-              <div class="red--text">NSFW</div>
+              <div class="red--text font-weight-bold">NSFW</div>
             </div>
           </template>
 
@@ -67,18 +69,38 @@
       title   : { type: String },
       name    : { type: String },
       viewers : { type: Number },
+      blur    : { type: Boolean, default: true },
     },
 
     data () {
       return {}
     },
+
+    computed: {
+      blurImage () {
+        return this.blur && this.nsfw && this.live;
+      },
+    },
   }
 </script>
 
 <style lang="scss">
-  .blur > div.v-image__image {
+  /*.blur > div.v-image__image {
     filter: blur(15px);
     -webkit-filter: blur(15px);
+  }*/
+
+  .stream-card-thumbnail {
+    & > div.v-image__image {
+      filter: blur(0);
+      -webkit-filter: blur(0);
+      transition: .5s;
+    }
+
+    &.blur > div.v-image__image {
+      filter: blur(15px);
+      -webkit-filter: blur(15px);
+    }
   }
 
   .stream-card {

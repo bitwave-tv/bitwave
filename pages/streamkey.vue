@@ -255,27 +255,27 @@
       >
         <div class="display-2 ml-5 mb-2 font-weight-thin yellow--text">The Basic Rules</div>
         <v-card>
-          <!--<v-card-text class="pb-0">
-            <div class="overline">in plain english</div>
-            <div class="headline">Don't be degenerate</div>
-          </v-card-text>-->
           <v-card-text>
-            <div>1. Use your brain. (Don't be dumb)</div>
-            <div>2. Don't attack chat.</div>
-            <div>3. This is not a dating site.</div>
+            <div>1. Use your brain. ( Don't be dumb )</div>
+            <div>2. Do not remove your hazzy outside of Spooky's stream.</div>
+            <div>3. Do not coof on chat, and do not eat bats.</div>
+            <div>4. Be sure to thank the mods, they do it for free after all.</div>
+            <div>5. Don't attack chat.</div>
+            <div>6. This <s> is not </s> should not be a dating site.</div>
             <div>
-              4. Attempts to interfere, disrupt, or disable normal operations of the site
+              7. Attempts to interfere, disrupt, or disable normal operations of the site
               will be subject to IP Scraping™.
             </div>
             <div>
-              5. If it's illegal in the US don't show it. We're not here to fight
-              for your legal battles.
+              8. If it's illegal in the US don't show it. We're not here to fight for your legal battles.<br>
+              Violation of US law will lead to account removal and is subject to IP banning (see rule 7).
             </div>
             <div>
-              6. If you don't like what you're viewing, stop watching it.
+              9. If you don't like what you're viewing, stop watching it. If you don't like what you're reading, stop reading it.<br>
+              Otherwise, you can write an essay on your feelings here: <a href="/report" target="_blank">https://bitwave.tv/report</a>
             </div>
             <div>
-              7. When in doubt, ask chat.
+              10. When in doubt, ask chat.
             </div>
           </v-card-text>
         </v-card>

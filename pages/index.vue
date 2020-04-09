@@ -1,217 +1,220 @@
 <template>
-  <v-container fluid>
+  <div>
+    <div class="gradient-background">
+      <v-container fluid>
 
-    <!-- Site Banner -->
-    <v-row class="justify-center">
-      <div class="d-flex align-center">
-        <!-- Font sizes: display4-1, headline, title, subtitle 1/2, body 1/2, caption, overline -->
-        <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
-        <!--<v-img
-          v-show="!this.$vuetify.breakpoint.smAndDown"
-          src="https://cdn.bitwave.tv/static/img/bloomberg-92.png"
-          alt="Michael Bloomberg"
-          height="92"
-          contain
-        />-->
-        <div class="font-weight-light title white--text text-center mx-3 d-flex flex-column">
-          [bitwave.tv]
-          <div class="grey--text">
-            Supporting Freedom of Expression
+        <!-- Site Banner -->
+        <v-row class="justify-center">
+          <div class="d-flex align-center">
+            <div class="title text-center mx-3 d-flex flex-column">
+              <span class="font-weight-light white--text">Freedom of Expression</span>
+              <span class="overline grey--text">for livestreamers and coofers</span>
+            </div>
           </div>
-          <span class="overline grey--text"></span>
-        </div>
-        <!--<v-img
-          src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
-          alt="bitwave sign OurAlley window of life"
-          height="92"
-          contain
-        />-->
-      </div>
-    </v-row>
+        </v-row>
 
-    <v-row class="justify-center">
-      <v-col
-        cols="12"
-        md="10"
-        xl="8"
-      >
-        <!-- Banner Stream -->
-        <banner-video
-          :src="live[0].src"
-          :type="live[0].type"
-          :poster="poster"
-          :name="live[0].name"
-          :mobile="mobile"
-          :offline="offline"
-          :chat-messages="chatMessages"
-        />
+        <v-row class="justify-center">
+          <v-col
+            cols="12"
+            md="10"
+            xl="8"
+          >
+            <!-- Banner Stream -->
+            <banner-video
+              :src="live[0].src"
+              :type="live[0].type"
+              :poster="poster"
+              :name="live[0].name"
+              :mobile="mobile"
+              :offline="offline"
+              :chat-messages="chatMessages"
+            />
 
-        <!-- Live Grid -->
-        <stream-grid :streamers="streamers" />
-
-        <!-- Homepage Content -->
-        <v-card class="mb-3" color="grey darken-4">
-          <v-card-title class="headline pb-2">
-            <div class="d-flex align-center">
-              <v-img
-                class="d-block mx-3"
-                contain
-                max-height="2rem"
-                max-width="2rem"
-                src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw"
-                alt="Cool blobby with sunglasses"
-                crossorigin
-              />
-              <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
-            </div>
-            <div class="subheading font-weight-light grey--text" style="word-break: break-word;">
-              An open platform live streaming service for creators to freely express themselves.
-            </div>
-          </v-card-title>
-
-          <v-card-text>
-            <div class="d-flex mb-2 align-center">
-              <v-btn
-                small
-                outlined
+            <!-- Blur Toggle -->
+            <div class="d-flex align-end mb-1 mt-2">
+              <div class="title">Live Channels</div>
+              <v-spacer />
+              <v-switch
+                v-model="blurNSFW"
+                label="Blur NSFW thumbnails"
                 color="primary"
-                href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
-                target="_blank"
-                class="my-1 mr-1"
-              >Donate</v-btn>
-              to the bitwave server fund
+                hide-details
+                dense
+                inset
+              />
             </div>
 
-            <div class="mb-1">A straight forward streaming service built entirely on open source software.</div>
-            <p>If you're interested in streaming here, just ask for a stream key in any chat, or message us on twitter or discord.</p>
+            <!-- Live Grid -->
+            <stream-grid
+              :streamers="streamers"
+              :blur-nsfw="blurNSFW"
+            />
 
-            <div class="d-flex align-center">
-              <v-btn
-                small
-                text
-                color="light-blue"
-                href="https://discord.gg/4WwJsKx"
-                target="_blank"
-                title="chat"
-                class="my-1 mr-1"
-              >Discord</v-btn>
-              If you have questions or feedback, join the discord chat.
-            </div>
+            <!-- Homepage Content -->
+            <v-card class="mb-5 mt-2" color="grey darken-4">
+              <v-card-title class="headline pb-2">
+                <div class="d-flex align-center">
+                  <v-img
+                    class="d-block mx-3"
+                    contain
+                    max-height="2rem"
+                    max-width="2rem"
+                    src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw"
+                    alt="Cool blobby with sunglasses"
+                    crossorigin
+                  />
+                  <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
+                </div>
+                <div class="subheading font-weight-light grey--text" style="word-break: break-word;">
+                  An open platform live streaming service for creators to freely express themselves.
+                </div>
+              </v-card-title>
 
-            <div class="mb-2 d-flex align-center">
-              <v-btn
-                small
-                text
-                color="light-blue"
-                href="https://twitter.com/BitWaveTV"
-                target="_blank"
-                title="chat"
-                class="my-1 mr-1"
-              >Twitter</v-btn>
-              Message or tag us on Twitter for direct assistance.
-            </div>
+              <v-card-text>
+                <div class="d-flex mb-2 align-center">
+                  <v-btn
+                    small
+                    outlined
+                    color="accent"
+                    href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
+                    target="_blank"
+                    class="my-1 mr-2"
+                  >Donate</v-btn>
+                  Please consider donating to help us cover operating costs, and support freedom of expression.
+                </div>
 
-            <div class="d-flex align-center">
-              <v-btn
-                small
-                text
-                color="light-blue"
-                href="https://github.com/bitwave-tv/bitwave"
-                target="_blank"
-                class="my-1 mr-1"
-              >Github</v-btn>
-              For more information on Bitwave's source code.
-            </div>
+                <div class="mb-1">A straight forward streaming service built entirely on open source software.</div>
+                <p>If you're interested in streaming here, just ask for a stream key in any chat, or message us on twitter or discord.</p>
 
-            <div class="d-flex align-center" v-if="false">
-              <v-btn
-                small
-                text
-                color="light-blue"
-                href="https://riot.im/app/#/group/+ops:ethanralph.com?hs_url=https://ethanralph.com"
-                target="_blank"
-                title="chat"
-              >Riot</v-btn>
-              If you have questions, join the riot chat.
-            </div>
+                <div class="d-flex align-center">
+                  <v-btn
+                    small
+                    text
+                    color="light-blue"
+                    href="https://discord.gg/4WwJsKx"
+                    target="_blank"
+                    title="chat"
+                    class="my-1 mr-1"
+                  >Discord</v-btn>
+                  If you have questions or feedback, join the discord chat.
+                </div>
 
-            <div class="d-flex align-center">
-              <v-btn
-                small
-                text
-                color="light-blue"
-                href="https://github.com/bitwave-tv/bitwave/issues"
-                target="_blank"
-                title="contribute"
-                class="my-1 mr-1"
-              >issue</v-btn>
-              Found a bug? Report it on Github.
-            </div>
+                <div class="mb-2 d-flex align-center">
+                  <v-btn
+                    small
+                    text
+                    color="light-blue"
+                    href="https://twitter.com/BitWaveTV"
+                    target="_blank"
+                    title="chat"
+                    class="my-1 mr-1"
+                  >Twitter</v-btn>
+                  Message or tag us on Twitter for direct assistance.
+                </div>
 
-            <div class="mt-2 d-flex align-center">
-              <v-btn
-                small
-                text
-                color="red"
-                to="/report"
-                class="my-1 mr-1"
-              >report</v-btn>
-              Need to report content?
-            </div>
+                <div class="d-flex align-center">
+                  <v-btn
+                    small
+                    text
+                    color="light-blue"
+                    href="https://github.com/bitwave-tv/bitwave"
+                    target="_blank"
+                    class="my-1 mr-1"
+                  >Github</v-btn>
+                  For more information on Bitwave's source code.
+                </div>
 
-            <div class="mb-2 d-flex align-center">
-              <v-btn
-                small
-                text
-                color="red"
-                to="/tos"
-                class="my-1 mr-1"
-              >ToS</v-btn>
-              Our terms of service.
-            </div>
+                <div class="d-flex align-center" v-if="false">
+                  <v-btn
+                    small
+                    text
+                    color="light-blue"
+                    href="https://riot.im/app/#/group/+ops:ethanralph.com?hs_url=https://ethanralph.com"
+                    target="_blank"
+                    title="chat"
+                  >Riot</v-btn>
+                  If you have questions, join the riot chat.
+                </div>
 
-            <div class="mb-1">
-              Thank you for helping
-              <v-chip color="red" outlined small class="mx-1">ALPHA</v-chip>
-              test [bitwave.tv] and I look forward to bringing more exciting features in the future.
-            </div>
+                <div class="d-flex align-center">
+                  <v-btn
+                    small
+                    text
+                    color="light-blue"
+                    href="https://github.com/bitwave-tv/bitwave/issues"
+                    target="_blank"
+                    title="contribute"
+                    class="my-1 mr-1"
+                  >issue</v-btn>
+                  Found a bug? Report it on Github.
+                </div>
 
-            <!-- Warrant canary -->
-            <div class="mb-0">
-              We have not been served any secret court orders and are not under any gag orders.
-            </div>
+                <div class="mt-2 d-flex align-center">
+                  <v-btn
+                    small
+                    text
+                    color="red"
+                    to="/report"
+                    class="my-1 mr-1"
+                  >report</v-btn>
+                  Need to report content?
+                </div>
 
-            <div class="text-xs-right">
-              <em><small>&mdash; Dispatch</small></em>
-            </div>
-          </v-card-text>
+                <div class="mb-2 d-flex align-center">
+                  <v-btn
+                    small
+                    text
+                    color="red"
+                    to="/tos"
+                    class="my-1 mr-1"
+                  >ToS</v-btn>
+                  Our terms of service.
+                </div>
 
-          <v-divider class="mb-2" />
+                <div class="mb-1">
+                  Thank you for helping
+                  <v-chip color="red" outlined small class="mx-1">ALPHA</v-chip>
+                  test [bitwave.tv] and I look forward to bringing more exciting features in the future.
+                </div>
 
-          <v-card-actions class="pt-0">
-            <div class="grey--text">
-              Bitwave Media &copy; {{ new Date().getFullYear() }}
-            </div>
-            <v-spacer/>
-            <v-btn
-              small
-              color="primary"
-              text
-              nuxt
-              to="/login"
-            >Login</v-btn>
-            <v-btn
-              class="black--text"
-              small
-              color="primary"
-              nuxt
-              to="/login"
-            >Register</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+                <!-- Warrant canary -->
+                <div class="mb-0">
+                  We have not been served any secret court orders and are not under any gag orders.
+                </div>
+
+                <div class="text-xs-right">
+                  <em><small>&mdash; Dispatch</small></em>
+                </div>
+              </v-card-text>
+
+              <v-divider class="mb-2" />
+
+              <v-card-actions class="pt-0">
+                <div class="grey--text">
+                  Bitwave Media &copy; {{ new Date().getFullYear() }}
+                </div>
+                <v-spacer/>
+                <v-btn
+                  small
+                  color="primary"
+                  text
+                  nuxt
+                  to="/login"
+                >Login</v-btn>
+                <v-btn
+                  class="black--text"
+                  small
+                  color="primary"
+                  nuxt
+                  to="/login"
+                >Register</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -254,6 +257,7 @@
         poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         chatMessages: null,
         offline: true,
+        blurNSFW: true,
       }
     },
 

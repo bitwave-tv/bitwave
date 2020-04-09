@@ -22,7 +22,7 @@
           color="primary"
           class="d-flex align-center pa-3 black--text"
         >
-          <v-icon class="mr-2" color="black">ondemand_video</v-icon>
+          <v-icon class="mr-3" color="black">ondemand_video</v-icon>
           <h2 class="title">
             [bitwave.tv] {{ signUp ? 'Create Account' : 'Login' }}
           </h2>
@@ -151,24 +151,22 @@
 
         <v-card-actions>
           <v-btn
-            small
             href="#"
             text
-            color="#2196f3"
+            color="primary"
             @click="resetPassword(user.email)"
           >Forgot Password?</v-btn>
           <v-spacer/>
           <v-btn
-            small
-            color="primary"
-            outlined
-            @click="switchForm"
-          >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
-          <v-btn
-            color="primary"
+            color="primary darken-3"
             text
             @click="show = false"
           >CANCEL</v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="switchForm"
+          >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

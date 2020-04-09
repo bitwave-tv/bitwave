@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex poll-vote">
     <v-sheet
-      color="primary"
+      color="secondary"
       width="8px"
       tile
     />
@@ -25,8 +25,8 @@
           class="d-flex mx-2 flex-grow-1"
           style="width: 0"
         >
-          <h3
-            class="d-inline-block font-weight-regular"
+          <div
+            class="d-inline-block font-weight-regular subtitle"
             :style="{
               display: '-webkit-box',
               '-webkit-line-clamp': showOptions ? '10' : '1',
@@ -36,7 +36,7 @@
             }"
           >
             {{ pollData.title }}
-          </h3>
+          </div>
 
         </div>
         <v-btn
@@ -131,7 +131,7 @@
           small
           outlined
           color="primary"
-          class="black--text ml-2"
+          class="ml-2"
           @click="endPoll"
         >
           Finish

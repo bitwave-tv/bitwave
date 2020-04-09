@@ -1,204 +1,324 @@
 <template>
-  <v-dialog
-    v-model="editStreamData"
-    transition="fade-transition"
-    :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '60%'"
-    @click:outside="cancel"
-    persistent
-  >
-    <template #activator="{ on }">
-      <v-btn
-        v-on="on"
-        class="mr-3"
-        outlined
-        small
-        color="primary"
-      >
-        edit
-        <v-icon small class="ml-1">edit</v-icon>
-      </v-btn>
-    </template>
-
-    <v-card
-      color="grey darken-4"
-      :loading="saveLoading || showExitConfirm"
-    >
-      <v-sheet
-        tile
-        color="primary"
-        class="pa-2 d-flex justify-space-between align-center"
-      >
-        <h4 class="black--text body-1">
-          <v-icon color="black">create</v-icon>
-          Edit Stream Data
-        </h4>
+  <div class="text-center">
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
         <v-btn
-          color="black"
-          text
-          icon
+          v-on="on"
+          class="mr-3"
           small
-          @click="cancel"
+          outlined
+          color="accent"
+          @click="editStreamData = true"
         >
-          <v-icon>close</v-icon>
+          <template v-if="$vuetify.breakpoint.smAndDown"><v-icon small class="ml-1">edit</v-icon></template>
+          <template v-else>Edit</template>
         </v-btn>
-      </v-sheet>
+      </template>
+      <span>Edit your channel</span>
+    </v-tooltip>
 
-      <div class="py-3">
-
-        <div class="d-flex justify-space-between align-center mb-3  px-3">
-          <v-switch
-            v-if="!previewData"
-            v-model="streamData.nsfw"
-            class="my-0"
-            label="Not Safe For Work (NSFW)"
-            color="primary"
-            hide-details
-            inset
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
-          <div v-else>
-            {{ this.streamData.title }}
-          </div>
-          <v-btn
-            color="primary"
-            outlined
-            small
-            @click="previewData = !previewData"
-          >
-            {{ previewData ? 'Edit' : 'preview' }}
-          </v-btn>
-        </div>
-
-        <div
-          v-if="!previewData"
-          class="px-3"
-        >
-
-          <v-switch
-            v-if="!previewData"
-            v-model="streamData.archive"
-            class="mb-4"
-            label="Archives"
-            color="primary"
-            hide-details
-            inset
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
-
-          <div class="body-1 mb-1">
-            Stream Title
-          </div>
-          <v-text-field
-            v-model="streamData.title"
-            color="primary"
-            outlined
-            clearable
-            dense
-            counter="240"
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
-
-          <div class="body-1 mb-1">
-            Stream Description
-          </div>
-          <v-textarea
-            v-model="streamData.description"
-            hint="markdown supported"
-            color="primary"
-            outlined
-            rows="15"
-            counter
-            dense
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
-
-        </div>
-
+    <v-dialog
+      v-model="editStreamData"
+      transition="fade-transition"
+      :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '60%'"
+      @click:outside="cancel"
+      persistent
+    >
+      <!-- Edit Dialog -->
+      <v-card
+        color="accentwave"
+        :loading="saveLoading || showExitConfirm"
+      >
+        <!-- Title Bar -->
         <v-sheet
-          v-else
-          color="grey darken-3"
-          class="markdown-content"
+          tile
+          color="primary"
+          class="pa-2 d-flex justify-space-between align-center black--text"
         >
-          <vue-markdown
-            style="overflow-y: auto; max-height: 60vh;"
-            class="pa-3"
-            :source="streamData.description"
-          />
-        </v-sheet>
-
-        <div class="d-flex justify-end mt-3 px-3">
+          <h4 class="body-1">
+            Edit Channel
+            <v-fade-transition>
+              <span v-show="enableSave">(unsaved changes)</span>
+            </v-fade-transition>
+          </h4>
           <v-btn
-            class="mr-2"
-            color="cyan"
-            outlined
+            color="black"
+            text
+            icon
             small
-            :disabled="!enableSave"
-            @click="resetValues"
-          >
-            reset
-          </v-btn>
-          <v-spacer/>
-          <v-btn
-            class="mr-2"
-            color="red"
-            small
-            :disabled="saveLoading"
             @click="cancel"
           >
-            cancel
+            <v-icon>close</v-icon>
           </v-btn>
-          <v-btn
-            color="success"
-            small
-            :loading="saveLoading"
-            @click="updateStreamData"
-          >
-            save
-          </v-btn>
-        </div>
-      </div>
-    </v-card>
-
-    <!-- Exit Confirmation Dialog -->
-    <v-dialog
-      v-model="showExitConfirm"
-      width="320"
-    >
-      <v-card>
-
-        <v-sheet
-          color="primary"
-          class="pa-2 d-flex justify-space-between align-center"
-        >
-          <h4 class="black--text body-1">
-            You have unsaved changes!
-          </h4>
-          <v-icon light>warning</v-icon>
         </v-sheet>
 
-        <v-card-title class="subtitle-1">
-          Are you sure you want to exit?
-        </v-card-title>
+        <!-- Content -->
+        <div class="py-3">
+          <div class="d-flex justify-space-between align-center mb-3  px-3">
+            <v-scroll-y-transition mode="out-in">
+              <v-switch
+                v-if="!previewData"
+                v-model="streamData.nsfw"
+                class="my-0"
+                label="NSFW (Not Safe For Work)"
+                color="primary"
+                hide-details
+                inset
+                :loading="saveLoading"
+                :disabled="saveLoading"
+                @change="enableSave = true"
+              >
 
+                <template #label>
+                  <div>
+                    NSFW <span class="caption">(Not Safe For Work)</span>
+                    <v-btn
+                      title="More info about NSFW setting"
+                      class="ml-2"
+                      icon
+                      x-small
+                      @click.stop="showNSFWNote = !showNSFWNote"
+                    >
+                      <v-icon>help_outline</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
+              </v-switch>
+              <div
+                v-else
+                class="d-flex align-center"
+              >
+                <v-chip
+                  v-show="this.streamData.nsfw"
+                  color="red"
+                  class="mr-2"
+                  small
+                  outlined
+                >NSFW</v-chip>
+                {{ this.streamData.title }}
+              </div>
+            </v-scroll-y-transition>
 
-        <v-card-actions class="justify-end">
+            <!-- Edit / Preview Button -->
+            <v-btn
+              color="accent"
+              outlined
+              small
+              @click="previewData = !previewData"
+            >
+              {{ previewData ? 'Edit' : 'preview' }}
+            </v-btn>
+          </div>
 
-          <v-btn
-            color="red"
-            @click="forceQuit"
-            outlined
-            small
+          <!-- NSFW note -->
+          <v-expand-transition>
+            <div v-show="showNSFWNote" class="mb-4 px-3">
+              <v-alert
+                type="info"
+                transition="expand-transition"
+                dismissible
+                dense
+              >
+                <div class="caption">
+                  <span class="font-weight-bold">Note:</span> This setting <strong>can</strong> be safely modified mid-stream as needed.<br>
+                  Changes to this setting will apply immediately upon saving.<br>
+                  Additionally, NSFW streams will appear in <strong>red</strong> on sidebar, and have their thumbnail blurred on the homepage.<br>
+                  NSFW streams are additionally prohibited from being selected as the homepage autoplay stream.
+                </div>
+
+                <template #close>
+                  <v-btn
+                    icon
+                    small
+                    @click="showNSFWNote = false"
+                  >
+                    <v-icon>close</v-icon>
+                  </v-btn>
+                </template>
+              </v-alert>
+            </div>
+          </v-expand-transition>
+
+          <v-slide-x-transition mode="out-in">
+            <div
+              v-if="!previewData"
+              class="px-3"
+            >
+              <v-switch
+                v-if="!previewData"
+                v-model="streamData.archive"
+                class="mb-4"
+                label="Archives"
+                color="primary"
+                hide-details
+                inset
+                :loading="saveLoading"
+                :disabled="saveLoading"
+                @change="enableSave = true"
+              >
+                <template #label>
+                  <div>
+                    Stream Replays
+                    <v-btn
+                      title="More info about replay setting"
+                      class="ml-2"
+                      icon
+                      x-small
+                      @click.stop="showArchiveNote = !showArchiveNote"
+                    >
+                      <v-icon>help_outline</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
+              </v-switch>
+
+              <!-- Archive note -->
+              <v-expand-transition>
+                <div v-show="showArchiveNote" class="mb-4">
+                  <v-alert
+                    type="info"
+                    transition="expand-transition"
+                    dismissible
+                    dense
+                  >
+                    <div class="caption">
+                      <span class="font-weight-bold">Note:</span> modifying the archive setting will <strong>not</strong> affect an in progress stream.<br>
+                      A stream must be fully restarted in order to apply changes.<br>
+                      Archives cannot be enabled / disabled mid stream.
+                    </div>
+
+                    <template #close>
+                      <v-btn
+                        icon
+                        small
+                        @click="showArchiveNote = false"
+                      >
+                        <v-icon>close</v-icon>
+                      </v-btn>
+                    </template>
+                  </v-alert>
+                </div>
+              </v-expand-transition>
+
+              <!-- Stream Title -->
+              <div class="body-1 mb-1">Stream Title</div>
+              <v-text-field
+                v-model="streamData.title"
+                color="primary"
+                outlined
+                clearable
+                dense
+                counter="240"
+                :loading="saveLoading"
+                :disabled="saveLoading"
+                @change="enableSave = true"
+              />
+
+              <!-- Stream Description -->
+              <div class="body-1 mb-1 d-flex">
+                Stream Description
+                <v-btn
+                  title="Formatting cheat sheet"
+                  class="ml-2"
+                  icon
+                  x-small
+                  href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+                  target="_blank"
+                >
+                  <v-icon>help_outline</v-icon>
+                </v-btn>
+              </div>
+              <v-textarea
+                v-model="streamData.description"
+                hint="markdown supported"
+                color="primary"
+                outlined
+                rows="13"
+                counter
+                dense
+                :loading="saveLoading"
+                :disabled="saveLoading"
+                @change="enableSave = true"
+              />
+
+            </div>
+
+            <v-sheet
+              v-else
+              color="grey darken-3"
+              class="markdown-content"
+            >
+              <vue-markdown
+                style="overflow-y: auto; max-height: 60vh;"
+                class="pa-3"
+                :source="streamData.description"
+              />
+            </v-sheet>
+          </v-slide-x-transition>
+
+          <div class="d-flex justify-end mt-3 px-3">
+            <v-btn
+              class="mr-2"
+              color="cyan"
+              outlined
+              small
+              :disabled="!enableSave"
+              @click="resetValues"
+            >
+              reset
+            </v-btn>
+            <v-spacer/>
+            <v-btn
+              class="mr-2"
+              color="error"
+              small
+              :disabled="saveLoading"
+              @click="cancel"
+            >
+              cancel
+            </v-btn>
+            <v-btn
+              color="primary"
+              small
+              :loading="saveLoading"
+              @click="updateStreamData"
+            >
+              save
+            </v-btn>
+          </div>
+        </div>
+      </v-card>
+
+      <!-- Exit Confirmation Dialog -->
+      <v-dialog
+        v-model="showExitConfirm"
+        width="320"
+      >
+        <v-card>
+
+          <v-sheet
+            color="error"
+            class="pa-2 d-flex justify-space-between align-center"
           >
-            exit
-          </v-btn>
+            <h4 class="body-1">
+              You have unsaved changes!
+            </h4>
+            <v-icon>warning</v-icon>
+          </v-sheet>
+
+          <!-- Exit confirmation Text -->
+          <v-card-title class="subtitle-1 justify-space-around">Are you sure you want to cancel?</v-card-title>
+
+          <!-- Exit confirmation Action Buttons -->
+          <v-card-actions class="justify-end">
+            <v-btn
+              color="red"
+              @click="forceQuit"
+              outlined
+              small
+            >
+              yes
+            </v-btn>
             <v-btn
               class="mr-2"
               color="primary"
@@ -209,12 +329,13 @@
               no
             </v-btn>
 
-        </v-card-actions>
+          </v-card-actions>
 
-      </v-card>
+        </v-card>
+      </v-dialog>
+
     </v-dialog>
-
-  </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -248,6 +369,8 @@
         },
         saveLoading: false,
         enableSave: false,
+        showArchiveNote: false,
+        showNSFWNote: false,
         showExitConfirm: false,
       };
     },
@@ -278,6 +401,8 @@
         };
         this.saveLoading = false;
         this.enableSave = false;
+        this.showArchiveNote = false;
+        this.showNSFWNote = false;
       },
 
       cancel () {
