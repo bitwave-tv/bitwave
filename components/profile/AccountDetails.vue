@@ -17,8 +17,8 @@
               />
             </v-avatar>
             <div class="flex-shrink-1 text-xs-center my-1">
-              <h3>THE REST OF THIS SHIT IS COMING SOON</h3>
-              <p>send complaints for $5/issue via paypal.</p>
+              <h3>IT'S JUST THE FLU BRO</h3>
+              <p>send in complaints for $5 / issue.</p>
               <v-btn
                 color="red"
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"

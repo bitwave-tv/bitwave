@@ -7,25 +7,10 @@
         <!-- Site Banner -->
         <v-row class="justify-center">
           <div class="d-flex align-center">
-            <!-- Font sizes: display4-1, headline, title, subtitle 1/2, body 1/2, caption, overline -->
-            <!-- image: "https://cdn.bitwave.tv/static/img/firework-banner.gif" size: 80 text: Freedom of Expression -->
-            <!--<v-img
-              v-show="!this.$vuetify.breakpoint.smAndDown"
-              src="https://cdn.bitwave.tv/static/img/bloomberg-92.png"
-              alt="Michael Bloomberg"
-              height="92"
-              contain
-            />-->
             <div class="title text-center mx-3 d-flex flex-column">
               <span class="font-weight-light white--text">Freedom of Expression</span>
-              <span class="overline grey--text">for livestreamers</span>
+              <span class="overline grey--text">for livestreamers and coofers</span>
             </div>
-            <!--<v-img
-              src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
-              alt="bitwave sign OurAlley window of life"
-              height="92"
-              contain
-            />-->
           </div>
         </v-row>
 
