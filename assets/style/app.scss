@@ -3,3 +3,44 @@
 html {
   font-family: "Roboto", sans-serif;
 }
+
+.v-application {
+  .bw-channel-topbar {
+    border-right: solid 1px $bw-blue !important;
+    overflow: auto;
+  }
+}
+
+
+$c1: #0c2a41;
+$c2: #0a0a19;
+$c3: #262639;
+$c4: #251237;
+$c5: #0e1b28;
+$c6: #113a5a;
+body .gradient-background {
+  background: linear-gradient(-45deg, $c1, $c2, $c3, $c4, $c5, $c6);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+/* Dora Gradient Background */
+/*body {
+  .v-application.theme--dark {
+    background: rgb(10,10,25);
+    background: linear-gradient(0deg, rgba(10,10,25,1) 0%, rgba(21,21,34,1) 100%);
+  }
+}*/

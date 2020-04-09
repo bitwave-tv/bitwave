@@ -11,7 +11,7 @@
           @click="showRestreamDialog = true"
         >
           restream
-          <v-icon class="ml-1">call_split</v-icon>
+          <!--<v-icon class="ml-1">call_split</v-icon>-->
         </v-btn>
       </template>
       <span>Restream</span>

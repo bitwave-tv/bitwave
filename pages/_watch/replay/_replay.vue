@@ -6,10 +6,9 @@
 
     <!-- Streamer Top Bar -->
     <v-sheet
-      class="py-2 px-3 hide-scrollbar"
-      color="grey darken-4"
+      class="py-2 px-3 hide-scrollbar bw-channel-topbar"
+      color="accentwave"
       tile
-      style="border-right: solid 1px #ffeb3b !important; overflow: auto"
     >
       <div class="d-flex align-center justify-space-between">
         <div class="d-flex align-center grey--text">

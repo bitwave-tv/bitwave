@@ -1,19 +1,31 @@
 <template>
   <v-navigation-drawer
     :value="value"
-    color="grey darken-4"
     :mini-variant="collapsed"
+    mini-variant-width="60px"
+    color="accentwave"
     app
     @input="$emit( 'input', $event )"
   >
 
-    <streamer-list />
+    <v-layout
+      fill-height
+      column
+    >
+      <!-- Site Navigation -->
+      <navigation-list />
+
+      <!-- Streamer List -->
+      <streamer-list />
+
+    </v-layout>
 
     <!-- Minify Panel -->
     <template #append>
-      <div class="pa-2">
+      <div class="my-2 mx-2">
         <v-btn
-          color="primary"
+          color="secondary"
+          class="px-0"
           block
           outlined
           small
@@ -29,11 +41,13 @@
 
 <script>
   import StreamerList from '@/components/SubLayout/sidebar/StreamerList';
+  import NavigationList from '@/components/SubLayout/sidebar/NavigationList';
 
   export default {
     name: 'index.vue',
 
     components: {
+      NavigationList,
       StreamerList,
     },
 

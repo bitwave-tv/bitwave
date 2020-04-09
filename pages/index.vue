@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="gradient-background">
 
     <!-- Site Banner -->
     <v-row class="justify-center">
@@ -13,12 +13,9 @@
           height="92"
           contain
         />-->
-        <div class="font-weight-light title white--text text-center mx-3 d-flex flex-column">
-          [bitwave.tv]
-          <div class="grey--text">
-            Supporting Freedom of Expression
-          </div>
-          <span class="overline grey--text"></span>
+        <div class="title text-center mx-3 d-flex flex-column">
+          <span class="font-weight-light white--text">Freedom of Expression</span>
+          <span class="overline grey--text">for livestreamers</span>
         </div>
         <!--<v-img
           src="https://cdn.bitwave.tv/static/img/bloomhead-92.png"
@@ -46,11 +43,28 @@
           :chat-messages="chatMessages"
         />
 
+        <!-- Blur Toggle -->
+        <div class="d-flex align-end mb-1 mt-2">
+          <div class="title">Live Channels</div>
+          <v-spacer />
+          <v-switch
+            v-model="blurNSFW"
+            label="Blur NSFW thumbnails"
+            color="primary"
+            hide-details
+            dense
+            inset
+          />
+        </div>
+
         <!-- Live Grid -->
-        <stream-grid :streamers="streamers" />
+        <stream-grid
+          :streamers="streamers"
+          :blur-nsfw="blurNSFW"
+        />
 
         <!-- Homepage Content -->
-        <v-card class="mb-3" color="grey darken-4">
+        <v-card class="mb-5 mt-2" color="grey darken-4">
           <v-card-title class="headline pb-2">
             <div class="d-flex align-center">
               <v-img
@@ -74,12 +88,12 @@
               <v-btn
                 small
                 outlined
-                color="primary"
+                color="accent"
                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
                 target="_blank"
-                class="my-1 mr-1"
+                class="my-1 mr-2"
               >Donate</v-btn>
-              to the bitwave server fund
+              Please consider donating to help us cover operating costs, and support freedom of expression.
             </div>
 
             <div class="mb-1">A straight forward streaming service built entirely on open source software.</div>
@@ -254,6 +268,7 @@
         poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         chatMessages: null,
         offline: true,
+        blurNSFW: true,
       }
     },
 

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid px-0>
+  <div class="px-0">
     <transition-group
       tag="div"
       class="row flex-wrap"
@@ -40,11 +40,12 @@
           :title="stream.title"
           :name="stream.name"
           :viewers="stream.viewCount"
+          :blur="blurNsfw"
           live
         />
       </v-col>
     </transition-group>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -58,6 +59,7 @@
 
     props: {
       streamers: {},
+      blurNsfw: { type: Boolean, default: true },
     },
 
     components: {

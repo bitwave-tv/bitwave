@@ -9,8 +9,7 @@
     <template #activator="{ on }">
       <v-chip
         v-on="on"
-        color="primary"
-        text-color="black"
+        color="primary black--text"
       >
         {{ channelViewCount }}
         <v-icon right>account_circle</v-icon>

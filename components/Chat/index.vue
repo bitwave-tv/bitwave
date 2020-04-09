@@ -9,7 +9,7 @@
     <v-sheet
       id="chat-header"
       class="d-flex align-center justify-space-between pa-2"
-      color="grey darken-4"
+      color="accentwave"
     >
 
       <!-- Viewer List -->
@@ -42,9 +42,9 @@
               <v-btn
                 v-on="on"
                 small
-                class="black--text"
                 :disabled="showPollClient"
-                color="primary"
+                color="primary black--text"
+                class="mr-2"
               >POLL</v-btn>
             </template>
 
@@ -70,10 +70,9 @@
           <template #activator="{ on }">
             <v-btn
               v-on="on"
-              :style="{ 'min-width': '40px' }"
               small
-              color="primary"
-              class="ml-2 px-0 black--text"
+              icon
+              class="px-0"
               :disabled="!isAdmin"
               @click="scrollToBottom(true)"
             >
@@ -95,7 +94,7 @@
           <template #activator="{ on }">
             <v-btn
               v-on="on"
-              class="ml-3 px-0"
+              class="px-0"
               small
               icon
             >
@@ -1175,7 +1174,7 @@
 
 <style lang='scss'>
   #sidechat {
-    border-top: 3px yellow;
+    border-top: 3px $bw-blue;
     background-color: #000;
     max-width: 100%;
 
@@ -1191,11 +1190,11 @@
 
     .highlight {
       font-weight: bold;
-      color: yellow;
+      color: $bw-blue;
     }
 
     code .highlight {
-      background-color: yellow;
+      background-color: $bw-blue;
       padding: 0 4px;
       color: inherit;
     }

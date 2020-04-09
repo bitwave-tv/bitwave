@@ -4,6 +4,7 @@
       class="stream-card"
       :to="link"
       no-prefetch
+      color="primary"
     >
       <div class="replay-thumbnail">
         <!-- Thumbnail -->
@@ -75,7 +76,7 @@
       >
         <!-- Replay Title -->
         <div
-          class="body-1 font-weight-bold text-truncate text-no-wrap yellow--text mb-0"
+          class="body-1 font-weight-bold text-truncate text-no-wrap primary---text mb-0"
           :title="title"
         >{{ title }}</div>
 

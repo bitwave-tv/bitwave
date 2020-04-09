@@ -14,26 +14,30 @@
         small
         color="primary"
       >
-        edit
-        <v-icon small class="ml-1">edit</v-icon>
+        <template v-if="$vuetify.breakpoint.smAndDown">
+          <v-icon small class="ml-1">edit</v-icon>
+        </template>
+        <template v-else>
+          Edit
+        </template>
       </v-btn>
     </template>
 
     <v-card
-      color="grey darken-4"
+      color="darkwave"
       :loading="saveLoading || showExitConfirm"
     >
       <v-sheet
         tile
-        color="primary"
+        color="secondary"
         class="pa-2 d-flex justify-space-between align-center"
       >
-        <h4 class="black--text body-1">
-          <v-icon color="black">create</v-icon>
+        <h4 class="body-1">
+          <v-icon color="">create</v-icon>
           Edit Stream Data
         </h4>
         <v-btn
-          color="black"
+          color=""
           text
           icon
           small
@@ -148,7 +152,7 @@
           <v-spacer/>
           <v-btn
             class="mr-2"
-            color="red"
+            color="error"
             small
             :disabled="saveLoading"
             @click="cancel"
@@ -156,7 +160,7 @@
             cancel
           </v-btn>
           <v-btn
-            color="success"
+            color="primary"
             small
             :loading="saveLoading"
             @click="updateStreamData"

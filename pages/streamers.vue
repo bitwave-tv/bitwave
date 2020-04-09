@@ -1,16 +1,17 @@
 <template>
-  <div>
+  <div class="gradient-background">
     <v-container>
       <v-row>
         <v-col>
           <v-toolbar>
             <v-autocomplete
               v-model="model"
-              label="Search streamers..."
+              :label="`Search ${streamers.length} streamers...`"
               no-data-text="No streamers found"
               prepend-icon="search"
               hide-details
               single-line
+              solo-inverted
               :items="streamerNames"
               :search-input.sync="search"
               @update:search-input="filterStreamers"

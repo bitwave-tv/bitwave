@@ -3,7 +3,7 @@
     <!-- Stream Title, Status -->
     <v-toolbar
       class="elevation-2"
-      color="grey darken-4"
+      color="accentwave"
       dense
     >
       <!-- Live / Replay / Offline Indicator -->

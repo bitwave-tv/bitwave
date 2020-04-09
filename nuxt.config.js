@@ -56,7 +56,7 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#2196f3' },
+  loading: { color: '#13a9fe' },
 
   /*
   ** Global CSS
@@ -263,6 +263,7 @@ module.exports = {
   buildModules: [
     '@nuxtjs/vuetify',
     '@nuxtjs/dotenv',
+    '@nuxtjs/style-resources',
   ],
 
   /*
@@ -278,6 +279,15 @@ module.exports = {
   */
   vuetify: {
     optionsPath: './vuetify.options.js',
+  },
+
+  /*
+  ** SASS/SCSS global styling variables & mixins
+  */
+  styleResources: {
+    scss: [
+      './assets/vars/*.scss',
+    ],
   },
 
   /*
