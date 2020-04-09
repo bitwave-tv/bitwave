@@ -13,7 +13,7 @@
           <v-icon small class="ml-1">share</v-icon>
         </v-btn>
       </template>
-      <span>Share this stream!</span>
+      <span>Share this replay!</span>
     </v-tooltip>
 
     <v-dialog
@@ -22,10 +22,10 @@
       offset-y
       left
       :close-on-content-click="false"
-      width="450px"
+      :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '60%'"
       transition="slide-x-transition"
     >
-      <!-- Share stream dialog -->
+      <!-- Share replay dialog -->
       <v-card>
         <v-sheet
           tile
@@ -33,7 +33,7 @@
           class="pa-2 d-flex justify-space-between align-center"
         >
           <h4 class="body-1">
-            Share Stream
+            Share Replay
           </h4>
           <v-btn
             text
@@ -47,14 +47,14 @@
 
         <div class="pa-3">
           <div class="mb-3">
-            Share a link directly to this stream on twitter below!<br>
+            Share a link directly to this stream replay on twitter below!<br>
             <span class="caption grey--text">(you will be able to edit the tweet before posting)</span>
           </div>
 
           <!-- Display canonical link -->
           <v-text-field
             class="mb-3"
-            :value="streamlink"
+            :value="shareLink"
             solo
             readonly
             hide-details
@@ -70,6 +70,19 @@
               >Copy Link</v-btn>
             </template>
           </v-text-field>
+
+          <!-- Option to include timestamp -->
+          <div class="mb-4">
+            <v-switch
+              v-model="shareAtTimestamp"
+              label="Share at current timestamp?"
+              color="secondary"
+              hide-details
+              dense
+              inset
+              @change="getCurrentPlayerTime"
+            />
+          </div>
 
           <div class="d-flex">
             <!-- Share to twitter -->
@@ -97,15 +110,18 @@
 
 <script>
   export default {
-    name: 'ShareStream',
+    name: 'ShareReplay',
 
     props: {
       user: { type: String },
+      replayId: { type: String },
     },
 
     data() {
       return {
         showShare: false,
+        shareAtTimestamp: false,
+        currentTime: null,
       };
     },
 
@@ -115,9 +131,18 @@
 
         this.$ga.event({
           eventCategory : 'share',
-          eventAction   : 'show share stream',
+          eventAction   : 'show share replay',
           eventLabel    : this.user,
         });
+      },
+
+      getCurrentPlayerTime () {
+        if ( !window.$bw || !window.$bw.player ) {
+          console.warn( `Failed to get timestamp from global player` );
+          this.currentTime = 0;
+          return;
+        }
+        this.currentTime = window.$bw.player.currentTime();
       },
 
       shareToTwitter () {
@@ -151,18 +176,24 @@
     },
 
     computed: {
-      cacheBust () {
-        const coeff = 1000 * 60 * 10; // Ten minute cache buster
-        const timestamp = Math.round( Date.now() / coeff ) * coeff;
-        return `?shareid=${timestamp}`;
+      timestamp () {
+        return Math.round( this.currentTime );
+      },
+
+      timestampQuery () {
+        if ( !this.timestamp || !this.shareAtTimestamp ) {
+          console.log( `Timestamp does not exist!` );
+          return '';
+        }
+        return `?t=${this.timestamp}`;
       },
 
       streamlink () {
-        return `https://bitwave.tv/${this.user}`;
+        return `https://bitwave.tv/${this.user}/${this.replayId}`;
       },
 
       shareLink () {
-        return `${this.streamlink}${this.cacheBust}`;
+        return `${this.streamlink}${this.timestampQuery}`;
       },
 
       twitterLink () {
