@@ -18,7 +18,7 @@
             <v-list-item-avatar class="my-1" tile>
 
               <img
-                :src="icon"
+                :src="icon2"
                 alt="bitwave.tv logo"
                 title="bitwave.tv homepage"
               />

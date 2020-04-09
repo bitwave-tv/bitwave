@@ -3,7 +3,6 @@
     <div class="gradient-background">
       <v-container fluid>
 
-
         <!-- Site Banner -->
         <v-row class="justify-center">
           <div class="d-flex align-center">
