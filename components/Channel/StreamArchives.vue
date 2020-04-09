@@ -31,6 +31,7 @@
               :link="replay.link"
               :duration="replay.duration"
               :thumbnails="replay.thumbnails"
+              :thumbnail="getThumbnail( replay.thumbnails )"
               :nsfw="replay.nsfw"
               :title="replay.title"
               :username="replay.user && replay.user.name || streamer"
@@ -38,6 +39,7 @@
               :views="replay.views || 0"
               :timestamp="replay.timestamp.toDate()"
               :time-ago="replay.timeAgo"
+              :blur="replay.nsfw"
             />
           </v-col>
         </transition-group>
@@ -327,22 +329,7 @@
               : archiveRef.where( 'deleted', '==', false )
           ).get();
 
-          const newData = results.docs.map( doc => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              ref: doc.ref,
-              title: data.title,
-              nsfw: data.nsfw,
-              timestamp: data.timestamp,
-              timeAgo: timeAgo( data.timestamp.toDate() ),
-              url: `https://${ data.server }/rec${ data.url }`,
-              type: data.type,
-              deleted: data.deleted,
-              loading: false,
-              duration: this.createTimecode( data.duration ),
-            }
-          });
+          const newData = results.docs.map( doc => this.mapReplayDoc( doc ) );
 
           this.archives = [ ...this.archives, ...newData ];
 
@@ -377,26 +364,8 @@
             return;
           }
 
-          this.archives = results.docs.map( doc => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              ref: doc.ref,
-              title: data.title,
-              nsfw: data.nsfw,
-              timestamp: data.timestamp,
-              timeAgo: timeAgo( data.timestamp.toDate() ),
-              url: `https://${data.server}/rec${data.url}`,
-              type: data.type,
-              deleted: data.deleted,
-              loading: false,
-              link: `/${this.streamer}/replay/${doc.id}`,
-              duration: this.createTimecode( data.duration ),
-              commentCount: data.commentCount || 0,
-              user: data.user,
-              thumbnails: data.thumbnails,
-            }
-          });
+          this.archives = results.docs.map( doc => this.mapReplayDoc( doc ) );
+
           this.processing = false;
           this.loaded = true;
         } catch ( error ) {
@@ -518,12 +487,37 @@
         this.$axios.setToken( token, 'Bearer' );
       },
 
+      mapReplayDoc ( doc ) {
+        const data = doc.data();
+        const streamer = data.user && data.user.name || data.name;
+        return {
+          id: doc.id,
+          title: data.title,
+          nsfw: data.nsfw,
+          timestamp: data.timestamp,
+          timeAgo: timeAgo( data.timestamp.toDate() ),
+          type: data.type,
+          deleted: data.deleted,
+          loading: false,
+          link: `/${streamer}/replay/${doc.id}`,
+          duration: this.createTimecode( data.duration ),
+          commentCount: data.commentCount || 0,
+          user: data.user,
+          thumbnails: data.thumbnails,
+        };
+      },
+
       createTimecode ( duration ) {
         // Create timecode
         const hh = Math.floor( duration / 3600 ).toString().padStart( 2, '0' );
         const mm = Math.floor(( duration % 3600 ) / 60).toString().padStart( 2, '0' );
         const ss = Math.floor( duration % 60 ).toString().padStart( 2, '0' );
         return `${hh}:${mm}:${ss}`;
+      },
+
+      getThumbnail ( thumbnails ) {
+        if ( !thumbnails || !thumbnails.length ) return 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
+        return thumbnails[ Math.floor( Math.random() * thumbnails.length ) ];
       },
 
     },
