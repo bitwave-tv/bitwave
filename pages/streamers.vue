@@ -1,41 +1,36 @@
 <template>
-  <div class="gradient-background">
-    <v-container>
-      <v-row>
-        <v-col>
-          <v-toolbar>
-            <v-autocomplete
-              v-model="model"
-              :label="`Search ${streamers.length} streamers...`"
-              no-data-text="No streamers found"
-              prepend-icon="search"
-              hide-details
-              single-line
-              solo-inverted
-              :items="streamerNames"
-              :search-input.sync="search"
-              @update:search-input="filterStreamers"
-              clearable
-              return-object
-            >
-              <template v-slot:item="data">
-                <v-list-item-avatar>
-                  <img
-                    :src="`${data.item.avatar}?_bw`"
-                    :alt="data.item.name"
-                    crossorigin
-                  >
-                </v-list-item-avatar>
-                <v-list-item-title>
-                  {{ data.item.text }}
-                </v-list-item-title>
-              </template>
-            </v-autocomplete>
-          </v-toolbar>
-        </v-col>
-      </v-row>
-
-      <v-row>
+  <div>
+    <div class="gradient-background">
+      <v-container>
+        <v-autocomplete
+          v-model="model"
+          :label="`Search ${streamers.length} streamers...`"
+          no-data-text="No streamers found"
+          prepend-inner-icon="search"
+          hide-details
+          single-line
+          solo-inverted
+          :items="streamerNames"
+          :search-input.sync="search"
+          @update:search-input="filterStreamers"
+          clearable
+          return-object
+        >
+          <template v-slot:item="data">
+            <v-list-item-avatar>
+              <img
+                :src="`${data.item.avatar}?_bw`"
+                :alt="data.item.name"
+                crossorigin
+              >
+            </v-list-item-avatar>
+            <v-list-item-title>
+              {{ data.item.text }}
+            </v-list-item-title>
+          </template>
+        </v-autocomplete>
+        
+        <v-row>
           <v-col
             cols="12"
             sm="6"
@@ -59,8 +54,9 @@
               />
             </v-lazy>
           </v-col>
-      </v-row>
-    </v-container>
+        </v-row>
+      </v-container>
+    </div>
   </div>
 </template>
 

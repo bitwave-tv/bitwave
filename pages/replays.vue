@@ -1,5 +1,6 @@
 <template>
-    <div>
+  <div>
+    <div class="gradient-background">
       <!-- Stream Replay Cards-->
       <v-container fluid>
 
@@ -57,6 +58,7 @@
         </transition-group>
       </v-container>
     </div>
+  </div>
 </template>
 
 <script>
