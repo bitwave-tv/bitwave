@@ -1190,11 +1190,11 @@
 
     .highlight {
       font-weight: bold;
-      color: $bw-blue;
+      color: yellow;
     }
 
     code .highlight {
-      background-color: $bw-blue;
+      background-color: yellow;
       padding: 0 4px;
       color: inherit;
     }
