@@ -10,6 +10,7 @@
           <div class="subtitle grey--text">Catch up on recent streams you may have missed!</div>
         </div>
 
+
         <!-- Loading placeholder -->
         <div
           v-if="processing"
@@ -24,6 +25,7 @@
             <div class="headline">Loading...</div>
           </div>
         </div>
+
 
         <!-- Content -->
         <transition-group
@@ -56,7 +58,40 @@
             />
           </v-col>
         </transition-group>
+
+
+        <!-- Load more button -->
+        <div class="text-center mb-5">
+          <v-btn
+            color="secondary"
+            outlined
+            small
+            :loading="loadingReplays"
+            @click="loadMore"
+          >Load More Replays</v-btn>
+        </div>
       </v-container>
+
+      <!-- Footer -->
+      <v-sheet
+        class="pa-2 d-flex justify-space-between align-center flex-wrap"
+        color="grey darken-4"
+        tile
+      >
+        <div class="overline">
+          Powered by Bitwave Media
+          <span class="grey--text">{{ version }}</span>
+        </div>
+        <div class="d-flex overline">
+          <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url" target="_blank">Donate</a>
+          <v-divider vertical class="mx-2" color="white"/>
+          <a href="https://twitter.com/BitWaveTV" target="_blank">Twitter</a>
+          <v-divider vertical class="mx-2" color="white"/>
+          <a href="https://github.com/bitwave-tv/bitwave" target="_blank">Github</a>
+          <v-divider vertical class="mx-2" color="white"/>
+          <a href="https://bitwave.tv/tos" target="_blank">ToS</a>
+        </div>
+      </v-sheet>
     </div>
   </div>
 </template>
@@ -104,10 +139,12 @@
         processing: true,
         loaded: false,
         replays: [],
+        loadingReplays: false,
       };
     },
 
     methods: {
+      // Load replays
       async loadReplays () {
         const replayRef = db
           .collection( 'archives' )
@@ -144,6 +181,7 @@
               thumbnails: data.thumbnails,
             }
           });
+
           this.processing = false;
           this.loaded = true;
         } catch ( error ) {
@@ -153,8 +191,55 @@
         }
       },
 
+      // Load more replays
+      async loadMore () {
+        console.log( `Loading more replays` );
+
+        if ( this.loadingReplays ) return console.log( `Already loading replays!` );
+        this.loadingReplays = true;
+
+        const replayCount = this.replays.length;
+        const offset = this.replays[ replayCount - 1 ].timestamp;
+
+        const replayQuery = await db
+          .collection( 'archives' )
+          .orderBy( 'timestamp', 'desc' )
+          .where( 'deleted', '==', false )
+          .startAfter( offset )
+          .limit( 16 )
+          .get();
+
+        replayQuery.docs.map( doc => {
+          const data = doc.data();
+          const streamer = data.user && data.user.name || data.name;
+          this.replays.push({
+            id: doc.id,
+            title: data.title,
+            nsfw: data.nsfw,
+            timestamp: data.timestamp,
+            timeAgo: timeAgo( data.timestamp.toDate() ),
+            type: data.type,
+            deleted: data.deleted,
+            loading: false,
+            link: `/${streamer}/replay/${doc.id}`,
+            duration: this.createTimecode( data.duration ),
+            commentCount: data.commentCount || 0,
+            user: data.user,
+            thumbnails: data.thumbnails,
+          });
+        });
+
+        this.loadingReplays = false;
+
+        this.$analytics.logEvent( 'load_more_replays' );
+        this.$ga.event({
+          eventCategory : 'replay',
+          eventAction   : 'load more replays',
+        });
+      },
+
+      // Create timecode
       createTimecode ( duration ) {
-        // Create timecode
         const hh = Math.floor( duration / 3600 ).toString().padStart( 2, '0' );
         const mm = Math.floor(( duration % 3600 ) / 60).toString().padStart( 2, '0' );
         const ss = Math.floor( duration % 60 ).toString().padStart( 2, '0' );
@@ -163,7 +248,9 @@
     },
 
     computed: {
-
+      version () {
+        return `v${process.env.version}`;
+      },
     },
 
     async mounted() {
@@ -171,7 +258,3 @@
     },
   };
 </script>
-
-<style lang='scss'>
-
-</style>
