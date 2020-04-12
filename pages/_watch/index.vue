@@ -23,13 +23,10 @@
           <div class="mx-2">{{ name }}</div>
         </div>
         <div class="d-flex align-center">
-          <v-chip
-            v-show="nsfw"
-            color="red"
-            class="mr-2"
-            small
-            outlined
-          >NSFW</v-chip>
+          <template v-if="nsfw">
+            <div class="font-weight-bold red--text body-2">NSFW</div>
+            <v-divider vertical class="mx-2"/>
+          </template>
           <KickStreamButton
             v-if="isAdmin"
             :streamer="name"

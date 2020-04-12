@@ -51,6 +51,7 @@
               clearable
               :loading="loading"
               :disabled="loading"
+              tabindex="1"
             />
 
             <v-text-field
@@ -67,6 +68,7 @@
               clearable
               :loading="loading"
               :disabled="loading"
+              tabindex="2"
             />
 
             <v-text-field
@@ -88,6 +90,7 @@
               :loading="loading"
               :disabled="loading"
               @click:append="showPassword = !showPassword"
+              tabindex="3"
             />
 
             <v-checkbox
@@ -97,6 +100,7 @@
               class="pt-0 mt-0 mb-3"
               :rules="[ val => val || 'You must be 18 to use this site!' ]"
               :disabled="loading"
+              tabindex="4"
             />
 
             <v-btn
@@ -107,6 +111,7 @@
               :loading="loading"
               type="submit"
               @click="signIn(user.email, user.password)"
+              tabindex="5"
             >
               Login
             </v-btn>
@@ -119,6 +124,7 @@
               :loading="loading"
               type="submit"
               @click="createUser(user.username, user.email, user.password)"
+              tabindex="5"
             >
               Register
             </v-btn>
@@ -153,7 +159,7 @@
           <v-btn
             href="#"
             text
-            color="primary"
+            color="accent"
             @click="resetPassword(user.email)"
           >Forgot Password?</v-btn>
           <v-spacer/>

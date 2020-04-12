@@ -211,7 +211,7 @@
           if ( data.success ) {
             this.$toast.success( `Successfully posted comment!`, { icon: 'done', duration: 5000, position: 'top-center' } );
 
-            // Add new comment to page without re-retching data
+            // Add new comment to page without re-retching data, also increase comment count total
             this.comments = [
               {
                 id: data.data.id,
@@ -219,6 +219,7 @@
               },
               ...this.comments,
             ];
+            this.commentCount += 1;
           } else {
             this.$toast.error( data, { icon: 'error', duration: 5000, position: 'top-center' } );
           }
