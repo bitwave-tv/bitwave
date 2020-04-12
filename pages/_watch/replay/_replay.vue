@@ -145,7 +145,7 @@
     </v-fab-transition>
 
 
-    <!-- Stream Info -->
+    <!-- Replay Info -->
     <replay-info
       :archive-id="$route.params.replay"
       :name="name"

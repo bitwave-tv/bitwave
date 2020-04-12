@@ -151,26 +151,7 @@
 
 
     <!-- Footer -->
-    <v-sheet
-      class="pa-2 d-flex justify-space-between align-center flex-wrap"
-      color="grey darken-4"
-      tile
-    >
-      <div class="overline">
-        Powered by Bitwave Media
-        <span class="grey--text">{{ version }}</span>
-      </div>
-      <div class="d-flex overline">
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url" target="_blank">Donate</a>
-        <v-divider vertical class="mx-2" color="white"/>
-        <a href="https://twitter.com/BitWaveTV" target="_blank">Twitter</a>
-        <v-divider vertical class="mx-2" color="white"/>
-        <a href="https://github.com/bitwave-tv/bitwave" target="_blank">Github</a>
-        <v-divider vertical class="mx-2" color="white"/>
-        <a href="https://bitwave.tv/tos" target="_blank">ToS</a>
-      </div>
-    </v-sheet>
-
+    <simple-footer :version="version" />
   </div>
 </template>
 
@@ -180,6 +161,7 @@
 
   import VueMarkdown from '@/components/VueMarkdown';
   import { timeAgo } from '@/assets/js/time-ago';
+  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = async () => await import ( '@/components/ShareStream' );
@@ -193,6 +175,7 @@
     name: 'StreamInfo',
 
     components: {
+      SimpleFooter,
       StreamArchives,
       VueMarkdown,
       ShareStream,
