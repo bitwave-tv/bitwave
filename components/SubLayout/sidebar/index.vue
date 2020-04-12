@@ -2,7 +2,7 @@
   <v-navigation-drawer
     :value="value"
     :mini-variant="collapsed"
-    mini-variant-width="60px"
+    :mini-variant-width="64"
     color="accentwave"
     app
     @input="$emit( 'input', $event )"
