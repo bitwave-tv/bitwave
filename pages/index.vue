@@ -22,57 +22,65 @@
               :offline="offline"
               :chat-messages="chatMessages"
             />
-
-            <!-- Live Grid -->
-            <div class="mb-4">
-              <!-- Blur Toggle -->
-              <div class="d-flex justify-space-between align-end">
-                <div class="title">Live Channels</div>
-                <v-switch
-                  v-model="blurNSFW"
-                  label="Blur NSFW thumbnails"
-                  color="primary"
-                  hide-details
-                  dense
-                  inset
-                />
-              </div>
-
-              <stream-grid
-                :streamers="streamers"
-                :blur-nsfw="blurNSFW"
-              />
-            </div>
-
-            <!-- Replay Grid -->
-            <div class="mb-4">
-              <div class="d-flex justify-space-between align-end">
-                <div class="title">Newest Replays</div>
-                <v-switch
-                  v-model="blurNSFW"
-                  label="Blur NSFW thumbnails"
-                  color="primary"
-                  hide-details
-                  dense
-                  inset
-                />
-              </div>
-
-              <replay-grid
-                :limit="8"
-                :blur-nsfw="blurNSFW"
-                :cols="12"
-                :sm="6"
-                :md="4"
-                :lg="3"
-                :xl="2"
-              />
-            </div>
-
-            <!-- Homepage Content -->
-            <about-us class="mb-5 mt-2" />
           </v-col>
         </v-row>
+
+
+        <!-- Live Now Header -->
+        <div class="mb-4">
+          <div class="d-flex justify-space-between align-end">
+            <div class="headline font-weight-light grey--text">Live Now</div>
+            <v-switch
+              v-model="blurNSFW"
+              label="Blur NSFW thumbnails"
+              color="primary"
+              hide-details
+              dense
+              inset
+            />
+          </div>
+
+          <!-- Livestream Grid -->
+          <stream-grid
+            :streamers="streamers"
+            :blur-nsfw="blurNSFW"
+            :cols="12"
+            :sm="6"
+            :md="4"
+            :lg="3"
+            :xl="2"
+          />
+        </div>
+
+        <!-- Replay Header -->
+        <div class="mb-4">
+          <div class="d-flex justify-space-between align-end">
+            <div class="headline font-weight-light grey--text">Recent Replays</div>
+            <v-switch
+              v-model="blurNSFW"
+              label="Blur NSFW thumbnails"
+              color="primary"
+              hide-details
+              dense
+              inset
+            />
+          </div>
+
+          <!-- Replay Grid -->
+          <replay-grid
+            :limit="12"
+            :blur-nsfw="blurNSFW"
+            :cols="12"
+            :sm="6"
+            :md="4"
+            :lg="3"
+            :xl="2"
+          />
+        </div>
+
+        <!-- Homepage Content -->
+        <about-us class="mb-5 mt-2" />
+
       </v-container>
     </div>
 

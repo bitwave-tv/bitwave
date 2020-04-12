@@ -26,7 +26,7 @@
 
         <!-- Display a grid of replays -->
         <replay-grid
-          :limit="8"
+          :limit="12"
           :blur-nsfw="blurNSFW"
           :cols="12"
           :sm="6"

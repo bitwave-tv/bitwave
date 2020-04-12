@@ -32,7 +32,7 @@
       </div>
 
       <div class="mb-1">A straight forward streaming service built entirely on open source software.</div>
-      <p>If you're interested in streaming here, just ask for a stream key in any chat, or message us on twitter or discord.</p>
+      <p>If you're interested in streaming here, head over to <nuxt-link to="/streamkey">bitwave.tv/streamkey</nuxt-link> to get setup!</p>
 
       <div class="d-flex align-center">
         <v-btn

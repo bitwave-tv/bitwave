@@ -27,11 +27,11 @@
         v-if="!loading"
         v-for="stream in streamerList"
         :key="stream.name"
-        cols="12"
-        sm="6"
-        md="6"
-        lg="4"
-        xl="3"
+        :cols="cols"
+        :sm="sm"
+        :md="md"
+        :lg="lg"
+        :xl="xl"
       >
         <stream-card
           :to="stream.name"
@@ -60,6 +60,11 @@
     props: {
       streamers: {},
       blurNsfw: { type: Boolean, default: true },
+      cols: { type: Number, default: 12 },
+      sm:   { type: Number, default: 6 },
+      md:   { type: Number, default: 4 },
+      lg:   { type: Number, default: 3 },
+      xl:   { type: Number, default: 2 },
     },
 
     components: {
