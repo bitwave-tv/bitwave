@@ -42,8 +42,9 @@
         </div>
         <div class="caption d-flex align-center">
 
-          <div class="d-block text-truncate">{{ name }}</div>
+          <div class="d-block text-truncate grey--text">{{ name }}</div>
 
+          <!-- NSFW Indicator -->
           <template v-if="nsfw">
             <v-divider vertical class="mx-2"/>
             <div class="d-flex align-center">

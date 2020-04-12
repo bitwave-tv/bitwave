@@ -4,7 +4,7 @@
       class="stream-card"
       :to="link"
       no-prefetch
-      color="primary"
+      color="accentwave"
     >
       <div class="replay-thumbnail">
         <!-- Thumbnail -->
@@ -29,7 +29,7 @@
             </div>
             <div v-else class="d-flex align-center">
               <div class="grey--text mr-2">REPLAY</div>
-              <v-icon small>visibility_off</v-icon>
+              <v-icon small color="grey">visibility_off</v-icon>
             </div>
           </v-chip>
         </div>
@@ -83,7 +83,7 @@
         <div class="caption d-flex align-center">
 
           <!-- Streamer Username -->
-          <div class="d-block text-truncate">{{ username }}</div>
+          <div class="d-block text-truncate grey--text">{{ username }}</div>
 
           <!-- NSFW Indicator -->
           <template v-if="nsfw">
@@ -97,10 +97,11 @@
           <template>
             <v-spacer/>
             <div
+              class="grey--text"
               :title="`${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}`"
             >
               {{ commentCount }}
-              <v-icon small>message</v-icon>
+              <v-icon small color="grey">message</v-icon>
             </div>
           </template>
 
