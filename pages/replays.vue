@@ -26,7 +26,7 @@
 
         <!-- Display a grid of replays -->
         <replay-grid
-          :limit="10"
+          :limit="8"
           :blur-nsfw="blurNSFW"
           :cols="12"
           :sm="6"
@@ -37,6 +37,7 @@
 
       </v-container>
 
+      <!-- Footer -->
       <simple-footer :version="version" />
     </div>
   </div>
@@ -86,18 +87,12 @@
       };
     },
 
-    methods: {
-
-    },
+    methods: {},
 
     computed: {
       version () {
         return `v${process.env.version}`;
       },
-    },
-
-    async mounted() {
-
     },
   };
 </script>

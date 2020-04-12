@@ -33,22 +33,21 @@
           :blur="blurNsfw && replay.nsfw"
         />
       </v-col>
-    </transition-group>
 
-    <!-- Loading indicator -->
-    <v-expand-transition>
-      <div
+      <!-- Skeleton loader -->
+      <v-col
         v-if="processing"
-        class="my-3 d-flex justify-center my-5"
+        v-for="replayLoader in ( limit / 2 )"
+        :key="replayLoader"
+        :cols="cols"
+        :sm="sm"
+        :md="md"
+        :lg="lg"
+        :xl="xl"
       >
-        <v-progress-circular
-          indeterminate
-          color="primary"
-          class="mr-3"
-        />
-        <div class="headline">Loading...</div>
-      </div>
-    </v-expand-transition>
+        <v-skeleton-loader type="card" />
+      </v-col>
+    </transition-group>
 
     <!-- Load more button -->
     <div class="d-flex justify-space-between mb-5 mt-2">
@@ -142,9 +141,10 @@
             return;
           }
 
+          this.processing = false;
+
           this.replays = results.docs.map( doc => mapReplayDoc( doc ) );
 
-          this.processing = false;
           this.loaded = true;
         } catch ( error ) {
           console.warn( error );
@@ -173,12 +173,13 @@
             .limit( this.limit )
             .get();
 
+          this.processing = false;
+
           replayQuery.docs.map( doc => {
             this.replays.push( mapReplayDoc( doc ) );
           });
 
           this.loadingReplays = false;
-          this.processing = false;
 
           this.$analytics.logEvent( 'load_more_replays' );
           this.$ga.event({
@@ -197,7 +198,6 @@
         return thumbnails[ Math.floor( Math.random() * thumbnails.length ) ];
       },
 
-
     },
 
     computed: {},
@@ -207,7 +207,3 @@
     },
   };
 </script>
-
-<style lang='scss'>
-
-</style>

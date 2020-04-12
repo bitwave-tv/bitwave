@@ -23,25 +23,51 @@
               :chat-messages="chatMessages"
             />
 
-            <!-- Blur Toggle -->
-            <div class="d-flex align-end mb-1 mt-2">
-              <div class="title">Live Channels</div>
-              <v-spacer />
-              <v-switch
-                v-model="blurNSFW"
-                label="Blur NSFW thumbnails"
-                color="primary"
-                hide-details
-                dense
-                inset
+            <!-- Live Grid -->
+            <div class="mb-4">
+              <!-- Blur Toggle -->
+              <div class="d-flex justify-space-between align-end">
+                <div class="title">Live Channels</div>
+                <v-switch
+                  v-model="blurNSFW"
+                  label="Blur NSFW thumbnails"
+                  color="primary"
+                  hide-details
+                  dense
+                  inset
+                />
+              </div>
+
+              <stream-grid
+                :streamers="streamers"
+                :blur-nsfw="blurNSFW"
               />
             </div>
 
-            <!-- Live Grid -->
-            <stream-grid
-              :streamers="streamers"
-              :blur-nsfw="blurNSFW"
-            />
+            <!-- Replay Grid -->
+            <div class="mb-4">
+              <div class="d-flex justify-space-between align-end">
+                <div class="title">Newest Replays</div>
+                <v-switch
+                  v-model="blurNSFW"
+                  label="Blur NSFW thumbnails"
+                  color="primary"
+                  hide-details
+                  dense
+                  inset
+                />
+              </div>
+
+              <replay-grid
+                :limit="8"
+                :blur-nsfw="blurNSFW"
+                :cols="12"
+                :sm="6"
+                :md="4"
+                :lg="3"
+                :xl="2"
+              />
+            </div>
 
             <!-- Homepage Content -->
             <about-us class="mb-5 mt-2" />
@@ -62,6 +88,7 @@
   import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import AboutUs from '@/components/Homepage/AboutUs';
+  import ReplayGrid from '@/components/Replay/ReplayGrid';
 
   export default {
     scrollToTop: true,
@@ -87,6 +114,7 @@
     },
 
     components: {
+      ReplayGrid,
       AboutUs,
       SimpleFooter,
       MessageOfTheDay,
