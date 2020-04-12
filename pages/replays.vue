@@ -24,69 +24,17 @@
           />
         </div>
 
+        <!-- Display a grid of replays -->
+        <replay-grid
+          :limit="10"
+          :blur-nsfw="blurNSFW"
+          :cols="12"
+          :sm="6"
+          :md="4"
+          :lg="3"
+          :xl="2"
+        />
 
-        <!-- Loading placeholder -->
-        <div
-          v-if="processing"
-          class="my-3"
-        >
-          <div class="d-flex align-center">
-            <v-progress-circular
-              indeterminate
-              color="primary"
-              class="mr-3"
-            />
-            <div class="headline">Loading...</div>
-          </div>
-        </div>
-
-
-        <!-- Content -->
-        <transition-group
-          tag="div"
-          class="row flex-wrap"
-          name="fade-transition"
-        >
-          <!-- Replay Cards -->
-          <v-col
-            v-for="replay in replays"
-            :key="replay.id"
-            cols="12"
-            sm="6"
-            md="6"
-            lg="4"
-            xl="3"
-          >
-            <replay-card
-              :key="replay.id"
-              :id="replay.id"
-              :link="replay.link"
-              :duration="replay.duration"
-              :thumbnails="replay.thumbnails"
-              :thumbnail="getThumbnail( replay.thumbnails )"
-              :nsfw="replay.nsfw"
-              :title="replay.title"
-              :username="replay.user && replay.user.name || replay.name"
-              :comment-count="replay.commentCount"
-              :views="replay.views || 0"
-              :timestamp="replay.timestamp.toDate()"
-              :time-ago="replay.timeAgo"
-              :blur="needsBlur( replay.nsfw )"
-            />
-          </v-col>
-        </transition-group>
-
-
-        <!-- Load more button -->
-        <div class="text-center mb-5">
-          <v-btn
-            color="secondary"
-            outlined
-            small
-            :loading="loadingReplays"
-            @click="loadMore"
-          >Load More Replays</v-btn>
-        </div>
       </v-container>
 
       <simple-footer :version="version" />
@@ -95,10 +43,8 @@
 </template>
 
 <script>
-  import { db } from '@/plugins/firebase';
-  import { timeAgo } from '@/assets/js/time-ago';
-  import ReplayCard from '@/components/Replay/ReplayCard';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
+  import ReplayGrid from '@/components/Replay/ReplayGrid';
 
   const title = `Stream Replays - [bitwave.tv]`;
   const description = `Browse the most recent stream replays available.`;
@@ -130,114 +76,18 @@
     },
 
     components: {
+      ReplayGrid,
       SimpleFooter,
-      ReplayCard
     },
 
     data() {
       return {
-        processing: true,
-        loaded: false,
-        replays: [],
-        loadingReplays: false,
         blurNSFW: true,
       };
     },
 
     methods: {
-      // Load replays
-      async loadReplays () {
-        try {
-          const results = await db
-            .collection( 'archives' )
-            .orderBy( 'timestamp', 'desc' )
-            .where( 'deleted', '==', false )
-            .limit( 10 )
-            .get();
 
-          if ( results.empty ) {
-            this.processing = false;
-            this.loaded = true;
-            this.replays = [];
-            return;
-          }
-
-          this.replays = results.docs.map( doc => this.mapReplayDoc( doc ) );
-
-          this.processing = false;
-          this.loaded = true;
-        } catch ( error ) {
-          console.log( error );
-          this.processing = false;
-          this.loaded = true;
-        }
-      },
-
-      // Load more replays
-      async loadMore () {
-        if ( this.loadingReplays ) return console.log( `Already loading replays!` );
-        this.loadingReplays = true;
-
-        const replayCount = this.replays.length;
-        const offset = this.replays[ replayCount - 1 ].timestamp;
-
-        const replayQuery = await db
-          .collection( 'archives' )
-          .orderBy( 'timestamp', 'desc' )
-          .where( 'deleted', '==', false )
-          .startAfter( offset )
-          .limit( 10 )
-          .get();
-
-        replayQuery.docs.map( doc => {
-          this.replays.push( this.mapReplayDoc( doc ) );
-        });
-
-        this.loadingReplays = false;
-
-        this.$analytics.logEvent( 'load_more_replays' );
-        this.$ga.event({
-          eventCategory : 'replay',
-          eventAction   : 'load more replays',
-        });
-      },
-
-      mapReplayDoc ( doc ) {
-        const data = doc.data();
-        const streamer = data.user && data.user.name || data.name;
-        return {
-          id: doc.id,
-          title: data.title,
-          nsfw: data.nsfw,
-          timestamp: data.timestamp,
-          timeAgo: timeAgo( data.timestamp.toDate() ),
-          type: data.type,
-          deleted: data.deleted,
-          loading: false,
-          link: `/${streamer}/replay/${doc.id}`,
-          duration: this.createTimecode( data.duration ),
-          commentCount: data.commentCount || 0,
-          user: data.user,
-          thumbnails: data.thumbnails,
-        };
-      },
-
-      // Create timecode
-      createTimecode ( duration ) {
-        const hh = Math.floor( duration / 3600 ).toString().padStart( 2, '0' );
-        const mm = Math.floor(( duration % 3600 ) / 60).toString().padStart( 2, '0' );
-        const ss = Math.floor( duration % 60 ).toString().padStart( 2, '0' );
-        return `${hh}:${mm}:${ss}`;
-      },
-
-      getThumbnail ( thumbnails ) {
-        if ( !thumbnails || !thumbnails.length ) return 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
-        return thumbnails[ Math.floor( Math.random() * thumbnails.length ) ];
-      },
-
-      needsBlur ( nsfw ) {
-        return this.blurNSFW && nsfw;
-      },
     },
 
     computed: {
@@ -247,7 +97,7 @@
     },
 
     async mounted() {
-      await this.loadReplays();
+
     },
   };
 </script>
