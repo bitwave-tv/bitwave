@@ -48,7 +48,6 @@
               required
               validate-on-blur
               outlined
-              clearable
               :loading="loading"
               :disabled="loading"
               tabindex="1"
@@ -65,7 +64,6 @@
               required
               validate-on-blur
               outlined
-              clearable
               :loading="loading"
               :disabled="loading"
               tabindex="2"
@@ -86,7 +84,6 @@
               counter
               validate-on-blur
               outlined
-              clearable
               :loading="loading"
               :disabled="loading"
               @click:append="showPassword = !showPassword"
