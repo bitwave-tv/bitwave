@@ -61,7 +61,7 @@
     </v-content>
 
     <!-- Fireworks overlay -->
-    <Fireworks ref="fireworks" />
+    <fireworks ref="fireworks" />
 
   </v-app>
 </template>

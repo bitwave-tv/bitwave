@@ -51,6 +51,7 @@
             :global="getGlobalTag( msg.global )"
             @reply="addUserTag"
             @whisper="addWhisper"
+            @select="onMessageClick( msg )"
           >
             <div
               class="body-2 msg"
@@ -89,6 +90,24 @@
       </v-slide-y-transition>
     </div>
 
+    <!-- Chat Message Menu -->
+    <div>
+      <chat-message-menu
+        v-model="showChatMessageMenu"
+        :avatar="selectedChatMessage.avatar"
+        :username="selectedChatMessage.username"
+        :displayName="selectedChatMessage.displayName"
+        :user-styling="{ color: selectedChatMessage.userStyling ? selectedChatMessage.userStyling : '#9e9e9e' }"
+        :message="selectedChatMessage.message"
+        :badge="selectedChatMessage.badge"
+        :timestamp="selectedChatMessage.timestamp"
+        :channel="selectedChatMessage.channel"
+        :global="selectedChatMessage.global"
+        @ignore="onIgnore"
+        @unignore="onUnignore"
+      />
+    </div>
+
   </v-flex>
 </template>
 
@@ -96,11 +115,13 @@
   import moment from 'moment'
 
   import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
+  import ChatMessageMenu from '@/components/Chat/ChatMessages/ChatMessageMenu';
 
   export default {
     name: 'ChatMessages',
 
     components: {
+      ChatMessageMenu,
       ChatMessage,
     },
 
@@ -112,6 +133,9 @@
 
     data () {
       return {
+        showChatMessageMenu: false,
+        selectedChatMessage: {},
+
         chatContainer: null,
         scrollTimeout: null,
         onScrollTimer: null,
@@ -254,6 +278,20 @@
             behavior: 'smooth',
           });
         }
+      },
+
+      onMessageClick ( msg ) {
+        this.showChatMessageMenu = true;
+        this.selectedChatMessage = msg;
+        console.log( `Selected:`, msg );
+      },
+
+      onIgnore ( username ) {
+        this.$emit( 'ignore', username );
+      },
+
+      onUnignore ( username ) {
+        this.$emit( 'unignore', username );
       },
     },
 

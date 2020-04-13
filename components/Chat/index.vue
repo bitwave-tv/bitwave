@@ -150,6 +150,8 @@
       :global="global"
       @reply="addUserTag"
       @whisper="addWhisper"
+      @ignore="ignoreUser"
+      @unignore="unignoreUser"
     />
 
     <!-- Chat Input -->

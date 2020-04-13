@@ -30,7 +30,9 @@
     </div>
 
     <!-- Chat Content -->
-    <div class="flex-grow-1 content">
+    <div
+      class="flex-grow-1 content"
+    >
 
       <!-- Message Header -->
       <div class="d-flex align-center">
@@ -53,6 +55,7 @@
           class="username text-truncate flex-grow-1 subtitle-2 pl-1"
           :style="props.userStyling"
           v-html="props.displayName"
+          @click="listeners.select"
         />
 
         <!-- Room Label -->
@@ -101,6 +104,7 @@
         required: false,
       }
     },
+
   }
 </script>
 
@@ -160,6 +164,7 @@
       font-weight: 500;
       color: #9e9e9e;
       font-family: 'IBM Plex Sans', sans-serif;
+      cursor: pointer;
     }
 
     blockquote p {
