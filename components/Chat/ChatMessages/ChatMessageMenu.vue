@@ -71,6 +71,7 @@
 
           <v-btn
             color="primary"
+            :disabled="isTroll"
             :to="`/${username}`"
             small
           >Profile</v-btn>
@@ -157,7 +158,11 @@
       },
     },
 
-    computed: {},
+    computed: {
+      isTroll () {
+        return this.username && this.username.startsWith( 'troll:' );
+      },
+    },
 
     mounted() {
 
