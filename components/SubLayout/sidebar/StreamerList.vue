@@ -131,6 +131,8 @@
   export default {
     name: 'StreamerList',
 
+    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 10 ) ),
+
     props: {
       collapsed: { type: Boolean },
     },

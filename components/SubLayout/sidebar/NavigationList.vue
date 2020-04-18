@@ -86,6 +86,8 @@
   export default {
     name: 'NavigationList',
 
+    serverCacheKey: () => 'NavigationList',
+
     data() {
       return {
         icon  : '/icon.png',

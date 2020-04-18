@@ -12,5 +12,6 @@
 <script>
   export default {
     name: 'MessageOfTheDay',
+    serverCacheKey: () => 'MOTD',
   };
 </script>

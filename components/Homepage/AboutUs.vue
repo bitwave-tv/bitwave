@@ -160,6 +160,7 @@
   import WarrantCanary from '@/components/Homepage/WarrantCanary';
   export default {
     name: 'AboutUs',
+    serverCacheKey: () => 'AboutUs',
     components: { WarrantCanary },
     data() {
       return {

@@ -286,7 +286,7 @@ export const mutations = {
 export const actions = {
 
   async nuxtServerInit ({ dispatch, commit }, { req, params }) {
-    let authUser = null, user = null;
+    /*let authUser = null, user = null;
     const cookies = this.$cookies.getAll();
     if ( cookies ) {
       try {
@@ -309,7 +309,7 @@ export const actions = {
     }
 
     commit( $mutations.setAuth, authUser );
-    commit( $mutations.setUser, user );
+    commit( $mutations.setUser, user );*/
 
     const runParallel = [
       // Sidebar Streams
@@ -442,7 +442,7 @@ export const actions = {
         commit ( $mutations.setSidebarData, data.users );
       }
     } catch ( error ) {
-      console.warn( `${error.message}: Failed to update user list.`, error );
+      console.warn( `Failed to update sidebar.`, error.message );
     }
   },
 
@@ -493,8 +493,7 @@ export const actions = {
           commit( $mutations.setChannelViewers,  data.data );
         }
       } catch ( error ) {
-        console.warn( `Failed to hydrate channels` );
-        console.warn( error );
+        console.error( `Failed to hydrate channels`, error.message );
       }
     };
 
@@ -505,8 +504,7 @@ export const actions = {
           commit( $mutations.setUserList, data.data );
         }
       } catch ( error ) {
-        console.warn( `Failed to hydrate userlist` );
-        console.warn( error );
+        console.error( `Failed to hydrate userlist.`, error.message );
       }
     };
 

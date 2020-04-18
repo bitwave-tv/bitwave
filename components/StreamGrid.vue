@@ -57,6 +57,8 @@
   export default {
     name: 'StreamGrid',
 
+    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 10 ) ),
+
     props: {
       streamers: {},
       blurNsfw: { type: Boolean, default: true },

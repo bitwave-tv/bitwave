@@ -44,7 +44,7 @@
   import NavigationList from '@/components/SubLayout/sidebar/NavigationList';
 
   export default {
-    name: 'index.vue',
+    name: 'sidebar',
 
     components: {
       NavigationList,
