@@ -728,7 +728,7 @@
             console.error( `API server reponded with 404` );
             return {
               success: false,
-              error: { statusCode: 404, message: `Could not find channel.` },
+              error: { statusCode: 404, message: `Could not find channel '${channel}'.` },
             };
           }
         }
@@ -751,7 +751,7 @@
               console.error( `Database query did not find streamer!` );
               return {
                 success: false,
-                error: { statusCode: 404, message: `Could not find channel.` },
+                error: { statusCode: 404, message: `Could not find channel '${channel}'.` },
               };
             }
 

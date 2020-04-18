@@ -488,7 +488,7 @@ export const actions = {
   async [$actions.updateViewers] ( { commit } ) {
     const updateChannelViewers = async () => {
       try {
-        const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/channels', { progress: false } );
+        const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/chat/channels', { progress: false } );
         if ( data && data.success ) {
           commit( $mutations.setChannelViewers,  data.data );
         }
@@ -500,7 +500,7 @@ export const actions = {
 
     const updateUserList = async () => {
       try {
-        const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/users', { progress: false } );
+        const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/chat/users', { progress: false } );
         if ( data && data.success ) {
           commit( $mutations.setUserList, data.data );
         }
