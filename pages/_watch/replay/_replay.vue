@@ -559,6 +559,15 @@
         this.checkDroppedFrames();
       },
 
+      async trackReplayView () {
+        const url = `https://api.bitwave.tv/v1/replays/${this.archiveId}/watch`;
+        try {
+          await this.$axios.get( url );
+        } catch ( error ) {
+          console.error( `Failed to track replay view`, error.message );
+        }
+      },
+
       playerDispose (){
         if ( this.player ) this.player.dispose();
       },
@@ -753,6 +762,9 @@
 
     async mounted () {
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
+
+      // Track replay view
+      setTimeout( async () => await this.trackReplayView(), 60 * 1000 );
 
       await this.loadSettings();
 

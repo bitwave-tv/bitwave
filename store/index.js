@@ -285,20 +285,24 @@ export const mutations = {
 // Actions
 export const actions = {
 
-  async nuxtServerInit ({ dispatch, commit }, { req, params }) {
-    /*let authUser = null, user = null;
+  async nuxtServerInit ({ dispatch, commit }, { req, params, route }) {
+    let authUser = null, user = null;
     const cookies = this.$cookies.getAll();
     if ( cookies ) {
       try {
         if ( cookies.auth && cookies.user ) {
           authUser = cookies.auth;
           user     = cookies.user;
-          logger( `${user.username} logged in via nuxtServerInit: `, params );
+
+          commit( $mutations.setAuth, authUser );
+          commit( $mutations.setUser, user );
+
+          logger( `[${route.path}] ${user.username} logged in via nuxtServerInit: `, params );
         } else {
-          logger( `User is not logged in.`, params );
+          logger( `[${route.path}] User is not logged in.` );
         }
       } catch ( error ) {
-        logger( `ERROR: No valid cookie found.`, error );
+        logger( `Failed to get cookies!`, error );
       }
 
       // cookie for global chat hydration flag
@@ -307,9 +311,6 @@ export const actions = {
         commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, bwGlobal );
       }
     }
-
-    commit( $mutations.setAuth, authUser );
-    commit( $mutations.setUser, user );*/
 
     const runParallel = [
       // Sidebar Streams

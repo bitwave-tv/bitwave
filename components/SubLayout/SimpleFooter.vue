@@ -24,6 +24,7 @@
 <script>
   export default {
     name: 'SimpleFooter',
+    serverCacheKey: () => 'SimpleFooter',
 
     props: {
       version: { type: String, },

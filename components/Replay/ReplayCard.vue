@@ -24,8 +24,8 @@
             label
           >
             <div v-if="views" class="d-flex align-center">
-              <div class="white--text">{{ views <= 1 ? '🌊' : views }}</div>
-              <v-icon v-show="viewers > 1" color="red" class="ml-2" small>visibility</v-icon>
+              <div class="white--text">{{ views < 1 ? '🌊' : views }}</div>
+              <v-icon v-show="views > 0" color="red" class="ml-2" small>visibility</v-icon>
             </div>
             <div v-else class="d-flex align-center">
               <div class="grey--text mr-2">REPLAY</div>

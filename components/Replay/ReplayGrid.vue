@@ -98,6 +98,7 @@
       commentCount: data.commentCount || 0,
       user: data.user,
       thumbnails: data.thumbnails,
+      views: data.views,
     };
   };
 
