@@ -154,6 +154,7 @@
       :description="description"
       :timestamp="timestamp"
       :comment-count="commentCount"
+      :views="views"
       @update="replayUpdated"
       @click:timestamp="onClickTimestamp"
       replay
@@ -247,6 +248,7 @@
         type: null,
         timestamp: null,
         commentCount: 0,
+        views: 0,
 
         // Chat hydrated data defaults
         chatMessages: null,
@@ -263,8 +265,6 @@
         // Attempt to load via API server
         try {
           const { data } = await $axios.getSSR( `https://api.bitwave.tv/v1/replays/${id}`, { timeout } );
-
-          console.log( data );
 
           // Simple response validation
           if ( data && data.success ) {
@@ -300,12 +300,17 @@
         const title = replayData.title;
         const nsfw = replayData.nsfw;
 
+        const commentCount = replayData.commentCount;
+        const views = replayData.views;
+
         return {
           success: true,
           data: {
             name,
             title,
             nsfw,
+            commentCount,
+            views,
           },
         }
 
@@ -603,6 +608,7 @@
         // Stream properties
         this.nsfw  = data.nsfw;
         this.commentCount = data.commentCount;
+        this.views = data.views;
 
         // Process timestamp
         this.timestamp = data.timestamp
@@ -764,7 +770,7 @@
       if ( this.live ) this.watchTimer = setInterval( () => this.trackWatchTime(), 1000 * this.watchInterval );
 
       // Track replay view
-      setTimeout( async () => await this.trackReplayView(), 60 * 1000 );
+      this.viewTimer = setTimeout( async () => await this.trackReplayView(), 60 * 1000 );
 
       await this.loadSettings();
 
@@ -783,6 +789,7 @@
       window.removeEventListener( 'orientationchange', this.onOrientationChange );
       if ( this.streamDataListener ) this.streamDataListener();
       if ( this.watchTimer ) clearInterval( this.watchTimer );
+      if ( this.viewTimer ) clearTimeout( this.viewTimer );
       this.playerDispose();
     },
   }

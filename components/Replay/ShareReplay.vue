@@ -182,7 +182,7 @@
 
       timestampQuery () {
         if ( !this.timestamp || !this.shareAtTimestamp ) {
-          console.log( `Timestamp does not exist!` );
+          // console.log( `Timestamp does not exist!` );
           return '';
         }
         return `?t=${this.timestamp}`;

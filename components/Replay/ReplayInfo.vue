@@ -46,6 +46,10 @@
 
     <!-- Replay Actions -->
     <div class="d-flex flex-shrink-0 align-center flex-wrap px-3 py-2">
+      <div>
+        {{ views || '0' }} Views
+      </div>
+      <v-divider vertical color="accent" class="ma-2"/>
       <div
         class="caption grey--text my-2"
         :title="timestamp"
@@ -209,6 +213,7 @@
       timestamp: { type: Date },
       replay: { type: Boolean },
       commentCount: { type: Number },
+      views: { type: Number },
     },
 
     data () {
