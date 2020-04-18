@@ -52,11 +52,13 @@
 
         <!-- Username -->
         <div
-          class="username text-truncate flex-grow-1 subtitle-2 pl-1"
+          class="username text-truncate subtitle-2 pl-1"
           :style="props.userStyling"
           v-html="props.displayName"
           @click="listeners.select"
         />
+
+        <v-spacer />
 
         <!-- Room Label -->
         <nuxt-link
