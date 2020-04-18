@@ -21,8 +21,8 @@
           <!-- Avatar with webp support -->
           <picture
             v-if="avatar"
-            class="v-avatar ml-0 mr-4"
-            style="height: 32px; min-width: 32px; width: 32px; background: #212121;"
+            class="v-avatar ml-0"
+            style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
           >
             <source
               v-if="avatars"
