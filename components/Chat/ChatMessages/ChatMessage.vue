@@ -58,7 +58,7 @@
           @click="listeners.select"
         />
 
-        <v-spacer />
+        <div class="flex-grow-1"></div>
 
         <!-- Room Label -->
         <nuxt-link
