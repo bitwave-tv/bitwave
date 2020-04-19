@@ -17,22 +17,22 @@
         />
 
         <!-- View Counter -->
-        <div class="view-counter">
+        <!--<div class="view-counter">
           <v-chip
             color="grey darken-4"
             small
             label
           >
             <div v-if="views" class="d-flex align-center">
-              <div class="white--text">{{ views < 1 ? '🌊' : views }}</div>
+              <div class="white&#45;&#45;text">{{ views < 1 ? '🌊' : views }}</div>
               <v-icon v-show="views > 0" color="red" class="ml-2" small>visibility</v-icon>
             </div>
             <div v-else class="d-flex align-center">
-              <div class="grey--text mr-2">REPLAY</div>
+              <div class="grey&#45;&#45;text mr-2">REPLAY</div>
               <v-icon small color="grey">visibility_off</v-icon>
             </div>
           </v-chip>
-        </div>
+        </div>-->
 
         <!-- Duration Timecode -->
         <div class="replay-timecode">
@@ -75,10 +75,23 @@
         class="pa-2"
       >
         <!-- Replay Title -->
-        <div
-          class="body-1 font-weight-bold text-truncate text-no-wrap primary---text mb-0"
-          :title="title"
-        >{{ title }}</div>
+        <div class="d-flex align-center">
+          <div
+            class="body-1 font-weight-bold text-truncate text-no-wrap primary---text mb-0"
+            :title="title"
+          >{{ title }}</div>
+
+          <template v-if="views">
+            <v-spacer/>
+            <div
+              class="d-flex align-center caption ml-2"
+              :title="`${views} ${views === 1 ? 'view' : 'views'}`"
+            >
+              <div class="grey--text">{{ views < 1 ? '🌊' : views }}</div>
+              <v-icon color="grey" small class="ml-1">visibility</v-icon>
+            </div>
+          </template>
+        </div>
 
         <div class="caption d-flex align-center">
 
@@ -160,7 +173,7 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      opacity: .75;
+      opacity: .85;
       transition: .3s;
     }
 

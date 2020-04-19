@@ -4,14 +4,8 @@
       <!-- Stream Replay Cards-->
       <v-container fluid>
 
-        <!-- Header -->
-        <div class="text-center my-2">
-          <div class="headline"><v-icon>restore</v-icon> Recent Stream Replays</div>
-          <div class="subtitle grey--text">Catch up on recent streams you may have missed!</div>
-        </div>
-
         <!-- Blur Toggle -->
-        <div class="d-flex align-end mb-1 mt-2">
+        <div class="d-flex align-end">
           <div class="title"></div>
           <v-spacer />
           <v-switch
@@ -21,7 +15,33 @@
             hide-details
             dense
             inset
+            class="mt-0"
           />
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-1">
+          <div class="headline"><v-icon>restore</v-icon> Trending Replays</div>
+          <div class="subtitle grey--text">This algorithm probably sucks.</div>
+        </div>
+
+        <!-- Display a grid of replays -->
+        <trending-replays
+          :limit="8"
+          :blur-nsfw="blurNSFW"
+          :cols="12"
+          :sm="6"
+          :md="4"
+          :lg="3"
+          :xl="2"
+        />
+
+
+
+        <!-- Header -->
+        <div class="text-center mb-1 mt-5">
+          <div class="headline"><v-icon>restore</v-icon> Recent Stream Replays</div>
+          <!--<div class="subtitle grey&#45;&#45;text">Catch up on recent streams you may have missed!</div>-->
         </div>
 
         <!-- Display a grid of replays -->
@@ -46,6 +66,7 @@
 <script>
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import ReplayGrid from '@/components/Replay/ReplayGrid';
+  import TrendingReplays from '@/components/Replay/TrendingReplays';
 
   const title = `Stream Replays - [bitwave.tv]`;
   const description = `Browse the most recent stream replays available.`;
@@ -77,6 +98,7 @@
     },
 
     components: {
+      TrendingReplays,
       ReplayGrid,
       SimpleFooter,
     },

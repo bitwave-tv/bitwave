@@ -52,7 +52,33 @@
           />
         </div>
 
-        <!-- Replay Header -->
+        <!-- Trending Replay Header -->
+        <div class="mb-4">
+          <div class="d-flex justify-space-between align-end">
+            <div class="headline font-weight-light grey--text">Trending Replays</div>
+            <v-switch
+              v-model="blurNSFW"
+              label="Blur NSFW thumbnails"
+              color="primary"
+              hide-details
+              dense
+              inset
+            />
+          </div>
+
+          <!-- Display a grid of trending replays -->
+          <trending-replays
+            :limit="6"
+            :blur-nsfw="blurNSFW"
+            :cols="12"
+            :sm="6"
+            :md="4"
+            :lg="3"
+            :xl="2"
+          />
+        </div>
+
+        <!-- Recent Replay Header -->
         <div class="mb-4">
           <div class="d-flex justify-space-between align-end">
             <div class="headline font-weight-light grey--text">Recent Replays</div>
@@ -68,7 +94,7 @@
 
           <!-- Replay Grid -->
           <replay-grid
-            :limit="12"
+            :limit="6"
             :blur-nsfw="blurNSFW"
             :cols="12"
             :sm="6"
@@ -96,6 +122,7 @@
   import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import AboutUs from '@/components/Homepage/AboutUs';
+  import TrendingReplays from '@/components/Replay/TrendingReplays';
   import ReplayGrid from '@/components/Replay/ReplayGrid';
 
   export default {
@@ -122,6 +149,7 @@
     },
 
     components: {
+      TrendingReplays,
       ReplayGrid,
       AboutUs,
       SimpleFooter,
