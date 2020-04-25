@@ -9,14 +9,15 @@
     right
     offset-y
   >
-    <template #activator="{ on }">
-      <v-btn
-        v-on="on"
-        small
-        icon
-      >
-        <v-icon>settings</v-icon>
-      </v-btn>
+    <template #activator="{ on: menu }">
+      <v-tooltip top right>
+        <template #activator="{ on: tooltip }">
+          <v-btn v-on="{ ...menu, ...tooltip }" small icon>
+            <v-icon>settings</v-icon>
+          </v-btn>
+        </template>
+        <span>Chat settings</span>
+      </v-tooltip>
     </template>
 
     <v-card class="mb-3" color="grey darken-4">
