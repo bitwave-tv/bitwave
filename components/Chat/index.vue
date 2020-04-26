@@ -6,108 +6,12 @@
   >
 
     <!-- Chat Header -->
-    <v-sheet
-      id="chat-header"
-      class="d-flex align-center justify-space-between pa-2"
-      color="accentwave"
-    >
-
-      <!-- Viewer List -->
-      <div style="height: 32px;">
-        <ViewerList :page="page" />
-      </div>
-
-      <!-- Chat Label -->
-      <h4
-        @click="addUserTag(page)"
-        class="mx-2 text-truncate"
-        style="cursor: pointer;"
-      >
-        {{ page }}
-      </h4>
-
-      <div class="d-flex">
-
-        <!-- Create Poll Button -->
-        <div v-if="isChannelOwner">
-          <v-menu
-            v-model="showPoll"
-            :close-on-content-click="false"
-            :close-on-click="false"
-            bottom
-            offset-y
-            left
-          >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                small
-                :disabled="showPollClient"
-                color="primary black--text"
-                class="mr-2"
-              >POLL</v-btn>
-            </template>
-
-            <!-- Create Poll Dialog -->
-            <chat-poll
-              id="chat-poll"
-              @close="showPoll = false"
-              @create="createPoll"
-            />
-          </v-menu>
-        </div>
-
-        <!-- Admin Menu -->
-        <v-menu
-          v-if="isAdmin"
-          v-model="adminActionsMenu"
-          :close-on-content-click="false"
-          bottom
-          left
-          offset-y
-          transition="slide-y-transition"
-        >
-          <template #activator="{ on }">
-            <v-btn
-              v-on="on"
-              small
-              icon
-              class="px-0"
-              :disabled="!isAdmin"
-              @click="scrollToBottom(true)"
-            >
-              <v-icon>verified_user</v-icon>
-            </v-btn>
-          </template>
-          <chat-admin-menu @close="adminActionsMenu = false" />
-        </v-menu>
-
-        <!-- Overflow menu -->
-        <v-menu
-          v-model="overflowMenu"
-          :close-on-content-click="true"
-          bottom
-          left
-          offset-y
-          transition="slide-y-transition"
-        >
-          <template #activator="{ on }">
-            <v-btn
-              v-on="on"
-              class="px-0"
-              small
-              icon
-            >
-              <v-icon>more_vert</v-icon>
-            </v-btn>
-          </template>
-          <chat-overflow-menu :channel="page"/>
-        </v-menu>
-
-      </div>
-
-    </v-sheet>
-
+    <chat-header
+      :page="page"
+      :is-channel-owner="isChannelOwner"
+      @add-channel-tag="addUserTag( page )"
+      @create-poll="createPoll"
+    />
 
     <!-- TODO: move structure and logic to subcomponent -->
     <add-ons style="position: relative;">
@@ -172,16 +76,13 @@
   import socketio from 'socket.io-client';
 
   import AddOns from '@/components/Chat/AddOns';
+  import ChatHeader from '@/components/Chat/ChatHeader';
   import ChatMessages from '@/components/Chat/ChatMessages';
   import ChatInput from '@/components/Chat/ChatInput';
-  import ChatPoll from '@/components/Chat/ChatPoll';
-  import ViewerList from '@/components/Chat/ViewerList';
 
   const ChatPollVote = async () => await import ( '@/components/Chat/ChatPollVote' );
   const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
   const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
-  const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
-  const ChatOverflowMenu = async () => await import ( '@/components/Chat/ChatOverflowMenu' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { Chat } from '@/store/chat';
@@ -222,15 +123,12 @@
 
     components: {
       AddOns,
+      ChatHeader,
       ChatInput,
       ChatMessages,
-      ChatPoll,
-      ViewerList,
-      ChatOverflowMenu,
       ChatPollVote,
       ChatRate,
       ViewRate,
-      ChatAdminMenu,
     },
 
     data() {
@@ -250,11 +148,8 @@
         ignoreList: [],
         ignoreChannelList: [],
 
-        showChatSettings: false,
-
         voicesListTTS: [],
 
-        showPoll: false,
         showPollClient: false,
         pollData: {
           channel: '',
@@ -302,9 +197,6 @@
           average: 0,
           total: 0,
         },
-
-        adminActionsMenu: false,
-        overflowMenu: false,
       }
     },
 
@@ -1101,12 +993,6 @@
       },
     },
 
-    async created () {
-      // Hydrate chat from SSR or API
-      /*if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
-      else await this.httpHydrate();*/
-    },
-
     async mounted () {
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
 
@@ -1209,7 +1095,7 @@
 
     &::-webkit-scrollbar-track
     {
-      -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,0.25);
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.25);
       border-radius: 0;
       background-color: #0a0a0a;
     }
@@ -1223,7 +1109,7 @@
     &::-webkit-scrollbar-thumb
     {
       border-radius: 0;
-      -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,.25);
+      box-shadow: inset 0 0 4px rgba(0,0,0,.25);
       background-color: #333;
     }
   }
