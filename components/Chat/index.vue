@@ -942,7 +942,6 @@
     computed: {
       ...mapGetters({
         isAuth       : VStore.$getters.isAuth,
-        isAdmin      : VStore.$getters.isAdmin,
         user         : VStore.$getters.getUser,
         _username    : VStore.$getters.getUsername,
         getChannelViews : VStore.$getters.getChannelViews,
