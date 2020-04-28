@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.13.1",
+  "version": "1.13.2",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "scripts": {
@@ -42,7 +42,7 @@
     "nuxt": "^2.12.2",
     "sass-loader": "^8.0.2",
     "socket.io-client": "^2.3.0",
-    "video.js": "github:bitwave-tv/video.js#perf/fix-request-animation-frame",
+    "video.js": "github:bitwave-tv/video.js#dev",
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.1.1",
