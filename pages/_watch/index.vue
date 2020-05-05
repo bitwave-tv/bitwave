@@ -142,7 +142,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapMutations } from 'vuex';
 
   import { Chat as ChatStore } from '@/store/chat';
   import { VStore } from '@/store';
@@ -392,17 +392,6 @@
       ...mapMutations(ChatStore.namespace,{
         setDisplayChat: ChatStore.$mutations.setDisplayChat,
       }),
-
-      ...mapActions( Player.namespace, {
-      }),
-
-      /*async openPiP () {
-        try {
-          await this.player.requestPictureInPicture();
-        } catch ( error ) {
-          console.error( error.message );
-        }
-      },*/
     },
 
     async asyncData ( { $axios, store, params, error } ) {
