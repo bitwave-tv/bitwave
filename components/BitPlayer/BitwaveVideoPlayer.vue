@@ -431,6 +431,8 @@
 
         // Always reload when source is changed
         // Ensures that a stream will restart after brief drop out.
+        this.url  = newSource.url;
+        this.type = newSource.type;
         this.reloadPlayer();
       },
     },
