@@ -363,7 +363,7 @@
         }
 
         // Detect source change
-        else if ( this.url !== url  || this.type !== type ) {
+        else if ( this.source.url !== url  || this.source.type !== type ) {
           this.setSource({ url, type });
         }
 

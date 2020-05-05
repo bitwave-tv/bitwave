@@ -331,7 +331,7 @@
           console.log(`Player is not initialized yet`);
           return;
         }
-        console.log(`Reloading player source`);
+        console.log(`Reloading player source: ${this.url} / ${this.type}`);
         this.player.poster = this.poster;
         this.player.src( { src: this.url, type: this.type } );
       },
@@ -431,6 +431,7 @@
 
         // Always reload when source is changed
         // Ensures that a stream will restart after brief drop out.
+        console.log( `old URL: ${this.url}, NEW: ${newSource.url}` );
         this.url  = newSource.url;
         this.type = newSource.type;
         this.reloadPlayer();
