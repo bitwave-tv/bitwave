@@ -459,7 +459,7 @@
 </script>
 
 <style lang='scss'>
-  @import "~assets/style/stream-player.scss";
+/*  @import "~assets/style/stream-player.scss";
 
   .detach-player {
     position: fixed;
@@ -483,5 +483,5 @@
     transform: translateY( -100% );
     transition: .1s;
     background-color: rgba(0,0,0,.75);
-  }
+  }*/
 </style>
