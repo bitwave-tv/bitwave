@@ -10,9 +10,9 @@
     offset-y
   >
     <template #activator="{ on: menu }">
-      <v-tooltip top right>
+      <v-tooltip top :open-delay="500">
         <template #activator="{ on: tooltip }">
-          <v-btn v-on="{ ...menu, ...tooltip }" small icon>
+          <v-btn v-on="{ ...tooltip, focus: () => true, ...menu }" small icon>
             <v-icon>settings</v-icon>
           </v-btn>
         </template>

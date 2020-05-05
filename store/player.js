@@ -9,6 +9,9 @@ const saveToLocalStorage = ( values ) => {
 const $states = {
   // Player properties
   source: 'VIDEO_SRC',
+  poster: 'VIDEO_POSTER',
+
+  inPiP: 'IS_IN_PIP',
 
   // Player options
   keepLive: 'KEEP_LIVE',
@@ -24,6 +27,9 @@ const $getters = {
 
 const $mutations = {
   setSource: 'SET_VIDEO_SRC',
+  setPoster: 'SET_VIDEO_POSTER',
+
+  setPiP: 'SET_PIP',
 
   setKeepLive: 'SET_KEEP_LIVE',
   setDisableBumps: 'SET_DISABLE_BUMPS',
@@ -39,6 +45,9 @@ const $actions = {
 // Create Store
 export const state = () => ({
   [$states.source]: { url: '', type: '' },
+  [$states.poster]: '',
+
+  [$states.inPiP]: false,
 
   [$states.keepLive]: false,
   [$states.disableBumps]: false,
@@ -56,6 +65,14 @@ export const getters = {
 export const mutations = {
   [$mutations.setSource] ( state, data ) {
     state[$states.source] = data;
+  },
+
+  [$mutations.setPoster] ( state, data ) {
+    state[$states.poster] = data;
+  },
+
+  [$mutations.setPiP] ( state, data ) {
+    state[$states.inPiP] = data;
   },
 
   [$mutations.setKeepLive] ( state, data ) {
