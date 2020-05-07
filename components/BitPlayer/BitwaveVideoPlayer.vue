@@ -8,6 +8,7 @@
         id="streamplayer"
         class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
         controls
+        playsinline
         :autoplay="autoplay"
         preload="auto"
         :poster="posterCacheBusted"
