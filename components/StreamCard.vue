@@ -48,7 +48,7 @@
           <template v-if="nsfw">
             <v-divider vertical class="mx-2"/>
             <div class="d-flex align-center">
-              <div class="red--text font-weight-bold">NSFW</div>
+              <div class="green--text font-weight-bold">NSFQ</div>
             </div>
           </template>
 

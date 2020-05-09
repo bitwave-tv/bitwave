@@ -24,7 +24,7 @@
         </div>
         <div class="d-flex align-center">
           <template v-if="nsfw">
-            <div class="font-weight-bold red--text body-2">NSFW</div>
+            <div class="font-weight-bold green--text body-2">NSFQ</div>
             <v-divider vertical class="mx-2"/>
           </template>
           <KickStreamButton

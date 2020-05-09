@@ -10,7 +10,7 @@
           <v-spacer />
           <v-switch
             v-model="blurNSFW"
-            label="Blur NSFW thumbnails"
+            label="Blur NSFQ thumbnails"
             color="primary"
             hide-details
             dense
