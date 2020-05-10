@@ -174,7 +174,7 @@
             <v-flex shrink>
               <v-switch
                 v-model="streamData.nsfw"
-                label="NSFW"
+                label="NSFQ"
                 color="primary"
                 hide-details
                 dense
