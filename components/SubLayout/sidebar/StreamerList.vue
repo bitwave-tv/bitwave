@@ -25,7 +25,7 @@
           exact
           @click="onClick"
           no-prefetch
-          :title="`${user.nsfw ? '(NSFW) ' : ''}${user.name}`"
+          :title="`${user.nsfw ? '(NSFQ) ' : ''}${user.name}`"
         >
           <v-list-item-avatar
             :color="user.live ? user.nsfw ? '#ff4b66' : '#13a9fe' : '#000'"

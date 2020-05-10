@@ -52,7 +52,7 @@
         <v-divider />
 
         <v-card-actions>
-          <span>NSFW:</span>
+          <span>NSFQ:</span>
           <v-spacer />
           <v-btn
             color="blue"
