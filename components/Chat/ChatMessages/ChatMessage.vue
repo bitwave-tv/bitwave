@@ -165,7 +165,7 @@
     .username {
       font-weight: 500;
       color: #9e9e9e;
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'IBM Plex Sans', sans-serif !important;
       cursor: pointer;
     }
 
