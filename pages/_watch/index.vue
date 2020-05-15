@@ -38,59 +38,53 @@
 
 
     <!-- Video JS -->
-    <v-responsive :aspect-ratio="16/9">
-      <v-sheet
-        color="grey darken-4"
-        class="fill-height"
-        v-intersect="{
+    <div class="d-flex justify-space-around">
+      <v-responsive
+        :aspect-ratio="16/9"
+        max-width="calc(150vh - 98px)"
+      >
+        <v-sheet
+          color="grey darken-4"
+          class="fill-height"
+          v-intersect="{
           handler: onIntersect,
           options: {
             threshold: [ 0, 0.5, 1.0 ],
           },
         }"
-      >
-
-        <!-- Bitwave Stream Player -->
-        <bitwave-video-player
-          :live="live"
-          :autoplay="live || !disableBumps"
-          :docked="smartDetach"
-          @ended="onEnded"
-          @stats="trackWatchTime"
         >
-          <template #title>
-             <h5 class="white--text body-2 ml-2">{{ name }}</h5>
-          </template>
 
-          <!--<template #addon>
-            <v-btn
-              color="white"
-              text
-              icon
-              pa-0
-              @click="openPiP"
-            >
-              <v-icon color="white">picture_in_picture</v-icon>
-            </v-btn>
-          </template>-->
+          <!-- Bitwave Stream Player -->
+          <bitwave-video-player
+            :live="live"
+            :autoplay="live || !disableBumps"
+            :docked="smartDetach"
+            @ended="onEnded"
+            @stats="trackWatchTime"
+          >
+            <template #title>
+              <h5 class="white--text body-2 ml-2">{{ name }}</h5>
+            </template>
 
-        </bitwave-video-player>
+          </bitwave-video-player>
 
-        <v-img
-          v-if="smartDetach"
-          lazy-src="https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg"
-          :src="posterCacheBusted"
-          height="100%"
-          style="filter: grayscale(80%);"
-        >
-          <div class="fill-height" style="background-image: radial-gradient( transparent 50%, black )"></div>
-        </v-img>
-      </v-sheet>
+          <div
+            v-if="smartDetach"
+            style="height: 100%; width: 100%;"
+          >
+            <div
+              id="bw-player-thumbnail"
+              :style="`background-image: url('${posterCacheBusted}\');`"
+            ></div>
+          </div>
 
-      <!-- Video Overlay -->
-      <stickers />
+        </v-sheet>
 
-    </v-responsive>
+        <!-- Video Overlay -->
+        <stickers />
+
+      </v-responsive>
+    </div>
 
 
     <!-- Chat -->
@@ -683,7 +677,7 @@
 
   .detach-player {
     position: fixed;
-    left: 80px;
+    right: 0;
     top: 48px;
     margin: 1rem;
     width: 20rem;
@@ -703,5 +697,25 @@
     transform: translateY( -100% );
     transition: .1s;
     background-color: rgba(0,0,0,.75);
+  }
+
+  #bw-player-thumbnail {
+    position: relative;
+    filter: grayscale(80%);
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+
+    &::after {
+      content: ' ';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left:0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient( transparent 50%, black );
+    }
   }
 </style>
