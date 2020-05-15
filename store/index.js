@@ -259,13 +259,16 @@ export const mutations = {
   },
 
   [$mutations.setUserList] ( state, data ) {
-    state[$states.userlist] = Object.keys( data ).map( key => {
-      return {
-        user: key,
-        data: data[key].data,
-        watching: data[key].watching,
-      };
-    }).reverse();
+    state[$states.userlist] = Object
+      .keys( data )
+      .map( key => {
+        return {
+          user: key,
+          data: data[key].data,
+          watching: data[key].watching,
+        };
+      })
+      .reverse();
   },
 
   setAvatar( state, url ) {

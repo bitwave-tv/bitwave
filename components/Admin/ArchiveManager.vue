@@ -146,7 +146,7 @@
       },
 
       async deleteArchive ( archive ) {
-        const endpoint = `https://api.bitwave.tv/v1/archives/${archive.id}`;
+        const endpoint = `https://api.bitwave.tv/v1/replays/${archive.id}`;
         const options = { data: { user: this.username } };
 
         try {

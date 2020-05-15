@@ -97,39 +97,40 @@
               </v-btn>
             </template>
 
-            <!-- Edit Stream Title -->
-            <template
-              v-if="channelOwner"
-              v-slot:item.title="{ item }"
-            >
-              <v-edit-dialog
-                :return-value.sync="item.title"
-                @save="saveArchiveEdit( item )"
-                @cancel="cancelArchiveEdit"
-              >
-                <span class="overline">[{{ item.duration }}]</span>
-                <span class="">{{ item.title }}</span>
-                <template v-slot:input>
-                  <v-text-field
-                    v-model="item.title"
-                    label="Edit Stream Title"
-                    single-line
-                    counter
-                  />
-                </template>
-              </v-edit-dialog>
-            </template>
-
             <!-- Stream Title -->
             <template
-              v-if="!channelOwner"
               v-slot:item.title="{ item }"
             >
               <div>
-                <span class="overline">[{{ item.duration }}]</span>
-                <span class="">{{ item.title }}</span>
+
+                <!-- Edit Stream Title -->
+                <v-edit-dialog
+                  v-if="channelOwner"
+                  :return-value.sync="item.title"
+                  @save="saveArchiveEdit( item )"
+                  @cancel="cancelArchiveEdit"
+                >
+                  <span class="overline">[{{ item.duration }}]</span>
+                  <span class="">{{ item.title }}</span>
+                  <template v-slot:input>
+                    <v-text-field
+                      v-model="item.title"
+                      label="Edit Stream Title"
+                      single-line
+                      counter
+                    />
+                  </template>
+                </v-edit-dialog>
+
+                <!-- Stream Title -->
+                <div v-else>
+                  <span class="overline">[{{ item.duration }}]</span>
+                  <span class="">{{ item.title }}</span>
+                </div>
+
               </div>
             </template>
+
 
             <!-- Action Items -->
             <template v-slot:item.action="{ item }">
@@ -395,7 +396,7 @@
           return;
         }
 
-        const endpoint = `https://api.bitwave.tv/v1/archives/${archive.id}`;
+        const endpoint = `https://api.bitwave.tv/v1/replays/${archive.id}`;
         const options = {
           data: {
             user: this.username,
@@ -505,6 +506,7 @@
           user: data.user,
           thumbnails: data.thumbnails,
           views: data.views,
+          ref: doc.ref,
         };
       },
 
