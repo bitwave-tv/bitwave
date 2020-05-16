@@ -323,9 +323,6 @@ export const actions = {
       dispatch( $actions.updateViewers ),
     ];
 
-    // Hydrate emotes for logged in users
-    // if ( authUser && user ) runParallel.push( dispatch( `${Chat.namespace}/${Chat.$actions.updateEmoteList}` ) );
-
     // Run all our API actions in parallel
     await Promise.all( runParallel );
   },
@@ -380,7 +377,7 @@ export const actions = {
     commit( $mutations.setAuth, auth );
     this.$cookies.set( 'auth',  auth );
 
-    user =  JSON.parse( JSON.stringify( user ) );
+    user = JSON.parse( JSON.stringify( user ) );
 
     if ( unsubscribeUser ) {
       console.warn( 'Already had firebase listener!' );

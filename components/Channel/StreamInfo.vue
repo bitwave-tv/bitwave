@@ -136,7 +136,7 @@
 
       <!-- Debug Stream -->
       <v-tab-item
-        v-if="featureFlag && !replay"
+        v-if="!replay"
       >
         <div
           style="min-height: 500px"

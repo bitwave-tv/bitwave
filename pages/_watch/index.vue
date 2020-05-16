@@ -668,6 +668,7 @@
     beforeDestroy () {
       window.removeEventListener( 'orientationchange', this.onOrientationChange );
       if ( this.streamDataListener ) this.streamDataListener();
+      if ( this.offlineResetInterval ) clearInterval( this.offlineResetInterval );
     },
   }
 </script>

@@ -1,19 +1,32 @@
+$accent-color: #13a9fe;
+
 .video-js {
-  font-size: 11px;
+  font-size: 12px;
   overflow: hidden;
 
   // Control Bar (container)
   .vjs-control-bar {
-    background-color: rgba(20, 20, 20, 0.45);
+    background: none;
+
+    &::before {
+      position: absolute;
+      bottom: 0;
+      content: '';
+      height: 5rem;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.45);
+      background: linear-gradient(0deg, rgba(0,0,0,.85) 10%, rgba(0,0,0,0) 100%);
+    }
   }
 
   // Progress Bar
   .vjs-progress-control.vjs-control {
     position: absolute;
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
-    height: 50%;
-    transform: translateY(-75%);
+    height: 1rem;
+    bottom: 90%;
 
     // Circle play head
     .vjs-play-progress::before {
@@ -29,15 +42,14 @@
 
     // Progress Slider
     .vjs-slider {
-      margin: 0 5px;
-      top: 50%;
+      margin: 0 1rem;
     }
   }
 
   // Load progress color
   .vjs-load-progress,
   .vjs-load-progress div {
-    background-color: rgba(60, 60, 60, 0.5);
+    background-color: rgba(160, 160, 160, 0.5);
   }
 
   // Progress Bar Background
@@ -47,13 +59,13 @@
 
   // Primary Color Progress
   .vjs-slider-bar {
-    background-color: #ffeb3b;
+    background-color: $accent-color;
   }
 
   // Inner Progress Bar
   .vjs-play-progress {
-    background-color: #ffeb3b;
-    color: #ffeb3b;
+    background-color: $accent-color;
+    color: $accent-color;
   }
 
   // Spacer
@@ -89,7 +101,7 @@
 
 // Tooltip
 .vjs-mouse-display .vjs-time-tooltip {
-  color: #ffeb3b;
+  color: $accent-color;
 }
 
 // Tooltip
@@ -107,16 +119,20 @@
 // Transitions control bar between active / inactive
 .vjs-has-started {
   .vjs-control-bar {
-    //transform: translateY(0);
     opacity: 1;
-    transition: .3s;
+    transition: .1s;
   }
 
   &.vjs-user-inactive.vjs-playing {
     .vjs-control-bar {
-      //transform: translateY(127%);
       opacity: 0;
       transition: .3s;
+    }
+  }
+
+  &.vjs-user-active.vjs-playing {
+    .vjs-control-bar {
+
     }
   }
 }
@@ -136,7 +152,7 @@
 
 
 a {
-  color: yellow;
+  color: $accent-color;
   text-decoration: none;
 }
 

@@ -240,14 +240,14 @@
         };
 
         // Player is active (mouseover)
-        this.player.on( 'useractive', () => {
+        /*this.player.on( 'useractive', () => {
           volumeControlElement.addEventListener( 'wheel', handleVolumeScroll );
         });
 
         // Player is inactive
         this.player.on( 'userinactive', () => {
           volumeControlElement.removeEventListener( 'wheel', handleVolumeScroll );
-        });
+        });*/
 
         // Add event listener by default in case user loads with cursor over stream
         volumeControlElement.addEventListener( 'wheel', handleVolumeScroll, true );
@@ -270,7 +270,7 @@
         controlBar.customControlSpacer.on( 'mouseenter', removeVolumePanelHover );
 
         // remove UI instantly when mouse leaves player
-        this.player.on( 'mouseleave', () => this.player.userActive(false) );
+        this.player.on( 'mouseleave', () => this.$nextTick( () => this.player.userActive( false ) ) );
         //--------------------------------------------------------------------
 
 
@@ -289,6 +289,7 @@
           this.setPiP( true );
           this.setDetach( false );
         });
+
         this.player.on( 'leavepictureinpicture', () => {
           this.setPiP( false );
         });
