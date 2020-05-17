@@ -227,7 +227,10 @@
 
       // Get chat data for chat
       const channel = streams.live.length > 0 ? streams.live[0].name : 'error';
-      const chatMessages = await getChatHydration( channel );
+      let chatMessages = null;
+      if ( process.client ) {
+        chatMessages = await getChatHydration( channel );
+      }
 
       return {
         live: streams.live,

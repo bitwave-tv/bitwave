@@ -79,7 +79,7 @@ export default async ( { app, store } ) => {
     // Listen for authentication changes
     listenToAuthState( async user => {
       if ( user ) await store.dispatch( VStore.$actions.login, user );
-      else await store.dispatch( VStore.$actions.logout );
+      // else await store.dispatch( VStore.$actions.logout );
     });
 
     // Listen to the configuration, and dispatch updates
