@@ -997,6 +997,8 @@
 
       await this.connectToChat();
 
+      if ( !this.messages ) await this.httpHydrate();
+
       // Add listener for voice changes, then update voices.
       this.voicesListTTS = speechSynthesis.getVoices();
       speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();

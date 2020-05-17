@@ -570,6 +570,7 @@
           if ( global === null ) return null;
           const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
           if ( data && data.success ) return data.data;
+          return [];
         } catch ( error ) {
           console.log( `Chat hydration request failed` );
           console.error( error.message );
@@ -578,7 +579,7 @@
       };
 
       // Get chat data for chat
-      let chatMessages = [];
+      let chatMessages = null;
       if ( process.client ) {
         chatMessages = await getChatHydration( channel );
       }
@@ -586,7 +587,7 @@
       return {
         channel: channel,
         ...channelData.data,
-        chatMessages,
+        chatMessages: chatMessages,
       };
     },
 
