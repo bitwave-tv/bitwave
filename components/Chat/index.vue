@@ -696,7 +696,8 @@
 	voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
 
 	speechSynthesis.speak( voice );
-	setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout );
+	if(this.getTtsTimeout > 0)
+	  setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
       },
 
 

@@ -126,6 +126,31 @@
           hide-details
         />
       </v-list-item>
+
+      <v-list-item>
+        <v-slider
+          :disabled="!useTts"
+          label="Timeout"
+          v-model="ttsTimeout"
+          class="align-center"
+          :max="60"
+          :min="0"
+          :step="0.5"
+          hide-details
+        >
+
+	  <template #append>
+            <v-text-field
+              v-model="ttsTimeout"
+              class="mt-0 pt-0"
+              hide-details
+              single-line
+              type="number"
+              style="width: 50px"
+            />
+          </template>
+	</v-slider>
+      </v-list-item>
     </div>
   </div>
 </template>
@@ -156,6 +181,7 @@
         setUseIgnore      : Chat.$mutations.setUseIgnore,
         setTrollTts       : Chat.$mutations.setTrollTts,
         setTtsRate        : Chat.$mutations.setTtsRate,
+        setTtsTimeout     : Chat.$mutations.setTtsTimeout,
         setTtsVolume      : Chat.$mutations.setTtsVolume,
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
@@ -176,6 +202,7 @@
         getUseIgnore      : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsTimeout     : Chat.$states.ttsTimeout,
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         getNotify         : Chat.$states.notify,
@@ -228,6 +255,14 @@
           this.$analytics.logEvent( 'tts_rate', { value: val } );
         },
         get () { return this.getTtsRate }
+      },
+
+      ttsTimeout: {
+        set ( val ) {
+          this.setTtsTimeout( val );
+          this.$analytics.logEvent( 'tts_timeout', { value: val } );
+        },
+        get () { return this.getTtsTimeout }
       },
 
       ttsVolume: {
