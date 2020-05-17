@@ -578,7 +578,7 @@
       };
 
       // Get chat data for chat
-      let chatMessages = null;
+      let chatMessages = [];
       if ( process.client ) {
         chatMessages = await getChatHydration( channel );
       }

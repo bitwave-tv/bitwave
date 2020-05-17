@@ -210,8 +210,6 @@
         }
       };
 
-      const streams = await getStreams();
-
       const getChatHydration = async ( channel ) => {
         try {
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
@@ -225,9 +223,11 @@
         return null;
       };
 
+      const streams = await getStreams();
+
       // Get chat data for chat
       const channel = streams.live.length > 0 ? streams.live[0].name : 'error';
-      let chatMessages = null;
+      let chatMessages = [];
       if ( process.client ) {
         chatMessages = await getChatHydration( channel );
       }
