@@ -586,7 +586,7 @@
       return {
         channel: channel,
         ...channelData.data,
-        chatMessages: chatMessages,
+        chatMessages,
       };
     },
 

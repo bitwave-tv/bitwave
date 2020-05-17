@@ -220,14 +220,14 @@
           console.log( `Chat hydration request failed` );
           console.error( error.message );
         }
-        return null;
+        return [];
       };
 
       const streams = await getStreams();
 
       // Get chat data for chat
       const channel = streams.live.length > 0 ? streams.live[0].name : 'error';
-      let chatMessages = [];
+      let chatMessages = null;
       if ( process.client ) {
         chatMessages = await getChatHydration( channel );
       }
