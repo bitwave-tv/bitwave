@@ -26,6 +26,7 @@ const $states = {
   useIgnore  : 'USE_IGNORE',
   trollTts   : 'TROLL_TTS',
   ttsRate    : 'TTS_RATE',
+  ttsTimeout : 'TTS_TIMEOUT',
   ttsVolume  : 'TTS_VOLUME',
   ttsVoice   : 'TTS_VOICE',
   notify     : 'NOTIFY',
@@ -64,6 +65,7 @@ const $mutations = {
   setUseIgnore  : 'SET_USE_IGNORE',
   setTrollTts   : 'SET_TROLL_TTS',
   setTtsRate    : 'SET_TTS_RATE',
+  setTtsTimeout : 'SET_TTS_TIMEOUT',
   setTtsVolume  : 'SET_TTS_VOLUME',
   setTtsVoice   : 'SET_TTS_VOICE',
   setNotify     : 'SET_NOTIFY',
@@ -115,6 +117,7 @@ export const state = () => ({
   [$states.useIgnore]  : true,
   [$states.trollTts]   : true,
   [$states.ttsRate]    : 10,
+  [$states.ttsTimeout] : 0,
   [$states.ttsVolume]  : 10,
   [$states.ttsVoice]   : 1,
   [$states.notify]     : true,
@@ -192,6 +195,11 @@ export const mutations = {
   // Set TTS Rate
   [$mutations.setTtsRate] ( state, data ) {
     state[$states.ttsRate] = JSON.parse( data );
+  },
+
+  // Set TTS Timeout
+  [$mutations.setTtsTimeout] ( state, data ) {
+    state[$states.ttsTimeout] = JSON.parse( data );
   },
 
   // Set TTS Volume

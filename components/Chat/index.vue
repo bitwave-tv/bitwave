@@ -696,6 +696,9 @@
         voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
 
         speechSynthesis.speak( voice );
+        if ( this.getTtsTimeout > 0 ) {
+          setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );  
+        }
       },
 
 
@@ -954,6 +957,7 @@
         useIgnore         : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsTimeout     : Chat.$states.ttsTimeout,	
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         notify            : Chat.$states.notify,
