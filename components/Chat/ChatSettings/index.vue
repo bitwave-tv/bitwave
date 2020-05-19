@@ -47,7 +47,7 @@
   const SettingsMenu = async () => await import( '@/components/Chat/ChatSettings/SettingsMenu' );
 
   export default {
-    name: 'index',
+    name: 'ChatSettingsMenu',
 
     components: {
       SettingsMenu,

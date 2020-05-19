@@ -183,7 +183,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'index',
+    name: 'LoginDialog',
 
     data() {
       return {

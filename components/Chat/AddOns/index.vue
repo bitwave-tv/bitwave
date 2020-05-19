@@ -8,7 +8,7 @@
 
 <script>
   export default {
-    name: 'index',
+    name: 'ChatAddOns',
 
     data() {
       return {};
