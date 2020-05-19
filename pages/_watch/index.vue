@@ -5,37 +5,12 @@
   }">
 
     <!-- Streamer Top Bar -->
-    <v-sheet
-      class="py-2 px-3 hide-scrollbar bw-channel-topbar"
-      color="accentwave"
-      tile
-    >
-      <div class="d-flex align-center justify-space-between">
-        <div class="d-flex align-center grey--text">
-          <v-avatar size="32">
-            <img
-              v-if="avatar"
-              :src="`${avatar}`"
-              :alt="name"
-            />
-            <v-icon v-else>warning</v-icon>
-          </v-avatar>
-          <div class="mx-2">{{ name }}</div>
-        </div>
-        <div class="d-flex align-center">
-          <template v-if="nsfw">
-            <div class="font-weight-bold green--text body-2">NSFQ</div>
-            <v-divider vertical class="mx-2"/>
-          </template>
-          <KickStreamButton
-            v-if="isAdmin"
-            :streamer="name"
-          />
-          <FollowButton :streamer-id="owner" />
-        </div>
-      </div>
-    </v-sheet>
-
+    <stream-top-bar
+      :avatar="avatar"
+      :name="name"
+      :nsfw="nsfw"
+      :streamer-id="owner"
+    />
 
     <!-- Video JS -->
     <div class="d-flex justify-space-around">
@@ -86,7 +61,6 @@
       </v-responsive>
     </div>
 
-
     <!-- Chat -->
     <div
       v-if="displayChat"
@@ -121,7 +95,6 @@
       </v-btn>
     </v-fab-transition>
 
-
     <!-- Stream Info -->
     <stream-info
       :name="name"
@@ -145,11 +118,10 @@
   import { db } from '@/plugins/firebase.js';
 
   import Chat from '@/components/Chat';
-  import FollowButton from '@/components/FollowButton';
+  import StreamTopBar from '@/components/Channel/StreamTopBar';
   import StreamInfo from '@/components/Channel/StreamInfo';
   import BitwaveVideoPlayer from '@/components/BitPlayer/BitwaveVideoPlayer';
 
-  const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
   const Stickers = async () => await import ( '@/components/effects/Stickers' );
 
   export default {
@@ -181,9 +153,8 @@
 
     components: {
       Stickers,
-      KickStreamButton,
+      StreamTopBar,
       StreamInfo,
-      FollowButton,
       Chat,
       BitwaveVideoPlayer,
     },
@@ -192,7 +163,6 @@
       return {
         mounted: false,
         landscape: false,
-        initialized: false,
         showStreamStats: false,
         streamDataListener: null,
         recentBumps: [],
@@ -390,7 +360,6 @@
 
     async asyncData ( { $axios, store, params, error } ) {
       const channel = params.watch;
-
 
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
@@ -592,6 +561,11 @@
     },
 
     computed: {
+      ...mapGetters({
+        username : VStore.$getters.getUsername,
+        user     : VStore.$getters.getUser,
+      }),
+
       ...mapState(Player.namespace, {
         source : Player.$states.source,
         inPiP: Player.$states.inPiP,
@@ -602,12 +576,6 @@
 
       ...mapState(ChatStore.namespace, {
         displayChat: ChatStore.$states.displayChat
-      }),
-
-      ...mapGetters({
-        username : VStore.$getters.getUsername,
-        user     : VStore.$getters.getUser,
-        isAdmin  : VStore.$getters.isAdmin,
       }),
 
       posterCacheBusted () {
@@ -656,9 +624,7 @@
 
     async mounted () {
       // this.setSource({ url: this.url, type: this.type });
-      this.initialized = true;
       this.getStreamData(); // Get stream data
-
 
       this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       window.addEventListener( 'orientationchange', this.onOrientationChange );
