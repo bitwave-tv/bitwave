@@ -117,7 +117,7 @@
 
 <script>
   import StreamGrid from '@/components/StreamGrid'
-  import BannerVideo from '@/components/BannerVideo';
+  import BannerVideo from '@/components/Homepage/BannerVideo';
   import { Chat as ChatStore } from '@/store/chat';
   import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
