@@ -69,7 +69,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'index',
+    name: 'UserMenu',
 
     components: {
       UserMenu,

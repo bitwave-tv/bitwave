@@ -39,10 +39,11 @@
           const global = store.state[ChatStore.namespace][ChatStore.$states.global];
           const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
           if ( data.success ) return data.data;
+          return [];
         } catch ( error ) {
           console.log( error );
         }
-        return [];
+        return null;
       };
 
       const chatMessages = await getChatHydration();

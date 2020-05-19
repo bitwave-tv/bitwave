@@ -150,7 +150,7 @@
   import comment from '@/components/Replay/ReplayComments/comment';
 
   export default {
-    name: 'index',
+    name: 'ReplayComments',
 
     components: {
       comment,
