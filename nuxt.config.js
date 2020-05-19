@@ -305,7 +305,13 @@ module.exports = {
   */
   sentry: {
     dsn: process.env.SENTRY_DSN,
-    config: {}, // Additional config
+    config: {
+      publishRelease: true,
+      sourceMapStyle: 'hidden-source-map',
+      config: {
+        release: pkg.version,
+      },
+    },
   },
 
   /*
