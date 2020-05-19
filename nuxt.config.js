@@ -308,9 +308,7 @@ module.exports = {
     config: {
       publishRelease: true,
       sourceMapStyle: 'hidden-source-map',
-      config: {
-        release: pkg.version,
-      },
+      release: pkg.version,
     },
   },
 
