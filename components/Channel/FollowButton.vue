@@ -30,7 +30,7 @@
     name: 'FollowButton',
 
     props: {
-      'streamerId': String,
+      streamerId: { type: String },
     },
 
     data() {
@@ -45,7 +45,9 @@
 
     methods: {
       async getFollowCount () {
-        const ref = db.collection( 'followers' ).doc( `${this.streamerId}` );
+        const ref = db
+          .collection( 'followers' )
+          .doc( `${this.streamerId}` );
         const doc = await ref.get();
         if ( !doc.exists ) {
           this.followCount = 0;
@@ -63,7 +65,9 @@
       },
 
       async checkIfFollowing (uid) {
-        const followerRef = db.collection( 'followers' ).doc( `${uid}_${this.streamerId}` );
+        const followerRef = db
+          .collection( 'followers' )
+          .doc( `${uid}_${this.streamerId}` );
         const doc = await followerRef.get();
         this.following = doc.exists;
         return doc.exists;

@@ -20,6 +20,7 @@
           </div>
 
           <div class="d-flex align-center">
+
             <!-- NSFW Icon -->
             <template v-if="nsfw">
               <div class="font-weight-bold green--text body-2">NSFQ</div>
@@ -36,6 +37,7 @@
             <FollowButton
               :streamer-id="streamerId"
             />
+
           </div>
         </div>
       </v-sheet>
@@ -46,9 +48,7 @@
 <script>
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
-
-  import FollowButton from '@/components/FollowButton';
-
+  import FollowButton from '@/components/Channel/FollowButton';
   const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
 
   export default {
@@ -56,14 +56,13 @@
 
     components: {
       FollowButton,
-
       KickStreamButton,
     },
 
     props: {
-      avatar: { type: String },
-      name: { type: String },
-      nsfw: { type: Boolean },
+      avatar:     { type: String },
+      name:       { type: String },
+      nsfw:       { type: Boolean },
       streamerId: { type: String },
     },
 
@@ -76,6 +75,5 @@
         isAdmin  : VStore.$getters.isAdmin,
       }),
     },
-
   };
 </script>

@@ -172,7 +172,7 @@
   import { db } from '@/plugins/firebase.js';
 
   import Chat from '~/components/Chat';
-  import FollowButton from '@/components/FollowButton';
+  import FollowButton from '@/components/Channel/FollowButton';
   import ReplayInfo from '@/components/Replay/ReplayInfo';
 
   import { Chat as ChatStore } from '@/store/chat';
