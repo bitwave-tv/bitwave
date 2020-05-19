@@ -339,7 +339,7 @@
 </template>
 
 <script>
-  import VueMarkdown from '~/components/VueMarkdown';
+  import VueMarkdown from '@/components/VueMarkdown';
   import { db } from '@/plugins/firebase.js';
 
   export default {

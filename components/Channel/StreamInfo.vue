@@ -165,14 +165,14 @@
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = async () => await import ( '@/components/Channel/ShareStream' );
-  const EditStreamData = async () => await import ( '@/components/EditStreamData' );
+  const EditStreamData = async () => await import ( '@/components/Channel/EditStreamData' );
   const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
   const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
 
   const DebugStream = async () => await import ( '@/components/Analytics/DebugStream' );
 
   export default {
-    name: 'StreamInfo',
+    name: 'LiveStreamInfo',
 
     components: {
       SimpleFooter,

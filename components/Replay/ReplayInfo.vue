@@ -189,7 +189,7 @@
   const DebugStream = async () => await import ( '@/components/Analytics/DebugStream' );
 
   export default {
-    name: 'StreamInfo',
+    name: 'ReplayStreamInfo',
 
     components: {
       SimpleFooter,

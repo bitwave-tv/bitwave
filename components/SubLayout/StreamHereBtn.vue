@@ -19,7 +19,7 @@
 
 <script>
   export default {
-    name: 'StreamInfo',
+    name: 'StreamHereBtn',
 
     data () {
       return {};

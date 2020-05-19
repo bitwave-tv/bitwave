@@ -44,7 +44,7 @@
 
       <v-spacer />
 
-      <stream-info />
+      <stream-here-btn />
 
       <notifications />
 
@@ -70,7 +70,7 @@
   import UserMenu from '@/components/SubLayout/UserMenu'
   import sidebar from '@/components/SubLayout/sidebar'
   import Notifications from '@/components/Notifications'
-  import StreamInfo from '@/components/StreamInfo';
+  import StreamHereBtn from '@/components/SubLayout/StreamHereBtn';
   import SystemAlert from '@/components/Alerts/SystemAlert';
 
   const Fireworks = async () => await import( '@/components/effects/fireworks' );
@@ -85,7 +85,7 @@
       UserMenu,
       sidebar,
       Notifications,
-      StreamInfo,
+      StreamHereBtn,
       Fireworks,
     },
 
