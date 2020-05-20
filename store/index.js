@@ -448,10 +448,20 @@ export const actions = {
   },
 
   async [$actions.newVersionAvailable] ( { commit }, latestVersions ) {
+    if ( !latestVersions ) {
+      console.error( 'Missing latestVersions!', latestVersions );
+      return;
+    }
+
     const currentVersion = process.env.VERSION.split('.').map( v => parseInt(v) );
     const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.').map( v => parseInt(v) );
 
     const checkNewVersion = ( currentVersion, newestVersion ) => {
+      if ( !currentVersion || !newestVersion ) {
+        console.error( 'Version number missing!', currentVersion, newestVersion );
+        return false;
+      }
+
       if ( currentVersion[0 ] <  newestVersion[0] )
         return true;
       if ( currentVersion[1]  <  newestVersion[1]

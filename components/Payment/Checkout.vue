@@ -93,6 +93,7 @@
             // No payment method is available.
             // An appropriate error will be shown in the UI.
             console.error( error );
+            this.$sentry.captureException( error );
             this.error = true;
             this.errorMessage = error.message;
             setTimeout( () => this.error = false, 5000 );
@@ -131,6 +132,7 @@
           }
 
         } catch ( error ) {
+          this.$sentry.captureException( error );
           this.error = true;
           this.errorMessage = error.response.data.message;
           this.loading = false

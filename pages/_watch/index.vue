@@ -220,13 +220,16 @@
       },
 
       getStreamData () {
-        const streamer  = ( this.name || this.channel ).toLowerCase();
+        const channel = this.$route.params.watch;
+        const streamer  = ( this.name || channel ).toLowerCase();
         this.streamDataListener = db
           .collection( 'streams' )
           .doc( streamer )
           .onSnapshot(
             async doc => await this.streamDataChanged( doc.data() ),
-            error => console.warn( error )
+            error => {
+              this.$sentry.captureException( error );
+            }
           );
       },
 
@@ -554,7 +557,6 @@
       }
 
       return {
-        channel: channel,
         ...channelData.data,
         chatMessages: chatMessages,
       };

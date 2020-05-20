@@ -142,8 +142,12 @@
           const volume = this.player.volume();
           const muted  = this.player.muted();
           if ( typeof volume === 'undefined' || typeof muted === 'undefined' ) return;
-          localStorage.setItem( 'volume', volume );
-          localStorage.setItem( 'muted',  muted );
+          try {
+            localStorage.setItem( 'volume', volume );
+            localStorage.setItem( 'muted',  muted );
+          } catch ( error ) {
+            console.warn( 'Failed to access localStorage to save volume level' );
+          }
         });
 
       },

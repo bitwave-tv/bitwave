@@ -154,8 +154,13 @@
       },
 
       onVolumeChange () {
-        localStorage.setItem( 'volume', this.player.volume() );
-        localStorage.setItem( 'muted',  this.player.muted() );
+        try {
+
+          localStorage.setItem( 'volume', this.player.volume() );
+          localStorage.setItem( 'muted',  this.player.muted() );
+        } catch ( error ) {
+          console.warn( 'Failed to access localStorage to save volume level' );
+        }
       },
 
       onLoadedData () {

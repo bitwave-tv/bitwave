@@ -639,6 +639,23 @@
               msg.message = msg.message.replace( '/w', '!w' );
               this.socket.emit( 'message', msg );
               break;
+            case 'bugreport':
+              this.$sentry.withScope(
+                scope => {
+                  scope.setExtra( 'global_chat', this.global );
+                  scope.setExtra( 'is_auth', this.isAuth );
+                  scope.setUser({
+                    username: this.username,
+                  });
+                  this.$sentry.captureMessage( 'Bug Report' );
+                },
+              );
+              this.$sentry.showReportDialog({
+                title: 'Something looks broken...',
+                labelName: 'Username',
+                labelSubmit: 'Submit Bug Report',
+              });
+              break;
           }
         } else {
           this.socket.emit( 'message', msg );
@@ -697,7 +714,7 @@
 
         speechSynthesis.speak( voice );
         if ( this.getTtsTimeout > 0 ) {
-          setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );  
+          setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
         }
       },
 
@@ -957,7 +974,7 @@
         useIgnore         : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
-        getTtsTimeout     : Chat.$states.ttsTimeout,	
+        getTtsTimeout     : Chat.$states.ttsTimeout,
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         notify            : Chat.$states.notify,

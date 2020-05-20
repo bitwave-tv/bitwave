@@ -177,13 +177,13 @@
         this.player.ready( async () => {
           // Restore Volume & mute
           try {
-            console.log( `Volume: ${this.player.volume()}, Muted: ${this.player.muted()}` );
+            console.debug( `Volume: ${this.player.volume()}, Muted: ${this.player.muted()}` );
             let muted = JSON.parse( localStorage.getItem( 'muted' ) );
             if ( muted !== null ) this.player.muted( muted );
             let volume = localStorage.getItem( 'volume' );
             if ( volume !== null ) this.player.volume( volume );
           } catch ( error ) {
-            console.warn( 'Failed to find prior volume level' ); // No volume value in memory
+            console.warn( `Failed to read 'volume' or 'muted' from localStorage`, error );
           }
 
           const playerTech = this.player.tech({ IWillNotUseThisInPlugins: true });
@@ -280,8 +280,12 @@
           const volume = this.player.volume();
           const muted  = this.player.muted();
           if ( typeof volume === 'undefined' || typeof muted === 'undefined' ) return;
-          localStorage.setItem( 'volume', volume );
-          localStorage.setItem( 'muted',  muted );
+          try {
+            localStorage.setItem( 'volume', volume );
+            localStorage.setItem( 'muted',  muted );
+          } catch ( error ) {
+            console.warn( `Failed to save 'volume' and 'muted' to localStorage`, error );
+          }
         });
 
         // PiP events
@@ -301,7 +305,6 @@
 
         this.player.on( 'ended', async () => {
           this.$emit('ended');
-          // this.setSource({ url: await this.getRandomBump(), type: 'video/mp4' });
         });
 
         this.player.on( 'error', error => {
@@ -330,10 +333,10 @@
       reloadPlayer () {
         // this.player.reset(); this.player.load();
         if ( !this.initialized ) {
-          console.log(`Player is not initialized yet`);
+          console.log( `reloadPlayer() called but player is not initialized yet!` );
           return;
         }
-        console.log(`Reloading player source: ${this.url} / ${this.type}`);
+        console.log( `Reloading player with source: ${this.url} / ${this.type}` );
         this.player.poster = this.poster;
         this.player.src( { src: this.url, type: this.type } );
       },

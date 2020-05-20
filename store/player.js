@@ -1,9 +1,14 @@
 // Created by xander on 1/22/2020
 
 const saveToLocalStorage = ( values ) => {
-  const existing = JSON.parse( localStorage.getItem( 'player-settings' ) ) || {};
-  const data = JSON.stringify( { ...existing, ...values } );
-  if ( data ) localStorage.setItem( 'player-settings', data );
+  try {
+    let existing = localStorage.getItem( 'player-settings' );
+    existing = JSON.parse( existing ) || {};
+    const data = JSON.stringify( { ...existing, ...values } );
+    if ( data ) localStorage.setItem( 'player-settings', data );
+  } catch ( error ) {
+    console.error( 'Failed to save to localStorage', error );
+  }
 };
 
 const $states = {
@@ -93,14 +98,40 @@ export const mutations = {
 // Actions
 export const actions = {
   async [$actions.loadSettings] ({ dispatch, commit }) {
-    const keeplive = localStorage.getItem( 'keepLive' );
-    if ( keeplive ) {
-      commit( $mutations.setKeepLive, JSON.parse(keeplive) );
-      localStorage.removeItem( 'keepLive' )
+    // Check if we have access to localStorage
+    if ( localStorage === null ) {
+      console.error( 'Cannot access localStorage' );
+      return;
     }
 
-    const playerSettings = JSON.parse( localStorage.getItem( 'player-settings' ) );
-    if ( !playerSettings || typeof playerSettings !== 'object') return;
+    let keeplive = null;
+    try {
+      keeplive  = localStorage.getItem( 'keepLive' );
+    } catch ( error ) {
+      console.error( `Failed to get 'keepLive' from localStorage`, error );
+    }
+
+    if ( keeplive ) {
+      commit( $mutations.setKeepLive, JSON.parse(keeplive) );
+      try {
+        localStorage.removeItem( 'keepLive' );
+      } catch ( error ) {
+        console.error( `Failed to remove 'keepLive' from localStorage`, error );
+      }
+    }
+
+    let playerSettings = null;
+    try {
+      playerSettings = localStorage.getItem( 'player-settings' );
+      playerSettings = JSON.parse( playerSettings );
+    } catch ( error ) {
+      console.error( `Failed to get 'keepLive' from localStorage`, error );
+    }
+
+    if ( !playerSettings || typeof playerSettings !== 'object') {
+      return;
+    }
+
     if ( playerSettings.hasOwnProperty( 'keepLive' ) ) commit( $mutations.setKeepLive, playerSettings.keepLive );
     if ( playerSettings.hasOwnProperty( 'disableBumps' ) ) commit( $mutations.setDisableBumps, playerSettings.disableBumps );
   }

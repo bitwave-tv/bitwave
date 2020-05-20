@@ -104,8 +104,12 @@
       }),
 
       hideSystemAlert () {
-        this.systemAlertHidden = this.systemAlert.id;
-        localStorage.setItem( 'hide-system-alert', this.systemAlert.id );
+        try {
+          this.systemAlertHidden = this.systemAlert.id;
+          localStorage.setItem( 'hide-system-alert', this.systemAlert.id );
+        } catch ( error ) {
+          console.warn( `Failed to save 'hide-system-alert' to localStorage!`, error );
+        }
       },
 
       async newVersionAvailable ( info ) {
@@ -114,7 +118,7 @@
 
       onBeforeInstallPrompt ( prompt ) {
         if ( process.env.APP_DEBUG ) console.log( `Listening for PWA prompt...` );
-        console.log( `PWA Prompt:`, prompt );
+        console.debug( `PWA Prompt:`, prompt );
         prompt.preventDefault();
         this.setPwaPrompt( prompt );
       },
@@ -158,7 +162,13 @@
 
     async mounted () {
       this.ssr = false;
-      this.systemAlertHidden = localStorage.getItem( 'hide-system-alert' );
+
+      try {
+        this.systemAlertHidden = localStorage.getItem( 'hide-system-alert' );
+      } catch ( error ) {
+        this.systemAlertHidden = false;
+        console.warn( `Failed to read 'hide-system-alert from localStorage'`, error.message );
+      }
 
       const workbox = await $workbox;
       if ( workbox ) {
@@ -167,12 +177,10 @@
           await this.newVersionAvailable({ version: 'SW' });
         });
       }
-
-      // window.addEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
     },
 
     beforeDestroy () {
-      // window.removeEventListener( 'beforeinstallprompt', this.onBeforeInstallPrompt  );
+
     }
 
   }

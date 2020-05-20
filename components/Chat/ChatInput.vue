@@ -169,6 +169,10 @@
       label: 'Toggle User Badge (if available)',
       value: '/badge ',
     },
+    {
+      label: 'Bug Report',
+      value: '/bugreport ',
+    },
   ];
 
   export default {

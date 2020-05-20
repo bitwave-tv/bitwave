@@ -39,7 +39,8 @@ const listenToAuthState = ( callback ) => {
     }
     await Promise.all( runParallel );
   }, async error => {
-    console.error( 'Auth Error:', error )
+    console.error( 'Auth Error:', error );
+    this.$sentry.captureException( error );
   });
 };
 
@@ -51,6 +52,9 @@ export const listenToConfiguationUpdates = callbacks => {
     .onSnapshot( async doc => {
       const data = doc.data();
       await Promise.all( callbacks.map( async cb => await cb( data ) ) );
+    }, error => {
+      console.error( 'DB Configuration Query Failed:', error );
+      this.$sentry.captureException( error );
     });
 };
 
@@ -62,6 +66,9 @@ export const listenToFeatureFlags = callbacks => {
     .onSnapshot( async doc => {
       const data = doc.data();
       await Promise.all( callbacks.map( async cb => await cb( data ) ) );
+    }, error => {
+      console.error( 'Feature Flags Query Failed', error );
+      this.$sentry.captureException( error );
     });
 };
 
