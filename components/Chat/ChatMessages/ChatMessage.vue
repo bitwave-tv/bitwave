@@ -30,22 +30,28 @@
     </div>
 
     <!-- Chat Content -->
-    <div
-      class="flex-grow-1 content"
-    >
+    <div class="flex-grow-1 content">
 
       <!-- Message Header -->
       <div class="d-flex align-center">
 
         <!-- Timestamp & Global / Local tag -->
         <div class="bw-meta subtitle-2 flex-shrink-0">
-          <span class="time" :title="props.timestamp.long">{{ props.timestamp.short }}</span>
-          <span class="global" :title="`${props.global ? 'global' : 'local'} chat`">{{ props.global }}</span>
+          <span
+            v-text="props.timestamp.short"
+            class="time"
+            :title="props.timestamp.long"
+          ></span>
+          <span
+            v-text="props.global"
+            class="global"
+            :title="`${props.global ? 'global' : 'local'} chat`"
+          ></span>
         </div>
 
         <!-- User Badge -->
         <div
-          v-show="props.badge"
+          v-if="props.badge"
           class="badge pl-1 d-flex align-center"
           v-html="props.badge"
         ></div>
@@ -65,7 +71,10 @@
           :to="props.routePrefix + props.channel"
           no-prefetch
         >
-          <kbd :title="props.channel">{{ props.channel }}</kbd>
+          <kbd
+            v-text="props.channel"
+            :title="props.channel"
+          ></kbd>
         </nuxt-link>
       </div>
 

@@ -2,6 +2,7 @@
   <div>
     <div class="px-3">
       <div class="d-flex">
+        <!-- Global Chat -->
         <v-switch
           v-model="globalChat"
           label="Global Chat"
@@ -10,6 +11,8 @@
           dense
           inset
         />
+
+        <!-- Show Timestamps -->
         <v-switch
           v-model="showTimestamps"
           class="ml-3"
@@ -21,6 +24,7 @@
         />
       </div>
 
+      <!-- Ignore -->
       <v-switch
         v-model="useIgnore"
         label="Ignore Users"
@@ -31,6 +35,7 @@
         inset
       />
 
+      <!-- Notification Sounds -->
       <v-switch
         v-model="notificationSound"
         label="Notification Sounds"
@@ -41,6 +46,7 @@
         inset
       />
 
+      <!-- Autocomplete -->
       <v-switch
         v-model="autocomplete"
         label="Autocomplete"
@@ -55,9 +61,12 @@
     <v-divider/>
 
     <div class="pb-2">
+
+      <!-- TTS Settings -->
       <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
 
       <div class="d-flex justify-space-around mb-3">
+        <!-- Enable TTS -->
         <v-switch
           v-model="useTts"
           label="Use TTS"
@@ -67,6 +76,8 @@
           dense
           inset
         />
+
+        <!-- Troll TTS -->
         <v-switch
           v-model="trollTts"
           :disabled="!useTts"
@@ -79,6 +90,7 @@
         />
       </div>
 
+      <!-- TTS Voice -->
       <v-flex mx-3>
         <v-select
           v-model="ttsVoice"
@@ -90,6 +102,7 @@
         />
       </v-flex>
 
+      <!-- TTS Rate -->
       <v-list-item>
         <v-slider
           :disabled="!useTts"
@@ -114,6 +127,7 @@
         </v-slider>
       </v-list-item>
 
+      <!-- TTS Volume -->
       <v-list-item>
         <v-slider
           :disabled="!useTts"
@@ -127,6 +141,7 @@
         />
       </v-list-item>
 
+      <!-- TTS Timeout -->
       <v-list-item>
         <v-slider
           :disabled="!useTts"
@@ -139,7 +154,7 @@
           hide-details
         >
 
-	  <template #append>
+          <template #append>
             <v-text-field
               v-model="ttsTimeout"
               class="mt-0 pt-0"
@@ -149,8 +164,9 @@
               style="width: 50px"
             />
           </template>
-	</v-slider>
+        </v-slider>
       </v-list-item>
+
     </div>
   </div>
 </template>

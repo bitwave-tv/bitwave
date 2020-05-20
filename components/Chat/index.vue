@@ -205,13 +205,18 @@
 
         await this.initChat();
 
+        if ( !this.getChatToken ) {
+          console.error( `Failed to initialize with a chat token!` );
+          return;
+        }
+
         const tokenUser = {
           type  : 'unknown',
           token : this.getChatToken,
           page  : this.page,
         };
 
-        this.connectChat( tokenUser );
+        await this.connectChat( tokenUser );
       },
 
       async onResize () {
@@ -246,18 +251,23 @@
           // This occurs during page loads for trolls only.
           const tokenUpdated = !this.userToken || this.userToken.token !== this.getChatToken;
           if ( tokenUpdated ) {
+
             const tokenTroll = {
               type: 'troll',
               token: this.getChatToken,
               page: this.page,
             };
-            this.connectChat( tokenTroll );
+
+            await this.connectChat( tokenTroll );
           }
         }
       },
 
       async subscribeToUser ( uid ) {
-        const userdocRef = db.collection( 'users' ).doc( uid );
+        const userdocRef = db
+          .collection( 'users' )
+          .doc( uid );
+
         let lastUser = {};
         this.unsubscribeUser = userdocRef.onSnapshot( async doc => {
 
@@ -268,8 +278,15 @@
           const ignoreList = doc.get( 'ignoreList' );
           if ( ignoreList !== undefined ) {
             this.ignoreList = ignoreList;
-            localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+
+            // Save copy to browser
+            try {
+              localStorage.setItem( 'ignorelist', JSON.stringify( this.ignoreList ) );
+            } catch ( error ) {
+              console.warn( `Failed to save ignorelist to browser` );
+            }
           } else {
+            // Update account ignore list
             await doc.ref.update( 'ignoreList', this.ignoreList );
           }
 
@@ -277,13 +294,24 @@
           const ignoreChannelList = doc.get( 'ignoreChannelList' );
           if ( ignoreChannelList !== undefined ) {
             this.ignoreChannelList = ignoreChannelList;
-            localStorage.setItem( 'ignoreChannellist', JSON.stringify( this.ignoreChannelList ) );
+
+            // Save copy to browser
+            try {
+              localStorage.setItem( 'ignoreChannellist', JSON.stringify( this.ignoreChannelList ) );
+            } catch ( error ) {
+              console.warn( `Failed to save ignoreChannellist to browser` );
+            }
           } else {
+            // Update account ignore channel list
             await doc.ref.update( 'ignoreChannelList', this.ignoreChannelList );
           }
 
           // Check if reconnection required
-          if ( lastUser.avatar !== user.avatar || lastUser.username !== user.username || lastUser.color !== user.color || lastUser.badge !== user.badge ) {
+          if ( lastUser.avatar !== user.avatar
+            || lastUser.username !== user.username
+            || lastUser.color !== user.color
+            || lastUser.badge !== user.badge
+          ) {
             const oldToken = this.getChatToken;
 
             // Swap ID token for Chat Token
@@ -303,16 +331,9 @@
                   token : chatToken,
                   page  : this.page,
                 };
-                this.connectChat( tokenUser ); // Connect to chat server
+                await this.connectChat( tokenUser ); // Connect to chat server
               }
             };
-
-            /*if ( !oldToken ) {
-              await getNewToken();
-            } else {
-              setTimeout( () => getNewToken(), 5000 );
-            }*/
-
             await getNewToken();
           }
           lastUser = user; // Record user state
@@ -393,14 +414,15 @@
           const { data } = await this.$axios.get( `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }`, { progress: false } );
           await this.hydrate( data.data );
         } catch ( error ) {
-          console.log( error );
+          console.error( error );
         }
       },
 
       async hydrate ( data, isSSR ) {
         if ( !data && !isSSR ) {
           this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000, position: 'top-right' } );
-          console.log( 'Failed to receive hydration data' );
+          console.error( 'Failed to receive hydration data!' );
+          this.messages = [];
           return;
         }
 
@@ -409,8 +431,9 @@
 
         const size = data.length;
         if ( !size ) {
+          console.log( 'Hydration data was empty' );
           this.messages = [];
-          return console.log( 'Hydration data was empty' );
+          return;
         }
 
         this.messages = data
@@ -592,7 +615,6 @@
               this.hideTrolls = !this.hideTrolls;
               if ( this.hideTrolls ) this.messages = this.messages.filter( el => !el.username.startsWith( 'troll:' ) );
               else await this.httpHydrate();
-              // else if ( this.socket ) await this.socket.emit( 'hydrate' );
               break;
             case 'crc':
             case 'cuckrockchris':
@@ -1014,11 +1036,14 @@
     },
 
     async mounted () {
-      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
-
       await this.connectToChat();
 
-      if ( !this.messages ) await this.httpHydrate();
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
+      // TODO: trigger token exchange in store from plugin listener,
+      // TODO: store login will exchange and update our store token
+      // TODO: watch store token value locally,
+      // TODO: create user token and reconnect on change
+
 
       // Add listener for voice changes, then update voices.
       this.voicesListTTS = speechSynthesis.getVoices();

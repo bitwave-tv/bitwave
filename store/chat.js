@@ -111,7 +111,7 @@ const $actions = {
 // Create Store State
 export const state = () => ({
   [$states.room]       : '',
-  [$states.global]     : null,
+  [$states.global]     : false,
   [$states.timestamps] : true,
   [$states.useTts]     : false,
   [$states.useIgnore]  : true,
@@ -159,14 +159,22 @@ export const mutations = {
   // Set show timestamps
   [$mutations.setTimestamps] ( state, data ) {
     state[$states.timestamps] = JSON.parse( data );
-    localStorage.setItem( 'showtimestamps', data );
+    try {
+      localStorage.setItem( 'showtimestamps', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'showtimestamps'` );
+    }
   },
 
   // Set global chat
   [$mutations.setGlobal] ( state, data ) {
     state[$states.global] = JSON.parse( data );
-    localStorage.setItem( 'globalchat', data );
     this.$cookies.set( '_bw_global', data );
+    try {
+      localStorage.setItem( 'globalchat', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'globalchat'` );
+    }
   },
 
   // Set global chat SSR
@@ -177,14 +185,26 @@ export const mutations = {
   // Set use TTS
   [$mutations.setUseTts] ( state, data ) {
     state[$states.useTts] = JSON.parse( data );
-    localStorage.setItem( 'tts', data );
-    if ( !data ) speechSynthesis.cancel();
+    try {
+      localStorage.setItem( 'tts', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'tts'` );
+    }
+    try {
+      if ( !data ) speechSynthesis.cancel();
+    } catch ( error ) {
+      console.warn( `cannot access 'speechSynthesis'` );
+    }
   },
 
   // Set use ignore
   [$mutations.setUseIgnore] ( state, data ) {
     state[$states.useIgnore] = JSON.parse( data );
-    localStorage.setItem( 'useignore', data );
+    try {
+      localStorage.setItem( 'useignore', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'useIgnore'` );
+    }
   },
 
   // Set TTS enabled for trolls
@@ -194,16 +214,19 @@ export const mutations = {
 
   // Set TTS Rate
   [$mutations.setTtsRate] ( state, data ) {
+    if ( data ) return;
     state[$states.ttsRate] = JSON.parse( data );
   },
 
   // Set TTS Timeout
   [$mutations.setTtsTimeout] ( state, data ) {
+    if ( !data ) return;
     state[$states.ttsTimeout] = JSON.parse( data );
   },
 
   // Set TTS Volume
   [$mutations.setTtsVolume] ( state, data ) {
+    if ( !data ) return;
     state[$states.ttsVolume] = JSON.parse( data );
   },
 
@@ -215,13 +238,21 @@ export const mutations = {
   // Set notification sounds
   [$mutations.setNotify] ( state, data ) {
     state[$states.notify] = JSON.parse( data );
-    localStorage.setItem( 'notify', data );
+    try {
+      localStorage.setItem( 'notify', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'notify'` );
+    }
   },
 
   // Set autocomplete
   [$mutations.setAutocomplete] ( state, data ) {
     state[$states.autocomplete] = JSON.parse( data );
-    localStorage.setItem( 'autocomplete', data );
+    try {
+      localStorage.setItem( 'autocomplete', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'autocomplete'` );
+    }
   },
 
   // Set ignore list
@@ -282,7 +313,11 @@ export const mutations = {
   // Pinned message
   [$mutations.setShowBadge] ( state, data ) {
     state[$states.showBadge] = JSON.parse( data );
-    localStorage.setItem( 'showbadge', data );
+    try {
+      localStorage.setItem( 'showbadge', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'showbadge'` );
+    }
   },
 };
 
@@ -322,11 +357,12 @@ export const actions = {
   async [$actions.exchangeIdTokenChatToken] ({ dispatch }, idToken) {
     try {
       const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
-
-      localStorage.setItem( 'chatToken', data.chatToken );
-
       await dispatch( $actions.updateChatToken, data.chatToken );
-
+      try {
+        localStorage.setItem( 'chatToken', data.chatToken );
+      } catch ( error ) {
+        console.warn( `Failed to save 'chatToken' to localStorage`, error );
+      }
       if ( process.env.APP_DEBUG ) logger ( 'Set Chat Token' );
     } catch ( error ) {
       console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
@@ -336,28 +372,41 @@ export const actions = {
 
   async [$actions.createTrollToken] ({ dispatch }) {
     const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token' );
-    localStorage.setItem( 'troll', data.chatToken );
     await dispatch( $actions.updateChatToken, data.chatToken );
+    try {
+      localStorage.setItem( 'troll', data.chatToken );
+    } catch ( error ) {
+      console.warn( `Failed to save 'troll' (tokeen) to localStorage`, error );
+    }
   },
 
 
   async [$actions.init] ({ dispatch }) {
-    // Check for user token
-    const userToken = localStorage.getItem( 'chatToken' );
-    if ( userToken ) {
-      await dispatch( $actions.updateChatToken, userToken );
-      return;
-    }
+    // Find existing tokens in localStorage
+    const findChatToken = () => {
+      let token = null;
+      try {
+        // Check for user token
+        token = localStorage.getItem( 'chatToken' );
+        if ( token ) return token;
+        // Check for troll token
+        token = localStorage.getItem( 'troll' );
+        if ( token ) return token;
+      } catch ( error ) {
+        console.log( `no existing tokens found` );
+      }
+      return false;
+    };
 
-    // Check for troll token
-    const trollToken = localStorage.getItem( 'troll' );
-    if ( trollToken ) {
-      await dispatch( $actions.updateChatToken, trollToken );
-      return;
+    // Check for existing tokens
+    const token = findChatToken();
+    if ( token ) {
+      // Use existing token
+      await dispatch( $actions.updateChatToken, token );
+    } else {
+      // No existing tokens, get new troll token
+      await dispatch( $actions.createTrollToken );
     }
-
-    // No existing tokens, get new troll token
-    await dispatch( $actions.createTrollToken );
   },
 
   async [$actions.logout] ({ dispatch }) {
@@ -370,10 +419,19 @@ export const actions = {
     loggingOut = true; // Lock action while processing
 
     // Remove user chat token
-    localStorage.removeItem( 'chatToken' );
+    try {
+      localStorage.removeItem( 'chatToken' );
+    } catch ( error ) {
+      console.warn( `Failed to remove 'chatToken'`, error );
+    }
 
     // Check for existing troll token
-    const trollToken = localStorage.getItem( 'troll' );
+    let trollToken = null;
+    try {
+      trollToken = localStorage.getItem( 'troll' );
+    } catch ( error ) {
+      console.warn( `Failed to get 'troll' (token)`, error );
+    }
 
     if ( !trollToken ) {
       // Create new troll token if for some reason we don't have one
@@ -388,13 +446,13 @@ export const actions = {
 
   [$actions.loadSettings] ({ commit }) {
     // Global chat
+    let global = null;
     try {
-      const global = localStorage.getItem( 'globalchat' );
-      if ( global !== null ) commit( $mutations.setGlobal, global );
-      else  commit( $mutations.setGlobal, false );
+      global = localStorage.getItem( 'globalchat' );
     } catch ( error ) {
       logger ( 'No global chat option found.' );
     }
+    commit( $mutations.setGlobal, global !== null ? global : false );
 
     // Timestamps
     try {

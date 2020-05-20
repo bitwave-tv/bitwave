@@ -11,7 +11,7 @@
       <v-text-field
         ref="chatmessageinput"
         :value="getMessage"
-        :label="`Chat as ${username}...`"
+        :label="`Chat ${global ? 'globally' : ''} as ${username}...`"
         :loading="loading"
         :disabled="loading"
         color="primary"
@@ -358,11 +358,12 @@
         getUserList: VStore.$getters.getUserList,
       }),
 
-      ...mapState(Chat.namespace, {
-        getMessage: Chat.$states.message,
-        enableAutocomplete: Chat.$states.autocomplete,
-        getMessageBuffer : Chat.$states.messageBuffer,
-        emoteList : Chat.$states.emoteList,
+      ...mapState( Chat.namespace, {
+        global             : Chat.$states.global,
+        getMessage         : Chat.$states.message,
+        enableAutocomplete : Chat.$states.autocomplete,
+        getMessageBuffer   : Chat.$states.messageBuffer,
+        emoteList          : Chat.$states.emoteList,
       }),
 
       userlist () {
