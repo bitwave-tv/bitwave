@@ -1045,9 +1045,21 @@
       // TODO: create user token and reconnect on change
 
 
+      // Hydrate chat from SSR or API
+      if ( this.hydrationData ) {
+        await this.hydrate( this.hydrationData, true );
+      } else {
+        await this.httpHydrate();
+      }
+
+
       // Add listener for voice changes, then update voices.
-      this.voicesListTTS = speechSynthesis.getVoices();
-      speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      try {
+        this.voicesListTTS = speechSynthesis.getVoices();
+        speechSynthesis.onvoiceschanged = () => this.voicesListTTS = speechSynthesis.getVoices();
+      } catch ( error ) {
+        console.error( error );
+      }
 
       // Load settings from localstorage
       await this.loadSettings();
@@ -1074,10 +1086,6 @@
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
-
-      // Hydrate chat from SSR or API
-      if ( this.hydrationData ) await this.hydrate( this.hydrationData, true );
-      else await this.httpHydrate();
 
       // Listen for new polls
       this.subscribeToPoll( this.page );
