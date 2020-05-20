@@ -120,7 +120,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapMutations, mapState } from 'vuex';
   import { VStore } from '@/store';
 
   export default {
@@ -133,13 +133,16 @@
     data() {
       return {
         showViewers: false,
-        showAll: true,
         filter: '',
         filteredViewerList: [],
       };
     },
 
     methods: {
+      ...mapMutations ({
+        setShowAll  : VStore.$mutations.setShowAll,
+      }),
+
       close () {
         this.$emit( 'close' );
       },
@@ -151,7 +154,7 @@
             return viewer.data.username.toLowerCase().includes( filter.toLowerCase() );
 
           // Hide users in different channels
-          if ( !this.showAll )
+          if ( !this.getShowAll )
             return viewer.watching.includes( this.page.toLowerCase() );
 
           // Default true
@@ -161,15 +164,27 @@
     },
 
     computed: {
-      ...mapGetters({
-        getChannelViews: VStore.$getters.getChannelViews,
+    ...mapGetters({
         getUserList:     VStore.$getters.getUserList,
+        getChannelViews: VStore.$getters.getChannelViews,
+      }),
+
+    ...mapState({
+        getShowAll:      VStore.$states.showAll,
       }),
 
       viewerList () {
         if ( !this.showViewers ) return [];
         return this.getUserList;
       },
+
+      showAll: {
+        set ( val ) {
+          this.setShowAll( val );
+        },
+        get () { return this.getShowAll; }
+      },
+
     },
 
     mounted() {
