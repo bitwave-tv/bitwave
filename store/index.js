@@ -34,6 +34,7 @@ const $states = {
 
   channelsViewers : 'CHANNEL_VIEWERS',
   userlist        : 'USERLIST',
+  showAll         : 'SHOW_ALL',
 
   pwaPrompt: 'PWA_PROMPT',
 };
@@ -59,6 +60,7 @@ const $getters = {
   getChannelViews : 'GET_CHANNEL_VIEWS',
   getUserList     : 'GET_USERLIST',
   getUserCount    : 'GET_USER_COUNT',
+  getShowAll      : 'GET_SHOW_ALL',
 
   getPWaPrompt: 'GET_PWA_PROMPT',
 };
@@ -75,6 +77,7 @@ const $mutations = {
 
   setChannelViewers : 'SET_CHANNEL_VIEWERS',
   setUserList       : 'SET_USER_LIST',
+  setShowAll        : 'SET_SHOW_ALL',
 
   setPwaPrompt : 'SET_PWA_PROMPT',
 };
@@ -107,6 +110,7 @@ export const state = () => ({
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
+  [$states.showAll]         : false,
 
   [$states.pwaPrompt]       : null,
 });
@@ -202,6 +206,10 @@ export const getters = {
     return state[$states.userlist].length;
   },
 
+  [$getters.getShowAll] ( state ) {
+    return state[$states.showAll];
+  },
+
   [$getters.isAdmin] ( state ) {
     const user = state[$states.user];
     return user
@@ -256,6 +264,10 @@ export const mutations = {
 
   [$mutations.setChannelViewers] ( state, data ) {
     state[$states.channelsViewers] = data;
+  },
+
+  [$mutations.setShowAll] ( state, data ) {
+    state[$states.showAll] = data;
   },
 
   [$mutations.setUserList] ( state, data ) {
