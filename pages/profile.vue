@@ -281,7 +281,7 @@
 
         streamDataLoading: true,
         profileDataLoading: true,
-        showStreamInfo: true,
+        showStreamInfo: false,
         showKey: false,
         showSave: false,
         saveLoading: false,
