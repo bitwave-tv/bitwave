@@ -12,12 +12,12 @@
           <div class="d-flex justify-space-around align-center">
             <v-avatar color="grey darken-4" size="100" class="ma-3">
               <img
-                :src="`${imageUrl}` || `https://cdn.bitwave.tv/static/img/shield.png`"
+                :src="imageUrl || `https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw`"
                 alt="avatar"
               />
             </v-avatar>
             <div class="flex-shrink-1 text-xs-center my-1">
-              <h3>IT'S JUST THE FLU BRO</h3>
+              <h3>My Profile</h3>
               <p>send in complaints for $5 / issue.</p>
               <v-btn
                 color="red"

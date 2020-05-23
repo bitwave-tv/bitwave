@@ -2,19 +2,16 @@
   <v-container
     grid-list-md
   >
-    <v-layout
-      row
-      justify-space-around
-      class="mb-4"
+    <div
+      class="mb-4 d-flex justify-space-around"
     >
-      <v-flex xs12 md10 lg8 xl6>
-        <img
-          src="https://cdn.bitwave.tv/static/img/bitwave_banner.png?_bw1"
-          alt="bitwave tv live streaming platform"
-          crossorigin
-        />
-      </v-flex>
-    </v-layout>
+      <img
+        style="max-width: 90%"
+        src="https://cdn.bitwave.tv/static/img/bitwavetv.png"
+        alt="bitwave live streaming platform"
+        crossorigin
+      />
+    </div>
 
     <v-layout
       row

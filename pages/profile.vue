@@ -14,6 +14,28 @@
 
     <account-details />
 
+    <!-- Get a stream key -->
+    <v-layout
+      v-if="!showStreamInfo"
+      justify-center
+    >
+      <v-flex
+        xs12
+        sm10
+        md8
+        lg6
+      >
+        <v-card class="mb-4 pa-3">
+          <h2 class="mb-3">Want to stream?</h2>
+          <v-btn
+            to="/streamkey"
+            color="primary"
+          >Get A Streamkey</v-btn>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
+    <!-- Stream Key -->
     <v-layout justify-center>
       <v-flex
         v-if="showStreamInfo"
@@ -135,6 +157,7 @@
       </v-flex>
     </v-layout>
 
+    <!-- Stream Info -->
     <v-layout justify-center>
       <v-flex
         v-if="showStreamInfo"
