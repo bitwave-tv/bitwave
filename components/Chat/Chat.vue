@@ -408,6 +408,16 @@
           this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
       },
 
+      async getRecaptchaToken ( action ) {
+        try {
+          await this.$recaptcha.init();
+          return await this.$recaptcha.execute( action );
+        } catch ( error ) {
+          console.error( error );
+          return null;
+        }
+      },
+
       async httpHydrate () {
         try {
           const { data } = await this.$axios.get( `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }`, { progress: false } );
@@ -695,16 +705,6 @@
             channel: this.page,
           },
         ]));
-      },
-
-      async getRecaptchaToken ( action ) {
-        try {
-          await this.$recaptcha.init();
-          return await this.$recaptcha.execute( action );
-        } catch ( error ) {
-          console.error( error );
-          return null;
-        }
       },
 
       speak ( message, username ) {
@@ -1042,9 +1042,9 @@
 
       const getChatHydration = async ( channel ) => {
         try {
-          const global = store.state[Chat.namespace][Chat.$states.global];
+          const global = this.$store.state[Chat.namespace][Chat.$states.global];
           if ( global === null ) return null;
-          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
+          const { data } = await this.$axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
           if ( data && data.success ) return data.data;
           return [];
         } catch ( error ) {
