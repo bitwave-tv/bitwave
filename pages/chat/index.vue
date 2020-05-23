@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import Chat from '@/components/Chat/index'
+  import Chat from '@/components/Chat/Chat'
 
   export default {
     name: 'chat',

@@ -123,7 +123,6 @@
     >
       <chat
         :chat-channel="name"
-        :hydration-data="chatMessages"
       />
     </div>
 
@@ -171,7 +170,7 @@
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { db } from '@/plugins/firebase.js';
 
-  import Chat from '~/components/Chat';
+  import Chat from '~/components/Chat/Chat';
   import FollowButton from '@/components/Channel/FollowButton';
   import ReplayInfo from '@/components/Replay/ReplayInfo';
 
@@ -249,13 +248,10 @@
         timestamp: null,
         commentCount: 0,
         views: 0,
-
-        // Chat hydrated data defaults
-        chatMessages: null,
       }
     },
 
-    async asyncData ( { $axios, store, params, error } ) {
+    async asyncData ( { $axios, params, error } ) {
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 

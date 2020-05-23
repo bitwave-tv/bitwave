@@ -116,9 +116,8 @@
     name: 'Chat',
 
     props: {
-      chatChannel   : { type: String },
-      forceGlobal   : { type: Boolean },
-      hydrationData : { type: Array },
+      chatChannel : { type: String },
+      forceGlobal : { type: Boolean },
     },
 
     components: {
@@ -1033,6 +1032,29 @@
       async global ( val, old ) {
         await this.httpHydrate();
       },
+    },
+
+    fetchOnServer: false,
+
+    async fetch () {
+      // Timeout to prevent SSR from locking up
+      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
+      const getChatHydration = async ( channel ) => {
+        try {
+          const global = store.state[Chat.namespace][Chat.$states.global];
+          if ( global === null ) return null;
+          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
+          if ( data && data.success ) return data.data;
+          return [];
+        } catch ( error ) {
+          console.log( `Chat hydration request failed` );
+          console.error( error.message );
+        }
+        return null;
+      };
+
+      this.hydrationData = await getChatHydration( this.chatChannel );
     },
 
     async mounted () {

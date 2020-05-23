@@ -20,7 +20,6 @@
               :name="live[0].name"
               :mobile="mobile"
               :offline="offline"
-              :chat-messages="chatMessages"
             />
           </v-col>
         </v-row>
@@ -118,7 +117,6 @@
 <script>
   import StreamGrid from '@/components/StreamGrid'
   import BannerVideo from '@/components/Homepage/BannerVideo';
-  import { Chat as ChatStore } from '@/store/chat';
   import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import AboutUs from '@/components/Homepage/AboutUs';
@@ -173,7 +171,7 @@
 
     },
 
-    async asyncData ({ $axios, store }) {
+    async asyncData ({ $axios }) {
       const defaultLive = [
         {
           "src": 'https://cdn.bitwave.tv/static/bumps/2a3un.mp4',
@@ -210,32 +208,11 @@
         }
       };
 
-      const getChatHydration = async ( channel ) => {
-        try {
-          const global = store.state[ChatStore.namespace][ChatStore.$states.global];
-          if ( global === null ) return null;
-          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
-          if ( data && data.success ) return data.data;
-        } catch ( error ) {
-          console.log( `Chat hydration request failed` );
-          console.error( error.message );
-        }
-        return [];
-      };
-
       const streams = await getStreams();
-
-      // Get chat data for chat
-      const channel = streams.live.length > 0 ? streams.live[0].name : 'error';
-      let chatMessages = null;
-      if ( process.client ) {
-        chatMessages = await getChatHydration( channel );
-      }
 
       return {
         live: streams.live,
         streamers: streams.streamers,
-        chatMessages: chatMessages,
         offline: false,
       }
     },

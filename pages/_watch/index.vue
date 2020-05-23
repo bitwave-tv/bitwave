@@ -74,7 +74,6 @@
     >
       <chat
         :chat-channel="name"
-        :hydration-data="chatMessages"
       />
     </div>
 
@@ -117,7 +116,7 @@
 
   import { db } from '@/plugins/firebase.js';
 
-  import Chat from '@/components/Chat';
+  import Chat from '@/components/Chat/Chat';
   import StreamTopBar from '@/components/Channel/StreamTopBar';
   import StreamInfo from '@/components/Channel/StreamInfo';
   import BitwaveVideoPlayer from '@/components/BitPlayer/BitwaveVideoPlayer';
@@ -179,9 +178,6 @@
         url: null,
         type: null,
         timestamp: null,
-
-        // Chat hydrated data defaults
-        chatMessages: null,
       }
     },
 
@@ -361,7 +357,7 @@
       }),
     },
 
-    async asyncData ( { $axios, store, params, error } ) {
+    async asyncData ( { $axios, params, error } ) {
       const channel = params.watch;
 
       // Timeout to prevent SSR from locking up
@@ -536,29 +532,8 @@
         }
       }
 
-      const getChatHydration = async ( channel ) => {
-        try {
-          const global = store.state[ChatStore.namespace][ChatStore.$states.global];
-          if ( global === null ) return null;
-          const { data } = await $axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
-          if ( data && data.success ) return data.data;
-          return [];
-        } catch ( error ) {
-          console.log( `Chat hydration request failed` );
-          console.error( error.message );
-        }
-        return null;
-      };
-
-      // Get chat data for chat
-      let chatMessages = null;
-      if ( process.client ) {
-        chatMessages = await getChatHydration( channel );
-      }
-
       return {
         ...channelData.data,
-        chatMessages: chatMessages,
       };
     },
 

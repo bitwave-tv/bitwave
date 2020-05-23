@@ -113,6 +113,8 @@
 
     data () {
       return {
+        global: false,
+        channel: null,
         debug: false,
         unsubscribeOverlay: null,
         scrollInterval: null,
@@ -125,24 +127,6 @@
       };
     },
 
-    async asyncData ( { $axios } ) {
-      const getChatHydration = async () => {
-        try {
-          const { data } = await $axios.get( 'https://chat.bitwave.tv/v1/messages', { timeout: 5000 } );
-          if ( data.success ) return data.data;
-        } catch ( error ) {
-          console.log( error );
-        }
-        return [];
-      };
-
-      const chatMessages = await getChatHydration();
-
-      return {
-        chatMessages,
-      }
-    },
-
     methods: {
       subscribeToOverlay ( id ) {
         const overlayRef = db.collection( 'overlays' ).doc( id );
@@ -151,6 +135,10 @@
 
       onOverlayChange ( doc ) {
         this.overlay = doc.data();
+
+        this.global  = this.overlay.global;
+        this.channel = this.overlay.channel;
+
         this.overlay.created = this.overlay.created.toDate();
         this.overlay.edited = this.overlay.edited.toDate();
         console.log ( 'overlay config', this.overlay );
@@ -176,9 +164,26 @@
       },
 
       async httpHydrate () {
+        // Timeout to prevent SSR from locking up
+        const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
+        const getChatHydration = async ( channel ) => {
+          try {
+            const global = this.global;
+            if ( global === null ) return null;
+            const { data } = await this.$axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
+            if ( data && data.success ) return data.data;
+            return [];
+          } catch ( error ) {
+            console.log( `Chat hydration request failed` );
+            console.error( error.message );
+          }
+          return null;
+        };
+
         try {
-          const { data } = await this.$axios.get( 'https://chat.bitwave.tv/v1/messages' );
-          await this.hydrate( data.data );
+          const chatMessages = await getChatHydration( this.channel );
+          await this.hydrate( chatMessages );
         } catch ( error ) {
           console.log( error );
         }
@@ -260,11 +265,6 @@
 
     computed: {
 
-    },
-
-    async created () {
-      if ( this.chatMessages ) this.hydrate( this.chatMessages );
-      else await this.httpHydrate();
     },
 
     async mounted () {
