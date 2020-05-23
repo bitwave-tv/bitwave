@@ -358,6 +358,7 @@
         this.socket.on( 'update usernames', async () => await this.updateViewers() );
 
         this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
+        this.socket.on( 'alert', async data => await this.addAlert( data ) );
 
         this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
         this.socket.on( 'pollstate', data => this.updatePoll( data ) );
@@ -450,20 +451,22 @@
 
       async rcvMessageBulk ( messages ) {
         const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
-        messages.forEach( el => {
+        messages.forEach( m => {
           // Filter messages
-          if ( this.filterMessage( el ) ) return;
+          if ( this.filterMessage( m ) ) return;
 
           // Notification Sounds
-          if ( this.notify ) if ( pattern.test( el.message ) ) this.sound.play().then();
+          if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
 
           // For Text to Speech
-          const currentChat = el.channel.toLowerCase() === this.username.toLowerCase();
-          const myChat      = el.channel.toLowerCase() === this.page.toLowerCase();
-          if ( currentChat || myChat ) this.speak( el.message, el.username ); // Say Message
+          const currentChat = m.channel.toLowerCase() === this.username.toLowerCase();
+          const myChat      = m.channel.toLowerCase() === this.page.toLowerCase();
+          if ( currentChat || myChat ) this.speak( m.message, m.username ); // Say Message
+
+          m.type = 'message';
 
           // Add message to list
-          this.messages.push( Object.freeze( el ) );
+          this.messages.push( Object.freeze( m ) );
 
           // Track message count
           if ( this.statInterval ) this.newMessageCount++;
@@ -484,6 +487,21 @@
         if ( !this.$refs['chatmessages'].showFAB ) {
           if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           // this.scrollToBottom();
+          this.$nextTick( () => this.scrollToBottom() );
+        }
+      },
+
+      addAlert ( data ) {
+        const m = {
+          _id: data._id,
+          type: 'alert',
+          message: data.message,
+          color: 'primary',
+        };
+
+        this.messages.push( Object.freeze( m ) );
+
+        if ( !this.$refs['chatmessages'].showFAB ) {
           this.$nextTick( () => this.scrollToBottom() );
         }
       },

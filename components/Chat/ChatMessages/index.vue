@@ -36,39 +36,62 @@
           :key="msg._id"
           class="pb-1 pl-3 pr-1"
         >
-          <!-- Regular chat message -->
-          <chat-message
-            v-if="msg.username !== ( index && messages[ index - 1 ].username )"
-            :badge="msg.badge"
-            :username="msg.username"
-            :display-name="msg.username"
-            :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
-            :route-prefix="routePrefix"
-            :channel="msg.channel"
-            :timestamp="getTime( msg.timestamp )"
-            :avatar="msg.avatar"
-            :color="msg.color"
-            :global="getGlobalTag( msg.global )"
-            @reply="addUserTag"
-            @whisper="addWhisper"
-            @select="onMessageClick( msg )"
-          >
-            <div
-              class="body-2 msg"
-              v-html="msg.message"
-            ></div>
-          </chat-message>
 
-          <!-- Append messages -->
-          <div
-            v-else
-            class="msg append"
+          <!-- Chat Alert -->
+          <template
+            v-if="msg.type === 'alert'"
           >
+            <div>
+              <v-alert
+                dense
+                outlined
+                text
+                border="left"
+                :color="msg.color"
+                class="my-2"
+              >{{ msg.message }}</v-alert>
+            </div>
+          </template>
+
+          <!-- Chat Message -->
+          <template
+            v-else
+          >
+            <!-- Regular chat message -->
+            <chat-message
+              v-if="msg.username !== ( index && messages[ index - 1 ].username )"
+              :badge="msg.badge"
+              :username="msg.username"
+              :display-name="msg.username"
+              :user-styling="{ color: msg.userColor ? msg.userColor : '#9e9e9e' }"
+              :route-prefix="routePrefix"
+              :channel="msg.channel"
+              :timestamp="getTime( msg.timestamp )"
+              :avatar="msg.avatar"
+              :color="msg.color"
+              :global="getGlobalTag( msg.global )"
+              @reply="addUserTag"
+              @whisper="addWhisper"
+              @select="onMessageClick( msg )"
+            >
+              <div
+                class="body-2 msg"
+                v-html="msg.message"
+              ></div>
+            </chat-message>
+
+            <!-- Append messages -->
             <div
-              class="body-2 msg"
-              v-html="msg.message"
-            ></div>
-          </div>
+              v-else
+              class="msg append"
+            >
+              <div
+                class="body-2 msg"
+                v-html="msg.message"
+              ></div>
+            </div>
+          </template>
+
         </div>
 
       </transition-group>
