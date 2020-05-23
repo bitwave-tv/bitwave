@@ -71,7 +71,6 @@
 
 <script>
   import { auth, db } from '@/plugins/firebase.js';
-  import jwt_decode from 'jwt-decode';
 
   import socketio from 'socket.io-client';
 
@@ -88,12 +87,13 @@
   import { Chat } from '@/store/chat';
   import { VStore } from '@/store';
 
-  import { spamDetection } from '@/assets/js/ChatHelpers';
-
   import {
+    compareTokens,
     sanitize,
-    stripHTML
+    stripHTML,
+    spamDetection,
   } from '@/assets/js/ChatHelpers';
+
   import { ChatConfig } from '@/store/channel/chat-config';
 
   // Creates server map for switching chat servers
@@ -101,16 +101,6 @@
     [ 'DEV',  'localhost:5000'  ],
     [ 'PROD', 'https://chat.bitwave.tv' ],
   ]);
-
-  const compareTokens = ( t1, t2 ) => {
-    const dt1 = jwt_decode( t1 );
-    const dt2 = jwt_decode( t2 );
-    return dt1.user.avi === dt2.user.avi
-      && dt1.user.badge === dt2.user.badge
-      && dt1.user.name === dt2.user.name
-      && dt1.user.color === dt2.user.color
-      && dt1.user.userColor === dt2.user.userColor;
-  };
 
   export default {
     name: 'Chat',
