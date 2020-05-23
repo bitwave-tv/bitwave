@@ -66,15 +66,19 @@
           </div>
 
           <!-- Display a grid of trending replays -->
-          <trending-replays
-            :limit="6"
-            :blur-nsfw="blurNSFW"
-            :cols="12"
-            :sm="6"
-            :md="4"
-            :lg="3"
-            :xl="2"
-          />
+          <v-lazy
+            :min-height="200"
+          >
+            <trending-replays
+              :limit="6"
+              :blur-nsfw="blurNSFW"
+              :cols="12"
+              :sm="6"
+              :md="4"
+              :lg="3"
+              :xl="2"
+            />
+          </v-lazy>
         </div>
 
         <!-- Recent Replay Header -->
@@ -92,15 +96,19 @@
           </div>
 
           <!-- Replay Grid -->
-          <replay-grid
-            :limit="6"
-            :blur-nsfw="blurNSFW"
-            :cols="12"
-            :sm="6"
-            :md="4"
-            :lg="3"
-            :xl="2"
-          />
+          <v-lazy
+            :min-height="200"
+          >
+            <replay-grid
+              :limit="6"
+              :blur-nsfw="blurNSFW"
+              :cols="12"
+              :sm="6"
+              :md="4"
+              :lg="3"
+              :xl="2"
+            />
+          </v-lazy>
         </div>
 
         <!-- Homepage Content -->
@@ -120,8 +128,9 @@
   import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import AboutUs from '@/components/Homepage/AboutUs';
-  import TrendingReplays from '@/components/Replay/TrendingReplays';
-  import ReplayGrid from '@/components/Replay/ReplayGrid';
+
+  const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
+  const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
 
   export default {
     scrollToTop: true,
