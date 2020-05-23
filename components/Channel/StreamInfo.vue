@@ -39,7 +39,7 @@
         >
           <v-tab>{{ replay ? 'Summary' : 'Description' }}</v-tab>
           <v-tab>Replays</v-tab>
-          <v-tab v-if="featureFlag && !replay">Stream Stats</v-tab>
+          <v-tab v-if="!replay">Stream Stats</v-tab>
         </v-tabs>
       </template>
     </v-toolbar>
