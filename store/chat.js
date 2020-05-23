@@ -214,7 +214,7 @@ export const mutations = {
 
   // Set TTS Rate
   [$mutations.setTtsRate] ( state, data ) {
-    if ( data ) return;
+    if ( !data ) return;
     state[$states.ttsRate] = JSON.parse( data );
   },
 
