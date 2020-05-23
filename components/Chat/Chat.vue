@@ -346,25 +346,37 @@
 
         if ( this.willBeDestroyed ) return;
 
-        const socketOptions = { transports: [ 'websocket' ] };
+        // const socketOptions = { transports: [ 'websocket' ] };
+        // this.socket = socketio( this.chatServer, socketOptions );
 
-        this.socket = socketio( this.chatServer, socketOptions );
+        // this.socket.on( 'connect',    async ()    => await this.socketConnect() );
+        // this.socket.on( 'reconnect',  async ()    => await this.socketReconnect() );
+        // this.socket.on( 'error',      async error => await this.socketError( `Connection Failed`, error ) );
+        // this.socket.on( 'disconnect', async data  => await this.socketError( `Connection Lost`, data ) );
 
-        this.socket.on( 'connect',    async ()    => await this.socketConnect() );
-        this.socket.on( 'reconnect',  async ()    => await this.socketReconnect() );
-        this.socket.on( 'error',      async error => await this.socketError( `Connection Failed`, error ) );
-        this.socket.on( 'disconnect', async data  => await this.socketError( `Connection Lost`, data ) );
+        // this.socket.on( 'update usernames', async () => await this.updateViewers() );
 
-        this.socket.on( 'update usernames', async () => await this.updateViewers() );
+        // this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
+        // this.socket.on( 'alert', async data => await this.addAlert( data ) );
 
-        this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
-        this.socket.on( 'alert', async data => await this.addAlert( data ) );
+        // this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
+        // this.socket.on( 'pollstate', data => this.updatePoll( data ) );
 
-        this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
-        this.socket.on( 'pollstate', data => this.updatePoll( data ) );
+        /*if ( process.env.APP_DEBUG )
+          this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${ attempt })` ) );*/
 
-        if ( process.env.APP_DEBUG )
-          this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${ attempt })` ) );
+
+        /* Use new socket.io plugin */
+        this.$socket.connect( this.chatServer );
+        this.$socket.on( 'connect',    async () => await this.socketConnect() );
+
+        this.$socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
+        this.$socket.on( 'alert', async data => await this.addAlert( data ) );
+
+        this.$socket.on( 'blocked',   data => this.setMessage( data.message ) );
+        this.$socket.on( 'pollstate', data => this.updatePoll( data ) );
+
+        this.$socket.on( 'update usernames', async () => await this.updateViewers() );
       },
 
       async socketConnect () {
@@ -375,7 +387,9 @@
         }
 
         // Attempt to connect...
-        this.socket.emit( 'new user', this.userToken );
+        // this.socket.emit( 'new user', this.userToken );
+        await this.$socket.auth( this.userToken );
+
         this.loading = false;
 
         // Request poll hydration
