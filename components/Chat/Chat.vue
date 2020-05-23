@@ -1045,6 +1045,12 @@
       };
 
       this.hydrationData = await getChatHydration( this.chatChannel );
+
+      if ( this.hydrationData ) {
+        await this.hydrate( this.hydrationData, true );
+      } else {
+        await this.httpHydrate();
+      }
     },
 
     async mounted () {
@@ -1058,11 +1064,11 @@
 
 
       // Hydrate chat from SSR or API
-      if ( this.hydrationData ) {
+      /*if ( this.hydrationData ) {
         await this.hydrate( this.hydrationData, true );
       } else {
         await this.httpHydrate();
-      }
+      }*/
 
 
       // Add listener for voice changes, then update voices.
