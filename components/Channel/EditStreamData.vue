@@ -200,6 +200,51 @@
                 </div>
               </v-expand-transition>
 
+              <!-- Stream Cover Image -->
+              <template
+                v-if="isPremium"
+              >
+                <div class="my-5">
+                  <div
+                    v-if="streamData.cover"
+                    class="d-flex justify-space-around mb-5"
+                  >
+                    <v-img
+                      :src="streamData.cover"
+                      max-width="50%"
+                      width="100%"
+                    ></v-img>
+                  </div>
+
+                  <div class="d-flex align-center">
+                    <v-file-input
+                      ref="image"
+                      color="blue"
+                      label="Select new stream cover"
+                      solo
+                      light
+                      filled
+                      hide-details
+                      prepend-icon=""
+                      prepend-inner-icon="$file"
+                      background-color="white"
+                      truncate-length="30"
+                      :loading="uploadingCoverImage"
+                      @change="onFilePicked"
+                    />
+                    <v-btn
+                      large
+                      class="flex-shrink-1 ml-2"
+                      :loading="uploadingCoverImage"
+                      color="primary"
+                      outlined
+                      :disabled="!imageFile"
+                      @click="uploadFile"
+                    >Upload</v-btn>
+                  </div>
+                </div>
+              </template>
+
               <!-- Stream Title -->
               <div class="body-1 mb-1">Stream Title</div>
               <v-text-field
@@ -341,6 +386,9 @@
 <script>
   import VueMarkdown from '@/components/VueMarkdown';
   import { db } from '@/plugins/firebase.js';
+  import { mapGetters } from 'vuex'
+  import { VStore } from '@/store';
+  import { auth } from '@/plugins/firebase';
 
   export default {
     name: 'EditStreamData',
@@ -366,12 +414,17 @@
           description: this.description,
           nsfw: this.nsfw,
           archive: false,
+          cover: null,
         },
         saveLoading: false,
         enableSave: false,
         showArchiveNote: false,
         showNSFWNote: false,
         showExitConfirm: false,
+
+        // TODO: move elsewhere
+        imageFile: null,
+        uploadingCoverImage: false,
       };
     },
 
@@ -386,6 +439,7 @@
           const data = doc.data();
           this.archive = data.archive;
           this.streamData.archive = data.archive;
+          this.oldCoverImage = data.cover;
         } catch ( error ) {
           this.$toast.error( error.message, { icon: 'error', duration: 5000 } );
           this.editStreamData = false;
@@ -398,6 +452,7 @@
           title: this.title,
           description: this.description,
           nsfw: this.nsfw,
+          cover: this.cover,
         };
         this.saveLoading = false;
         this.enableSave = false;
@@ -459,9 +514,95 @@
           this.editStreamData = false;
         }, 100 );
       },
+
+      /* Stream Cover Upload */
+      onFilePicked ( file ) {
+        if ( !!file ) {
+          this.imageName = file.name;
+          if( this.imageName.lastIndexOf('.') <= 0 ) return;
+
+          const fr = new FileReader ();
+          fr.readAsDataURL( file );
+          fr.addEventListener('load', () => {
+            this.streamData.cover  = fr.result;
+            this.imageFile = file; // this is an image file that can be sent to server...
+          });
+        }
+      },
+
+      /* Upload Cover Image */
+      async uploadFile () {
+        await this.updateToken();
+        if ( !this.imageFile ) return false;
+        this.uploadingAvatar = true;
+        const formData = new FormData();
+        formData.append( 'image', this.imageFile );
+        try {
+          const { data } = await this.$axios.post(
+            'https://api.bitwave.tv/v1/upload/cover',
+            formData,
+            { headers: { 'content-type': 'multipart/formdata', }, }
+          );
+          console.log( `Upload successfull.` );
+          this.$toast.success( 'Upload successful', { icon: 'done', duration: 5000 } );
+          console.log( data );
+
+          if ( data.hasOwnProperty( 'key' ) ) {
+            const imgURL = data.location;
+            await this.saveCoverImage( imgURL );
+          }
+
+        } catch ( error ) {
+          console.log( `Upload failed!` );
+          this.$toast.error( `Failed to upload image: ${error.response.data}`, { icon: 'error', duration: 5000 } );
+          console.error( error.message );
+        }
+        this.uploadingAvatar = false;
+      },
+
+      async saveCoverImage ( url ) {
+        const stream      = this.username.toLowerCase();
+        const streamRef   = db.collection( 'streams' ).doc( stream );
+        await streamRef.update({
+          cover: url,
+        });
+
+        this.imageFile = null;
+        this.imageName = '';
+        this.streamData.cover = url;
+
+        await this.deleteOldCover();
+      },
+
+      async deleteOldCover () {
+        try {
+          const { data } = await this.$axios.delete(
+            'https://api.bitwave.tv/v1/upload',
+            {
+              data: { key: this.oldCoverImage },
+            }
+          );
+          console.log( `Deleted old cover? ${data ? 'Yes' : 'No'}` );
+        } catch ( error ) {
+          console.error( `Failed to delete old cover: `, error.message );
+          this.$toast.error( `Failed to delete old cover image: ${error.response.data}`, { icon: 'error', duration: 5000 } );
+        }
+        this.oldCoverImage = this.streamData.cover;
+      },
+
+      // In case our token expires
+      async updateToken () {
+        if ( !auth.currentUser ) return;
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
     },
 
-    computed: {},
+    computed: {
+      ...mapGetters({
+        isPremium : VStore.$getters.isPremium,
+      }),
+    },
 
     async mounted () {
       await this.getStreamData();

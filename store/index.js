@@ -42,6 +42,7 @@ const $states = {
 const $getters = {
   isAuth       : 'IS_AUTH',
   isStreamer   : 'IS_STREAMER',
+  isPremium    : 'IS_PREMIUM',
   isAdmin      : 'IS_ADMIN',
   getAuth      : 'GET_AUTH',
   getUID       : 'GET_UID',
@@ -126,6 +127,14 @@ export const getters = {
     return state[$states.user]
       && state[$states.user]
         .hasOwnProperty( 'streamkey' );
+  },
+
+  [$getters.isPremium] : state => {
+    const hasRank = state[$states.user]
+      && state[$states.user]
+        .hasOwnProperty( 'rank' );
+    if ( !hasRank ) return false;
+    return state[$states.user].rank.toLowerCase() === 'premium';
   },
 
   [$getters.getAuth] : state => {
