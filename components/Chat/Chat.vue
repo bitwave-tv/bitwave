@@ -496,7 +496,7 @@
           _id: data._id,
           type: 'alert',
           message: data.message,
-          color: 'primary',
+          color: data.color || 'primary',
         };
 
         this.messages.push( Object.freeze( m ) );
