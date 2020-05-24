@@ -49,7 +49,7 @@ const $getters = {
   getUser      : 'GET_USER',
   getUsername  : 'GET_USERNAME',
   getStreamKey : 'GET_STREAM_KEY',
-  getBalance   : 'GET_BALANCE',
+  getCoins     : 'GET_COINS',
   getChannel   : 'GET_CHANNEL',
 
   getSidebarData : 'GET_SIDEBAR_DATA',
@@ -111,7 +111,7 @@ export const state = () => ({
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
-  [$states.showAll]         : false,
+  [$states.showAll]         : true,
 
   [$states.pwaPrompt]       : null,
 });
@@ -226,12 +226,11 @@ export const getters = {
       && user.role === 'admin';
   },
 
-  [$getters.getBalance] ( state ) {
+  [$getters.getCoins] ( state ) {
     const user = state[$states.user];
     return user
-      && user.hasOwnProperty( 'balance' )
-      && user.balance
-      || 0;
+      && user.hasOwnProperty( 'coins' )
+      && user.coins || 0;
   },
 
   [$getters.getPWaPrompt] ( state ) {

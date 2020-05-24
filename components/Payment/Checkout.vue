@@ -1,7 +1,12 @@
 <template>
     <div>
-        <!-- Make a purchase -->
+      <div class="mt-3 grey--text caption">NOTE: All purchases support bitwave media directly currently. Additional monetization options for streamers is in progress.</div>
+      <div class="mt-3 grey--text caption"><i>coins are nonrefundable and cannot be redeemed for cash value.</i></div>
+      <div class="mt-3 grey--text caption">Donations within the last 30 days are eligable for credit.<br>Email support@bitwave.tv for assistance.</div>
+
+      <!-- Make a purchase -->
       <div ref="dropin"></div>
+
       <v-alert
         :value="error"
         type="error"
@@ -17,7 +22,7 @@
         Thanks for your purchase!
       </v-alert>
 
-      <div class="d-flex">
+      <div class="d-flex mt-3">
         <v-spacer/>
         <v-btn
           ref="submit"
@@ -36,6 +41,8 @@
 
 <script>
   import dropIn from 'braintree-web-drop-in';
+  import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
 
   export default {
     name: 'Checkout',
@@ -61,7 +68,7 @@
       },
       btnText: {
         type: String,
-        default: 'Buy Now'
+        default: 'Buy Coins'
       },
       btnClass: {
         type: String,
@@ -108,7 +115,8 @@
         try {
           const response = await this.$axios.post( this.url, {
             nonce: nonce,
-            username: this.username,
+            username: this.user.username,
+            uid: this.user.uid,
             amount: this.amount,
           });
 
@@ -122,7 +130,7 @@
             this.$ga.event({
               eventCategory : 'merchant',
               eventAction   : 'purchased coins',
-              eventLabel    : this.productId,
+              eventLabel    : 'coins',
               eventValue    : this.amount,
             });
           } else {
@@ -140,22 +148,30 @@
       }
     },
 
-    computed: {},
+    computed: {
+      ...mapGetters({
+        isAuth     : VStore.$getters.isAuth,
+        user       : VStore.$getters.getUser,
+        getBalance : VStore.$getters.getCoins,
+      }),
+    },
 
     mounted () {
       // Create config
       const config = {
         authorization: this.token,
         container: this.$refs.dropin,
-        locale: this.locale
+        locale: this.locale,
+        paypal: { flow: 'vault' },
+        /*paypalCredit: { flow: 'vault' },*/
       };
 
       // If PayPal is available
-      if ( this.paypal ) {
+      /*if ( this.paypal ) {
         config.paypal = {
           flow: 'vault'
         }
-      }
+      }*/
 
       // Create drop-in
       dropIn.create( config, ( createErr, instance ) => {

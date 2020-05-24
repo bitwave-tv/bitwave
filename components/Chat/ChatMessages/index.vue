@@ -48,7 +48,8 @@
                 text
                 border="left"
                 :color="msg.color"
-                class="my-2"
+                class="my-1"
+                style="font-size: 14px"
               >{{ msg.message }}</v-alert>
             </div>
           </template>

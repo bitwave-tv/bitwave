@@ -149,15 +149,16 @@
       let config = {
         authorization: this.token,
         container: this.$refs.dropin,
-        locale: this.locale
+        locale: this.locale,
+        paypal: { flow: 'vault' },
       };
 
       // If Paypal is available
-      if ( this.paypal ) {
+      /*if ( this.paypal ) {
         config.paypal = {
           flow: 'vault'
         }
-      }
+      }*/
 
       // Create dropin
       dropIn.create( config, ( createErr, instance ) => {

@@ -46,10 +46,10 @@
 
       <!-- Chat Coin -->
       <v-menu
-        v-if="false"
+        v-if="true"
         v-model="showChatCoins"
         :close-on-content-click="false"
-        transition="slide-x-transition"
+        transition="slide-y-reverse-transition"
         :max-width="320"
         top
         right
