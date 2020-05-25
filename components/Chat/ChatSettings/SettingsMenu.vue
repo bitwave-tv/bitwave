@@ -60,7 +60,16 @@
 
     <v-divider/>
 
-    <div class="pb-2">
+    <v-alert
+      v-if="!ttsVoicesExist"
+      class="mt-5 mb-0"
+      type="warning"
+      text
+    >
+      No TTS voices found!
+    </v-alert>
+
+    <div class="pb-2" v-if="ttsVoicesExist">
 
       <!-- TTS Settings -->
       <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
@@ -69,6 +78,7 @@
         <!-- Enable TTS -->
         <v-switch
           v-model="useTts"
+	  :disabled="!ttsVoicesExist"
           label="Use TTS"
           class="d-block mt-0 pt-0"
           color="primary"
@@ -224,6 +234,10 @@
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
       }),
+
+      ttsVoicesExist: {
+        get () { return this.ttsVoices.length }
+      },
 
       globalChat: {
         set ( val ) {
