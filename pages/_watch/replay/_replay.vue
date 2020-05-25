@@ -298,6 +298,14 @@
 
         const commentCount = replayData.commentCount;
         const views = replayData.views;
+        const thumbnails = replayData.thumbnails;
+
+        let poster;
+        if ( thumbnails && thumbnails[5] ) {
+          poster = thumbnails[5];
+        } else {
+          poster = 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
+        }
 
         return {
           success: true,
@@ -307,7 +315,9 @@
             nsfw,
             commentCount,
             views,
+            thumbnails,
           },
+          poster,
         }
 
       };
