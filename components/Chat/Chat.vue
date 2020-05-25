@@ -737,7 +737,8 @@
         voice.rate   = this.getTtsRate / 10.0;
         voice.volume = this.getTtsVolume / 10.0;
         voice.pitch  = pitch;
-        voice.text   = message;
+        // Completely sanitized messages (i.e. emotes only) don't get read
+        voice.text   = (this.getTtsReadUsername && message == ' ' ? `${username} says: ` : '') + message;
 
         voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
 
@@ -1003,6 +1004,7 @@
         useIgnore         : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsReadUsername: Chat.$states.ttsReadUsername,
         getTtsTimeout     : Chat.$states.ttsTimeout,
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,

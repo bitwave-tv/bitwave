@@ -74,30 +74,44 @@
       <!-- TTS Settings -->
       <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
 
-      <div class="d-flex justify-space-around mb-3">
-        <!-- Enable TTS -->
-        <v-switch
-          v-model="useTts"
-	  :disabled="!ttsVoicesExist"
-          label="Use TTS"
-          class="d-block mt-0 pt-0"
-          color="primary"
-          hide-details
-          dense
-          inset
-        />
+      <div class="px-3">
+	<div class="d-flex">
+          <!-- Enable TTS -->
+          <v-switch
+            v-model="useTts"
+	    :disabled="!ttsVoicesExist"
+            label="Use TTS"
+            class="mt-0 pt-0"
+            color="primary"
+            hide-details
+            dense
+            inset
+          />
 
-        <!-- Troll TTS -->
-        <v-switch
-          v-model="trollTts"
-          :disabled="!useTts"
-          label="Troll TTS"
-          class="d-block mt-0 pt-0"
-          color="primary"
-          hide-details
-          dense
-          inset
-        />
+          <!-- Troll TTS -->
+          <v-switch
+            v-model="trollTts"
+            :disabled="!useTts"
+            label="Troll TTS"
+            class="mt-0 ml-3 pt-0"
+            color="primary"
+            hide-details
+            dense
+            inset
+          />
+	</div>
+
+      <!-- Read username -->
+      <v-switch
+        v-model="ttsReadUsername"
+        :disabled="!useTts"
+        label="Read Username"
+        class="mb-3 pt-0"
+        color="primary"
+        hide-details
+        dense
+        inset
+      />
       </div>
 
       <!-- TTS Voice -->
@@ -207,6 +221,7 @@
         setUseIgnore      : Chat.$mutations.setUseIgnore,
         setTrollTts       : Chat.$mutations.setTrollTts,
         setTtsRate        : Chat.$mutations.setTtsRate,
+        setTtsReadUsername: Chat.$mutations.setTtsReadUsername,
         setTtsTimeout     : Chat.$mutations.setTtsTimeout,
         setTtsVolume      : Chat.$mutations.setTtsVolume,
         setTtsVoice       : Chat.$mutations.setTtsVoice,
@@ -228,6 +243,7 @@
         getUseIgnore      : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsReadUsername: Chat.$states.ttsReadUsername,
         getTtsTimeout     : Chat.$states.ttsTimeout,
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
@@ -285,6 +301,15 @@
           this.$analytics.logEvent( 'tts_rate', { value: val } );
         },
         get () { return this.getTtsRate }
+      },
+
+      ttsReadUsername: {
+        set ( val ) {
+          this.setTtsReadUsername( val );
+          console.log(`readUsername trying to be set to: ${val}`)
+          this.$analytics.logEvent( 'tts_read_username', { value: val } );
+        },
+        get () { return this.getTtsReadUsername }
       },
 
       ttsTimeout: {
