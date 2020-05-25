@@ -49,7 +49,7 @@
                 border="left"
                 :color="msg.color"
                 class="my-1"
-                style="font-size: 14px"
+                style="font-size: 14px; word-break: break-word;"
               >{{ msg.message }}</v-alert>
             </div>
           </template>

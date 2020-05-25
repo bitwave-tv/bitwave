@@ -234,7 +234,7 @@
           );
           this.redeemAlertPopup = false;
           this.alertMessage = '';
-          this.close();
+          this.closeMenu();
         } catch ( error ) {
           console.error( error.message );
           this.$toast.error( error.message, { duration: 2500, icon: 'error', position: 'top-center' } );
