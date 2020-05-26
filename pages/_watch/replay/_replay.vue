@@ -316,8 +316,8 @@
             commentCount,
             views,
             thumbnails,
+            poster,
           },
-          poster,
         }
 
       };
@@ -331,6 +331,7 @@
           name: params.watch,
           title: 'SSR Error',
           nsfw: false,
+          poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         };
       }
 
