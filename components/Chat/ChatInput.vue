@@ -29,20 +29,20 @@
         @change="value => this.setChatMessage( value )"
         @keyup.delete="updateMessage"
         @keyup.enter.prevent="sendMessage"
-        @keyup.prevent="event => lastMessageHandler(event)"
-        @cut="event => lastMessageHandler(event)"
+        @keyup.prevent="event => lastMessageHandler( event )"
+        @cut="event => lastMessageHandler( event )"
         @keydown="onDetectAutocomplete"
         @click:clear="setChatMessage( '' )"
-        @keydown.tab.prevent="event => onTab(event)"
-        @keydown.down="event => onArrow(event)"
-        @keydown.up="event => onArrow(event)"
+        @keydown.tab.prevent="event => onTab( event )"
+        @keydown.down="event => onArrow( event )"
+        @keydown.up="event => onArrow( event )"
       />
     </div>
 
     <!-- Bottom Buttons -->
     <div class="d-flex align-center">
       <!-- Chat Settings -->
-      <chat-settings />
+      <chat-settings/>
 
       <!-- Chat Coin -->
       <v-menu
@@ -80,7 +80,7 @@
         <v-icon>monetization_on</v-icon>
       </v-btn>
 
-      <v-spacer />
+      <v-spacer/>
 
       <v-btn
         :disabled="loading"

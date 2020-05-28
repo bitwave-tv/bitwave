@@ -162,7 +162,7 @@
       }),
 
       onClick () {
-        window.navigator.vibrate( 10 );
+        if ( 'vibrate' in navigator ) window.navigator.vibrate( 10 );
       },
 
       async authenticated ( user ) {
