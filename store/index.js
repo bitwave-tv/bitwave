@@ -473,8 +473,14 @@ export const actions = {
       return;
     }
 
-    const currentVersion = process.env.VERSION.split('.').map( v => parseInt(v) );
-    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.').map( v => parseInt(v) );
+    // Explode version numbers
+    const currentVersion = process.env.VERSION
+      .split( '.' )
+      .map( v => parseInt( v ) );
+
+    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ]
+      .split( '.' )
+      .map( v => parseInt( v ) );
 
     const checkNewVersion = ( currentVersion, newestVersion ) => {
       if ( !currentVersion || !newestVersion ) {

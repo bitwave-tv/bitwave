@@ -259,9 +259,13 @@
 
         let lastUser = {};
         this.unsubscribeUser = userdocRef.onSnapshot( async doc => {
+          // Detect when we are offline
+          if ( !doc.exists ) {
+            console.log( `No user snapshot, are we offline?` );
+            return;
+          }
 
-          const user = doc.data();
-          user.page  = this.page;
+          const user = { ...doc.data(), page: this.page };
 
           // Save local ignore list to account
           const ignoreList = doc.get( 'ignoreList' );
