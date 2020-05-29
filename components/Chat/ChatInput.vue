@@ -8,7 +8,7 @@
 
     <!-- Text Input Field -->
     <div class="d-flex">
-      <v-text-field
+      <v-textarea
         ref="chatmessageinput"
         :value="getMessage"
         :label="`Chat ${global ? 'globally' : ''} as ${username}...`"
@@ -20,15 +20,17 @@
         autocapitalize="off"
         spellcheck="true"
         single-line
+        auto-grow
         validate-on-blur
         outlined
         dense
         clearable
+        rows="1"
         counter="300"
         @focus="onFocus"
         @change="value => this.setChatMessage( value )"
         @keyup.delete="updateMessage"
-        @keyup.enter.prevent="sendMessage"
+        @keydown.enter.prevent="sendMessage"
         @keyup.prevent="event => lastMessageHandler(event)"
         @cut="event => lastMessageHandler(event)"
         @keydown="onDetectAutocomplete"
