@@ -17,7 +17,7 @@
         tag="div"
       >
         <v-list-item
-          v-for="( user ) in sidebarData"
+          v-for="( user ) in liveChannelList"
           :key="user.owner"
           :to="user.to"
           class="py-1"
@@ -124,7 +124,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
   import { auth, db } from '@/plugins/firebase';
 
@@ -148,6 +148,8 @@
           },
         ],
 
+        liveChannelList: [],
+
         userUpdateRate: 20,
         userListTimer: null,
 
@@ -156,11 +158,23 @@
       }
     },
 
-    methods: {
-      ...mapActions({
-        fetchData : VStore.$actions.fetchSidebarData,
-      }),
+    fetchOnServer: false,
 
+    async fetch () {
+      const getLiveChannelList = async () => {
+        try {
+          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/live' );
+          if ( data && data.hasOwnProperty( 'users' ) ) return  data.users;
+        } catch ( error ) {
+          console.warn( `Failed to update sidebar.`, error.message );
+          return  [];
+        }
+      };
+
+      this.liveChannelList = await getLiveChannelList();
+    },
+
+    methods: {
       onClick () {
         if ( 'vibrate' in navigator ) window.navigator.vibrate( 10 );
       },
@@ -190,13 +204,15 @@
 
     computed: {
       ...mapGetters({
-        sidebarData: VStore.$getters.getSidebarData,
         uid : VStore.$getters.getUID,
       }),
     },
 
     async mounted () {
-      this.userListTimer = setInterval( async () => await this.fetchData(), this.userUpdateRate * 1000 );
+      this.userListTimer = setInterval(
+        async () => await this.$fetch(),
+        this.userUpdateRate * 1000
+      );
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 

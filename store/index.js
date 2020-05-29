@@ -337,7 +337,7 @@ export const actions = {
 
     const runParallel = [
       // Sidebar Streams
-      dispatch( $actions.fetchSidebarData ),
+      // dispatch( $actions.fetchSidebarData ),
 
       // Chat user hydration data
       dispatch( $actions.updateViewers ),
