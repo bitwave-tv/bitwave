@@ -609,10 +609,10 @@
               await this.insertMessage( 'Disabled developer mode.\nAttempting to connect to production chat server.' );
               break;
             case 'local':
-              this.global = false;
+              this.setGlobal( false );
               break;
             case 'global':
-              this.global = true;
+              this.setGlobal( true );
               break;
             case 'ignore':
             case 'i':
@@ -966,6 +966,7 @@
       }),
 
       ...mapMutations ( Chat.namespace, {
+        setGlobal         : Chat.$mutations.setGlobal,
         setIgnoreList     : Chat.$mutations.setIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
         appendChatMessage : Chat.$mutations.appendMessage,
