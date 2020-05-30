@@ -26,7 +26,6 @@ const $states = {
 
   channel   : 'CHANNEL',
 
-  sidebarData : 'SIDEBAR_DATA',
   newVersion  : 'LATEST_VERSION',
 
   alerts: 'SYSTEM_ALERT',
@@ -52,7 +51,6 @@ const $getters = {
   getCoins     : 'GET_COINS',
   getChannel   : 'GET_CHANNEL',
 
-  getSidebarData : 'GET_SIDEBAR_DATA',
   isUpdateAvailable : 'IS_UPDATE_AVAILABLE',
 
   getAlerts: 'GET_SYSTEM_ALERT',
@@ -70,7 +68,6 @@ const $mutations = {
   setAuth : 'SET_AUTH',
   setUser : 'SET_USER',
 
-  setSidebarData : 'SET_SIDEBAR_DATA',
   setNewVersion : 'SET_LATEST_VERSION',
 
   setAlerts: 'SET_SYSTEM_ALERT',
@@ -89,7 +86,6 @@ const $actions = {
   login        : 'LOGIN',
   logout       : 'LOGOUT',
 
-  fetchSidebarData : 'FETCH_SIDEBAR',
   newVersionAvailable : 'NEW_VERSION_AVAILABLE',
 
   updateAlerts : 'CHECK_FOR_ALERTS',
@@ -104,7 +100,6 @@ export const state = () => ({
   [$states.auth]        : null,
   [$states.user]        : null,
   [$states.channel]     : null,
-  [$states.sidebarData] : [],
   [$states.newVersion]  : null,
   [$states.alerts]      : {},
   [$states.featureFlags]: {},
@@ -168,11 +163,6 @@ export const getters = {
         ? state[$states.user].streamkey
         : null
       : null;
-  },
-
-  [$getters.getSidebarData] ( state ) {
-    if ( !state[$states.sidebarData] ) return [];
-    return state[$states.sidebarData].slice( 0, 25 );
   },
 
   [$getters.isUpdateAvailable] ( state ) {
@@ -254,10 +244,6 @@ export const mutations = {
     state[$states.metaUser] = data;
   },
 
-  [$mutations.setSidebarData] ( state, data ) {
-    state[$states.sidebarData] = data;
-  },
-
   [$mutations.setNewVersion] ( state, data ) {
     state[$states.newVersion] = data;
   },
@@ -336,9 +322,6 @@ export const actions = {
     }
 
     const runParallel = [
-      // Sidebar Streams
-      dispatch( $actions.fetchSidebarData ),
-
       // Chat user hydration data
       dispatch( $actions.updateViewers ),
     ];
@@ -456,25 +439,20 @@ export const actions = {
     }
   },
 
-  async [$actions.fetchSidebarData] ({ commit }) {
-    try {
-      const { data } = await axios.get( 'https://api.bitwave.tv/api/channels/live' );
-      if ( data && data.hasOwnProperty( 'users' ) ) {
-        commit ( $mutations.setSidebarData, data.users );
-      }
-    } catch ( error ) {
-      console.warn( `Failed to update sidebar.`, error.message );
-    }
-  },
-
   async [$actions.newVersionAvailable] ( { commit }, latestVersions ) {
     if ( !latestVersions ) {
       console.error( 'Missing latestVersions!', latestVersions );
       return;
     }
 
-    const currentVersion = process.env.VERSION.split('.').map( v => parseInt(v) );
-    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ].split('.').map( v => parseInt(v) );
+    // Explode version numbers
+    const currentVersion = process.env.VERSION
+      .split( '.' )
+      .map( v => parseInt( v ) );
+
+    const newestVersion  = latestVersions[ process.env.BITWAVE_ENV ]
+      .split( '.' )
+      .map( v => parseInt( v ) );
 
     const checkNewVersion = ( currentVersion, newestVersion ) => {
       if ( !currentVersion || !newestVersion ) {

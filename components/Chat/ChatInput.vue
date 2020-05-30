@@ -45,7 +45,7 @@
     <!-- Bottom Buttons -->
     <div class="d-flex align-center">
       <!-- Chat Settings -->
-      <chat-settings />
+      <chat-settings/>
 
       <!-- Chat Coin -->
       <v-menu
@@ -83,7 +83,7 @@
         <v-icon>monetization_on</v-icon>
       </v-btn>
 
-      <v-spacer />
+      <v-spacer/>
 
       <v-btn
         :disabled="loading"

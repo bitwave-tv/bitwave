@@ -106,18 +106,12 @@
 
     methods: {
       onClick () {
-        window.navigator.vibrate( 10 );
+        if ( 'vibrate' in navigator ) window.navigator.vibrate( 10 );
       },
     },
 
     computed: {},
 
-    mounted() {
-
-    },
+    mounted() {},
   };
 </script>
-
-<style lang='scss'>
-
-</style>

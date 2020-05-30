@@ -259,9 +259,13 @@
 
         let lastUser = {};
         this.unsubscribeUser = userdocRef.onSnapshot( async doc => {
+          // Detect when we are offline
+          if ( !doc.exists ) {
+            console.log( `No user snapshot, are we offline?` );
+            return;
+          }
 
-          const user = doc.data();
-          user.page  = this.page;
+          const user = { ...doc.data(), page: this.page };
 
           // Save local ignore list to account
           const ignoreList = doc.get( 'ignoreList' );
@@ -608,10 +612,10 @@
               await this.insertMessage( 'Disabled developer mode.\nAttempting to connect to production chat server.' );
               break;
             case 'local':
-              this.global = false;
+              this.setGlobal( false );
               break;
             case 'global':
-              this.global = true;
+              this.setGlobal( true );
               break;
             case 'ignore':
             case 'i':
@@ -966,6 +970,7 @@
       }),
 
       ...mapMutations ( Chat.namespace, {
+        setGlobal         : Chat.$mutations.setGlobal,
         setIgnoreList     : Chat.$mutations.setIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
         appendChatMessage : Chat.$mutations.appendMessage,
