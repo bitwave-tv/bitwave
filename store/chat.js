@@ -34,6 +34,8 @@ const $states = {
   ignoreList      : 'IGNORE_LIST',
   autocomplete    : 'AUTOCOMPLETE',
 
+  recieveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
+
   message    : 'MESSAGE',
   messageBuffer : 'MESSAGE_BUFFER',
 
@@ -73,6 +75,8 @@ const $mutations = {
   setNotify          : 'SET_NOTIFY',
   setIgnoreList      : 'SET_IGNORE_LIST',
   setAutocomplete    : 'SET_AUTOCOMPLETE',
+
+  setRecieveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
 
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
@@ -126,6 +130,8 @@ export const state = () => ({
   [$states.notify]          : true,
   [$states.ignoreList]      : [],
   [$states.autocomplete]    : true,
+
+  [$states.recieveMentionsInLocal] : true,
 
   [$states.message]          : '',
   [$states.messageBuffer]    : [],
@@ -263,9 +269,14 @@ export const mutations = {
     }
   },
 
+  // Set recieve mentions in local
+  [$mutations.setTtsVoice] ( state, data ) {
+    state[$states.ttsVoice] = data;
+  },
+
   // Set ignore list
-  [$mutations.setIgnoreList] ( state, data ) {
-    state[$states.ignoreList] = data;
+  [$mutations.setRecieveMentionsInLocal] ( state, data ) {
+    state[$states.recieveMentionsInLocal] = data;
   },
 
   // Set current input message

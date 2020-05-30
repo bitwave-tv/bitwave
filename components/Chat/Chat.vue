@@ -507,6 +507,7 @@
       },
 
       filterMessage ( message ) {
+        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
 
         // Remove ignored user messages
         if ( this.useIgnore && this.ignoreList.includes( message.username.toLowerCase() ) ) return true;
@@ -520,6 +521,9 @@
         // Remove trolls
         if ( this.hideTrolls && message.username.startsWith( 'troll:' ) ) return true;
 
+        // Include mentions
+        if ( message.message.match( pattern ) ) return false;
+
         // Local / Global filter
         if ( !this.global && !this.forceGlobal ) {
           const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
@@ -529,7 +533,6 @@
         }
 
         // Add username highlighting
-        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
         message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
 
         return false
