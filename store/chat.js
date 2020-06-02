@@ -19,19 +19,22 @@ const logger = ( message, data ) => {
 let loggingOut = false;
 
 const $states = {
-  room       : 'ROOM',
-  global     : 'GLOBAL',
-  timestamps : 'TIMESTAMPS',
-  useTts     : 'USE_TTS',
-  useIgnore  : 'USE_IGNORE',
-  trollTts   : 'TROLL_TTS',
-  ttsRate    : 'TTS_RATE',
-  ttsTimeout : 'TTS_TIMEOUT',
-  ttsVolume  : 'TTS_VOLUME',
-  ttsVoice   : 'TTS_VOICE',
-  notify     : 'NOTIFY',
-  ignoreList : 'IGNORE_LIST',
-  autocomplete : 'AUTOCOMPLETE',
+  room            : 'ROOM',
+  global          : 'GLOBAL',
+  timestamps      : 'TIMESTAMPS',
+  useTts          : 'USE_TTS',
+  useIgnore       : 'USE_IGNORE',
+  trollTts        : 'TROLL_TTS',
+  ttsRate         : 'TTS_RATE',
+  ttsReadUsername : 'TTS_READ_USERNAME',
+  ttsTimeout      : 'TTS_TIMEOUT',
+  ttsVolume       : 'TTS_VOLUME',
+  ttsVoice        : 'TTS_VOICE',
+  notify          : 'NOTIFY',
+  ignoreList      : 'IGNORE_LIST',
+  autocomplete    : 'AUTOCOMPLETE',
+
+  recieveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
 
   message    : 'MESSAGE',
   messageBuffer : 'MESSAGE_BUFFER',
@@ -57,20 +60,23 @@ const $getters = {
 };
 
 const $mutations = {
-  setRoom       : 'SET_ROOM',
-  setGlobal     : 'SET_GLOBAL',
-  setGlobalSSR  : 'SET_GLOBAL_SSR',
-  setTimestamps : 'SET_TIMESTAMPS',
-  setUseTts     : 'SET_USE_TTS',
-  setUseIgnore  : 'SET_USE_IGNORE',
-  setTrollTts   : 'SET_TROLL_TTS',
-  setTtsRate    : 'SET_TTS_RATE',
-  setTtsTimeout : 'SET_TTS_TIMEOUT',
-  setTtsVolume  : 'SET_TTS_VOLUME',
-  setTtsVoice   : 'SET_TTS_VOICE',
-  setNotify     : 'SET_NOTIFY',
-  setIgnoreList : 'SET_IGNORE_LIST',
-  setAutocomplete : 'SET_AUTOCOMPLETE',
+  setRoom            : 'SET_ROOM',
+  setGlobal          : 'SET_GLOBAL',
+  setGlobalSSR       : 'SET_GLOBAL_SSR',
+  setTimestamps      : 'SET_TIMESTAMPS',
+  setUseTts          : 'SET_USE_TTS',
+  setUseIgnore       : 'SET_USE_IGNORE',
+  setTrollTts        : 'SET_TROLL_TTS',
+  setTtsRate         : 'SET_TTS_RATE',
+  setTtsReadUsername : 'SET_TTS_READ_USERNAME',
+  setTtsTimeout      : 'SET_TTS_TIMEOUT',
+  setTtsVolume       : 'SET_TTS_VOLUME',
+  setTtsVoice        : 'SET_TTS_VOICE',
+  setNotify          : 'SET_NOTIFY',
+  setIgnoreList      : 'SET_IGNORE_LIST',
+  setAutocomplete    : 'SET_AUTOCOMPLETE',
+
+  setRecieveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
 
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
@@ -110,19 +116,22 @@ const $actions = {
 
 // Create Store State
 export const state = () => ({
-  [$states.room]       : '',
-  [$states.global]     : false,
-  [$states.timestamps] : true,
-  [$states.useTts]     : false,
-  [$states.useIgnore]  : true,
-  [$states.trollTts]   : true,
-  [$states.ttsRate]    : 10,
-  [$states.ttsTimeout] : 0,
-  [$states.ttsVolume]  : 10,
-  [$states.ttsVoice]   : 1,
-  [$states.notify]     : true,
-  [$states.ignoreList] : [],
-  [$states.autocomplete] : true,
+  [$states.room]            : '',
+  [$states.global]          : false,
+  [$states.timestamps]      : true,
+  [$states.useTts]          : false,
+  [$states.useIgnore]       : true,
+  [$states.trollTts]        : true,
+  [$states.ttsRate]         : 10,
+  [$states.ttsReadUsername] : false,
+  [$states.ttsTimeout]      : 0,
+  [$states.ttsVolume]       : 10,
+  [$states.ttsVoice]        : 1,
+  [$states.notify]          : true,
+  [$states.ignoreList]      : [],
+  [$states.autocomplete]    : true,
+
+  [$states.recieveMentionsInLocal] : true,
 
   [$states.message]          : '',
   [$states.messageBuffer]    : [],
@@ -218,6 +227,11 @@ export const mutations = {
     state[$states.ttsRate] = JSON.parse( data );
   },
 
+  // Set if TTS reads username
+  [$mutations.setTtsReadUsername] ( state, data ) {
+    state[$states.ttsReadUsername] = JSON.parse( data );
+  },
+
   // Set TTS Timeout
   [$mutations.setTtsTimeout] ( state, data ) {
     if ( !data ) return;
@@ -255,9 +269,14 @@ export const mutations = {
     }
   },
 
+  // Set recieve mentions in local
+  [$mutations.setTtsVoice] ( state, data ) {
+    state[$states.ttsVoice] = data;
+  },
+
   // Set ignore list
-  [$mutations.setIgnoreList] ( state, data ) {
-    state[$states.ignoreList] = data;
+  [$mutations.setRecieveMentionsInLocal] ( state, data ) {
+    state[$states.recieveMentionsInLocal] = data;
   },
 
   // Set current input message

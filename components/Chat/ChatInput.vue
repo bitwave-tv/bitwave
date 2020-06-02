@@ -8,7 +8,7 @@
 
     <!-- Text Input Field -->
     <div class="d-flex">
-      <v-text-field
+      <v-textarea
         ref="chatmessageinput"
         :value="getMessage"
         :label="`Chat ${global ? 'globally' : ''} as ${username}...`"
@@ -20,22 +20,25 @@
         autocapitalize="off"
         spellcheck="true"
         single-line
+        auto-grow
         validate-on-blur
         outlined
         dense
         clearable
+        rows="1"
         counter="300"
         @focus="onFocus"
         @change="value => this.setChatMessage( value )"
         @keyup.delete="updateMessage"
-        @keyup.enter.prevent="sendMessage"
-        @keyup.prevent="event => lastMessageHandler( event )"
-        @cut="event => lastMessageHandler( event )"
+        @keydown.enter.prevent="sendMessage"
+        @keyup.prevent="event => lastMessageHandler(event)"
+        @cut="event => lastMessageHandler(event)"
         @keydown="onDetectAutocomplete"
         @click:clear="setChatMessage( '' )"
-        @keydown.tab.prevent="event => onTab( event )"
-        @keydown.down="event => onArrow( event )"
-        @keydown.up="event => onArrow( event )"
+        @keydown.tab.prevent="event => onTab(event)"
+        @keydown.down="event => onArrow(event)"
+        @keydown.up="event => onArrow(event)"
+        @drop="onDrop"
       />
     </div>
 
@@ -201,6 +204,8 @@
         autocompleteSelection: 0,
         autocompleteValue: null,
         acSize: 5,
+
+        emoteLinkMap: null,
       }
     },
 
@@ -211,7 +216,7 @@
       }),
 
       ...mapActions(Chat.namespace, {
-        updateEmoteList: Chat.$actions.updateEmoteList,
+        updateEmoteListInStore: Chat.$actions.updateEmoteList,
       }),
 
       updateMessage ( event ) {
@@ -350,6 +355,40 @@
       // Defer some load events til user interacts with chat
       async onFocus () {
         await this.updateEmoteList();
+      },
+
+      updateEmoteList() {
+        this.updateEmoteListInStore();
+
+        if( !this.emoteLinkMap ) {
+          this.emoteLinkMap = new Map();
+        }
+
+        for( const emote of this.emoteList ) {
+          this.emoteLinkMap.set( emote.image, emote.value );
+        }
+      },
+
+      onDrop( event ) {
+        if( !this.emoteLinkMap || this.emoteLinkMap.size < 1 ) {
+          this.updateEmoteList();
+        }
+
+        const droppedText = event.dataTransfer.getData( "text/plain" );
+        const isEmoteLink = droppedText.startsWith( "https://cdn.bitwave.tv/static/emotes/" );
+
+        if( isEmoteLink ) {
+          const emoteLink = droppedText.replace( /\?[0-9]*$/g, '' );
+          const emote = this.emoteLinkMap.get( emoteLink );
+
+          // Even with updateEmoteList(), the map is sometimes incomplete.
+          // Namely, the map seems to stay empty until focus.
+          if( emote ) {
+            const currentMessage = this.getMessage;
+            this.setChatMessage( currentMessage + (currentMessage === '' ? '' : ' ') +  emote);
+            event.preventDefault();
+          }
+        }
       },
     },
 
