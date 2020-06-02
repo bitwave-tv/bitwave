@@ -38,7 +38,7 @@
     "express": "^4.17.1",
     "firebase": "^7.14.5",
     "jwt-decode": "^2.2.0",
-    "marked": "^0.7.0",
+    "marked": "^1.1.0",
     "moment": "^2.26.0",
     "nuxt": "^2.12.2",
     "sass-loader": "^8.0.2",
