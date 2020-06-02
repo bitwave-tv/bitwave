@@ -34,7 +34,7 @@
     "chart.js": "^2.9.3",
     "cookie-universal-nuxt": "^2.1.4",
     "cross-env": "^7.0.2",
-    "dashjs": "^3.1.0",
+    "dashjs": "^3.1.1",
     "express": "^4.17.1",
     "firebase": "^7.14.5",
     "jwt-decode": "^2.2.0",
