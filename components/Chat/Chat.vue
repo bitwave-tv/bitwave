@@ -159,6 +159,7 @@
         willBeDestroyed: false,
         hideTrolls: false,
         cleanTTS: false,
+        ttsTimeout: null,
 
         statInterval: null,
         longStatRate: 10,
@@ -525,19 +526,25 @@
         // Remove trolls
         if ( this.hideTrolls && message.username.startsWith( 'troll:' ) ) return true;
 
-        // Include mentions
-        if ( message.message.match( pattern ) ) return false;
+        // Add username highlighting
+        message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
 
         // Local / Global filter
         if ( !this.global && !this.forceGlobal ) {
+          // LOCAL CHAT
+
+          // Include mentions
+          // If enabled, allow cross-channel username tagging in local
+          if ( this.getRecieveMentionsInLocal && message.message.match( pattern ) ) return false;
+
+          // Check if message is in our local channel or in our own channel
           const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
           const myChannel   = message.channel.toLowerCase() === this.page.toLowerCase();
+
           // if the message is NOT in the current channel AND NOT in our channel
+          // then it should be filtered
           if ( !currChannel && !myChannel ) return true;
         }
-
-        // Add username highlighting
-        message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
 
         return false
       },
@@ -745,13 +752,17 @@
         voice.volume = this.getTtsVolume / 10.0;
         voice.pitch  = pitch;
         // Completely sanitized messages (i.e. emotes only) don't get read
-        voice.text   = (this.getTtsReadUsername && message == ' ' ? `${username} says: ` : '') + message;
+        // TODO: implement empty message filter
+        voice.text   = ( this.getTtsReadUsername ? `${username} says: ` : '' ) + message;
 
-        voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+        voice.onend = e => {
+          if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
+          console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+        }
 
         speechSynthesis.speak( voice );
         if ( this.getTtsTimeout > 0 ) {
-          setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
+          this.ttsTimeout = setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
         }
       },
 
@@ -1019,6 +1030,7 @@
         notify            : Chat.$states.notify,
         getIgnoreList     : Chat.$states.ignoreList,
         getMessage        : Chat.$states.message,
+        getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
 
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,
