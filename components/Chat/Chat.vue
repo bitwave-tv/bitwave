@@ -752,7 +752,8 @@
         voice.volume = this.getTtsVolume / 10.0;
         voice.pitch  = pitch;
         // Completely sanitized messages (i.e. emotes only) don't get read
-        voice.text   = (this.getTtsReadUsername && message == ' ' ? `${username} says: ` : '') + message;
+        // TODO: implement empty message filter
+        voice.text   = ( this.getTtsReadUsername ? `${username} says: ` : '' ) + message;
 
         voice.onend = e => {
           if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
