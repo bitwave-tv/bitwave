@@ -751,9 +751,14 @@
         voice.rate   = this.getTtsRate / 10.0;
         voice.volume = this.getTtsVolume / 10.0;
         voice.pitch  = pitch;
-        // Completely sanitized messages (i.e. emotes only) don't get read
-        // TODO: implement empty message filter
         voice.text   = ( this.getTtsReadUsername ? `${username} says: ` : '' ) + message;
+
+        // Completely sanitized messages (i.e. emotes only) don't get read
+        const pattern = new RegExp( '\S', 'gi' );
+        if( !message.match( pattern ) ) {
+          console.log( 'Empty message, skipping TTS.' );
+          return;
+        }
 
         voice.onend = e => {
           if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
