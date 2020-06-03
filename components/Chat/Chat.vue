@@ -751,13 +751,20 @@
         voice.rate   = this.getTtsRate / 10.0;
         voice.volume = this.getTtsVolume / 10.0;
         voice.pitch  = pitch;
-        voice.text   = ( this.getTtsReadUsername ? `${username} says: ` : '' ) + message;
+        voice.text   = message;
 
-        // Completely sanitized messages (i.e. emotes only) don't get read
-        const pattern = new RegExp( '\S', 'gi' );
-        if( !message.match( pattern ) ) {
-          console.log( 'Empty message, skipping TTS.' );
-          return;
+        if( this.getTtsReadUsername ) {
+
+          // Since 'username says' will be prepended to the read message, we have to ensure
+          // that the message isn't blank; skip only if there isn't readable text.
+          const pattern = new RegExp( '\S', 'gi' );
+          if( !message.match( pattern ) ) {
+            console.log( 'Empty message, skipping TTS.' );
+            return;
+          }
+
+          voice.text = `${username} says: ` + voice.text;
+
         }
 
         voice.onend = e => {
