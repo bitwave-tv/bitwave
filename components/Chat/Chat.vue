@@ -159,6 +159,7 @@
         willBeDestroyed: false,
         hideTrolls: false,
         cleanTTS: false,
+        ttsTimeout: null,
 
         statInterval: null,
         longStatRate: 10,
@@ -747,11 +748,14 @@
         // Completely sanitized messages (i.e. emotes only) don't get read
         voice.text   = (this.getTtsReadUsername && message == ' ' ? `${username} says: ` : '') + message;
 
-        voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+        voice.onend = e => {
+          if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
+          console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+        }
 
         speechSynthesis.speak( voice );
         if ( this.getTtsTimeout > 0 ) {
-          setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
+          this.ttsTimeout = setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
         }
       },
 
