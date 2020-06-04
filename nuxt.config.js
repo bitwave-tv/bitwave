@@ -18,7 +18,7 @@ module.exports = {
 
     IPINFO_TOKEN: process.env.IPINFO_TOKEN || '28731f83a6e092',
 
-    SSR_TIMEOUT: parseInt( process.env.SSR_TIMEOUT ) || 5 * 1000,
+    SSR_TIMEOUT: parseInt( process.env.SSR_TIMEOUT ) || 10 * 1000,
   },
 
   /*
@@ -305,6 +305,7 @@ module.exports = {
   sentry: {
     dsn: process.env.SENTRY_DSN,
     config: {
+      attachCommits: true,
       publishRelease: true,
       sourceMapStyle: 'hidden-source-map',
       release: pkg.version,
