@@ -319,7 +319,6 @@
       ttsReadUsername: {
         set ( val ) {
           this.setTtsReadUsername( val );
-          console.log(`readUsername trying to be set to: ${val}`)
           this.$analytics.logEvent( 'tts_read_username', { value: val } );
         },
         get () { return this.getTtsReadUsername }

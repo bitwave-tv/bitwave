@@ -389,8 +389,8 @@
           event.preventDefault();
 
           // In case the emote isn't found, ensure the link is pasted
-          if( emote ) { this.appendToMessage( emote ); }
-          else { this.appendToMessage( emoteLink ); }
+          if( emote ) { this.appendToChatMessage( emote ); }
+          else { this.appendToChatMessage( emoteLink ); }
         }
       },
     },
