@@ -131,7 +131,7 @@ export const state = () => ({
   [$states.ignoreList]      : [],
   [$states.autocomplete]    : true,
 
-  [$states.recieveMentionsInLocal] : true,
+  [$states.recieveMentionsInLocal] : false,
 
   [$states.message]          : '',
   [$states.messageBuffer]    : [],
@@ -213,6 +213,16 @@ export const mutations = {
       localStorage.setItem( 'useignore', data );
     } catch ( error ) {
       console.warn( `cannot save 'useIgnore'` );
+    }
+  },
+
+  // Set user ignore list
+  [$mutations.setIgnoreList] ( state, data ) {
+    state[$states.ignoreList] = JSON.parse( data );
+    try {
+      localStorage.setItem( 'ignorelist', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'ignorelist'` );
     }
   },
 
