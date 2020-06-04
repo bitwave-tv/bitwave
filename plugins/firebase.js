@@ -116,10 +116,22 @@ export default async ( { app, store }, inject ) => {
     // Begin performance mon
     console.log( `Starting performance module.` );
     const defaultPerformance = firebase.performance();
+    inject( 'perf', defaultPerformance );
 
     // Inject analytics into context
     console.log( `Starting and injecting analytics module.` );
     const analytics = firebase.analytics();
     inject( 'analytics', analytics );
+
+    // Persistence Manager
+    /*try {
+      await db.enablePersistence();
+    } catch ( err ) {
+      if ( err.code === 'failed-precondition' ) {
+        console.log( `Multiple tabs open, persistence can only be enabled in one tab at a a time.` );
+      } else if ( err.code === 'unimplemented' ) {
+        console.log( `The current browser does not support all of the features required to enable persistence.` )
+      }
+    }*/
   }
 }

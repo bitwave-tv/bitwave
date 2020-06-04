@@ -788,7 +788,8 @@
       // Get stream data
       await this.getStreamData();
 
-      this.landscape = ( screen.orientation || {} ).type.startsWith( 'landscape' );
+      const orientation = (screen.orientation || {}).type;
+      this.landscape = orientation && orientation.startsWith( 'landscape' );
       window.addEventListener( 'orientationchange', this.onOrientationChange );
 
       this.mounted = true;
