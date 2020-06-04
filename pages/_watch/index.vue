@@ -338,7 +338,9 @@
       },
 
       onOrientationChange () {
-        this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+        const orientation = (screen.orientation || {}).type;
+        this.landscape = orientation && orientation.startsWith( 'landscape' );
+        // this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       },
 
       showChat () {
@@ -603,7 +605,7 @@
       // this.setSource({ url: this.url, type: this.type });
       this.getStreamData(); // Get stream data
 
-      this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+      this.landscape = ( screen.orientation || {} ).type.startsWith( 'landscape' );
       window.addEventListener( 'orientationchange', this.onOrientationChange );
 
       this.mounted = true;

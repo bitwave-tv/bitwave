@@ -25,7 +25,6 @@
         dense
         clearable
         counter="300"
-        @focus="onFocus"
         @change="value => this.setChatMessage( value )"
         @keyup.delete="updateMessage"
         @keyup.enter.prevent="sendMessage"
@@ -36,6 +35,7 @@
         @keydown.tab.prevent="event => onTab( event )"
         @keydown.down="event => onArrow( event )"
         @keydown.up="event => onArrow( event )"
+        @drop="onDrop"
       />
     </div>
 
@@ -204,6 +204,11 @@
       }
     },
 
+    fetchOnServer: false,
+    async fetch() {
+      await this.updateEmoteListInStore();
+    },
+
     methods: {
       ...mapMutations(Chat.namespace, {
         setMessage: Chat.$mutations.setMessage,
@@ -211,7 +216,7 @@
       }),
 
       ...mapActions(Chat.namespace, {
-        updateEmoteList: Chat.$actions.updateEmoteList,
+        updateEmoteListInStore: Chat.$actions.updateEmoteList,
       }),
 
       updateMessage ( event ) {
@@ -318,6 +323,11 @@
         this.autocomplete = this.enableAutocomplete && this.detectAutocomplete();
       },
 
+      appendToChatMessage ( msg ) {
+        const currentMessage = this.getMessage;
+        this.setChatMessage( currentMessage + (currentMessage === '' ? '' : ' ') + msg );
+      },
+
       detectAutocomplete () {
         if ( !this.getMessage ) return;
 
@@ -347,9 +357,41 @@
         }
       },
 
-      // Defer some load events til user interacts with chat
-      async onFocus () {
-        await this.updateEmoteList();
+      updateEmoteList() {
+        this.updateEmoteListInStore();
+
+        if( this.emoteList && this.emoteLinkMap && this.emoteLinkMap.size === this.emoteList.length ) {
+          console.log( 'Skipping emoteList update.' );
+          return;
+        }
+
+        if( !this.emoteLinkMap ) {
+          this.emoteLinkMap = new Map();
+        }
+
+        for( const emote of this.emoteList ) {
+          this.emoteLinkMap.set( emote.image, emote.value );
+        }
+      },
+
+      async onDrop( event ) {
+        if( !this.emoteLinkMap || this.emoteLinkMap.size < 1 ) {
+          await this.updateEmoteList();
+        }
+
+        const droppedText = event.dataTransfer.getData( "text/plain" );
+        const isEmoteLink = droppedText.startsWith( "https://cdn.bitwave.tv/static/emotes/" )
+                         || droppedText.startsWith( "https://cdn.bitwave.tv/uploads/" );
+        if( isEmoteLink ) {
+          const emoteLink = droppedText.replace( /\?[0-9]*$/g, '' );
+          const emote = this.emoteLinkMap.get( emoteLink );
+
+          event.preventDefault();
+
+          // In case the emote isn't found, ensure the link is pasted
+          if( emote ) { this.appendToChatMessage( emote ); }
+          else { this.appendToChatMessage( emoteLink ); }
+        }
       },
     },
 

@@ -159,6 +159,7 @@
         willBeDestroyed: false,
         hideTrolls: false,
         cleanTTS: false,
+        ttsTimeout: null,
 
         statInterval: null,
         longStatRate: 10,
@@ -511,6 +512,7 @@
       },
 
       filterMessage ( message ) {
+        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
 
         // Remove ignored user messages
         if ( this.useIgnore && this.ignoreList.includes( message.username.toLowerCase() ) ) return true;
@@ -524,17 +526,25 @@
         // Remove trolls
         if ( this.hideTrolls && message.username.startsWith( 'troll:' ) ) return true;
 
+        // Add username highlighting
+        message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
+
         // Local / Global filter
         if ( !this.global && !this.forceGlobal ) {
+          // LOCAL CHAT
+
+          // Include mentions
+          // If enabled, allow cross-channel username tagging in local
+          if ( this.getRecieveMentionsInLocal && message.message.match( pattern ) ) return false;
+
+          // Check if message is in our local channel or in our own channel
           const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
           const myChannel   = message.channel.toLowerCase() === this.page.toLowerCase();
+
           // if the message is NOT in the current channel AND NOT in our channel
+          // then it should be filtered
           if ( !currChannel && !myChannel ) return true;
         }
-
-        // Add username highlighting
-        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
-        message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
 
         return false
       },
@@ -743,11 +753,28 @@
         voice.pitch  = pitch;
         voice.text   = message;
 
-        voice.onend = e => console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+        if( this.getTtsReadUsername ) {
+
+          // Since 'username says' will be prepended to the read message, we have to ensure
+          // that the message isn't blank; skip only if there isn't readable text.
+          const pattern = new RegExp( /\S/, 'gi' );
+          if( !message.match( pattern ) ) {
+            console.log( 'Empty message, skipping TTS.' );
+            return;
+          }
+
+          voice.text = `${username} says: ` + voice.text;
+
+        }
+
+        voice.onend = e => {
+          if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
+          console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+        }
 
         speechSynthesis.speak( voice );
         if ( this.getTtsTimeout > 0 ) {
-          setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
+          this.ttsTimeout = setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
         }
       },
 
@@ -1008,12 +1035,14 @@
         useIgnore         : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsReadUsername: Chat.$states.ttsReadUsername,
         getTtsTimeout     : Chat.$states.ttsTimeout,
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         notify            : Chat.$states.notify,
         getIgnoreList     : Chat.$states.ignoreList,
         getMessage        : Chat.$states.message,
+        getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
 
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,

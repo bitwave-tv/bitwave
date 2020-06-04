@@ -24,6 +24,17 @@
         />
       </div>
 
+      <v-switch
+        v-model="recieveMentionsInLocal"
+        :disabled="globalChat"
+        class="mb-2"
+        label="Recieve @'s while in local"
+        color="primary"
+        hide-details
+        dense
+        inset
+      />
+
       <!-- Ignore -->
       <v-switch
         v-model="useIgnore"
@@ -60,34 +71,58 @@
 
     <v-divider/>
 
-    <div class="pb-2">
+    <v-alert
+      v-if="!ttsVoicesExist"
+      class="mt-5 mb-0"
+      type="warning"
+      text
+    >
+      No TTS voices found!
+    </v-alert>
+
+    <div class="pb-2" v-if="ttsVoicesExist">
 
       <!-- TTS Settings -->
       <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
 
-      <div class="d-flex justify-space-around mb-3">
-        <!-- Enable TTS -->
-        <v-switch
-          v-model="useTts"
-          label="Use TTS"
-          class="d-block mt-0 pt-0"
-          color="primary"
-          hide-details
-          dense
-          inset
-        />
+      <div class="px-3">
+	<div class="d-flex">
+          <!-- Enable TTS -->
+          <v-switch
+            v-model="useTts"
+	    :disabled="!ttsVoicesExist"
+            label="Use TTS"
+            class="mt-0 pt-0"
+            color="primary"
+            hide-details
+            dense
+            inset
+          />
 
-        <!-- Troll TTS -->
-        <v-switch
-          v-model="trollTts"
-          :disabled="!useTts"
-          label="Troll TTS"
-          class="d-block mt-0 pt-0"
-          color="primary"
-          hide-details
-          dense
-          inset
-        />
+          <!-- Troll TTS -->
+          <v-switch
+            v-model="trollTts"
+            :disabled="!useTts"
+            label="Troll TTS"
+            class="mt-0 ml-3 pt-0"
+            color="primary"
+            hide-details
+            dense
+            inset
+          />
+	</div>
+
+      <!-- Read username -->
+      <v-switch
+        v-model="ttsReadUsername"
+        :disabled="!useTts"
+        label="Read Username"
+        class="mb-3 pt-0"
+        color="primary"
+        hide-details
+        dense
+        inset
+      />
       </div>
 
       <!-- TTS Voice -->
@@ -197,11 +232,13 @@
         setUseIgnore      : Chat.$mutations.setUseIgnore,
         setTrollTts       : Chat.$mutations.setTrollTts,
         setTtsRate        : Chat.$mutations.setTtsRate,
+        setTtsReadUsername: Chat.$mutations.setTtsReadUsername,
         setTtsTimeout     : Chat.$mutations.setTtsTimeout,
         setTtsVolume      : Chat.$mutations.setTtsVolume,
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
+        setRecieveMentionsInLocal : Chat.$mutations.setRecieveMentionsInLocal,
       }),
 
       updateSettings() {
@@ -218,12 +255,18 @@
         getUseIgnore      : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,
+        getTtsReadUsername: Chat.$states.ttsReadUsername,
         getTtsTimeout     : Chat.$states.ttsTimeout,
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
+        getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
       }),
+
+      ttsVoicesExist: {
+        get () { return this.ttsVoices.length }
+      },
 
       globalChat: {
         set ( val ) {
@@ -273,6 +316,14 @@
         get () { return this.getTtsRate }
       },
 
+      ttsReadUsername: {
+        set ( val ) {
+          this.setTtsReadUsername( val );
+          this.$analytics.logEvent( 'tts_read_username', { value: val } );
+        },
+        get () { return this.getTtsReadUsername }
+      },
+
       ttsTimeout: {
         set ( val ) {
           this.setTtsTimeout( val );
@@ -311,6 +362,14 @@
         },
         get () { return this.getAutocomplete }
       },
+
+      recieveMentionsInLocal: {
+        set ( val ) {
+          this.setRecieveMentionsInLocal( val );
+          this.$analytics.logEvent( 'chat_recieve_mentions_in_local', { value: val } );
+        },
+        get () { return this.getRecieveMentionsInLocal }
+      }
     },
 
     async mounted () {

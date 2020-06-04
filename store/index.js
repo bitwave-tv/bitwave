@@ -1,5 +1,4 @@
 import { auth, db } from '@/plugins/firebase.js';
-import axios from 'axios';
 import { Chat } from '@/store/chat';
 
 const logger = ( message, data ) => {
