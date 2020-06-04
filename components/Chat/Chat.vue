@@ -757,7 +757,7 @@
 
           // Since 'username says' will be prepended to the read message, we have to ensure
           // that the message isn't blank; skip only if there isn't readable text.
-          const pattern = new RegExp( '\S', 'gi' );
+          const pattern = new RegExp( /\S/, 'gi' );
           if( !message.match( pattern ) ) {
             console.log( 'Empty message, skipping TTS.' );
             return;
