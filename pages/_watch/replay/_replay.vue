@@ -646,7 +646,9 @@
       },
 
       onOrientationChange () {
-        this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+        const orientation = (screen.orientation || {}).type;
+        this.landscape = orientation && orientation.startsWith( 'landscape' );
+        // this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
       },
 
       onClickTimestamp () {
@@ -786,7 +788,7 @@
       // Get stream data
       await this.getStreamData();
 
-      this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+      this.landscape = ( screen.orientation || {} ).type.startsWith( 'landscape' );
       window.addEventListener( 'orientationchange', this.onOrientationChange );
 
       this.mounted = true;
