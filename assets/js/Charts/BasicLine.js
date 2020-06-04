@@ -1,7 +1,7 @@
 // Created by xander on 1/21/2020
 
 import { Line, mixins } from 'vue-chartjs';
-const { reactiveProp } = mixins;
+// const { reactiveProp } = mixins;
 
 export default {
   extends: Line,

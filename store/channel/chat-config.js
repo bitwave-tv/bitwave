@@ -15,8 +15,6 @@ const logger = ( message, data ) => {
   }
 };
 
-let loggingOut = false;
-
 
 const $states = {
   configRef : 'CONFIG_REF',
