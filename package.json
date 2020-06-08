@@ -19,7 +19,7 @@
     "rollout:status": "kubectl rollout status deployment/bitwave-app -n bitwave-node"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.10.3",
+    "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/component-cache": "^1.1.5",
     "@nuxtjs/device": "^1.2.7",
     "@nuxtjs/dotenv": "^1.4.1",
