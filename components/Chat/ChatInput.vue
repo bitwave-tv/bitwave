@@ -201,12 +201,15 @@
         autocompleteSelection: 0,
         autocompleteValue: null,
         acSize: 5,
+
+        emoteList: [],
       }
     },
 
     fetchOnServer: false,
     async fetch() {
       await this.updateEmoteMap();
+      this.emoteList = Array.from( this.emoteMap.values() )
     },
 
     methods: {
@@ -351,7 +354,7 @@
           .match( /:[\w]*$/g );
 
         if ( emoteMatch ) {
-          this.autocompleteData = Array.from( this.emoteMap.values() );
+          this.autocompleteData = this.emoteList;
           this.acSize = 5;
           return emoteMatch;
         }
