@@ -150,7 +150,7 @@
 
         liveChannelList: [],
 
-        userUpdateRate: 20,
+        userUpdateRate: 30,
         userListTimer: null,
 
         following: [],
@@ -163,7 +163,7 @@
     async fetch () {
       const getLiveChannelList = async () => {
         try {
-          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/live' );
+          const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/live', { progress: false }  );
           if ( data && data.hasOwnProperty( 'users' ) ) return  data.users;
         } catch ( error ) {
           console.warn( `Failed to update sidebar.`, error.message );
@@ -181,7 +181,7 @@
 
       async authenticated ( user ) {
         // if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
-        if ( user ) setTimeout( async () => await this.getFollowing( user.uid ), 5000 );
+        if ( user ) await this.getFollowing( user.uid );
       },
 
       async getFollowing ( userId ) {
@@ -193,10 +193,16 @@
               .where('viewerId', '==', userId)
               .limit( this.followingLimit )
               .get();
+
+            // Detect when user is not following anyone
+            if ( query.empty ) return;
+
             const streamers = query.docs.map( doc => doc.data().streamerId );
+
+            // Remove live streamers from following list
             this.following = data.users.filter( streamer => streamers.includes( streamer.owner ) && !streamer.live );
           } catch ( error ) {
-            console.error( error.message );
+            console.error( `Failed to get following:`, error.message );
           }
         }
       },
@@ -209,11 +215,11 @@
     },
 
     async mounted () {
+      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
       this.userListTimer = setInterval(
         async () => await this.$fetch(),
         this.userUpdateRate * 1000
       );
-      this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
     },
 
     beforeDestroy () {
