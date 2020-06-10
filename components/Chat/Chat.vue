@@ -94,6 +94,8 @@
     spamDetection,
   } from '@/assets/js/ChatHelpers';
 
+  import { UserStats } from '@/assets/js/Stats/UserStats';
+
   import { ChatConfig } from '@/store/channel/chat-config';
 
   // Creates server map for switching chat servers
@@ -188,7 +190,7 @@
           total: 0,
         },
 
-        userStats: new Map(),
+        userStats: new UserStats( 1 ),
       }
     },
 
@@ -552,97 +554,6 @@
       },
 
 
-      /*
-       * 'this.userStats' maps usernames to a map of strings that are mapped to objects
-           userStats := (username -> stat); stat := (stat name -> object)
-       * Generally, this object contains a property 'val' holding the value
-       * However, for histogram support, the object might contain a property 'values' instead,
-           which is a fixed-size array of previous values, where index 0 is the latest one.
-       * Ideally, this would all be extrapolated into a separate object / module.
-       */
-
-
-      // For all users in the map, does a histogram-aware u.set(key, val),
-      // where period is the maximum length the histogram reaches
-      pushValueForStat(stat, val = 0, period = 5 ) {
-        this.userStats.forEach( stats => {
-          const statValue = stats.get( stat );
-          if( statValue && statValue.values) {
-            statValue.values.unshift( val );
-            if( statValue.values.length >= period ) {
-              statValue.values.pop();
-            }
-          } else {
-            stats.set( stat, { values: [val] } );
-          }
-        });
-      },
-
-      // Puts # of messages into a map, keyed by username
-      // userStats -> username -> messageCount -> values
-      // Expects 'messages' to have happened within a single period
-      // Creates entries in this.userStats for usernames that don't have one
-      calcMessageCount( messages ) {
-        const key = "messageCount";
-        // Since new people might show up when going through messages, and we want to
-        // go through them only once, pushValueForStat() is abused as an init so that
-        // u.key.values[0]++ works.
-        this.pushValueForStat( key );
-
-        for( const m of messages ) {
-          console.log(m.username, m.message);
-          let u = this.userStats.get( m.username );
-          // New person showed up, we have to init for key
-          if( !u ) {
-            this.userStats.set(
-              m.username,
-              new Map([
-                [ key, { values: [0] } ]
-              ]),
-            );
-          } else if( !( u.get(key) && u.get(key).values ) ) {
-            u.set( key, { values: [0] } );
-          }
-
-          // Old u seems to *not* be a reference to the updated u in the if-statement
-          u = this.userStats.get( m.username );
-          u.get( key ).values[0]++;
-        }
-      },
-
-      // Calculates # of messages, divides count by 'period'
-      // userStats -> username -> messageRate -> val
-      //
-      // Expects 'messages' to have happened within 'period';
-      // relies on calcMessageCount() to create entries of usernames
-      async calcMessageRate( messages, period ) {
-        const key = "messageRate";
-        await this.calcMessageCount( messages );
-
-        this.userStats.forEach( stats => {
-          const count = stats.get( "messageCount" );
-          if( count && count.values && count.values[0] ) {
-            this.pushValueForStat( key, count.values[0] / period );
-          } else {
-            this.pushValueForStat( key );
-          }
-        });
-      },
-
-      // Although the name implies derivation, since we're dealing with non-continuous,
-      // discrete values, it's just an average of messageRates over its histogram period
-      calcMessageRateDerivative() {
-        this.userStats.forEach( stats => {
-          const key = "messageRateDerivative";
-          const messageRate = stats.get("messageRate");
-          if (messageRate && messageRate.values && messageRate.values.length > 0) {
-            this.pushValueForStat( key, messageRate.values.reduce((a, b) => a + b) / messageRate.values.length );
-          } else {
-            this.pushValueForStat( key );
-          }
-        });
-      },
-
       async onChatStatTick() {
         //TODO: fix this bodge
         const newMessages = [];
@@ -650,12 +561,15 @@
           newMessages.push( this.messages[ this.messages.length - i - 1] );
         }
 
-        this.calcMessageRate(newMessages, 1);
-        if( this.statTickCount % 2 === 0 ) {
-          this.userStats.forEach( ( stats, username ) => {
-            console.log(username, JSON.stringify(Array.from(stats.entries())));
-          });
+        if( this.statTickCount % 3 === 0 ) {
+          this.userStats.calculateMessageRateDerivative();
         }
+
+        this.userStats.calculateMessageRate(newMessages);
+        this.userStats.userStats.forEach( ( stats, username ) => {
+          console.log(username,
+            JSON.stringify(Array.from(stats.entries())));
+        });
 
         //TODO: not do this
         this.newMessageCount = 0;
