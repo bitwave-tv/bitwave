@@ -159,12 +159,14 @@
                 class="d-flex ml-2"
                 color="primary"
                 small
+                :loading="processing"
                 @click="createAlert"
               >Create</v-btn>
               <v-btn
                 class="d-flex ml-2"
                 color="red"
                 small
+                :loading="processing"
                 @click="redeemAlertPopup = false"
               >Cancel</v-btn>
             </div>
@@ -202,6 +204,7 @@
 
         alertColor: 'grey',
         alertMessage: '',
+        processing: false,
       };
     },
 
@@ -222,6 +225,10 @@
       },
 
       async createAlert () {
+        if ( this.processing ) return;
+
+        // Make purchase with site currency
+        this.processing = true;
         try {
           await this.$axios.post(
             'https://api.bitwave.tv/api/store/alerts/checkout',
@@ -230,6 +237,7 @@
               uid: this.user.uid,
               color: this.alertColor,
               message: this.alertMessage,
+              channel: this.getChannel,
             }
           );
           this.redeemAlertPopup = false;
@@ -239,6 +247,7 @@
           console.error( error.message );
           this.$toast.error( error.message, { duration: 2500, icon: 'error', position: 'top-center' } );
         }
+        this.processing = false;
       },
     },
 
@@ -246,7 +255,8 @@
       ...mapGetters({
         isAuth     : VStore.$getters.isAuth,
         user       : VStore.$getters.getUser,
-        getCoins : VStore.$getters.getCoins,
+        getCoins   : VStore.$getters.getCoins,
+        getChannel : VStore.$getters.getChannel,
       }),
 
       coins () {
