@@ -30,11 +30,11 @@
 
     </add-ons>
 
-
     <v-slide-y-transition mode="out-in">
       <chat-rate
         v-if="showChatStats"
-        :stats="chatStats"
+        :values="userStats.getStat('all', 'messageCount').values"
+        :period="tickPeriod"
       />
     </v-slide-y-transition>
 
@@ -190,7 +190,8 @@
           total: 0,
         },
 
-        userStats: new UserStats( 1 ),
+        tickPeriod: 3,
+        userStats: new UserStats( this.tickPeriod ),
       }
     },
 
@@ -555,31 +556,39 @@
 
 
       async onChatStatTick() {
-        //TODO: fix this bodge
-        const newMessages = [];
-        for( let i = 0; i < this.newMessageCount; i++ ) {
-          newMessages.push( this.messages[ this.messages.length - i - 1] );
-        }
+        // TODO: once chatsettings option is gone, maybe pass this as a prop instead?
+        if( !this.getTrackMetrics ) { this.newMessageCount = 0; return; }
 
-        if( this.statTickCount % 3 === 0 ) {
+        const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
+
+        await this.userStats.calculateMessageRateAll( newMessages );
+        this.userStats.calculateMessageRateDerivativeAll();
+
+        if( this.getTrackMetricsPerUser ) {
+          await this.userStats.calculateMessageRate( newMessages );
           this.userStats.calculateMessageRateDerivative();
         }
 
-        this.userStats.calculateMessageRate(newMessages);
         this.userStats.userStats.forEach( ( stats, username ) => {
           console.log(username,
             JSON.stringify(Array.from(stats.entries())));
         });
 
-        //TODO: not do this
+        const data = this.userStats.getStat( "all", "messageCount" ).values;
+        this.chatStats = {
+          value: data,
+          min: data.reduce( (a, b) => Math.min(a, b) ),
+          max: data.reduce( (a, b) => Math.max(a, b) ),
+          average: data.reduce( (a, b) => a + b ) / data.length,
+          current: data[0],
+          total: this.chatStats.total + this.newMessageCount,
+        };
+
         this.newMessageCount = 0;
       },
 
       onStatTick () {
         this.statTickCount++;
-
-        //TODO: set this on a separate timer
-        this.onChatStatTick();
 
         // Long rate stat updates
         if ( this.statTickCount > this.longStatRate ) {
@@ -1073,6 +1082,9 @@
         getMessage        : Chat.$states.message,
         getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
 
+        getTrackMetrics          : Chat.$states.trackMetrics,
+        getTrackMetricsPerUser   : Chat.$states.trackMetricsPerUser,
+
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,
 
@@ -1180,7 +1192,7 @@
       }
 
       // Stat tracking interval
-      this.statInterval = setInterval( () => this.onStatTick(), 1000 );
+      this.statInterval = setInterval( () => this.onChatStatTick(), this.tickPeriod * 1000 );
 
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
