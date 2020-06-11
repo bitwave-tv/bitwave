@@ -43,6 +43,9 @@ const $states = {
   roomViewerList   : 'ROOM_VIEWER_LIST',
   streamViewerList : 'STREAM_VIEWER_LIST',
 
+  trackMetrics        : 'TRACK_METRICS',
+  trackMetricsPerUser : 'TRACK_METRICS_PER_USER',
+
   emoteList : 'EMOTE_LIST',
 
   chatToken : 'CHAT_TOKEN',
@@ -86,6 +89,9 @@ const $mutations = {
   setViewerList       : 'SET_VIEWERLIST',
   setRoomViewerList   : 'SET_ROOM_VIEWERLIST',
   setStreamViewerList : 'SET_STREAM_VIEWERLIST',
+
+  setTrackMetrics        : 'SET_TRACK_METRICS',
+  setTrackMetricsPerUser : 'SET_TRACK_METRICS_PER_USER',
 
   setEmoteList : 'SET_EMOTE_LIST',
 
@@ -135,6 +141,9 @@ export const state = () => ({
 
   [$states.message]          : '',
   [$states.messageBuffer]    : [],
+
+  [$states.trackMetrics]        : false,
+  [$states.trackMetricsPerUser] : false,
 
   [$states.emoteList] : [],
 
@@ -308,6 +317,14 @@ export const mutations = {
       state[$states.messageBuffer].push( data );
       state[$states.messageBuffer] = state[$states.messageBuffer].splice( -10 );
     }
+  },
+
+  [$mutations.setTrackMetrics] ( state, data ) {
+    state[$states.trackMetrics] = data;
+  },
+
+  [$mutations.setTrackMetricsPerUser] ( state, data ) {
+    state[$states.trackMetricsPerUser] = data;
   },
 
   [$mutations.setEmoteList] ( state, data ) {

@@ -73,7 +73,7 @@
 
     <v-alert
       v-if="!ttsVoicesExist"
-      class="mt-5 mb-0"
+      class="mt-3 mb-3"
       type="warning"
       text
     >
@@ -86,11 +86,11 @@
       <v-subheader class="overline mb-0">Text To Speech Options</v-subheader>
 
       <div class="px-3">
-	<div class="d-flex">
+        <div class="d-flex">
           <!-- Enable TTS -->
           <v-switch
             v-model="useTts"
-	    :disabled="!ttsVoicesExist"
+            :disabled="!ttsVoicesExist"
             label="Use TTS"
             class="mt-0 pt-0"
             color="primary"
@@ -110,7 +110,7 @@
             dense
             inset
           />
-	</div>
+	      </div>
 
       <!-- Read username -->
       <v-switch
@@ -203,6 +203,38 @@
       </v-list-item>
 
     </div>
+
+    <v-divider/>
+
+    <div class="pb-5">
+      <v-subheader class="overline mb-0">
+        Experimental Options <sup style="color: red">BETA</sup>
+      </v-subheader>
+
+      <div class="px-3">
+        <v-switch
+          v-model="trackMetrics"
+          label="Keep track of chat statistics"
+          class="mb-3 mt-0"
+          color="primary"
+          hide-details
+          dense
+          inset
+        />
+
+        <v-switch
+          v-model="trackMetricsPerUser"
+          :disabled="!trackMetrics"
+          label="Track stats per-user"
+          class="mb-0"
+          color="primary"
+          hide-details
+          dense
+          inset
+        />
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -239,6 +271,9 @@
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
         setRecieveMentionsInLocal : Chat.$mutations.setRecieveMentionsInLocal,
+
+        setTrackMetrics        : Chat.$mutations.setTrackMetrics,
+        setTrackMetricsPerUser : Chat.$mutations.setTrackMetricsPerUser,
       }),
 
       updateSettings() {
@@ -262,6 +297,9 @@
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
         getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
+
+        getTrackMetrics        : Chat.$states.trackMetrics,
+        getTrackMetricsPerUser : Chat.$states.trackMetricsPerUser,
       }),
 
       ttsVoicesExist: {
@@ -369,7 +407,23 @@
           this.$analytics.logEvent( 'chat_recieve_mentions_in_local', { value: val } );
         },
         get () { return this.getRecieveMentionsInLocal }
-      }
+      },
+
+      trackMetrics: {
+        set ( val ) {
+          this.setTrackMetrics( val );
+          this.$analytics.logEvent( 'chat_track_metrics', { value: val } );
+        },
+        get () { return this.getTrackMetrics }
+      },
+
+      trackMetricsPerUser: {
+        set ( val ) {
+          this.setTrackMetricsPerUser( val );
+          this.$analytics.logEvent( 'chat_track_metrics_per_user', { value: val } );
+        },
+        get () { return this.getTrackMetricsPerUser }
+      },
     },
 
     async mounted () {
