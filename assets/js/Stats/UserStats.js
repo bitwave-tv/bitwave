@@ -41,6 +41,7 @@ class UserStats {
 
     // Faux username for a user representing the total stats for all users
     this.ALL_USER = "all";
+    this.defaultHistogramSettings = { create: true, size: 25 };
   }
 
   // Adds 'username' to the map, if it doesn't already exist
@@ -84,7 +85,7 @@ class UserStats {
   // Sets the stat value for 'username'
   // Will create a new user if it doesn't exist
   // Will create a new stat, if one doesn't exist
-  setStatValue( username, key, value = 0, histogram = { create: true, size: 5 } ) {
+  setStatValue( username, key, value = 0 ) {
     let user = this.getUser( username );
     if( !user ) {
       this.addUser( username );
@@ -93,8 +94,8 @@ class UserStats {
 
     const stat = user.get( key );
     if( !stat ) {
-      if( histogram.create ) {
-        user.set( key, new StatHistogram( histogram.size, value ) );
+      if( this.defaultHistogramSettings.create ) {
+        user.set( key, new StatHistogram( this.defaultHistogramSettings.size, value ) );
       } else {
         user.set( key, new Stat( value ) );
       }
@@ -238,7 +239,7 @@ class UserStats {
   // Stores this into stat messageCount for username this.ALL_USER ("all")
   calculateMessageCountAll( messages ) {
     const key = "messageCount";
-    this.offsetStatValue( this.ALL_USER, key, messages.length );
+    this.setStatValue( this.ALL_USER, key, messages.length );
   }
 
   // Calculates the rate of posting for all messages
