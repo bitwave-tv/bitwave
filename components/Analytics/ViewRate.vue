@@ -2,7 +2,7 @@
   <div id="view-rate">
     <div class="graph">
       <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-        Viewers per 10 second interval
+        Viewers per {{ period }} second interval
       </div>
       <v-sparkline
         :value="stats.value"
@@ -45,7 +45,8 @@
     name: 'ChatRate',
 
     props: {
-      stats: { type: Object },
+      values: { type: Array },
+      period: { type: Number },
     },
 
     data() {
@@ -67,6 +68,18 @@
     methods: {},
 
     computed: {
+      stats () {
+        this.total += this.values[0];
+        return {
+          value: this.values,
+          min: this.values.reduce( (a, b) => Math.min(a, b) ),
+          max: this.values.reduce( (a, b) => Math.max(a, b) ),
+          average: this.values.reduce( (a, b) => a + b ) / this.values.length,
+          current: this.values[0],
+          total: this.values[0],
+        };
+      },
+
       dataLabels () {
         const total = this.stats.total > 1000
           ? `${this.stats.total/1000}k`

@@ -41,7 +41,8 @@
     <v-slide-y-transition mode="out-in">
       <view-rate
         v-if="showViewStats"
-        :stats="viewStats"
+        :values="userStats.getStat('all', 'viewerCount').values"
+        :period="tickPeriod"
       />
     </v-slide-y-transition>
 
@@ -559,6 +560,8 @@
         // TODO: once chatsettings option is gone, maybe pass this as a prop instead?
         if( !this.getTrackMetrics ) { this.newMessageCount = 0; return; }
 
+        this.userStats.calculateViewerCount();
+
         const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
 
         await this.userStats.calculateMessageRateAll( newMessages );
@@ -574,7 +577,7 @@
             JSON.stringify(Array.from(stats.entries())));
         });
 
-        const data = this.userStats.getStat( "all", "messageCount" ).values;
+        let data = this.userStats.getStat( "all", "messageCount" ).values;
         this.chatStats = {
           value: data,
           min: data.reduce( (a, b) => Math.min(a, b) ),
@@ -583,6 +586,18 @@
           current: data[0],
           total: this.chatStats.total + this.newMessageCount,
         };
+
+        data = this.userStats.getStat( "all", "viewerCount" ).values;
+        this.viewStats = {
+          value: data,
+          min: data.reduce( (a, b) => Math.min(a, b) ),
+          max: data.reduce( (a, b) => Math.max(a, b) ),
+          average: data.reduce( (a, b) => a + b ) / data.length,
+          current: data[0],
+          total: this.viewStats.total + data[0],
+        };
+
+        this.userStats.garbageCollect();
 
         this.newMessageCount = 0;
       },
@@ -1163,6 +1178,11 @@
         await this.httpHydrate();
       }*/
 
+      this.userStats.calculateViewerCount = () => {
+        const me = this.userStats;
+        const key = "viewerCount";
+        me.setStatValue( me.ALL_USER, key, this.getChannelViews( this.page ) );
+      };
 
       // Add listener for voice changes, then update voices.
       try {
