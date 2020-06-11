@@ -2,10 +2,10 @@
     <div id="chat-rate">
       <div class="graph">
         <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-          messages per 10 second interval
+          messages per {{ period }} second interval
         </div>
         <v-sparkline
-          :value="stats.value"
+          :value="values"
           :gradient="gradient"
           :smooth="radius || false"
           :padding="padding"
@@ -45,7 +45,8 @@
     name: 'ChatRate',
 
     props: {
-      stats: { type: Object },
+      values: { type: Array },
+      period: { type: Number },
     },
 
     data() {
@@ -61,12 +62,25 @@
         type: 'trend',
         autoLineWidth: false,
         autoDraw: false,
+        total: 0,
       };
     },
 
     methods: {},
 
     computed: {
+      stats () {
+        this.total += this.values[0];
+        return {
+          value: this.values,
+          min: this.values.reduce( (a, b) => Math.min(a, b) ),
+          max: this.values.reduce( (a, b) => Math.max(a, b) ),
+          average: this.values.reduce( (a, b) => a + b ) / this.values.length,
+          current: this.values[0],
+          total: this.total,
+        };
+      },
+
       dataLabels () {
         const total = this.stats.total > 1000
           ? `${this.stats.total/1000}k`
@@ -96,7 +110,6 @@
         ];
       }
     },
-
   };
 </script>
 
