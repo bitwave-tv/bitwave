@@ -42,6 +42,7 @@ class UserStats {
     // Faux username for a user representing the total stats for all users
     this.ALL_USER = "all";
     this.defaultHistogramSettings = { create: true, size: 25 };
+    this.statNames = new Set();
   }
 
   // Adds 'username' to the map, if it doesn't already exist
@@ -71,12 +72,14 @@ class UserStats {
       user = this.getUser( username );
     }
 
+    this.statNames.add( key );
     user.set( key, statObj );
   }
 
   // Sets the stat for 'key' to be 'statObj' for all existing users
   // Will overwrite any existing stat object. For setting a value, see setStatValueAll()
   setStatAll( key, statObj ) {
+    this.statNames.add( key );
     this.userStats.forEach( stats => {
       stats.set( key, statObj );
     });
@@ -102,6 +105,8 @@ class UserStats {
     } else {
       stat.setValue( value );
     }
+
+    this.statNames.add( key );
   }
 
   // Sets the stat value for 'key' to be 'value' for all existing users
@@ -266,8 +271,8 @@ class UserStats {
     };
 
     for( const m of messages ) {
-      incrementMessageCount( m );
-      this.offsetStatValue( m.username, key, messageCount.get( m ) ?? 0 );
+      incrementMessageCount( m.message );
+      this.offsetStatValue( m.username, key, messageCount.get( m.message ) ?? 0 );
     }
   }
 
@@ -285,7 +290,7 @@ class UserStats {
     };
 
     for( const m of messages ) {
-      incrementMessageCount( m );
+      incrementMessageCount( m.message );
     }
 
     const sorted = Array.from( messageCount.values() ).sort()[0];
