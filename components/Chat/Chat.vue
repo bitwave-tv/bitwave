@@ -33,7 +33,7 @@
     <v-slide-y-transition mode="out-in">
       <chat-rate
         v-if="showChatStats"
-        :values="userStats.getStat('all', 'messageCount').values"
+        :values="chatValues"
         :period="tickPeriod"
       />
     </v-slide-y-transition>
@@ -41,7 +41,7 @@
     <v-slide-y-transition mode="out-in">
       <view-rate
         v-if="showViewStats"
-        :values="userStats.getStat('all', 'viewerCount').values"
+        :values="viewValues"
         :period="tickPeriod"
       />
     </v-slide-y-transition>
@@ -170,26 +170,11 @@
 
         newMessageCount: 0,
         showChatStats: false,
-        chatStats: {
-          display: false,
-          value: [ 0 ],
-          current: 0,
-          min: 0,
-          max: 0,
-          average: 0,
-          total: 0,
-        },
+        chatValues: [ 0 ],
 
         viewCount: 0,
         showViewStats: false,
-        viewStats: {
-          value: [ 0 ],
-          current: 0,
-          min: 0,
-          max: 0,
-          average: 0,
-          total: 0,
-        },
+        viewValues: [ 0 ],
 
         tickPeriod: 3,
         userStats: new UserStats( this.tickPeriod ),
@@ -577,69 +562,13 @@
             JSON.stringify(Array.from(stats.entries())));
         });
 
-        let data = this.userStats.getStat( "all", "messageCount" ).values;
-        this.chatStats = {
-          value: data,
-          min: data.reduce( (a, b) => Math.min(a, b) ),
-          max: data.reduce( (a, b) => Math.max(a, b) ),
-          average: data.reduce( (a, b) => a + b ) / data.length,
-          current: data[0],
-          total: this.chatStats.total + this.newMessageCount,
-        };
+        this.chatValues = this.userStats.getStat( "all", "messageCount" ).values.slice().reverse();
 
-        data = this.userStats.getStat( "all", "viewerCount" ).values;
-        this.viewStats = {
-          value: data,
-          min: data.reduce( (a, b) => Math.min(a, b) ),
-          max: data.reduce( (a, b) => Math.max(a, b) ),
-          average: data.reduce( (a, b) => a + b ) / data.length,
-          current: data[0],
-          total: this.viewStats.total + data[0],
-        };
+        this.viewValues = this.userStats.getStat( "all", "viewerCount" ).values.slice().reverse();
 
         this.userStats.garbageCollect();
 
         this.newMessageCount = 0;
-      },
-
-      onStatTick () {
-        this.statTickCount++;
-
-        // Long rate stat updates
-        if ( this.statTickCount > this.longStatRate ) {
-          // calc stats
-          const calcStats = ( dataArr, newVal, oldTotal, defaultValue ) => {
-            if ( newVal === null ) return;
-
-            // Record length here to prevent skewing average
-            let length = dataArr.push( newVal );
-            // Place holder for data set in short tick updates
-            dataArr.push( defaultValue );
-            // Limit to 60 data snapshots
-            const val = dataArr.splice( -120 );
-
-            return {
-              value: val,
-              current: newVal,
-              min: val.reduce( ( a, b ) => Math.min( a, b ) ),
-              max: val.reduce( ( a, b ) => Math.max( a, b ) ),
-              average: val.reduce( ( a, b ) => a + b ) / length,
-              total: oldTotal + newVal,
-            };
-          };
-
-          this.chatStats = calcStats( this.chatStats.value, this.newMessageCount, this.chatStats.total, 0 );
-          this.viewStats = calcStats( this.viewStats.value, this.getChannelViews( this.page ), this.viewStats.total, this.getChannelViews( this.page ) );
-
-          this.newMessageCount = 0;
-          this.statTickCount   = 0;
-        } else {
-          // Short rate stat update
-          this.chatStats.value.splice( this.chatStats.value.length - 1, 1, this.newMessageCount );
-          this.viewStats.value.splice( this.viewStats.value.length - 1, 1, this.getChannelViews( this.page ) );
-          this.chatStats.current = this.newMessageCount;
-          this.viewStats.current = this.getChannelViews( this.page );
-        }
       },
 
       async sendMessage () {

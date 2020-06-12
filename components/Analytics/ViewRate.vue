@@ -62,6 +62,7 @@
         type: 'trend',
         autoLineWidth: false,
         autoDraw: false,
+        total: 0,
       };
     },
 
@@ -69,14 +70,15 @@
 
     computed: {
       stats () {
-        this.total += this.values[0];
+        const latestValue = this.values[this.values.length - 1];
+        this.total += latestValue;
         return {
           value: this.values,
           min: this.values.reduce( (a, b) => Math.min(a, b) ),
           max: this.values.reduce( (a, b) => Math.max(a, b) ),
           average: this.values.reduce( (a, b) => a + b ) / this.values.length,
-          current: this.values[0],
-          total: this.values[0],
+          current: latestValue,
+          total: this.total,
         };
       },
 
