@@ -5,11 +5,11 @@
 // Trivial stat with just a value (no histogram)
 class Stat {
   constructor( value ) {
-    this.value = value;
+    this._value = value;
   }
 
-  getValue() { return this.value; }
-  setValue( value ) { this.value = value; }
+  get value() { return this._value; }
+  set value( value ) { this._value = value; }
 }
 
 // Stat that has an array of values, 'histogramSize' long
@@ -23,8 +23,8 @@ class StatHistogram {
     }
   }
 
-  getValue() { return this.values[0]; }
-  setValue( value ) {
+  get value() { return this.values[0]; }
+  set value( value ) {
     this.values.unshift( value );
     if( this.values.length > this.histogramSize ) {
       this.values.pop();
@@ -103,7 +103,7 @@ class UserStats {
         user.set( key, new Stat( value ) );
       }
     } else {
-      stat.setValue( value );
+      stat.value = value;
     }
 
     this.statNames.add( key );
@@ -132,7 +132,7 @@ class UserStats {
     if( user ) {
       const stat = user.get( key );
       if( key ) {
-        return stat.getValue();
+        return stat.value;
       }
     }
   }
