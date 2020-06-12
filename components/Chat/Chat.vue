@@ -549,10 +549,14 @@
 
         const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
 
+        this.userStats.calculateSpamminessAll( newMessages );
         await this.userStats.calculateMessageRateAll( newMessages );
         this.userStats.calculateMessageRateDerivativeAll();
+        this.userStats.calculateSpamminessAll( newMessages );
+        this.userStats.calculateNicenessUser( "all", 1 );
 
         if( this.getTrackMetricsPerUser ) {
+          this.userStats.calculateSpamminess( newMessages );
           await this.userStats.calculateMessageRate( newMessages );
           this.userStats.calculateMessageRateDerivative();
         }
@@ -563,10 +567,9 @@
         });
 
         this.chatValues = this.userStats.getStat( "all", "messageCount" ).values.slice().reverse();
-
         this.viewValues = this.userStats.getStat( "all", "viewerCount" ).values.slice().reverse();
 
-        this.userStats.garbageCollect();
+        //this.userStats.garbageCollect();
 
         this.newMessageCount = 0;
       },

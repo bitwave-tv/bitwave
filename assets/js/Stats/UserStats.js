@@ -251,6 +251,57 @@ class UserStats {
   // Calculates the rate of change of the rate of posting
   // Stores this into stat messageRateDerivative for username this.ALL_USER ("all")
   calculateMessageRateDerivativeAll = () => this.calculateMessageRateDerivativeUser( this.ALL_USER );
+
+  calculateSpamminess( messages ) {
+    const key = "spamminess";
+    const messageCount = new Map();
+
+    const incrementMessageCount = ( message ) => {
+      const value = messageCount.get( message );
+      if( value !== undefined && value !== null ) {
+        messageCount.set( message, value + 1 );
+      } else {
+        messageCount.set( message, 0 );
+      }
+    };
+
+    for( const m of messages ) {
+      incrementMessageCount( m );
+      this.offsetStatValue( m.username, key, messageCount.get( m ) ?? 0 );
+    }
+  }
+
+  calculateSpamminessAll( messages ) {
+    const key = "spamminess";
+    const messageCount = new Map();
+
+    const incrementMessageCount = ( message ) => {
+      const value = messageCount.get( message );
+      if( value !== undefined && value !== null ) {
+        messageCount.set( message, value + 1 );
+      } else {
+        messageCount.set( message, 1 );
+      }
+    };
+
+    for( const m of messages ) {
+      incrementMessageCount( m );
+    }
+
+    const sorted = Array.from( messageCount.values() ).sort()[0];
+    this.setStatValue( this.ALL_USER, key, sorted ?? 1 );
+  }
+
+  calculateNicenessUser( username, sensitivity ) {
+    const key = "niceness";
+
+    const messageCount = this.getStatValue( username, "messageCount" ) ?? 0;
+    const messageRate = this.getStatValue( username, "messageRate" ) ?? 0;
+    const spamminess = this.getStatValue( username, "spamminess" ) ?? 0;
+
+    this.setStatValue( username, key, ( messageCount * spamminess * sensitivity ) + messageRate );
+  }
+
 }
 
 export { UserStats };
