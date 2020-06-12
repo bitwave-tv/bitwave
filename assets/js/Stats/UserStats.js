@@ -163,16 +163,15 @@ class UserStats {
   // Deletes users that have no stats
   garbageCollect() {
     this.userStats.forEach( (stats, username) => {
-      stats.forEach( object => {
-        for( const prop in object ) {
-          if( object.hasOwnProperty( prop ) && object[prop].reduce && !object[prop].reduce( (a, b) => a + b ) ) {
-            delete object[prop];
-          }
-        }
-        if( JSON.stringify( object ) === JSON.stringify( {} ) ) {
-          this.deleteUser( username );
+      stats.forEach( (stat, statName) => {
+        if( ( stat.values && stat.values.reduce && !stat.values.reduce( (a, b) => a + b ) )
+        || ( stat.value && !stat.value ) ) {
+          stats.delete( statName );
         }
       });
+      if( JSON.stringify( stats ) === JSON.stringify( {} ) ) {
+        this.deleteUser( username );
+      }
     });
   }
 
