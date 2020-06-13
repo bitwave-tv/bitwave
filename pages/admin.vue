@@ -24,6 +24,13 @@
         <archive-manager />
       </v-col>
 
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <update-trending />
+      </v-col>
+
     </v-row>
 
     <div>Not <i>everything</i> here works yet. In case you didn't notice...</div>
@@ -34,6 +41,7 @@
   import Reports from '@/components/Admin/Reports';
   import StreamManager from '@/components/Admin/StreamManager';
   import ArchiveManager from '@/components/Admin/ArchiveManager';
+  import UpdateTrending from '@/components/Admin/UpdateTrending';
   import { auth } from '@/plugins/firebase';
 
   export default {
@@ -41,7 +49,12 @@
 
     middleware: [ 'auth', 'admin' ],
 
-    components: { ArchiveManager, StreamManager, Reports },
+    components: {
+      UpdateTrending,
+      ArchiveManager,
+      StreamManager,
+      Reports,
+    },
 
     data () {
       return {};
