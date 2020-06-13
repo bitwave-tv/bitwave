@@ -36,12 +36,18 @@
         color="primary"
         @click="createOnLiveWebhook"
       >Add Webhook</v-btn>
+      <v-btn
+        :disabled="!webhooks || webhooks.length === 0"
+        :loading="testingWebhooks"
+        color="success"
+        @click="testWebhooks"
+      >Test</v-btn>
     </div>
   </div>
 </template>
 
 <script>
-  import { db } from '@/plugins/firebase';
+  import { auth, db } from '@/plugins/firebase';
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
@@ -53,10 +59,16 @@
         webhooks: [],
         newWebhook: '',
         loading: false,
+        testingWebhooks: false,
       };
     },
 
     methods: {
+      async getFreshIdToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
+
       async getWebhooks () {
         const result = await db
           .collection('webhooks')
@@ -101,6 +113,23 @@
       async deleteWebhook ( id ) {
         await db.collection( 'webhooks' ).doc( id ).delete();
         await this.getWebhooks();
+      },
+
+      async testWebhooks () {
+        this.testingWebhooks = true;
+        await this.getFreshIdToken();
+        const endpoint = `https://api.bitwave.tv/v1/webhooks/test`;
+        const payload = { user: this.username };
+        try {
+          await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          this.$toast.success( `Notifications sent!`, { icon: 'done', duration: 2000, position: 'top-center' } );
+        } catch ( error ) {
+          this.$toast.error( error.message, { icon: 'error', duration: 2000, position: 'top-center' } );
+        }
+        this.testingWebhooks = false;
       },
     },
 
