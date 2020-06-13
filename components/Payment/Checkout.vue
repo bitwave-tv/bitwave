@@ -133,6 +133,10 @@
               eventLabel    : 'coins',
               eventValue    : this.amount,
             });
+            this.$analytics.logEvent( 'purchase', {
+              currency: 'USD',
+              value: 10.00,
+            });
           } else {
             this.loading = false;
             this.error = true;
@@ -165,13 +169,6 @@
         paypal: { flow: 'vault' },
         /*paypalCredit: { flow: 'vault' },*/
       };
-
-      // If PayPal is available
-      /*if ( this.paypal ) {
-        config.paypal = {
-          flow: 'vault'
-        }
-      }*/
 
       // Create drop-in
       dropIn.create( config, ( createErr, instance ) => {
