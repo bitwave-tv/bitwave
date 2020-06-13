@@ -231,6 +231,26 @@
       </v-flex>
     </v-layout>
 
+    <!-- Webhooks -->
+    <v-layout justify-center>
+      <v-flex
+        v-if="showStreamInfo"
+        xs12
+        sm10
+        md8
+        lg6
+      >
+        <v-card class="mb-4 pa-3">
+          <v-flex class="mb-3">
+            <h2>Discord Webhooks</h2>
+          </v-flex>
+          <div>
+            <manage-webhooks />
+          </div>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
   </v-container>
 </template>
 
@@ -241,12 +261,14 @@
   import { VStore } from '@/store';
 
   import AccountDetails from '@/components/profile/AccountDetails';
+  import ManageWebhooks from '@/components/profile/ManageWebhooks';
 
   export default {
 
     name: 'profile',
 
     components: {
+      ManageWebhooks,
       AccountDetails,
     },
 
