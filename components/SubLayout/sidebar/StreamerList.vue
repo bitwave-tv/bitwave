@@ -131,7 +131,7 @@
   export default {
     name: 'StreamerList',
 
-    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 10 ) ),
+    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 30 ) ),
 
     props: {
       collapsed: { type: Boolean },
@@ -167,11 +167,13 @@
           if ( data && data.hasOwnProperty( 'users' ) ) return  data.users;
         } catch ( error ) {
           console.warn( `Failed to update sidebar.`, error.message );
-          return  [];
         }
       };
 
-      this.liveChannelList = await getLiveChannelList();
+      const liveChannels = await getLiveChannelList();
+      if ( liveChannels ) {
+        this.liveChannelList = liveChannels;
+      }
     },
 
     methods: {
@@ -180,7 +182,6 @@
       },
 
       async authenticated ( user ) {
-        // if ( user ) this.$nextTick( async () => await this.getFollowing( user.uid ) );
         if ( user ) await this.getFollowing( user.uid );
       },
 
