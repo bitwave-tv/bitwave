@@ -44,6 +44,8 @@
       <!-- Chat Settings -->
       <chat-settings/>
 
+      <chat-mod-tools v-if="false"/>
+
       <!-- Chat Coin -->
       <v-menu
         v-if="true"
@@ -70,15 +72,6 @@
           @close="showChatCoins = false"
         />
       </v-menu>
-
-      <v-btn
-        v-if="false"
-        class="ml-1"
-        small
-        icon
-      >
-        <v-icon>monetization_on</v-icon>
-      </v-btn>
 
       <v-spacer/>
 
@@ -119,6 +112,7 @@
   const ChatCoin     = async () => await import ( '@/components/Payment/ChatCoin' );
 
   import AutocompleteChat from '@/components/Chat/AutocompleteChat';
+  import ChatModTools from '@/components/Chat/ChatModTools/index';
 
   const commands = [
     {
@@ -179,6 +173,7 @@
     name: 'ChatInput',
 
     components: {
+      ChatModTools,
       ChatCoin,
       ChatSettings,
       AutocompleteChat,
