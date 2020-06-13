@@ -57,6 +57,7 @@ const $states = {
 
 const $getters = {
   getStreamViewerList : 'GET_STREAM_VIEWERLIST',
+  getRoom : 'GET_ROOM',
 };
 
 const $mutations = {

@@ -280,10 +280,6 @@ export const mutations = {
     state[$states.user] = {}
   },
 
-  setChannel ( state, channel ) {
-    state[$states.channel] = channel;
-  },
-
   [$mutations.setPwaPrompt] ( state, data ) {
     state[$states.pwaPrompt] = data;
   },

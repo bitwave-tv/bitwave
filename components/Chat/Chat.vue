@@ -502,7 +502,15 @@
           type: 'alert',
           message: data.message,
           color: data.color || 'primary',
+          channel: data.channel,
         };
+
+        console.log( `New alert: `, m );
+
+        if ( m.channel
+          && m.channel.toLowerCase() !== this.page.toLowerCase() ) {
+          return;
+        }
 
         this.messages.push( Object.freeze( m ) );
 
@@ -993,6 +1001,7 @@
       }),
 
       ...mapMutations ( Chat.namespace, {
+        setRoom           : Chat.$mutations.setRoom,
         setGlobal         : Chat.$mutations.setGlobal,
         setIgnoreList     : Chat.$mutations.setIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
@@ -1107,6 +1116,8 @@
 
     async mounted () {
       await this.connectToChat();
+
+      this.setRoom( this.page );
 
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
       // TODO: trigger token exchange in store from plugin listener,

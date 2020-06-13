@@ -181,8 +181,9 @@
 <script>
   const Checkout = async () => await import ( '@/components/Payment/Checkout' );
 
-  import { mapGetters } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   import { VStore } from '@/store';
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'ChatCoin',
@@ -237,7 +238,7 @@
               uid: this.user.uid,
               color: this.alertColor,
               message: this.alertMessage,
-              channel: this.getChannel,
+              channel: this.room,
             }
           );
           this.redeemAlertPopup = false;
@@ -256,7 +257,10 @@
         isAuth     : VStore.$getters.isAuth,
         user       : VStore.$getters.getUser,
         getCoins   : VStore.$getters.getCoins,
-        getChannel : VStore.$getters.getChannel,
+      }),
+
+      ...mapState( Chat.namespace, {
+        room : Chat.$states.room,
       }),
 
       coins () {
