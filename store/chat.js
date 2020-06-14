@@ -280,7 +280,7 @@ export const mutations = {
     }
   },
 
-  // Set recieve mentions in local
+  // Set receive mentions in local
   [$mutations.setTtsVoice] ( state, data ) {
     state[$states.ttsVoice] = data;
   },
@@ -288,6 +288,11 @@ export const mutations = {
   // Set ignore list
   [$mutations.setRecieveMentionsInLocal] ( state, data ) {
     state[$states.recieveMentionsInLocal] = data;
+    try {
+      localStorage.setItem( 'at-in-local', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'at-in-local'` );
+    }
   },
 
   // Set current input message
@@ -518,6 +523,15 @@ export const actions = {
       else commit( $mutations.setAutocomplete, true );
     } catch ( error ) {
       logger ( 'No autocomplete option found.' );
+    }
+
+    // Autocomplete
+    try {
+      const atInLocal = localStorage.getItem( 'at-in-local' );
+      if ( atInLocal !== null ) commit( $mutations.setRecieveMentionsInLocal, atInLocal );
+      else commit( $mutations.setRecieveMentionsInLocal, false );
+    } catch ( error ) {
+      logger ( 'No at-in-local option found.' );
     }
 
     // Get ignore list
