@@ -23,7 +23,7 @@
 
             <!-- NSFW Icon -->
             <template v-if="nsfw">
-              <div class="font-weight-bold green--text body-2">NSFQ</div>
+              <div class="font-weight-bold red--text body-2">NSFW</div>
               <v-divider vertical class="mx-2"/>
             </template>
 

@@ -31,7 +31,7 @@
             <div class="headline font-weight-light grey--text">Live Now</div>
             <v-switch
               v-model="blurNSFW"
-              label="Blur NSFQ thumbnails"
+              label="Blur NSFW thumbnails"
               color="primary"
               hide-details
               dense
@@ -57,7 +57,7 @@
             <div class="headline font-weight-light grey--text">Trending Replays</div>
             <v-switch
               v-model="blurNSFW"
-              label="Blur NSFQ thumbnails"
+              label="Blur NSFW thumbnails"
               color="primary"
               hide-details
               dense
@@ -87,7 +87,7 @@
             <div class="headline font-weight-light grey--text">Recent Replays</div>
             <v-switch
               v-model="blurNSFW"
-              label="Blur NSFQ thumbnails"
+              label="Blur NSFW thumbnails"
               color="primary"
               hide-details
               dense

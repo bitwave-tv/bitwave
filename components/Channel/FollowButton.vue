@@ -21,6 +21,7 @@
       <!-- Push notifications -->
       <v-btn
         v-if="isAuth"
+        class="ml-2"
         :disabled="!following"
         icon
         @click="verifyPushNotifications"
@@ -111,7 +112,7 @@
         this.showConfirmNotifications = true;
 
         // Verify when enabling push notifications
-        if ( !this.pushNotifications ) {
+        if ( !this.pushNotifications || !this.getTokenFCM ) {
           const enable = await new Promise( res => this.confirmNotifications = res );
           if ( !enable ) return;
         }
@@ -314,6 +315,9 @@
         user   : VStore.$getters.getUser,
       }),
 
+      ...mapGetters( VNotifications.namespace, {
+        getTokenFCM : VNotifications.getTokenFCM,
+      }),
     },
 
     async mounted () {

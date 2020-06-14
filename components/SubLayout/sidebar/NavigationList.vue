@@ -3,7 +3,7 @@
       <!-- Navigation List -->
 
         <v-list
-          class="py-0"
+          class="pt-0 pb-1"
           dense
         >
           <v-list-item
@@ -31,7 +31,24 @@
           </v-list-item>
         </v-list>
 
-      <div class="">
+      <div
+        v-if="!getPWaPrompt"
+      >
+        <v-btn
+          class="text-center py-2 px-0"
+          style="height: auto;"
+          text
+          tile
+          block
+          small
+          @click="showPWAPrompt"
+          no-prefetch
+        >
+          GET APP
+        </v-btn>
+      </div>
+
+      <div v-else>
         <v-btn
           class="text-center py-2"
           style="height: auto;"
@@ -43,8 +60,7 @@
           @click="onClick"
           no-prefetch
         >
-          STREAM<br>
-          HERE
+          STREAM
         </v-btn>
       </div>
 
@@ -83,6 +99,9 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
+  import { VStore } from '@/store';
+
   export default {
     name: 'NavigationList',
 
@@ -108,9 +127,45 @@
       onClick () {
         if ( 'vibrate' in navigator ) window.navigator.vibrate( 10 );
       },
+
+      async showPWAPrompt () {
+        const prompt = this.getPWaPrompt;
+
+        await prompt.prompt();
+        const userAction = await prompt.userChoice;
+
+        this.$analytics.logEvent( 'show_pwa_prompt' );
+
+        if ( userAction.outcome === 'accepted' ) {
+          this.$toast.success('Successfully installed.', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-success',
+          });
+          this.$analytics.logEvent( 'pwa_installed' );
+        } else if (userAction.outcome === 'dismissed') {
+          this.$toast.error('Installation cancelled', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-cancelled',
+          });
+          this.$analytics.logEvent( 'pwa_install_cancelled' );
+        } else {
+          this.$toast.error('ERROR: Installation failed', { duration: 2000 });
+          this.$ga.event({
+            eventCategory : 'pwa-install',
+            eventAction   : 'pwa-failed',
+          });
+          this.$analytics.logEvent( 'pwa_install_failed' );
+        }
+      },
     },
 
-    computed: {},
+    computed: {
+      ...mapGetters({
+        getPWaPrompt: VStore.$getters.getPWaPrompt,
+      }),
+    },
 
     mounted() {},
   };
