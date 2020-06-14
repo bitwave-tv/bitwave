@@ -129,6 +129,11 @@ export default async ( { app, store }, inject ) => {
 
 
     // Add push notifications
+    if ( !firebase.messaging.isSupported() ) {
+      console.error( `FCM not supported` );
+      return;
+    }
+
     try {
       const messaging = firebase.messaging();
       messaging.usePublicVapidKey( 'BMghbCgNLfIbIqsuJaz4HV8EHYgu71MnONedQM26co3WfF2w0ahxzS6eq56JzPhaKVRamh_NtbbM-FdQsB-qXew' );
