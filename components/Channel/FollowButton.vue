@@ -150,8 +150,20 @@
 
         if ( !notifications ) {
           await this.subscribeToUser( this.streamerId );
+
+          this.$analytics.logEvent( 'enable_push_notifications' );
+          this.$ga.event({
+            eventCategory : 'notifications',
+            eventAction   : 'enable push notifications',
+          });
         } else {
           await this.unsubscribeFrom( this.streamerId );
+
+          this.$analytics.logEvent( 'disable_push_notifications' );
+          this.$ga.event({
+            eventCategory : 'notifications',
+            eventAction   : 'disable push notifications',
+          });
         }
 
         this.pushNotifications = !notifications;

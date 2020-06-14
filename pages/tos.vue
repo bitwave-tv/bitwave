@@ -301,7 +301,7 @@
 
     <!-- Footer -->
     <simple-footer />
-    
+
   </div>
 </template>
 
