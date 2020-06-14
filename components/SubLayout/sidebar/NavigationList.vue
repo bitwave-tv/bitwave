@@ -32,7 +32,7 @@
         </v-list>
 
       <div
-        v-if="!getPWaPrompt"
+        v-if="getPWaPrompt"
       >
         <v-btn
           class="text-center py-2 px-0"
