@@ -405,6 +405,7 @@
       },
 
       async getRecaptchaToken ( action ) {
+        return null;
         try {
           await this.$recaptcha.init();
           return await this.$recaptcha.execute( action );

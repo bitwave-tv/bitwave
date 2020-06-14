@@ -1,34 +1,33 @@
 <template>
-  <div>
-    <v-btn
-      v-if="isAuth"
-      small
-      :outlined="following || !streamerId"
-      :loading="loading || disabled"
-      :disabled="!isAuth"
-      color="primary black--text"
-      @click="onFollowClick"
-    >
-      {{ following ? `following (${followCount})` : `follow (${followCount})` }}
-    </v-btn>
-    <div
-      v-else
-      class="body-2 primary--text text-uppercase font-weight-bold"
-    >
-      {{ `${followCount} Followers` }}
-    </div>
+  <div class="d-flex flex-row align-center">
+      <v-btn
+        v-if="isAuth"
+        small
+        :outlined="following || !streamerId"
+        :loading="loading || disabled"
+        :disabled="!isAuth"
+        color="primary black--text"
+        @click="onFollowClick"
+      >
+        {{ following ? `following (${followCount})` : `follow (${followCount})` }}
+      </v-btn>
+      <div
+        v-else
+        class="body-2 primary--text text-uppercase font-weight-bold"
+      >
+        {{ `${followCount} Followers` }}
+      </div>
 
-    <!-- Push notifications -->
-    <v-btn
-      v-if="isAuth"
-      :disabled="!following"
-      icon
-      @click="verifyPushNotifications"
-    >
-      <v-icon v-if="following">{{ pushNotifications ? 'notifications_active' : 'notifications' }}</v-icon>
-      <v-icon v-else>notifications_none</v-icon>
-    </v-btn>
-
+      <!-- Push notifications -->
+      <v-btn
+        v-if="isAuth"
+        :disabled="!following"
+        icon
+        @click="verifyPushNotifications"
+      >
+        <v-icon v-if="following">{{ pushNotifications ? 'notifications_active' : 'notifications' }}</v-icon>
+        <v-icon v-else>notifications_none</v-icon>
+      </v-btn>
 
     <!-- Push Notification Confirmation Dialog -->
     <v-dialog
@@ -110,8 +109,13 @@
     methods: {
       async verifyPushNotifications () {
         this.showConfirmNotifications = true;
-        const enable = await new Promise( res => this.confirmNotifications = res );
-        if ( !enable ) return;
+
+        // Verify when enabling push notifications
+        if ( !this.pushNotifications ) {
+          const enable = await new Promise( res => this.confirmNotifications = res );
+          if ( !enable ) return;
+        }
+
 
         this.requestTokenFCM();
 

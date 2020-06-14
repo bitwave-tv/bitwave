@@ -109,10 +109,12 @@ export default async ( { app, store }, inject ) => {
     ]);
 
     // Listen to the feature flags, and dispatch updates
-    console.log( `Listening to feature flags...` );
+    /*console.log( `Listening to feature flags...` );
     listenToFeatureFlags([
       async ( featureFlags ) => await store.dispatch( VStore.$actions.updateFeatureFlags, featureFlags ),
-    ]);
+    ]);*/
+
+
 
     // Begin performance mon
     console.log( `Starting performance module.` );
@@ -123,6 +125,7 @@ export default async ( { app, store }, inject ) => {
     console.log( `Starting and injecting analytics module.` );
     const analytics = firebase.analytics();
     inject( 'analytics', analytics );
+
 
 
     // Add push notifications

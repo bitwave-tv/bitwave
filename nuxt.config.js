@@ -350,7 +350,7 @@ module.exports = {
     ** You can extend webpack config here
     */
 
-    crossorigin: true,
+    // crossorigin: true,
 
     extractCSS: true,
 
