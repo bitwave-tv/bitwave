@@ -4,6 +4,7 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/analytics'
 import 'firebase/performance'
+import 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: "AIzaSyCgIwubBz-nTd0mof6l7eklzJk1evuwzhg",
@@ -122,6 +123,41 @@ export default async ( { app, store }, inject ) => {
     console.log( `Starting and injecting analytics module.` );
     const analytics = firebase.analytics();
     inject( 'analytics', analytics );
+
+
+    // Add push notifications
+    const messaging = firebase.messaging();
+    messaging.usePublicVapidKey( 'BMghbCgNLfIbIqsuJaz4HV8EHYgu71MnONedQM26co3WfF2w0ahxzS6eq56JzPhaKVRamh_NtbbM-FdQsB-qXew' );
+    inject( 'messaging', messaging );
+
+
+    // Callback fired if Instance ID token is updated.
+    messaging.onTokenRefresh(async () => {
+      try {
+        const refreshedToken = await messaging.getToken();
+
+        console.log( 'Token refreshed.', refreshedToken );
+
+        // Indicate that the new Instance ID token has not yet been sent to the app server.
+        // setTokenSentToServer( false );
+
+        // Send Instance ID token to app server.
+        // sendTokenToServer( refreshedToken );
+        // ...
+      } catch ( err ) {
+        console.log( 'Unable to retrieve refreshed token ', err );
+        // showToken( 'Unable to retrieve refreshed token ', err );
+      }
+    });
+
+    // Handle incoming messages. Called when:
+    // - a message is received while the app has focus
+    // - the user clicks on an app notification created by a service worker
+    //   `messaging.setBackgroundMessageHandler` handler.
+    messaging.onMessage(( payload ) => {
+      console.log( 'Message received. ', payload );
+    });
+
 
     // Persistence Manager
     /*try {

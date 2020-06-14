@@ -17,14 +17,75 @@
     >
       {{ `${followCount} Followers` }}
     </div>
+
+    <!-- Push notifications -->
+    <v-btn
+      v-if="isAuth"
+      :disabled="!following"
+      icon
+      @click="verifyPushNotifications"
+    >
+      <v-icon v-if="following">{{ pushNotifications ? 'notifications_active' : 'notifications' }}</v-icon>
+      <v-icon v-else>notifications_none</v-icon>
+    </v-btn>
+
+
+    <!-- Push Notification Confirmation Dialog -->
+    <v-dialog
+      v-model="showConfirmNotifications"
+      width="500"
+      @click:outside="confirm( false )"
+    >
+      <v-card>
+        <v-sheet
+          color="primary"
+          class="pa-2 mr-2 d-flex justify-space-end align-center"
+        >
+          <v-icon color="black">notifications_active</v-icon>
+          <h4 class="black--text body-1 font-weight-bold">
+            Enable Push Notifications?
+          </h4>
+        </v-sheet>
+
+        <v-card-text class="pb-0">
+          <div class="subtitle-1 my-2 white--text">
+            Notifications will still be sent if bitwave is closed.
+          </div>
+          <div>
+            You can always disable notifications by clicking the bell again.
+          </div>
+        </v-card-text>
+
+        <v-card-actions class="justify-end pa-3">
+          <v-btn
+            class="mr-2"
+            color="error"
+            outlined
+            small
+            @click="confirm( false )"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="green"
+            small
+            @click="confirm( true )"
+          >
+            Enable
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
   import { VStore } from '@/store';
 
   import { auth, db, FieldValue } from '@/plugins/firebase.js'
+  import { VNotifications } from '@/store/notifications';
 
   export default {
     name: 'FollowButton',
@@ -40,10 +101,57 @@
         following : false,
         followCount : 0,
         disabled: false,
+        showConfirmNotifications: false,
+        confirmNotifications: null,
+        pushNotifications: false,
       }
     },
 
     methods: {
+      async verifyPushNotifications () {
+        this.showConfirmNotifications = true;
+        const enable = await new Promise( res => this.confirmNotifications = res );
+        if ( !enable ) return;
+
+        this.requestTokenFCM();
+
+        await this.togglePushNotifications();
+      },
+
+      confirm ( confirm ) {
+        this.showConfirmNotifications = false;
+        this.confirmNotifications( confirm );
+      },
+
+      async togglePushNotifications () {
+        const followerDoc = await db
+          .collection( 'followers' )
+          .doc( `${this.user.uid}_${this.streamerId}` )
+          .get();
+
+        if ( !followerDoc.exists ) {
+          console.error( `Failed to get follower documeent to update!` );
+          return;
+        }
+
+        const data = followerDoc.data();
+        const notifications = data.hasOwnProperty( 'notifications' )
+          ? data.notifications
+          : false;
+
+        await followerDoc.ref.update({
+          notifications: !notifications,
+        });
+
+        if ( !notifications ) {
+          await this.subscribeToUser( this.streamerId );
+        } else {
+          await this.unsubscribeFrom( this.streamerId );
+        }
+
+        this.pushNotifications = !notifications;
+      },
+
       async getFollowCount () {
         const ref = db
           .collection( 'followers' )
@@ -65,11 +173,22 @@
       },
 
       async checkIfFollowing (uid) {
-        const followerRef = db
+        const doc = await db
           .collection( 'followers' )
-          .doc( `${uid}_${this.streamerId}` );
-        const doc = await followerRef.get();
+          .doc( `${uid}_${this.streamerId}` )
+          .get()
+
         this.following = doc.exists;
+
+        if ( this.following ) {
+          const data = doc.data();
+          this.pushNotifications = data.hasOwnProperty( 'notifications' )
+            ? data.notifications
+            : false;
+        } else {
+          this.pushNotifications = false;
+        }
+
         return doc.exists;
       },
 
@@ -177,6 +296,12 @@
           this.disabled = false;
         }, 500 );
       },
+
+      ...mapActions( VNotifications.namespace,{
+        requestTokenFCM  : VNotifications.$actions.requestTokenFCM,
+        subscribeToUser  : VNotifications.$actions.subscribeToUser,
+        unsubscribeFrom : VNotifications.$actions.unsubscribeFrom,
+      }),
     },
 
     computed: {
