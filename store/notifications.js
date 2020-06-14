@@ -86,7 +86,7 @@ export const actions = {
         commit( $mutations.setTokenFCM, currentToken );
         await dispatch( $actions.saveTokenFCM )
 
-        this.$toast.success( `Push notifications enabled!!`, toastSuccessConfig );
+        this.$toast.success( `Push notifications permissions approved!!`, toastSuccessConfig );
       } else {
         // Show permission request.
         console.log( 'No Instance ID token available. Request permission to generate one.' );

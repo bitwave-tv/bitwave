@@ -122,9 +122,10 @@
           if ( !enable ) return;
         }
 
+        console.log( `CHeck for FCM key or show request` );
+        await this.requestTokenFCM();
 
-        this.requestTokenFCM();
-
+        console.log( `Enable & Subscribe to channel` );
         await this.togglePushNotifications();
       },
 
@@ -151,12 +152,9 @@
           ? data.notifications
           : false;
 
-        await followerDoc.ref.update({
-          notifications: !notifications,
-        });
-
         if ( !notifications ) {
           await this.subscribeToUser( this.streamerId );
+          this.pushNotifications = true;
 
           this.$analytics.logEvent( 'enable_push_notifications' );
           this.$ga.event({
@@ -165,6 +163,7 @@
           });
         } else {
           await this.unsubscribeFrom( this.streamerId );
+          this.pushNotifications = false;
 
           this.$analytics.logEvent( 'disable_push_notifications' );
           this.$ga.event({
@@ -173,7 +172,10 @@
           });
         }
 
-        this.pushNotifications = !notifications;
+        await followerDoc.ref.update({
+          notifications: this.pushNotifications,
+        });
+
       },
 
       async getFollowCount () {
