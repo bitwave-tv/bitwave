@@ -117,7 +117,9 @@
         this.showConfirmNotifications = true;
 
         // Verify when enabling push notifications
-        if ( !this.pushNotifications || !this.getTokenFCM ) {
+        // if ( !this.pushNotifications || !this.getTokenFCM ) {
+
+        if ( !this.getTokenFCM ) {
           const enable = await new Promise( res => this.confirmNotifications = res );
           if ( !enable ) return;
         }

@@ -56,7 +56,28 @@
 
     </v-menu>
 
-    <login-dialog v-else />
+    <div
+      v-else
+      class="text-xs-center"
+    >
+      <v-dialog
+        v-model="showLogin"
+        width="500"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            color="primary"
+            class="black--text"
+            small
+          >
+            Login
+          </v-btn>
+        </template>
+
+        <login-dialog @close="showLogin = false"/>
+    </v-dialog>
+  </div>
 
   </div>
 </template>
@@ -79,6 +100,7 @@
     data() {
       return {
         profileMenu: false,
+        showLogin: false,
       };
     },
 

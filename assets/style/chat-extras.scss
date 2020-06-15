@@ -1,0 +1,27 @@
+@import "compass/css3";
+
+$starter-h: 10;
+$animation-steps: 10;
+$animation-step-duration: .2s;
+$animation-duration: $animation-steps * $animation-step-duration;
+
+@mixin colors {
+  $h: $starter-h;
+  @for $i from 1 through $animation-steps {
+    $percent: (($i/$animation-steps) * 100) + '%';
+    #{$percent} {
+      color: hsl( $h, 90%, 60%);
+    }
+    @if ( $i == ($animation-steps - 1) ) {
+      $h: $starter-h;
+    }
+    @else {
+      $h: $h + 20;
+    }
+  } // @for
+} // @mixin colors
+
+.rbw {
+  color: hsl( $starter-h, 90%, 60% );
+  animation: colors $animation-duration linear infinite;
+}

@@ -1,30 +1,14 @@
 <template>
-  <div class="text-xs-center">
-    <v-dialog
-      v-model="show"
-      width="500"
-    >
-      <template v-slot:activator="{ on }">
-        <v-btn
-          v-on="on"
-          color="primary"
-          class="black--text"
-          small
-        >
-          Login
-        </v-btn>
-      </template>
-
-      <v-card class="my-3" color="grey darken-4">
+  <v-card class="my-3" color="grey darken-4">
 
         <v-sheet
           tile
           color="primary"
           class="d-flex align-center pa-3 black--text"
         >
-          <v-icon class="mr-3" color="black">ondemand_video</v-icon>
+          <v-icon class="mr-3" color="black">person</v-icon>
           <h2 class="title">
-            [bitwave.tv] {{ signUp ? 'Create Account' : 'Login' }}
+            {{ signUp ? 'Create Account' : 'Login' }}
           </h2>
         </v-sheet>
 
@@ -34,6 +18,19 @@
             v-model="valid"
             onSubmit="return false"
           >
+            <div>
+              <v-alert
+                v-if="signUp"
+                type="error"
+                class="align-center"
+              >
+                <strong>STOP!</strong>
+                If you want to stay anonymous (not doxxed)<br>
+                CONSIDER USING A NEW USERNAME.<br>
+                <span class="overline">only you can protect your online privacy!</span>
+              </v-alert>
+            </div>
+
             <v-text-field
               v-if="signUp"
               id="username"
@@ -161,9 +158,9 @@
           >Forgot Password?</v-btn>
           <v-spacer/>
           <v-btn
-            color="primary darken-3"
+            color="red"
             text
-            @click="show = false"
+            @click="$emit( 'close' )"
           >CANCEL</v-btn>
           <v-btn
             color="primary"
@@ -172,8 +169,6 @@
           >{{ signUp ? 'Login' : 'Sign Up' }}</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-  </div>
 </template>
 
 <script>
@@ -188,7 +183,6 @@
     data() {
       return {
         unsubAuthChanged: null,
-        show: false,
         signUp: false,
         loading: false,
         alert: false,

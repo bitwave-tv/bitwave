@@ -83,6 +83,7 @@ export const actions = {
 
         // sendTokenToServer( currentToken );
         // updateUIForPushEnabled( currentToken );
+
         commit( $mutations.setTokenFCM, currentToken );
         await dispatch( $actions.saveTokenFCM )
 
