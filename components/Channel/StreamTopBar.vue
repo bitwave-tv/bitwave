@@ -16,7 +16,11 @@
               />
               <v-icon v-else>warning</v-icon>
             </v-avatar>
-            <div class="mx-2">{{ name }}</div>
+            <div
+              v-if="!mobile"
+              class="mx-2"
+              v-text="name"
+            ></div>
           </div>
 
           <div class="d-flex align-center">
@@ -74,6 +78,12 @@
       ...mapGetters({
         isAdmin  : VStore.$getters.isAdmin,
       }),
+
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
+      },
     },
   };
 </script>
