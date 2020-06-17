@@ -81,8 +81,6 @@
 </template>
 
 <script>
-  import { db } from '@/plugins/firebase.js'
-
   export default {
     name: 'report',
 
@@ -141,7 +139,5 @@
         this.submitted = true;
       },
     },
-
-    computed: {},
   }
 </script>

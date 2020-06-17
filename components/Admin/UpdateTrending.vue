@@ -36,6 +36,8 @@
       },
 
       async updateTrending () {
+        await this.getFreshIdToken();
+
         this.updating = true;
 
         const endpoint = `https://api.bitwave.tv/v1/replays/update-trending`;

@@ -64,7 +64,7 @@
       async authenticated ( user ) {
         if ( !user ) {
           // User logged out, redirect back to login page.
-          this.$router.push( '/login' );
+          await this.$router.push( '/login' );
         }
       },
     },
