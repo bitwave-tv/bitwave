@@ -544,7 +544,8 @@
         });
 
         this.player.on( 'ended', async () => {
-          this.setSource({ url: await this.getRandomBump(), type: 'video/mp4' });
+          // Disable bumps for replays
+          // this.setSource({ url: await this.getRandomBump(), type: 'video/mp4' });
         });
 
         this.player.on( 'error', error => {
