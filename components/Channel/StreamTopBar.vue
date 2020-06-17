@@ -11,7 +11,7 @@
             <v-avatar size="32">
               <img
                 v-if="avatar"
-                :src="`${avatar}`"
+                :src="avatar"
                 :alt="name"
               />
               <v-icon v-else>warning</v-icon>
@@ -19,8 +19,7 @@
             <div
               v-if="!mobile"
               class="mx-2"
-              v-text="name"
-            ></div>
+            >{{ name }}</div>
           </div>
 
           <div class="d-flex align-center">
@@ -71,7 +70,9 @@
     },
 
     data() {
-      return {};
+      return {
+        mounted: false,
+      };
     },
 
     computed: {
@@ -85,5 +86,9 @@
           : !this.$device.isDesktopOrTablet;
       },
     },
+
+    mounted () {
+      this.mounted = true;
+    }
   };
 </script>
