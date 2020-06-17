@@ -68,7 +68,7 @@
                     v-show="submitted"
                     :color="success ? 'success' : 'error'"
                     class="mt-4"
-                  >{{ success ? `Report sent. Ref: ${reportId.id}` : 'Error Occured' }}</v-alert>
+                  >{{ success ? `Success: ${reportResult}` : 'Error Occured' }}</v-alert>
                 </v-flex>
               </v-layout>
             </v-form>
@@ -92,7 +92,7 @@
         email: '',
         report: '',
 
-        reportId: '',
+        reportResult: '',
 
         valid: true,
         submitting: false,
@@ -118,35 +118,20 @@
         this.submitting = true;
         this.success = true;
 
-        let ipinfo = {
-          ip: '',
-          hostname: '',
-          city: '',
-          region: '',
-          country: '',
-          loc: '',
-          postal: '',
-          phone: '',
-          org: '',
+        const endpoint = `https://api.bitwave.tv/v1/reports`
+        const payload = {
+          name: this.name,
+          email: this.email,
+          report: this.report,
         };
 
         try {
-          const res = await this.$axios.get(`https://ipinfo.io/json?token=${process.env.IPINFO_TOKEN}`);
-          ipinfo = res.data;
-        } catch (e) {
-          console.log(e);
-        }
-
-        try {
-          const reportRef = db.collection('reports');
-          this.reportId = await reportRef.add({
-            name: this.name,
-            email: this.email,
-            report: this.report,
-            resolved: false,
-            date:  new Date( Date.now() ),
-            ipinfo,
-          });
+          const result = await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          this.reportResult = result.data;
+          console.log( result.data );
         } catch (e) {
           console.log(e);
           this.success = false;
