@@ -531,7 +531,7 @@
       },
 
       showGraph( stat, user ) {
-        const data = this.userStats.getStat( user, stat );
+        const data = this.userStats.stat.get( user, stat );
         if( data && data.values && data.values.length ) {
           this.graphStat = { user: user, stat: stat };
           this.showChatGraph = !this.showChatGraph;
@@ -564,7 +564,7 @@
             JSON.stringify(Array.from(stats.entries())));
         });
 
-        const data = this.userStats.getStat( this.graphStat.user, this.graphStat.stat );
+        const data = this.userStats.stat.get( this.graphStat.user, this.graphStat.stat );
         if( data && data.values && data.values.length ) {
           this.graphValues = data.values.slice().reverse();
         } else {
@@ -1106,7 +1106,7 @@
         total: () => {
           const me = this.userStats;
           const key = "viewerCount";
-          me.setStatValue( me.ALL_USER, key, this.getChannelViews( this.page ) );
+          me.stat.value.set( me.ALL_USER, key, this.getChannelViews( this.page ) );
         }
       };
 

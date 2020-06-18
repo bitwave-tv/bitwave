@@ -53,16 +53,16 @@ class UserStats {
         // Expects 'messages' to have happened within a single period
         // Creates entries for usernames that don't have one
         everybody: async messages => {
-          this.setStatValueAll( this.calculate.messageCount.key );
+          this.stat.value.setAll( this.calculate.messageCount.key );
           for( const m of messages ) {
-            await this.incrementStatValue( m.username, this.calculate.messageCount.key );
+            await this.stat.value.increment( m.username, this.calculate.messageCount.key );
           }
         },
 
         // Calculates the total amount of messages
         // Stores this into stat messageCount for username this.ALL_USER ("all")
         total: messages => {
-          this.setStatValue( this.ALL_USER, this.calculate.messageCount.key, messages.length );
+          this.stat.value.set( this.ALL_USER, this.calculate.messageCount.key, messages.length );
         },
       },
 
@@ -74,11 +74,11 @@ class UserStats {
         user: username => {
           const user = this.getUser( username );
           if( user ) {
-            const count = this.getStatValue( username, "messageCount" );
+            const count = this.stat.value.get( username, "messageCount" );
             if( count ) {
-              this.setStatValue( username, this.calculate.messageRate.key, count / this.tickPeriod );
+              this.stat.value.set( username, this.calculate.messageRate.key, count / this.tickPeriod );
             } else {
-              this.setStatValue( username, this.calculate.messageRate.key, 0 );
+              this.stat.value.set( username, this.calculate.messageRate.key, 0 );
             }
           }
         },
@@ -97,7 +97,7 @@ class UserStats {
         // Calculates the rate of posting for all messages
         // Stores this into stat messageRate for username this.ALL_USER ("all")
         total: async messages => {
-          await this.calculate.messageCount.everybody( messages );
+          await this.calculate.messageCount.total( messages );
           this.calculate.messageRate.user( this.ALL_USER );
         },
       },
@@ -107,11 +107,11 @@ class UserStats {
 
         // Calculates the rate of messageRate for a single user
         user: username => {
-          const messageRate = this.getStat( username, "messageRate" );
+          const messageRate = this.stat.get( username, "messageRate" );
           if( messageRate && messageRate.values && messageRate.values.length > 0 ) {
-            this.setStatValueAll( this.calculate.messageRateDerivative.key, messageRate.values.reduce((a, b) => a + b) / messageRate.histogramSize );
+            this.stat.value.setAll( this.calculate.messageRateDerivative.key, messageRate.values.reduce((a, b) => a + b) / messageRate.histogramSize );
           } else {
-            this.setStatValueAll( this.calculate.messageRateDerivative.key );
+            this.stat.value.setAll( this.calculate.messageRateDerivative.key );
           }
         },
 
@@ -145,7 +145,7 @@ class UserStats {
 
           for( const m of messages ) {
             incrementMessageCount( m.message );
-            this.offsetStatValue( m.username, this.calculate.spamminess.key, messageCount.get( m.message ) ?? 0 );
+            this.stat.value.offset( m.username, this.calculate.spamminess.key, messageCount.get( m.message ) ?? 0 );
           }
         },
         total: messages => {
@@ -165,20 +165,125 @@ class UserStats {
           }
 
           const sorted = Array.from( messageCount.values() ).sort()[0];
-          this.setStatValue( this.ALL_USER, this.calculate.spamminess.key, sorted ?? 1 );
+          this.stat.value.set( this.ALL_USER, this.calculate.spamminess.key, sorted ?? 1 );
         }
       },
 
       niceness: {
         key: "niceness",
         user: ( username, sensitivity ) => {
-          const messageCount = this.getStatValue( username, "messageCount" ) ?? 0;
-          const messageRate = this.getStatValue( username, "messageRate" ) ?? 0;
-          const spamminess = this.getStatValue( username, "spamminess" ) ?? 0;
+          const messageCount = this.stat.value.get( username, "messageCount" ) ?? 0;
+          const messageRate = this.stat.value.get( username, "messageRate" ) ?? 0;
+          const spamminess = this.stat.value.get( username, "spamminess" ) ?? 0;
 
-          this.setStatValue( username, this.calculate.niceness.key, ( messageCount * spamminess * sensitivity ) + messageRate );
+          this.stat.value.set( username, this.calculate.niceness.key, ( messageCount * spamminess * sensitivity ) + messageRate );
         }
       }
+    };
+
+    this.stat = {
+      // Sets the stat object for 'username'
+      // Will create a new user if it doesn't exist
+      // Will overwrite any existing stat object. For setting a value, see stat.value.set()
+      set: ( username, key, statObj ) => {
+        let user = this.getUser( username );
+        if( !user ) {
+          this.addUser( username );
+          user = this.getUser( username );
+        }
+
+        this.statNames.add( key );
+        user.set( key, statObj );
+      },
+
+      // Sets the stat for 'key' to be 'statObj' for all existing users
+      // Will overwrite any existing stat object. For setting a value, see stat.value.setAll()
+      setAll: ( key, statObj ) => {
+        this.statNames.add( key );
+        this.userStats.forEach( stats => {
+          stats.set( key, statObj );
+        });
+      },
+
+      // Gets the user's stat object for key
+      // For getting a stat value, see stat.value.get()
+      get: ( username, key ) => {
+        const user = this.getUser( username );
+        if( user ) {
+          return user.get( key );
+        }
+      },
+
+      value: {
+        // Sets the stat value for 'username'
+        // Will create a new user if it doesn't exist
+        // Will create a new stat, if one doesn't exist
+        set: ( username, key, value = 0 ) => {
+          let user = this.getUser( username );
+          if( !user ) {
+            this.addUser( username );
+            user = this.getUser( username );
+          }
+
+          const stat = user.get( key );
+          if( !stat ) {
+            if( this.defaultHistogramSettings.create ) {
+              user.set( key, new StatHistogram( this.defaultHistogramSettings.size, value ) );
+            } else {
+              user.set( key, new Stat( value ) );
+            }
+          } else {
+            stat.value = value;
+          }
+
+          this.statNames.add( key );
+        },
+
+        // Sets the stat value for 'key' to be 'value' for all existing users
+        // Will create a new stat, if the user doesn't have one
+        setAll: ( key, value = 0 ) => {
+          this.userStats.forEach( (stats, username) => {
+            this.stat.value.set( username, key, value );
+          });
+        },
+
+        // Gets the value of a stat for a user
+        get: ( username, key ) => {
+          const user = this.getUser( username );
+          if( user ) {
+            const stat = user.get( key );
+            if( key ) {
+              return stat.value;
+            }
+          }
+        },
+
+        // Sets the value of a stat corresponding to key, belonging to a user to be oldValue + offset
+        // Will create a new stat, if one doesn't exist
+        // Will create a new user, if one doesn't exist
+        offset: ( username, key, offset ) => {
+          const value = this.stat.value.get( username, key );
+          if( value !== undefined && value != null ) {
+            this.stat.value.set( username, key, value + offset );
+          } else {
+            this.stat.value.set( username, key, offset );
+          }
+        },
+
+        // Increments the value of a stat corresponding to key, belonging to a user
+        // Will create a new stat, if one doesn't exist
+        // Will create a new user, if one doesn't exist
+        increment: ( username, key ) => {
+          this.stat.value.offset( username, key, 1 );
+        },
+
+        // Decrements the value of a stat corresponding to key, belonging to a user
+        // Will create a new stat, if one doesn't exist
+        // Will create a new user, if one doesn't exist
+        decrement: ( username, key ) => {
+          this.stat.value.offset( username, key, -1 );
+        },
+      },
     };
   }
 
@@ -197,107 +302,6 @@ class UserStats {
 
   deleteUser( username ) {
     this.userStats.delete( username );
-  }
-
-  // Sets the stat object for 'username'
-  // Will create a new user if it doesn't exist
-  // Will overwrite any existing stat object. For setting a value, see setStatValue()
-  setStat( username, key, statObj ) {
-    let user = this.getUser( username );
-    if( !user ) {
-      this.addUser( username );
-      user = this.getUser( username );
-    }
-
-    this.statNames.add( key );
-    user.set( key, statObj );
-  }
-
-  // Sets the stat for 'key' to be 'statObj' for all existing users
-  // Will overwrite any existing stat object. For setting a value, see setStatValueAll()
-  setStatAll( key, statObj ) {
-    this.statNames.add( key );
-    this.userStats.forEach( stats => {
-      stats.set( key, statObj );
-    });
-  }
-
-  // Sets the stat value for 'username'
-  // Will create a new user if it doesn't exist
-  // Will create a new stat, if one doesn't exist
-  setStatValue( username, key, value = 0 ) {
-    let user = this.getUser( username );
-    if( !user ) {
-      this.addUser( username );
-      user = this.getUser( username );
-    }
-
-    const stat = user.get( key );
-    if( !stat ) {
-      if( this.defaultHistogramSettings.create ) {
-        user.set( key, new StatHistogram( this.defaultHistogramSettings.size, value ) );
-      } else {
-        user.set( key, new Stat( value ) );
-      }
-    } else {
-      stat.value = value;
-    }
-
-    this.statNames.add( key );
-  }
-
-  // Sets the stat value for 'key' to be 'value' for all existing users
-  // Will create a new stat, if the user doesn't have one
-  setStatValueAll( key, value = 0 ) {
-    this.userStats.forEach( (stats, username) => {
-      this.setStatValue( username, key, value );
-    });
-  }
-
-  // Gets the user's stat object for key
-  // For getting a stat value, see getStatValue
-  getStat( username, key ) {
-    const user = this.getUser( username );
-    if( user ) {
-      return user.get( key );
-    }
-  }
-
-  // Gets the value of a stat for a user
-  getStatValue( username, key ) {
-    const user = this.getUser( username );
-    if( user ) {
-      const stat = user.get( key );
-      if( key ) {
-        return stat.value;
-      }
-    }
-  }
-
-  // Sets the value of a stat corresponding to key, belonging to a user to be oldValue + offset
-  // Will create a new stat, if one doesn't exist
-  // Will create a new user, if one doesn't exist
-  offsetStatValue( username, key, offset ) {
-    const value = this.getStatValue( username, key );
-    if( value !== undefined && value != null ) {
-      this.setStatValue( username, key, value + offset );
-    } else {
-      this.setStatValue( username, key, offset );
-    }
-  }
-
-  // Increments the value of a stat corresponding to key, belonging to a user
-  // Will create a new stat, if one doesn't exist
-  // Will create a new user, if one doesn't exist
-  incrementStatValue( username, key ) {
-    this.offsetStatValue( username, key, 1 );
-  }
-
-  // Decrements the value of a stat corresponding to key, belonging to a user
-  // Will create a new stat, if one doesn't exist
-  // Will create a new user, if one doesn't exist
-  decrementStatValue( username, key ) {
-    this.offsetStatValue( username, key, -1 );
   }
 
   // Experimental manual garbage collection. Mileage may vary.
