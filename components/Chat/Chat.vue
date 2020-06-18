@@ -35,6 +35,7 @@
         v-if="showGraph"
         :values="graphValues"
         :period="tickPeriod"
+        :statName="graphStat.stat"
       />
     </v-slide-y-transition>
 

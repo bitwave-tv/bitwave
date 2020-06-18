@@ -2,7 +2,7 @@
     <div id="chat-graph">
       <div class="graph">
         <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-          messages per {{ period }} second interval
+          {{ statName }} per {{ period }} second interval
         </div>
         <v-sparkline
           :value="values"
@@ -47,6 +47,7 @@
     props: {
       values: { type: Array },
       period: { type: Number },
+      statName: { type: String },
     },
 
     data() {
