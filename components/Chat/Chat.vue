@@ -548,15 +548,15 @@
 
         const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
 
-        this.userStats.calculateSpamminessAll( newMessages );
-        await this.userStats.calculateMessageRateAll( newMessages );
-        this.userStats.calculateMessageRateDerivativeAll();
-        this.userStats.calculateNicenessUser( "all", 1 );
+        await this.userStats.calculate.messageRate.total( newMessages );
+        this.userStats.calculate.messageRateDerivative.total();
+        this.userStats.calculate.spamminess.total( newMessages );
+        this.userStats.calculate.niceness.user( "all", 1 );
 
         if( this.getTrackMetricsPerUser ) {
-          this.userStats.calculateSpamminess( newMessages );
-          await this.userStats.calculateMessageRate( newMessages );
-          this.userStats.calculateMessageRateDerivative();
+          this.userStats.calculate.spamminess.everybody( newMessages );
+          await this.userStats.calculate.messageRate.everybody( newMessages );
+          this.userStats.calculate.messageRateDerivative.everybody();
         }
 
         this.userStats.userStats.forEach( ( stats, username ) => {

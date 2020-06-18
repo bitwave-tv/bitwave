@@ -42,7 +42,144 @@ class UserStats {
     // Faux username for a user representing the total stats for all users
     this.ALL_USER = "all";
     this.defaultHistogramSettings = { create: true, size: 25 };
+
     this.statNames = new Set();
+
+    this.calculate = {
+      messageCount: {
+        key: "messageCount",
+
+        // Puts # of messages into a messageCount stat
+        // Expects 'messages' to have happened within a single period
+        // Creates entries for usernames that don't have one
+        everybody: async messages => {
+          this.setStatValueAll( this.calculate.messageCount.key );
+          for( const m of messages ) {
+            await this.incrementStatValue( m.username, this.calculate.messageCount.key );
+          }
+        },
+
+        // Calculates the total amount of messages
+        // Stores this into stat messageCount for username this.ALL_USER ("all")
+        total: messages => {
+          this.setStatValue( this.ALL_USER, this.calculate.messageCount.key, messages.length );
+        },
+      },
+
+      messageRate: {
+        key: "messageRate",
+
+        // Puts user's messageCount value divided over tickPeriod into a messageRate stat
+        // Sets 0 for messageRate if messageCount is falsy
+        user: username => {
+          const user = this.getUser( username );
+          if( user ) {
+            const count = this.getStatValue( username, "messageCount" );
+            if( count ) {
+              this.setStatValue( username, this.calculate.messageRate.key, count / this.tickPeriod );
+            } else {
+              this.setStatValue( username, this.calculate.messageRate.key, 0 );
+            }
+          }
+        },
+
+        // Puts # of messages divided over tickPeriod into a messageRate stat
+        // Expects 'messages' to have been within tickPeriod
+        everybody: async messages => {
+          await this.calculate.messageCount.everybody( messages );
+
+          // Sadly, setStatValueAll() cannot pass a 'this' before it is called
+          this.userStats.forEach( (_, username) => {
+            this.calculate.messageRate.user( username );
+          });
+        },
+
+        // Calculates the rate of posting for all messages
+        // Stores this into stat messageRate for username this.ALL_USER ("all")
+        total: async messages => {
+          await this.calculate.messageCount.everybody( messages );
+          this.calculate.messageRate.user( this.ALL_USER );
+        },
+      },
+
+      messageRateDerivative: {
+        key: "messageRateDerivative",
+
+        // Calculates the rate of messageRate for a single user
+        user: username => {
+          const messageRate = this.getStat( username, "messageRate" );
+          if( messageRate && messageRate.values && messageRate.values.length > 0 ) {
+            this.setStatValueAll( this.calculate.messageRateDerivative.key, messageRate.values.reduce((a, b) => a + b) / messageRate.histogramSize );
+          } else {
+            this.setStatValueAll( this.calculate.messageRateDerivative.key );
+          }
+        },
+
+        // Although the name implies derivation, since we're dealing with non-continuous,
+        // discrete values, it's just an average of messageRates over its histogram period
+        // Stores this in a stat called messageRateDerivative
+        everybody: () => {
+          this.userStats.forEach( (_, username) => {
+            this.calculate.messageRateDerivative.user( username );
+          });
+        },
+
+        // Calculates the rate of change of the rate of posting
+        // Stores this into stat messageRateDerivative for username this.ALL_USER ("all")
+        total: () => this.calculate.messageRateDerivative.user( this.ALL_USER ),
+      },
+
+      spamminess: {
+        key: "spamminess",
+        everybody: messages => {
+          const messageCount = new Map();
+
+          const incrementMessageCount = ( message ) => {
+            const value = messageCount.get( message );
+            if( value !== undefined && value !== null ) {
+              messageCount.set( message, value + 1 );
+            } else {
+              messageCount.set( message, 0 );
+            }
+          };
+
+          for( const m of messages ) {
+            incrementMessageCount( m.message );
+            this.offsetStatValue( m.username, this.calculate.spamminess.key, messageCount.get( m.message ) ?? 0 );
+          }
+        },
+        total: messages => {
+          const messageCount = new Map();
+
+          const incrementMessageCount = ( message ) => {
+            const value = messageCount.get( message );
+            if( value !== undefined && value !== null ) {
+              messageCount.set( message, value + 1 );
+            } else {
+              messageCount.set( message, 1 );
+            }
+          };
+
+          for( const m of messages ) {
+            incrementMessageCount( m.message );
+          }
+
+          const sorted = Array.from( messageCount.values() ).sort()[0];
+          this.setStatValue( this.ALL_USER, this.calculate.spamminess.key, sorted ?? 1 );
+        }
+      },
+
+      niceness: {
+        key: "niceness",
+        user: ( username, sensitivity ) => {
+          const messageCount = this.getStatValue( username, "messageCount" ) ?? 0;
+          const messageRate = this.getStatValue( username, "messageRate" ) ?? 0;
+          const spamminess = this.getStatValue( username, "spamminess" ) ?? 0;
+
+          this.setStatValue( username, this.calculate.niceness.key, ( messageCount * spamminess * sensitivity ) + messageRate );
+        }
+      }
+    };
   }
 
   // Adds 'username' to the map, if it doesn't already exist
@@ -179,134 +316,6 @@ class UserStats {
       }
     });
   }
-
-  // Puts # of messages into a messageCount stat
-  // Expects 'messages' to have happened within a single period
-  // Creates entries for usernames that don't have one
-  async calculateMessageCount( messages ) {
-    const key = "messageCount";
-    this.setStatValueAll( key );
-    for( const m of messages ) {
-      await this.incrementStatValue( m.username, key );
-    }
-  }
-
-  // Puts user's messageCount value divided over tickPeriod into a messageRate stat
-  // Sets 0 for messageRate if messageCount is falsy
-  calculateMessageRateUser( username ) {
-    const key = "messageRate";
-    const user = this.getUser( username );
-    if( user ) {
-      const count = this.getStatValue( username, "messageCount" );
-      if( count ) {
-        this.setStatValue( username, key, count / this.tickPeriod );
-      } else {
-        this.setStatValue( username, key, 0 );
-      }
-    }
-  }
-
-  // Puts # of messages divided over tickPeriod into a messageRate stat
-  // Expects 'messages' to have been within tickPeriod
-  async calculateMessageRate( messages ) {
-    const key = "messageRate";
-    await this.calculateMessageCount( messages );
-
-    // Sadly, setStatValueAll() cannot pass a 'this' before it is called
-    this.userStats.forEach( (_, username) => {
-      this.calculateMessageRateUser( username );
-    });
-  }
-
-  // Calculates the rate of messageRate for a single user
-  calculateMessageRateDerivativeUser( username ) {
-    const key = "messageRateDerivative";
-    const messageRate = this.getStat( username, "messageRate" );
-    if( messageRate && messageRate.values && messageRate.values.length > 0 ) {
-      this.setStatValueAll( key, messageRate.values.reduce((a, b) => a + b) / messageRate.histogramSize );
-    } else {
-      this.setStatValueAll( key );
-    }
-  }
-
-  // Although the name implies derivation, since we're dealing with non-continuous,
-  // discrete values, it's just an average of messageRates over its histogram period
-  // Stores this in a stat called messageRateDerivative
-  calculateMessageRateDerivative() {
-    const key = "messageRateDerivative";
-    this.userStats.forEach( (_, username) => {
-      this.calculateMessageRateDerivativeUser( username );
-    });
-  }
-
-  // Calculates the total amount of messages
-  // Stores this into stat messageCount for username this.ALL_USER ("all")
-  calculateMessageCountAll( messages ) {
-    const key = "messageCount";
-    this.setStatValue( this.ALL_USER, key, messages.length );
-  }
-
-  // Calculates the rate of posting for all messages
-  // Stores this into stat messageRate for username this.ALL_USER ("all")
-  async calculateMessageRateAll( messages ) {
-    await this.calculateMessageCountAll( messages );
-    this.calculateMessageRateUser( this.ALL_USER );
-  }
-
-  // Calculates the rate of change of the rate of posting
-  // Stores this into stat messageRateDerivative for username this.ALL_USER ("all")
-  calculateMessageRateDerivativeAll = () => this.calculateMessageRateDerivativeUser( this.ALL_USER );
-
-  calculateSpamminess( messages ) {
-    const key = "spamminess";
-    const messageCount = new Map();
-
-    const incrementMessageCount = ( message ) => {
-      const value = messageCount.get( message );
-      if( value !== undefined && value !== null ) {
-        messageCount.set( message, value + 1 );
-      } else {
-        messageCount.set( message, 0 );
-      }
-    };
-
-    for( const m of messages ) {
-      incrementMessageCount( m.message );
-      this.offsetStatValue( m.username, key, messageCount.get( m.message ) ?? 0 );
-    }
-  }
-
-  calculateSpamminessAll( messages ) {
-    const key = "spamminess";
-    const messageCount = new Map();
-
-    const incrementMessageCount = ( message ) => {
-      const value = messageCount.get( message );
-      if( value !== undefined && value !== null ) {
-        messageCount.set( message, value + 1 );
-      } else {
-        messageCount.set( message, 1 );
-      }
-    };
-
-    for( const m of messages ) {
-      incrementMessageCount( m.message );
-    }
-
-    const sorted = Array.from( messageCount.values() ).sort()[0];
-    this.setStatValue( this.ALL_USER, key, sorted ?? 1 );
-  }
-
-  calculateNicenessUser( username, sensitivity ) {
-    const key = "niceness";
-
-    const messageCount = this.getStatValue( username, "messageCount" ) ?? 0;
-    const messageRate = this.getStatValue( username, "messageRate" ) ?? 0;
-    const spamminess = this.getStatValue( username, "spamminess" ) ?? 0;
-
-    this.setStatValue( username, key, ( messageCount * spamminess * sensitivity ) + messageRate );
-  }
-
 }
 
 export { UserStats };
