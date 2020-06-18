@@ -32,7 +32,7 @@
 
     <v-slide-y-transition mode="out-in">
       <chat-graph
-        v-if="showChatGraph"
+        v-if="showGraph"
         :values="graphValues"
         :period="tickPeriod"
       />
@@ -158,7 +158,7 @@
         statTickCount: 0,
 
         newMessageCount: 0,
-        showChatGraph: false,
+        showGraph: false,
         graphStat: { stat: 'messageCount', user: 'all' },
         graphValues: [ 0 ],
 
@@ -530,11 +530,11 @@
         return false
       },
 
-      showGraph( stat, user ) {
+      changeStatOnGraph( stat, user ) {
         const data = this.userStats.stat.get( user, stat );
         if( data && data.values && data.values.length ) {
           this.graphStat = { user: user, stat: stat };
-          this.showChatGraph = !this.showChatGraph;
+          this.showGraph = !this.showGraph;
         } else {
           this.insertMessage( 'Invalid stat name' );
         }
@@ -641,7 +641,7 @@
               await this.insertMessage( `Clean TTS: ${this.cleanTTS}` );
               break;
             case 'graph':
-              await this.showGraph( params[2] ? params[2] : '', params[3] ? params[3] : 'all' );
+              await this.changeStatOnGraph( params[2] ? params[2] : '', params[3] ? params[3] : 'all' );
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
