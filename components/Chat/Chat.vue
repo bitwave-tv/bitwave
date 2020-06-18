@@ -31,21 +31,12 @@
     </add-ons>
 
     <v-slide-y-transition mode="out-in">
-      <chat-rate
-        v-if="showChatStats"
-        :values="chatValues"
+      <chat-graph
+        v-if="showChatGraph"
+        :values="graphValues"
         :period="tickPeriod"
       />
     </v-slide-y-transition>
-
-    <v-slide-y-transition mode="out-in">
-      <view-rate
-        v-if="showViewStats"
-        :values="viewValues"
-        :period="tickPeriod"
-      />
-    </v-slide-y-transition>
-
 
     <!-- Chat Messages -->
     <chat-messages
@@ -81,8 +72,7 @@
   import ChatInput from '@/components/Chat/ChatInput';
 
   const ChatPollVote = async () => await import ( '@/components/Chat/ChatPollVote' );
-  const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
-  const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
+  const ChatGraph = async () => await import ( '@/components/Analytics/ChatGraph' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { Chat } from '@/store/chat';
@@ -119,8 +109,7 @@
       ChatInput,
       ChatMessages,
       ChatPollVote,
-      ChatRate,
-      ViewRate,
+      ChatGraph,
     },
 
     data() {
@@ -169,8 +158,9 @@
         statTickCount: 0,
 
         newMessageCount: 0,
-        showChatStats: false,
-        chatValues: [ 0 ],
+        showChatGraph: false,
+        graphStat: { stat: 'messageCount', user: 'all' },
+        graphValues: [ 0 ],
 
         viewCount: 0,
         showViewStats: false,
@@ -540,19 +530,27 @@
         return false
       },
 
+      showGraph( stat, user ) {
+        const data = this.userStats.getStat( user, stat );
+        if( data && data.values && data.values.length ) {
+          this.graphStat = { user: user, stat: stat };
+          this.showChatGraph = !this.showChatGraph;
+        } else {
+          this.insertMessage( 'Invalid stat name' );
+        }
+      },
 
       async onChatStatTick() {
         // TODO: once chatsettings option is gone, maybe pass this as a prop instead?
         if( !this.getTrackMetrics ) { this.newMessageCount = 0; return; }
 
-        this.userStats.calculateViewerCount();
+        this.userStats.calculate.viewerCount.total();
 
         const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
 
         this.userStats.calculateSpamminessAll( newMessages );
         await this.userStats.calculateMessageRateAll( newMessages );
         this.userStats.calculateMessageRateDerivativeAll();
-        this.userStats.calculateSpamminessAll( newMessages );
         this.userStats.calculateNicenessUser( "all", 1 );
 
         if( this.getTrackMetricsPerUser ) {
@@ -566,8 +564,12 @@
             JSON.stringify(Array.from(stats.entries())));
         });
 
-        this.chatValues = this.userStats.getStat( "all", "messageCount" ).values.slice().reverse();
-        this.viewValues = this.userStats.getStat( "all", "viewerCount" ).values.slice().reverse();
+        const data = this.userStats.getStat( this.graphStat.user, this.graphStat.stat );
+        if( data && data.values && data.values.length ) {
+          this.graphValues = data.values.slice().reverse();
+        } else {
+          this.graphValues = [0];
+        }
 
         //this.userStats.garbageCollect();
 
@@ -639,17 +641,7 @@
               await this.insertMessage( `Clean TTS: ${this.cleanTTS}` );
               break;
             case 'graph':
-            case 'stats':
-              if ( !this.showChatStats && this.showViewStats ) {
-                this.showViewStats = false;
-              }
-              this.showChatStats = !this.showChatStats;
-              break;
-            case 'views':
-              if ( !this.showViewStats && this.showChatStats ) {
-                this.showChatStats = false;
-              }
-              this.showViewStats = !this.showViewStats;
+              await this.showGraph( params[2] ? params[2] : '', params[3] ? params[3] : 'all' );
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
@@ -1110,10 +1102,12 @@
         await this.httpHydrate();
       }*/
 
-      this.userStats.calculateViewerCount = () => {
-        const me = this.userStats;
-        const key = "viewerCount";
-        me.setStatValue( me.ALL_USER, key, this.getChannelViews( this.page ) );
+      this.userStats.calculate.viewerCount = {
+        total: () => {
+          const me = this.userStats;
+          const key = "viewerCount";
+          me.setStatValue( me.ALL_USER, key, this.getChannelViews( this.page ) );
+        }
       };
 
       // Add listener for voice changes, then update voices.

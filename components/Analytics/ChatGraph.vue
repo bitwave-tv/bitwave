@@ -1,34 +1,34 @@
 <template>
-  <div id="view-rate">
-    <div class="graph">
-      <div class="chart-val grey--text text-weight-thin overline text-center my-2">
-        Viewers per {{ period }} second interval
-      </div>
-      <v-sparkline
-        :value="stats.value"
-        :gradient="gradient"
-        :smooth="radius || false"
-        :padding="padding"
-        :line-width="width"
-        :type="type"
-        stroke-linecap="round"
-        gradient-direction="top"
-      />
-      <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
-        <template v-for="( stat, index ) in dataLabels">
-          <div>
-            <span class="grey--text mr-1">{{ stat.label }}</span>
-            <span class="body-2">{{ stat.value }}</span>
-          </div>
-          <v-divider
-            v-if="index !== dataLabels.length - 1"
-            color="orange"
-            vertical
-          />
-        </template>
+    <div id="chat-graph">
+      <div class="graph">
+        <div class="chart-val grey--text text-weight-thin overline text-center my-2">
+          messages per {{ period }} second interval
+        </div>
+        <v-sparkline
+          :value="values"
+          :gradient="gradient"
+          :smooth="radius || false"
+          :padding="padding"
+          :line-width="width"
+          :type="type"
+          stroke-linecap="round"
+          gradient-direction="top"
+        />
+        <div class="chart-val d-flex justify-space-around white--text text-weight-thin caption text-center ma-2">
+          <template v-for="( stat, index ) in dataLabels">
+            <div>
+              <span class="grey--text mr-1">{{ stat.label }}</span>
+              <span class="body-2">{{ stat.value }}</span>
+            </div>
+            <v-divider
+              v-if="index !== dataLabels.length - 1"
+              color="orange"
+              vertical
+            />
+          </template>
+        </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -66,18 +66,21 @@
       };
     },
 
-    methods: {},
+    methods: {
+      resetTotal() {
+        this.total = 0;
+      },
+    },
 
     computed: {
       stats () {
-        const latestValue = this.values[this.values.length - 1];
-        this.total += latestValue;
+        this.total += this.values[this.values.length - 1];
         return {
           value: this.values,
           min: this.values.reduce( (a, b) => Math.min(a, b) ),
           max: this.values.reduce( (a, b) => Math.max(a, b) ),
           average: this.values.reduce( (a, b) => a + b ) / this.values.length,
-          current: latestValue,
+          current: this.values[this.values.length - 1],
           total: this.total,
         };
       },
@@ -111,12 +114,11 @@
         ];
       }
     },
-
   };
 </script>
 
 <style lang='scss'>
-  #view-rate {
+  #chat-graph {
     position: relative;
     pointer-events: none;
     z-index: 2;
