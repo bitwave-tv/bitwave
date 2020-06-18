@@ -46,7 +46,7 @@ const $states = {
   trackMetrics        : 'TRACK_METRICS',
   trackMetricsPerUser : 'TRACK_METRICS_PER_USER',
 
-  emoteList : 'EMOTE_LIST',
+  emoteMap : 'EMOTE_MAP',
 
   chatToken : 'CHAT_TOKEN',
   displayName : 'DISPLAY_NAME',
@@ -60,6 +60,7 @@ const $states = {
 
 const $getters = {
   getStreamViewerList : 'GET_STREAM_VIEWERLIST',
+  getRoom : 'GET_ROOM',
 };
 
 const $mutations = {
@@ -93,7 +94,8 @@ const $mutations = {
   setTrackMetrics        : 'SET_TRACK_METRICS',
   setTrackMetricsPerUser : 'SET_TRACK_METRICS_PER_USER',
 
-  setEmoteList : 'SET_EMOTE_LIST',
+  setEmoteMap    : 'SET_EMOTE_MAP',
+  setEmoteMapKey : 'SET_EMOTE_MAP_KEY',
 
   setChatToken : 'SET_CHAT_TOKEN',
   setDisplayName : 'SET_DISPLAY_NAME',
@@ -107,7 +109,7 @@ const $mutations = {
 
 const $actions = {
   updateViewerList : 'UPDATE_VIEWERLIST',
-  updateEmoteList  : 'UPDATE_EMOTE_LIST',
+  updateEmoteMap   : 'UPDATE_EMOTE_MAP',
   updateChatToken  : 'UPDATE_CHAT_TOKEN',
 
   createTrollToken : 'CREATE_TROLL_TOKEN',
@@ -145,7 +147,7 @@ export const state = () => ({
   [$states.trackMetrics]        : false,
   [$states.trackMetricsPerUser] : false,
 
-  [$states.emoteList] : [],
+  [$states.emoteMap] : new Map(),
 
   [$states.chatToken] : null,
   [$states.displayName] : '',
@@ -288,7 +290,7 @@ export const mutations = {
     }
   },
 
-  // Set recieve mentions in local
+  // Set receive mentions in local
   [$mutations.setTtsVoice] ( state, data ) {
     state[$states.ttsVoice] = data;
   },
@@ -296,6 +298,11 @@ export const mutations = {
   // Set ignore list
   [$mutations.setRecieveMentionsInLocal] ( state, data ) {
     state[$states.recieveMentionsInLocal] = data;
+    try {
+      localStorage.setItem( 'at-in-local', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'at-in-local'` );
+    }
   },
 
   // Set current input message
@@ -327,8 +334,15 @@ export const mutations = {
     state[$states.trackMetricsPerUser] = data;
   },
 
-  [$mutations.setEmoteList] ( state, data ) {
-    state[$states.emoteList] = data;
+  [$mutations.setEmoteMap] ( state, data ) {
+    // data is an array of emotes: {label: string, ...}
+    for( const emote of data ) {
+      state[$states.emoteMap].set( emote.label, emote );
+    }
+  },
+
+  [$mutations.setEmoteMapKey] ( state, data ) {
+    state[$states.emoteMap].set( data.key, data.value );
   },
 
   // Set chat token
@@ -374,16 +388,16 @@ export const actions = {
     commit( 'SET_ROOM', data );
   },
 
-  async [$actions.updateEmoteList] ( { state, commit } ) {
+  async [$actions.updateEmoteMap] ( { state, commit } ) {
     // Detect if we have already leaded emotes
-    if ( state[$states.emoteList] && state[$states.emoteList].length > 0 ) return;
+    if ( state[$states.emoteMap] && state[$states.emoteMap].size > 0 ) return;
 
     // Load emote autocompletes
     try {
       const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/emotes', { progress: false } );
-      commit( $mutations.setEmoteList,  data.data );
+      commit( $mutations.setEmoteMap,  data.data );
     } catch ( error ) {
-      console.error( `Failed to load emote list!` );
+      console.error( `Failed to load emote map!` );
       console.error( error.message );
     }
   },
@@ -534,6 +548,15 @@ export const actions = {
       else commit( $mutations.setAutocomplete, true );
     } catch ( error ) {
       logger ( 'No autocomplete option found.' );
+    }
+
+    // Autocomplete
+    try {
+      const atInLocal = localStorage.getItem( 'at-in-local' );
+      if ( atInLocal !== null ) commit( $mutations.setRecieveMentionsInLocal, atInLocal );
+      else commit( $mutations.setRecieveMentionsInLocal, false );
+    } catch ( error ) {
+      logger ( 'No at-in-local option found.' );
     }
 
     // Get ignore list

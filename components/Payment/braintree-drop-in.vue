@@ -30,7 +30,7 @@
             :token="token"
             :paypal="false"
             :url="url"
-            :btn-class="'v-btn theme--light yellow'"
+            :btn-class="'v-btn theme--light yellow mt-3'"
           />
         </v-card-text>
       </v-card>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import VBraintree from '~/components/Payment/v-braintree'
+  const VBraintree = async () => await import (  '~/components/Payment/v-braintree' );
 
   export default {
     name: 'braintree-drop-in',

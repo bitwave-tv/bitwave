@@ -126,7 +126,7 @@
 </template>
 
 <script>
-  const BraintreeDropIn = async () => await import ( '~/components/Payment/braintree-drop-in' );
+  import BraintreeDropIn from '~/components/Payment/braintree-drop-in';
 
   import { mapGetters, mapActions } from 'vuex';
   import { VStore } from '@/store';

@@ -11,19 +11,22 @@
             <v-avatar size="32">
               <img
                 v-if="avatar"
-                :src="`${avatar}`"
+                :src="avatar"
                 :alt="name"
               />
               <v-icon v-else>warning</v-icon>
             </v-avatar>
-            <div class="mx-2">{{ name }}</div>
+            <div
+              v-if="!mobile"
+              class="mx-2"
+            >{{ name }}</div>
           </div>
 
           <div class="d-flex align-center">
 
             <!-- NSFW Icon -->
             <template v-if="nsfw">
-              <div class="font-weight-bold green--text body-2">NSFQ</div>
+              <div class="font-weight-bold red--text body-2">NSFW</div>
               <v-divider vertical class="mx-2"/>
             </template>
 
@@ -67,13 +70,25 @@
     },
 
     data() {
-      return {};
+      return {
+        mounted: false,
+      };
     },
 
     computed: {
       ...mapGetters({
         isAdmin  : VStore.$getters.isAdmin,
       }),
+
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
+      },
     },
+
+    mounted () {
+      this.mounted = true;
+    }
   };
 </script>

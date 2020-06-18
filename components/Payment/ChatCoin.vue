@@ -159,12 +159,14 @@
                 class="d-flex ml-2"
                 color="primary"
                 small
+                :loading="processing"
                 @click="createAlert"
               >Create</v-btn>
               <v-btn
                 class="d-flex ml-2"
                 color="red"
                 small
+                :loading="processing"
                 @click="redeemAlertPopup = false"
               >Cancel</v-btn>
             </div>
@@ -179,8 +181,9 @@
 <script>
   const Checkout = async () => await import ( '@/components/Payment/Checkout' );
 
-  import { mapGetters } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   import { VStore } from '@/store';
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'ChatCoin',
@@ -202,6 +205,7 @@
 
         alertColor: 'grey',
         alertMessage: '',
+        processing: false,
       };
     },
 
@@ -222,6 +226,10 @@
       },
 
       async createAlert () {
+        if ( this.processing ) return;
+
+        // Make purchase with site currency
+        this.processing = true;
         try {
           await this.$axios.post(
             'https://api.bitwave.tv/api/store/alerts/checkout',
@@ -230,6 +238,7 @@
               uid: this.user.uid,
               color: this.alertColor,
               message: this.alertMessage,
+              channel: this.room,
             }
           );
           this.redeemAlertPopup = false;
@@ -239,6 +248,7 @@
           console.error( error.message );
           this.$toast.error( error.message, { duration: 2500, icon: 'error', position: 'top-center' } );
         }
+        this.processing = false;
       },
     },
 
@@ -246,7 +256,11 @@
       ...mapGetters({
         isAuth     : VStore.$getters.isAuth,
         user       : VStore.$getters.getUser,
-        getCoins : VStore.$getters.getCoins,
+        getCoins   : VStore.$getters.getCoins,
+      }),
+
+      ...mapState( Chat.namespace, {
+        room : Chat.$states.room,
       }),
 
       coins () {

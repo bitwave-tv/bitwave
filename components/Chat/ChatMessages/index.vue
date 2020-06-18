@@ -61,6 +61,7 @@
             <!-- Regular chat message -->
             <chat-message
               v-if="msg.username !== ( index && messages[ index - 1 ].username )"
+              :message="msg.message"
               :badge="msg.badge"
               :username="msg.username"
               :display-name="msg.username"
@@ -69,22 +70,20 @@
               :channel="msg.channel"
               :timestamp="getTime( msg.timestamp )"
               :avatar="msg.avatar"
+              :show-avatar="showAvatars"
               :color="msg.color"
               :global="getGlobalTag( msg.global )"
+              :show-channel="true"
               @reply="addUserTag"
               @whisper="addWhisper"
               @select="onMessageClick( msg )"
-            >
-              <div
-                class="body-2 msg"
-                v-html="msg.message"
-              ></div>
-            </chat-message>
+            ></chat-message>
 
             <!-- Append messages -->
             <div
               v-else
               class="msg append"
+              :class="{ 'no-avatar': !showAvatars }"
             >
               <div
                 class="body-2 msg"
@@ -151,8 +150,12 @@
 
     props: {
       messages: { type: Array },
-      showTimestamps: { type: Boolean },
       global: { type: Boolean },
+      showTimestamps: { type: Boolean },
+      showAvatars: {
+        type: Boolean,
+        default: true,
+      },
     },
 
     data () {
@@ -358,6 +361,10 @@
 
       &.append .msg {
         padding-left: 40px;
+      }
+
+      &.append.no-avatar .msg {
+        padding-left: 0;
       }
     }
 

@@ -44,6 +44,7 @@
             <!-- Chat Message -->
             <chat-message
               v-if="message.username !== ( index && messages[ index - 1 ].username )"
+              :message="message.message"
               :key="message._id"
               :username="message.username"
               :display-name="message.username"
@@ -51,22 +52,20 @@
               :channel="message.channel"
               :timestamp="getTime( message.timestamp )"
               :avatar="message.avatar"
+              :show-avatar="overlay.showAvatars"
               :color="message.color"
               :global="getGlobalTag( message.global )"
+              :show-channel="false"
               @reply=""
               @whisper=""
               @select=""
-            >
-              <div
-                class="body-2 msg"
-                v-html="message.message"
-              ></div>
-            </chat-message>
+            ></chat-message>
 
             <!-- Append messages -->
             <div
               v-else
               class="msg append"
+              :class="{ 'no-avatar': !overlay.showAvatars }"
               :key="message._id"
             >
               <div
@@ -141,6 +140,7 @@
 
         this.overlay.created = this.overlay.created.toDate();
         this.overlay.edited = this.overlay.edited.toDate();
+        this.overlay.showAvatars = this.overlay.hasOwnProperty( 'showAvatars' ) ? this.overlay.showAvatars : true;
         console.log ( 'overlay config', this.overlay );
         this.connectChat();
       },
@@ -293,6 +293,10 @@
 
       &.append .msg {
         padding-left: 40px;
+      }
+
+      &.append.no-avatar .msg {
+        padding-left: 0;
       }
 
       p {

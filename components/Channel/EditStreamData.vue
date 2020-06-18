@@ -60,7 +60,7 @@
                 v-if="!previewData"
                 v-model="streamData.nsfw"
                 class="my-0"
-                label="NSFQ (Not Safe For Quarantine)"
+                label="NSFW (Not Safe For Work)"
                 color="primary"
                 hide-details
                 inset
@@ -71,9 +71,9 @@
 
                 <template #label>
                   <div>
-                    NSFQ <span class="caption">(Not Safe For Quarantine)</span>
+                    NSFW <span class="caption">(Not Safe For Work)</span>
                     <v-btn
-                      title="More info about NSFQ setting"
+                      title="More info about NSFW setting"
                       class="ml-2"
                       icon
                       x-small
@@ -94,7 +94,7 @@
                   class="mr-2"
                   small
                   outlined
-                >NSFQ</v-chip>
+                >NSFW</v-chip>
                 {{ this.streamData.title }}
               </div>
             </v-scroll-y-transition>
@@ -110,7 +110,7 @@
             </v-btn>
           </div>
 
-          <!-- NSFQ note -->
+          <!-- NSFW note -->
           <v-expand-transition>
             <div v-show="showNSFWNote" class="mb-4 px-3">
               <v-alert
@@ -122,7 +122,7 @@
                 <div class="caption">
                   <span class="font-weight-bold">Note:</span> This setting <strong>can</strong> be safely modified mid-stream as needed.<br>
                   Changes to this setting will apply immediately upon saving.<br>
-                  Additionally, NSFQ streams will appear in <strong>red</strong> on sidebar, and have their thumbnail blurred on the homepage.<br>
+                  Additionally, NSFW streams will appear in <strong>red</strong> on sidebar, and have their thumbnail blurred on the homepage.<br>
                   NSFQ streams are additionally prohibited from being selected as the homepage autoplay stream.
                 </div>
 
