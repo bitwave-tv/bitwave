@@ -139,7 +139,11 @@
         const { data } = await this.$axios.get('https://api.bitwave.tv/v1/archives/old');
 
         this.archives = data.data
-          .map( archive => ({ ...archive.data, timeAgo: archive.timeAgo, id: archive.id }) )
+          .map( archive => ({
+            ...archive.data,
+            timeAgo: archive.timeAgo,
+            id: archive.id,
+          }) )
           .reverse();
 
         this.loading = false;
@@ -147,7 +151,12 @@
 
       async deleteArchive ( archive ) {
         const endpoint = `https://api.bitwave.tv/v1/replays/${archive.id}`;
-        const options = { data: { user: this.username } };
+        const options = {
+          data: {
+            user: this.username,
+            // force: true,
+          }
+        };
 
         try {
           const { data } = await this.$axios.delete( endpoint, options );
