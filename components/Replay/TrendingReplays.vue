@@ -5,6 +5,7 @@
       tag="div"
       class="row flex-wrap"
       name="fade-transition"
+      mode="out-in"
     >
       <!-- Replay Cards -->
       <v-col
@@ -37,7 +38,7 @@
       <!-- Skeleton loader -->
       <v-col
         v-if="processing"
-        v-for="replayLoader in ( limit / 2 )"
+        v-for="replayLoader in ( limit )"
         :key="replayLoader"
         :cols="cols"
         :sm="sm"
@@ -47,6 +48,7 @@
       >
         <v-skeleton-loader type="card" />
       </v-col>
+
     </transition-group>
 
     <!-- Load more button -->
@@ -105,7 +107,9 @@
   export default {
     name: 'TrendingReplays',
 
-    components: { ReplayCard },
+    components: {
+      ReplayCard,
+    },
 
     props: {
       limit: { type: Number, default: 10 },
