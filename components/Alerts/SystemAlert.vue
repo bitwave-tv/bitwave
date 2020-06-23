@@ -72,7 +72,7 @@
 <style lang="scss">
   .marquee {
     width: 100%;
-    max-width: 480px;
+    max-width: 720px;
     white-space: nowrap;
     overflow: hidden;
     box-sizing: border-box;

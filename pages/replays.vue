@@ -36,8 +36,6 @@
           :xl="2"
         />
 
-
-
         <!-- Header -->
         <div class="text-center mb-1 mt-5">
           <div class="headline"><v-icon>restore</v-icon> Recent Stream Replays</div>
@@ -58,7 +56,9 @@
       </v-container>
 
       <!-- Footer -->
-      <simple-footer :version="version" />
+      <simple-footer
+        :version="version"
+      />
     </div>
   </div>
 </template>

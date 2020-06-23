@@ -33,6 +33,7 @@ const $states = {
   notify          : 'NOTIFY',
   ignoreList      : 'IGNORE_LIST',
   autocomplete    : 'AUTOCOMPLETE',
+  highDensity     : 'HIGH_DENSITY',
 
   recieveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
 
@@ -79,6 +80,7 @@ const $mutations = {
   setNotify          : 'SET_NOTIFY',
   setIgnoreList      : 'SET_IGNORE_LIST',
   setAutocomplete    : 'SET_AUTOCOMPLETE',
+  setHighDensity     : 'SET_HIGH_DENSITY',
 
   setRecieveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
 
@@ -138,6 +140,7 @@ export const state = () => ({
   [$states.notify]          : true,
   [$states.ignoreList]      : [],
   [$states.autocomplete]    : true,
+  [$states.highDensity]     : false,
 
   [$states.recieveMentionsInLocal] : false,
 
@@ -287,6 +290,16 @@ export const mutations = {
       localStorage.setItem( 'autocomplete', data );
     } catch ( error ) {
       console.warn( `cannot save 'autocomplete'` );
+    }
+  },
+
+  // Set high density
+  [$mutations.setHighDensity] ( state, data ) {
+    state[$states.highDensity] = JSON.parse( data );
+    try {
+      localStorage.setItem( 'high-density', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'high-density'` );
     }
   },
 
@@ -556,7 +569,16 @@ export const actions = {
       if ( atInLocal !== null ) commit( $mutations.setRecieveMentionsInLocal, atInLocal );
       else commit( $mutations.setRecieveMentionsInLocal, false );
     } catch ( error ) {
-      logger ( 'No at-in-local option found.' );
+      logger ( 'No autocomplete option found.' );
+    }
+
+    // High density
+    try {
+      const useHighDensity = localStorage.getItem( 'high-density' );
+      if ( useHighDensity !== null ) commit( $mutations.setHighDensity, useHighDensity );
+      else commit( $mutations.setHighDensity, false );
+    } catch ( error ) {
+      logger ( 'No high-density option found.' );
     }
 
     // Get ignore list

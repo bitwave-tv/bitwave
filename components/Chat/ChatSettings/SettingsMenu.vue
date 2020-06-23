@@ -67,6 +67,17 @@
         dense
         inset
       />
+
+      <!-- Dense Chat -->
+      <v-switch
+        v-model="denseChat"
+        label="High Density"
+        class="mb-2"
+        color="primary"
+        hide-details
+        dense
+        inset
+      />
     </div>
 
     <v-divider/>
@@ -270,6 +281,7 @@
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
+        setHighDensity    : Chat.$mutations.setHighDensity,
         setRecieveMentionsInLocal : Chat.$mutations.setRecieveMentionsInLocal,
 
         setTrackMetrics        : Chat.$mutations.setTrackMetrics,
@@ -296,6 +308,7 @@
         getTtsVoice       : Chat.$states.ttsVoice,
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
+        getHighDensity    : Chat.$states.highDensity,
         getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
 
         getTrackMetrics        : Chat.$states.trackMetrics,
@@ -399,6 +412,14 @@
           this.$analytics.logEvent( 'chat_autocomplete', { value: val } );
         },
         get () { return this.getAutocomplete }
+      },
+
+      denseChat: {
+        set ( val ) {
+          this.setHighDensity( val );
+          this.$analytics.logEvent( 'chat_high_density', { value: val } );
+        },
+        get () { return this.getHighDensity }
       },
 
       recieveMentionsInLocal: {
