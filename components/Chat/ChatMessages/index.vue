@@ -11,6 +11,7 @@
         name="fade-transition"
         :duration="150"
         tag="div"
+        :class="{ dense: highDensity }"
       >
         <!-- Skeleton placeholders (for SSR) -->
         <v-sheet
@@ -139,6 +140,8 @@
 
   import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
   import ChatMessageMenu from '@/components/Chat/ChatMessages/ChatMessageMenu';
+  import { mapState } from 'vuex';
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'ChatMessages',
@@ -338,6 +341,12 @@
       }
     },
 
+    computed: {
+      ...mapState (Chat.namespace, {
+        highDensity : Chat.$states.highDensity,
+      }),
+    },
+
     beforeDestroy () {
       this.chatContainer.removeEventListener( 'scroll', this.onScroll );
       // clearInterval( this.scrollInterval );
@@ -374,6 +383,17 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 3;
+    }
+
+    .dense .msg {
+      h1, h2, h3, h4, h5, h6 {
+        font-size: 1rem;
+      }
+
+      img {
+        height: 28px;
+        vertical-align: middle;
+      }
     }
   }
 
