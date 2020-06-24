@@ -3,6 +3,7 @@
 import jwt_decode from 'jwt-decode';
 import * as utils from '@/plugins/store-utils.js';
 const saveToLocalStorage = values => utils.saveToLocalStorage( 'chat', values );
+const loadFromLocalStorage = ( commit, props ) => utils.loadFromLocalStorage( 'chat', commit, props );
 const logger = ( message, data ) => utils.logger( 'CHAT STORE', message, data );
 
 let loggingOut = false;
@@ -75,6 +76,7 @@ const $mutations = {
   appendMessage : 'APPEND_MESSAGE',
 
   setMessageBufferLimit : 'SET_MESSAGE_BUFFER_LIMIT',
+  setMessageBuffer : 'SET_MESSAGE_BUFFER',
   addToMessageBuffer : 'ADD_MESSAGE_BUFFER',
 
   setViewerList       : 'SET_VIEWERLIST',
@@ -165,22 +167,14 @@ export const mutations = {
   // Set show timestamps
   [$mutations.setTimestamps] ( state, data ) {
     state[$states.timestamps] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'showtimestamps', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'showtimestamps'` );
-    }
+    saveToLocalStorage( { [$states.timestamps]: data } );
   },
 
   // Set global chat
   [$mutations.setGlobal] ( state, data ) {
     state[$states.global] = JSON.parse( data );
     this.$cookies.set( '_bw_global', data );
-    try {
-      localStorage.setItem( 'globalchat', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'globalchat'` );
-    }
+    saveToLocalStorage( { [$states.global]: data } );
   },
 
   // Set global chat SSR
@@ -191,11 +185,7 @@ export const mutations = {
   // Set use TTS
   [$mutations.setUseTts] ( state, data ) {
     state[$states.useTts] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'tts', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'tts'` );
-    }
+    saveToLocalStorage( { [$states.useTts]: data } );
     try {
       if ( !data ) speechSynthesis.cancel();
     } catch ( error ) {
@@ -206,21 +196,13 @@ export const mutations = {
   // Set use ignore
   [$mutations.setUseIgnore] ( state, data ) {
     state[$states.useIgnore] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'useignore', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'useIgnore'` );
-    }
+    saveToLocalStorage( { [$states.useIgnore]: data } );
   },
 
   // Set user ignore list
   [$mutations.setIgnoreList] ( state, data ) {
     state[$states.ignoreList] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'ignorelist', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'ignorelist'` );
-    }
+    saveToLocalStorage( { [$states.ignoreList]: data } );
   },
 
   // Set TTS enabled for trolls
@@ -259,46 +241,25 @@ export const mutations = {
   // Set notification sounds
   [$mutations.setNotify] ( state, data ) {
     state[$states.notify] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'notify', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'notify'` );
-    }
+    saveToLocalStorage( { [$states.notify]: data } );
   },
 
   // Set autocomplete
   [$mutations.setAutocomplete] ( state, data ) {
     state[$states.autocomplete] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'autocomplete', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'autocomplete'` );
-    }
+    saveToLocalStorage( { [$states.autocomplete]: data } );
   },
 
   // Set high density
   [$mutations.setHighDensity] ( state, data ) {
     state[$states.highDensity] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'high-density', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'high-density'` );
-    }
+    saveToLocalStorage( { [$states.highDensity]: data } );
   },
 
   // Set receive mentions in local
-  [$mutations.setTtsVoice] ( state, data ) {
-    state[$states.ttsVoice] = data;
-  },
-
-  // Set ignore list
   [$mutations.setRecieveMentionsInLocal] ( state, data ) {
     state[$states.recieveMentionsInLocal] = data;
-    try {
-      localStorage.setItem( 'at-in-local', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'at-in-local'` );
-    }
+    saveToLocalStorage( { [$states.recieveMentionsInLocal]: data } );
   },
 
   // Set current input message
@@ -315,10 +276,16 @@ export const mutations = {
   // Sets message buffer (history) max size
   [$mutations.setMessageBufferLimit] ( state, data ) {
     state[$states.messageBufferLimit] = data;
-    saveToLocalStorage( { messageBufferLimit: data } );
+    saveToLocalStorage( { [$states.messageBufferLimit]: data } );
   },
 
-  // Sets message buffer (history)
+  // Sets message buffer
+  [$mutations.setMessageBuffer] (state, data ) {
+    state[$states.messageBuffer] = data;
+    state[$states.messageBuffer] = state[$states.messageBuffer].splice( -state[$states.messageBufferLimit] );
+  },
+
+  // Add a message  to message buffer (history)
   [$mutations.addToMessageBuffer] ( state, data ) {
     const bufferSize = state[$states.messageBuffer].length;
     if ( bufferSize === 0 ) state[$states.messageBuffer].push( data );
@@ -326,7 +293,7 @@ export const mutations = {
       state[$states.messageBuffer].push( data );
       state[$states.messageBuffer] = state[$states.messageBuffer].splice( -state[$states.messageBufferLimit] );
     }
-    saveToLocalStorage( { messageBuffer: state[$states.messageBuffer] } );
+    saveToLocalStorage( { [$states.messageBuffer]: state[$states.messageBuffer] } );
   },
 
   [$mutations.setEmoteMap] ( state, data ) {
@@ -365,14 +332,10 @@ export const mutations = {
     state[$states.pinnedMessage] = data;
   },
 
-  // Pinned message
+  // Whether or not to show user badge
   [$mutations.setShowBadge] ( state, data ) {
     state[$states.showBadge] = JSON.parse( data );
-    try {
-      localStorage.setItem( 'showbadge', data );
-    } catch ( error ) {
-      console.warn( `cannot save 'showbadge'` );
-    }
+    saveToLocalStorage( { [$states.showBadge]: data } );
   },
 };
 
@@ -500,81 +463,29 @@ export const actions = {
   },
 
   [$actions.loadSettings] ({ commit }) {
-    // Global chat
-    let global = null;
-    try {
-      global = localStorage.getItem( 'globalchat' );
-    } catch ( error ) {
-      logger ( 'No global chat option found.' );
-    }
-    commit( $mutations.setGlobal, global !== null ? global : false );
+    let settings = new Map([
+      [$states.timestamps, $mutations.setTimestamps],
+      [$states.global, $mutations.setGlobal],
+      [$states.useTts, $mutations.setUseTts],
+      [$states.useIgnore, $mutations.setUseIgnore],
+      //TODO: fix ignore list
+      //[$states.ignoreList, $mutations.setIgnoreList],
+      [$states.notify, $mutations.setNotify],
+      [$states.autocomplete, $mutations.setAutocomplete],
+      [$states.highDensity, $mutations.setHighDensity],
+      [$states.recieveMentionsInLocal, $mutations.setRecieveMentionsInLocal],
+      [$states.showBadge, $mutations.setShowBadge],
+      [$states.messageBufferLimit, $mutations.setMessageBufferLimit],
+      //TODO: flip messageBufferIndex in ChatInput.vue
+      //[$states.messageBuffer, $mutations.setMessageBuffer],
+    ]);
 
-    // Timestamps
-    try {
-      const showTimestamps = localStorage.getItem( 'showtimestamps' );
-      if ( showTimestamps !== null ) commit( $mutations.setTimestamps, showTimestamps );
-      else commit( $mutations.setTimestamps, true );
-    } catch ( error ) {
-      logger ( 'No showTimestamps option found.' );
-    }
-
-    // Ignore users
-    try {
-      const ignore = localStorage.getItem( 'useignore' );
-      if ( ignore !== null ) commit( $mutations.setUseIgnore, JSON.parse( ignore ) );
-      else commit( $mutations.setUseIgnore, true );
-    } catch ( error ) {
-      logger ( 'No ignore option found.' );
-    }
-
-    // Notifications
-    try {
-      const notify = localStorage.getItem( 'notify' );
-      if ( notify !== null ) commit( $mutations.setNotify, notify );
-      else commit( $mutations.setNotify, true );
-    } catch ( error ) {
-      logger ( 'No notification sound option found.' );
-    }
-
-    // Autocomplete
-    try {
-      const autocomplete = localStorage.getItem( 'autocomplete' );
-      if ( autocomplete !== null ) commit( $mutations.setAutocomplete, autocomplete );
-      else commit( $mutations.setAutocomplete, true );
-    } catch ( error ) {
-      logger ( 'No autocomplete option found.' );
-    }
-
-    // Autocomplete
-    try {
-      const atInLocal = localStorage.getItem( 'at-in-local' );
-      if ( atInLocal !== null ) commit( $mutations.setRecieveMentionsInLocal, atInLocal );
-      else commit( $mutations.setRecieveMentionsInLocal, false );
-    } catch ( error ) {
-      logger ( 'No autocomplete option found.' );
-    }
-
-    // High density
-    try {
-      const useHighDensity = localStorage.getItem( 'high-density' );
-      if ( useHighDensity !== null ) commit( $mutations.setHighDensity, useHighDensity );
-      else commit( $mutations.setHighDensity, false );
-    } catch ( error ) {
-      logger ( 'No high-density option found.' );
-    }
+    loadFromLocalStorage( commit, settings );
 
     // Get ignore list
     try {
       const ignores = localStorage.getItem( 'ignorelist' );
       if ( ignores !== null ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
-    } catch ( error ) {
-      logger ( 'No ignore list found.' );
-    }
-
-    // Get ignore list
-    try {
-      const showbadge = localStorage.getItem( 'showbadge' );
-      if ( showbadge !== null ) commit( $mutations.setShowBadge, JSON.parse( showbadge ) );
     } catch ( error ) {
       logger ( 'No ignore list found.' );
     }
