@@ -1,20 +1,9 @@
 // Define Store states, getters, mutations & actions
 
 import jwt_decode from 'jwt-decode';
-
-const logger = ( message, data ) => {
-  if ( process.client ) {
-    if ( data && typeof data === 'object' )
-      console.log( `%cCHAT STORE:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
-    else
-      console.log( `%cCHAT STORE:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-  } else {
-    if ( data && typeof data === 'object' )
-      console.log( `CHAT STORE: ${message} %o`, data );
-    else
-      console.log( `CHAT STORE: ${message}` );
-  }
-};
+import * as utils from '@/plugins/store-utils.js';
+const saveToLocalStorage = values => utils.saveToLocalStorage( 'chat', values );
+const logger = ( message, data ) => utils.logger( 'CHAT STORE', message, data );
 
 let loggingOut = false;
 
@@ -326,6 +315,7 @@ export const mutations = {
   // Sets message buffer (history) max size
   [$mutations.setMessageBufferLimit] ( state, data ) {
     state[$states.messageBufferLimit] = data;
+    saveToLocalStorage( { messageBufferLimit: data } );
   },
 
   // Sets message buffer (history)
@@ -336,6 +326,7 @@ export const mutations = {
       state[$states.messageBuffer].push( data );
       state[$states.messageBuffer] = state[$states.messageBuffer].splice( -state[$states.messageBufferLimit] );
     }
+    saveToLocalStorage( { messageBuffer: state[$states.messageBuffer] } );
   },
 
   [$mutations.setEmoteMap] ( state, data ) {

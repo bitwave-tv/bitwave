@@ -1,19 +1,8 @@
 // Created by xander on 6/13/2020
 import { auth, db } from '@/plugins/firebase.js';
 
-const logger = ( message, data ) => {
-  if ( process.client ) {
-    if ( data && typeof data === 'object' )
-      console.log( `%cNOTIFICATIONS:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
-    else
-      console.log( `%cNOTIFICATIONS:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-  } else {
-    if ( data && typeof data === 'object' )
-      console.log( `NOTIFICATIONS: ${message} %o`, data );
-    else
-      console.log( `NOTIFICATIONS: ${message}` );
-  }
-};
+import * as utils from '@/plugins/store-utils.js';
+const logger = ( message, data ) => utils.logger( 'NOTIFICATIONS', message, data );
 
 const toastErrorConfig = {
   icon: 'error',

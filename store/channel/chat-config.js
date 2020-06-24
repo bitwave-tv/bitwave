@@ -1,20 +1,8 @@
 // Define Store states, getters, mutations & actions
 import { db } from '@/plugins/firebase.js';
 
-const logger = ( message, data ) => {
-  if ( process.client ) {
-    if ( data && typeof data === 'object' )
-      console.log( `%cCHAT CONFIG:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
-    else
-      console.log( `%cCHAT CONFIG:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-  } else {
-    if ( data && typeof data === 'object' )
-      console.log( `CHAT CONFIG: ${message} %o`, data );
-    else
-      console.log( `CHAT CONFIG: ${message}` );
-  }
-};
-
+import * as utils from '@/plugins/store-utils.js';
+const logger = ( message, data ) => utils.logger( 'CHAT CONFIG', message, data );
 
 const $states = {
   configRef : 'CONFIG_REF',

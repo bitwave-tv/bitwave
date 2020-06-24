@@ -1,22 +1,10 @@
 import { auth, db } from '@/plugins/firebase.js';
 import { Chat } from '@/store/chat';
 
-const logger = ( message, data ) => {
-  if ( process.client ) {
-    if ( data && typeof data === 'object' )
-      console.log( `%cSTORE:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
-    else
-      console.log( `%cSTORE:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-  } else {
-    if ( data && typeof data === 'object' )
-      console.log( `STORE: ${message} %o`, data );
-    else
-      console.log( `STORE: ${message}` );
-  }
-};
+import * as utils from '@/plugins/store-utils.js';
+const logger = ( message, data ) => utils.logger( 'STORE', message, data );
 
 let unsubscribeUser = null;
-
 
 // Define Store
 const $states = {
