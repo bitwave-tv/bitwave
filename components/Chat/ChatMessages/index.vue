@@ -11,6 +11,7 @@
         name="fade-transition"
         :duration="150"
         tag="div"
+        :class="{ dense: highDensity }"
       >
         <!-- Skeleton placeholders (for SSR) -->
         <v-sheet
@@ -61,6 +62,7 @@
             <!-- Regular chat message -->
             <chat-message
               v-if="msg.username !== ( index && messages[ index - 1 ].username )"
+              :message="msg.message"
               :badge="msg.badge"
               :username="msg.username"
               :display-name="msg.username"
@@ -69,22 +71,20 @@
               :channel="msg.channel"
               :timestamp="getTime( msg.timestamp )"
               :avatar="msg.avatar"
+              :show-avatar="showAvatars"
               :color="msg.color"
               :global="getGlobalTag( msg.global )"
+              :show-channel="true"
               @reply="addUserTag"
               @whisper="addWhisper"
               @select="onMessageClick( msg )"
-            >
-              <div
-                class="body-2 msg"
-                v-html="msg.message"
-              ></div>
-            </chat-message>
+            ></chat-message>
 
             <!-- Append messages -->
             <div
               v-else
               class="msg append"
+              :class="{ 'no-avatar': !showAvatars }"
             >
               <div
                 class="body-2 msg"
@@ -136,10 +136,13 @@
 </template>
 
 <script>
-  import moment from 'moment'
+  import moment from 'moment';
 
   import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
   import ChatMessageMenu from '@/components/Chat/ChatMessages/ChatMessageMenu';
+
+  import { mapState } from 'vuex';
+  import { Chat } from '@/store/chat';
 
   export default {
     name: 'ChatMessages',
@@ -151,8 +154,12 @@
 
     props: {
       messages: { type: Array },
-      showTimestamps: { type: Boolean },
       global: { type: Boolean },
+      showTimestamps: { type: Boolean },
+      showAvatars: {
+        type: Boolean,
+        default: true,
+      },
     },
 
     data () {
@@ -335,6 +342,12 @@
       }
     },
 
+    computed: {
+      ...mapState (Chat.namespace, {
+        highDensity : Chat.$states.highDensity,
+      }),
+    },
+
     beforeDestroy () {
       this.chatContainer.removeEventListener( 'scroll', this.onScroll );
       // clearInterval( this.scrollInterval );
@@ -359,6 +372,10 @@
       &.append .msg {
         padding-left: 40px;
       }
+
+      &.append.no-avatar .msg {
+        padding-left: 0;
+      }
     }
 
     .stb-fab {
@@ -367,6 +384,17 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 3;
+    }
+
+    .dense .msg {
+      h1, h2, h3, h4, h5, h6 {
+        font-size: 1rem;
+      }
+
+      img {
+        height: 28px;
+        vertical-align: middle;
+      }
     }
   }
 

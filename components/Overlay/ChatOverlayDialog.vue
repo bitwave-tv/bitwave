@@ -94,6 +94,19 @@
             @change="enableSave = true"
           />
         </div>
+        <div class="d-flex flex-wrap">
+          <!-- Show Avatars -->
+          <v-switch
+            v-model="overlay.showAvatars"
+            class="flex-grow-1"
+            label="Show Avatars"
+            color="primary"
+            hide-details
+            :loading="saveLoading"
+            :disabled="saveLoading"
+            @change="enableSave = true"
+          />
+        </div>
 
         <!-- History Size -->
         <div class="mt-3">
@@ -196,6 +209,7 @@
     showChannel: true,
     showTimestamps: true,
     showTrolls: true,
+    showAvatars: true,
     title: '',
     type: 'chat',
   };
@@ -254,6 +268,7 @@
           showChannel: true,
           showTimestamps: this.overlay.showTimestamps,
           showTrolls: true,
+          showAvatars: this.overlay.showAvatars,
           title: title,
           type: 'chat',
         };
@@ -281,6 +296,7 @@
           showChannel: true,
           showTimestamps: this.overlay.showTimestamps,
           showTrolls: true,
+          showAvatars: this.overlay.showAvatars,
           title: title,
         };
 

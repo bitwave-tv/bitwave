@@ -153,13 +153,6 @@
         paypal: { flow: 'vault' },
       };
 
-      // If Paypal is available
-      /*if ( this.paypal ) {
-        config.paypal = {
-          flow: 'vault'
-        }
-      }*/
-
       // Create dropin
       dropIn.create( config, ( createErr, instance ) => {
         this.instance = instance;
@@ -204,6 +197,10 @@
               eventAction   : 'purchased color',
               eventLabel    : this.username.toLowerCase(),
             });
+            this.$analytics.logEvent( 'purchase', {
+              currency: 'USD',
+              value: 5.00,
+            });
           } else {
             this.loading = false;
             this.error = true;
@@ -215,7 +212,7 @@
           this.errorMessage = error.response.data.message;
           this.loading = false
         }
-      }
+      },
     },
 
     computed: {

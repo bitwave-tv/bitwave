@@ -33,6 +33,7 @@ const $states = {
   notify          : 'NOTIFY',
   ignoreList      : 'IGNORE_LIST',
   autocomplete    : 'AUTOCOMPLETE',
+  highDensity     : 'HIGH_DENSITY',
 
   recieveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
 
@@ -43,7 +44,7 @@ const $states = {
   roomViewerList   : 'ROOM_VIEWER_LIST',
   streamViewerList : 'STREAM_VIEWER_LIST',
 
-  emoteList : 'EMOTE_LIST',
+  emoteMap : 'EMOTE_MAP',
 
   chatToken : 'CHAT_TOKEN',
   displayName : 'DISPLAY_NAME',
@@ -57,6 +58,7 @@ const $states = {
 
 const $getters = {
   getStreamViewerList : 'GET_STREAM_VIEWERLIST',
+  getRoom : 'GET_ROOM',
 };
 
 const $mutations = {
@@ -75,6 +77,7 @@ const $mutations = {
   setNotify          : 'SET_NOTIFY',
   setIgnoreList      : 'SET_IGNORE_LIST',
   setAutocomplete    : 'SET_AUTOCOMPLETE',
+  setHighDensity     : 'SET_HIGH_DENSITY',
 
   setRecieveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
 
@@ -87,7 +90,8 @@ const $mutations = {
   setRoomViewerList   : 'SET_ROOM_VIEWERLIST',
   setStreamViewerList : 'SET_STREAM_VIEWERLIST',
 
-  setEmoteList : 'SET_EMOTE_LIST',
+  setEmoteMap    : 'SET_EMOTE_MAP',
+  setEmoteMapKey : 'SET_EMOTE_MAP_KEY',
 
   setChatToken : 'SET_CHAT_TOKEN',
   setDisplayName : 'SET_DISPLAY_NAME',
@@ -101,7 +105,7 @@ const $mutations = {
 
 const $actions = {
   updateViewerList : 'UPDATE_VIEWERLIST',
-  updateEmoteList  : 'UPDATE_EMOTE_LIST',
+  updateEmoteMap   : 'UPDATE_EMOTE_MAP',
   updateChatToken  : 'UPDATE_CHAT_TOKEN',
 
   createTrollToken : 'CREATE_TROLL_TOKEN',
@@ -130,13 +134,14 @@ export const state = () => ({
   [$states.notify]          : true,
   [$states.ignoreList]      : [],
   [$states.autocomplete]    : true,
+  [$states.highDensity]     : false,
 
   [$states.recieveMentionsInLocal] : false,
 
   [$states.message]          : '',
   [$states.messageBuffer]    : [],
 
-  [$states.emoteList] : [],
+  [$states.emoteMap] : new Map(),
 
   [$states.chatToken] : null,
   [$states.displayName] : '',
@@ -279,7 +284,17 @@ export const mutations = {
     }
   },
 
-  // Set recieve mentions in local
+  // Set high density
+  [$mutations.setHighDensity] ( state, data ) {
+    state[$states.highDensity] = JSON.parse( data );
+    try {
+      localStorage.setItem( 'high-density', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'high-density'` );
+    }
+  },
+
+  // Set receive mentions in local
   [$mutations.setTtsVoice] ( state, data ) {
     state[$states.ttsVoice] = data;
   },
@@ -287,6 +302,11 @@ export const mutations = {
   // Set ignore list
   [$mutations.setRecieveMentionsInLocal] ( state, data ) {
     state[$states.recieveMentionsInLocal] = data;
+    try {
+      localStorage.setItem( 'at-in-local', data );
+    } catch ( error ) {
+      console.warn( `cannot save 'at-in-local'` );
+    }
   },
 
   // Set current input message
@@ -310,8 +330,15 @@ export const mutations = {
     }
   },
 
-  [$mutations.setEmoteList] ( state, data ) {
-    state[$states.emoteList] = data;
+  [$mutations.setEmoteMap] ( state, data ) {
+    // data is an array of emotes: {label: string, ...}
+    for( const emote of data ) {
+      state[$states.emoteMap].set( emote.label, emote );
+    }
+  },
+
+  [$mutations.setEmoteMapKey] ( state, data ) {
+    state[$states.emoteMap].set( data.key, data.value );
   },
 
   // Set chat token
@@ -357,16 +384,16 @@ export const actions = {
     commit( 'SET_ROOM', data );
   },
 
-  async [$actions.updateEmoteList] ( { state, commit } ) {
+  async [$actions.updateEmoteMap] ( { state, commit } ) {
     // Detect if we have already leaded emotes
-    if ( state[$states.emoteList] && state[$states.emoteList].length > 0 ) return;
+    if ( state[$states.emoteMap] && state[$states.emoteMap].size > 0 ) return;
 
     // Load emote autocompletes
     try {
       const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/emotes', { progress: false } );
-      commit( $mutations.setEmoteList,  data.data );
+      commit( $mutations.setEmoteMap,  data.data );
     } catch ( error ) {
-      console.error( `Failed to load emote list!` );
+      console.error( `Failed to load emote map!` );
       console.error( error.message );
     }
   },
@@ -517,6 +544,24 @@ export const actions = {
       else commit( $mutations.setAutocomplete, true );
     } catch ( error ) {
       logger ( 'No autocomplete option found.' );
+    }
+
+    // Autocomplete
+    try {
+      const atInLocal = localStorage.getItem( 'at-in-local' );
+      if ( atInLocal !== null ) commit( $mutations.setRecieveMentionsInLocal, atInLocal );
+      else commit( $mutations.setRecieveMentionsInLocal, false );
+    } catch ( error ) {
+      logger ( 'No autocomplete option found.' );
+    }
+
+    // High density
+    try {
+      const useHighDensity = localStorage.getItem( 'high-density' );
+      if ( useHighDensity !== null ) commit( $mutations.setHighDensity, useHighDensity );
+      else commit( $mutations.setHighDensity, false );
+    } catch ( error ) {
+      logger ( 'No high-density option found.' );
     }
 
     // Get ignore list

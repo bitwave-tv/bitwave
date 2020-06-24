@@ -105,7 +105,7 @@
           to="/report"
           class="my-1 mr-1"
         >report</v-btn>
-        Need to report content?
+        Report content
       </div>
 
       <div class="mb-2 d-flex align-center">
@@ -117,6 +117,17 @@
           class="my-1 mr-1"
         >ToS</v-btn>
         Our terms of service.
+      </div>
+
+      <div class="mb-2 d-flex align-center">
+        <v-btn
+          small
+          text
+          color="red"
+          to="/privacy"
+          class="my-1 mr-1"
+        >Privacy Policy</v-btn>
+        Our Privacy Policy.
       </div>
 
       <div class="mb-1">
@@ -170,7 +181,3 @@
 
   };
 </script>
-
-<style lang='scss'>
-
-</style>

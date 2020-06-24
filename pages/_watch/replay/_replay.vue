@@ -24,7 +24,7 @@
         </div>
         <div class="d-flex align-center">
           <template v-if="nsfw">
-            <div class="font-weight-bold green--text body-2">NSFQ</div>
+            <div class="font-weight-bold red--text body-2">NSFW</div>
             <v-divider vertical class="mx-2"/>
           </template>
           <KickStreamButton
@@ -544,7 +544,8 @@
         });
 
         this.player.on( 'ended', async () => {
-          this.setSource({ url: await this.getRandomBump(), type: 'video/mp4' });
+          // Disable bumps for replays
+          // this.setSource({ url: await this.getRandomBump(), type: 'video/mp4' });
         });
 
         this.player.on( 'error', error => {
@@ -647,8 +648,11 @@
 
       onOrientationChange () {
         const orientation = (screen.orientation || {}).type;
-        this.landscape = orientation && orientation.startsWith( 'landscape' );
-        // this.landscape = ( window.orientation || screen.orientation.angle ) !== 0;
+        if ( orientation ) {
+          this.landscape = orientation.startsWith( 'landscape' );
+        } else {
+          this.landscape = false;
+        }
       },
 
       onClickTimestamp () {
@@ -788,7 +792,12 @@
       // Get stream data
       await this.getStreamData();
 
-      this.landscape = ( screen.orientation || {} ).type.startsWith( 'landscape' );
+      const orientation = (screen.orientation || {}).type;
+      if ( orientation ) {
+        this.landscape = orientation.startsWith( 'landscape' );
+      } else {
+        this.landscape = false;
+      }
       window.addEventListener( 'orientationchange', this.onOrientationChange );
 
       this.mounted = true;

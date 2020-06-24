@@ -3,6 +3,7 @@
 
     <!-- Chat Avatar -->
     <div
+      v-if="props.showAvatar"
       class="v-avatar mr-2 mt-2"
       @click="listeners.reply( props.username )"
       @dblclick="listeners.whisper( props.username )"
@@ -68,6 +69,7 @@
 
         <!-- Room Label -->
         <nuxt-link
+          v-if="props.showChannel"
           :to="props.routePrefix + props.channel"
           no-prefetch
         >
@@ -79,7 +81,10 @@
       </div>
 
       <!-- Chat Body -->
-      <slot/>
+      <div
+        class="body-2 msg"
+        v-html="props.message"
+      ></div>
 
     </div>
   </div>
@@ -91,6 +96,10 @@
 
     props: {
       avatar: {},
+      showAvatar: {
+        type: Boolean,
+        default: true,
+      },
       badge: { type: String },
       color: {},
       message: {
@@ -107,6 +116,7 @@
       channel: {
         type: String,
       },
+      showChannel: { type: Boolean },
       timestamp: {
         type: Object,
       },

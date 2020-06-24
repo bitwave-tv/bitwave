@@ -60,7 +60,7 @@
                 v-if="!previewData"
                 v-model="streamData.nsfw"
                 class="my-0"
-                label="NSFQ (Not Safe For Quarantine)"
+                label="NSFW (Not Safe For Work)"
                 color="primary"
                 hide-details
                 inset
@@ -71,9 +71,9 @@
 
                 <template #label>
                   <div>
-                    NSFQ <span class="caption">(Not Safe For Quarantine)</span>
+                    NSFW <span class="caption">(Not Safe For Work)</span>
                     <v-btn
-                      title="More info about NSFQ setting"
+                      title="More info about NSFW setting"
                       class="ml-2"
                       icon
                       x-small
@@ -94,7 +94,7 @@
                   class="mr-2"
                   small
                   outlined
-                >NSFQ</v-chip>
+                >NSFW</v-chip>
                 {{ this.streamData.title }}
               </div>
             </v-scroll-y-transition>
@@ -110,7 +110,7 @@
             </v-btn>
           </div>
 
-          <!-- NSFQ note -->
+          <!-- NSFW note -->
           <v-expand-transition>
             <div v-show="showNSFWNote" class="mb-4 px-3">
               <v-alert
@@ -122,7 +122,7 @@
                 <div class="caption">
                   <span class="font-weight-bold">Note:</span> This setting <strong>can</strong> be safely modified mid-stream as needed.<br>
                   Changes to this setting will apply immediately upon saving.<br>
-                  Additionally, NSFQ streams will appear in <strong>red</strong> on sidebar, and have their thumbnail blurred on the homepage.<br>
+                  Additionally, NSFW streams will appear in <strong>red</strong> on sidebar, and have their thumbnail blurred on the homepage.<br>
                   NSFQ streams are additionally prohibited from being selected as the homepage autoplay stream.
                 </div>
 
@@ -409,6 +409,7 @@
         archive: false,
         editStreamData: false,
         previewData: false,
+        live: false,
         streamData : {
           title: this.title,
           description: this.description,
@@ -429,6 +430,11 @@
     },
 
     methods: {
+      async getFreshIdToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
+
       async getStreamData () {
         const stream = this.username.toLowerCase();
         try {
@@ -440,6 +446,7 @@
           this.archive = data.archive;
           this.streamData.archive = data.archive;
           this.oldCoverImage = data.cover;
+          this.live = data.live;
         } catch ( error ) {
           this.$toast.error( error.message, { icon: 'error', duration: 5000 } );
           this.editStreamData = false;
@@ -454,6 +461,7 @@
           nsfw: this.nsfw,
           cover: this.cover,
         };
+        this.live = false;
         this.saveLoading = false;
         this.enableSave = false;
         this.showArchiveNote = false;
@@ -495,9 +503,36 @@
           eventLabel    : this.username.toLowerCase(),
         });
 
-        this.saveLoading  = true;
-        const stream      = this.username.toLowerCase();
-        const streamRef   = db.collection( 'streams' ).doc( stream );
+        this.saveLoading = true;
+        const stream     = this.username.toLowerCase();
+        const streamRef  = db.collection( 'streams' ).doc( stream );
+
+
+        // Trigger Start / Stop Archiving
+        if ( this.live && this.archive !== this.streamData.archive ) {
+          await this.getFreshIdToken();
+          const endpoint = `https://api.bitwave.tv/v1/streamer/recorder/${this.streamData.archive ? 'start' : 'stop' }`;
+          const payload = { user: this.username.toLowerCase(), };
+          try {
+            const result = await this.$axios
+              .post(
+                endpoint,
+                payload,
+              );
+            console.log( result );
+            this.$toast.error(
+              `Failed to ${this.streamData.archive ? 'start' : 'stop'} recording`,
+              { icon: 'error', duration: 5000, position: 'top-center' }
+            );
+          } catch ( error ) {
+            console.error( error.message );
+            this.$toast.success(
+              `Successfully ${this.streamData.archive ? 'started' : 'stopped'} recording!`,
+              { icon: 'done', duration: 5000, position: 'top-center' }
+            );
+          }
+        }
+
 
         await streamRef.update({
           archive: !!this.streamData.archive,

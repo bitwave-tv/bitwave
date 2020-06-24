@@ -44,6 +44,8 @@
       <!-- Chat Settings -->
       <chat-settings/>
 
+      <chat-mod-tools v-if="false"/>
+
       <!-- Chat Coin -->
       <v-menu
         v-if="true"
@@ -70,15 +72,6 @@
           @close="showChatCoins = false"
         />
       </v-menu>
-
-      <v-btn
-        v-if="false"
-        class="ml-1"
-        small
-        icon
-      >
-        <v-icon>monetization_on</v-icon>
-      </v-btn>
 
       <v-spacer/>
 
@@ -119,6 +112,7 @@
   const ChatCoin     = async () => await import ( '@/components/Payment/ChatCoin' );
 
   import AutocompleteChat from '@/components/Chat/AutocompleteChat';
+  import ChatModTools from '@/components/Chat/ChatModTools/index';
 
   const commands = [
     {
@@ -179,6 +173,7 @@
     name: 'ChatInput',
 
     components: {
+      ChatModTools,
       ChatCoin,
       ChatSettings,
       AutocompleteChat,
@@ -201,12 +196,15 @@
         autocompleteSelection: 0,
         autocompleteValue: null,
         acSize: 5,
+
+        emoteList: [],
       }
     },
 
     fetchOnServer: false,
     async fetch() {
-      await this.updateEmoteListInStore();
+      await this.updateEmoteMap();
+      this.emoteList = Array.from( this.emoteMap.values() )
     },
 
     methods: {
@@ -216,7 +214,7 @@
       }),
 
       ...mapActions(Chat.namespace, {
-        updateEmoteListInStore: Chat.$actions.updateEmoteList,
+        updateEmoteMap: Chat.$actions.updateEmoteMap,
       }),
 
       updateMessage ( event ) {
@@ -357,39 +355,18 @@
         }
       },
 
-      updateEmoteList() {
-        this.updateEmoteListInStore();
-
-        if( this.emoteList && this.emoteLinkMap && this.emoteLinkMap.size === this.emoteList.length ) {
-          console.log( 'Skipping emoteList update.' );
-          return;
-        }
-
-        if( !this.emoteLinkMap ) {
-          this.emoteLinkMap = new Map();
-        }
-
-        for( const emote of this.emoteList ) {
-          this.emoteLinkMap.set( emote.image, emote.value );
-        }
-      },
-
       async onDrop( event ) {
-        if( !this.emoteLinkMap || this.emoteLinkMap.size < 1 ) {
-          await this.updateEmoteList();
-        }
-
         const droppedText = event.dataTransfer.getData( "text/plain" );
         const isEmoteLink = droppedText.startsWith( "https://cdn.bitwave.tv/static/emotes/" )
                          || droppedText.startsWith( "https://cdn.bitwave.tv/uploads/" );
         if( isEmoteLink ) {
           const emoteLink = droppedText.replace( /\?[0-9]*$/g, '' );
-          const emote = this.emoteLinkMap.get( emoteLink );
+          const emote = Array.from( this.emoteMap.values() ).find( emote => emote.image.startsWith( emoteLink ) );
 
           event.preventDefault();
 
           // In case the emote isn't found, ensure the link is pasted
-          if( emote ) { this.appendToChatMessage( emote ); }
+          if( emote ) { this.appendToChatMessage( emote.value ); }
           else { this.appendToChatMessage( emoteLink ); }
         }
       },
@@ -405,7 +382,7 @@
         getMessage         : Chat.$states.message,
         enableAutocomplete : Chat.$states.autocomplete,
         getMessageBuffer   : Chat.$states.messageBuffer,
-        emoteList          : Chat.$states.emoteList,
+        emoteMap           : Chat.$states.emoteMap,
       }),
 
       userlist () {

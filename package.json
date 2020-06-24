@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.20.1",
+  "version": "1.21.6",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "scripts": {
@@ -19,7 +19,7 @@
     "rollout:status": "kubectl rollout status deployment/bitwave-app -n bitwave-node"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.10.3",
+    "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/component-cache": "^1.1.5",
     "@nuxtjs/device": "^1.2.7",
     "@nuxtjs/dotenv": "^1.4.1",
@@ -27,8 +27,10 @@
     "@nuxtjs/manifest": "^3.0.0-beta.16",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/recaptcha": "^0.6.2",
-    "@nuxtjs/sentry": "^4.0.3",
+    "@nuxtjs/sentry": "^4.1.2",
     "@nuxtjs/toast": "^3.3.0",
+    "@sentry/browser": "^5.17.0",
+    "@videojs/http-streaming": "^1.13.3",
     "babel-runtime": "^6.26.0",
     "braintree-web-drop-in": "^1.22.1",
     "chart.js": "^2.9.3",
@@ -36,7 +38,7 @@
     "cross-env": "^7.0.2",
     "dashjs": "^3.1.1",
     "express": "^4.17.1",
-    "firebase": "^7.14.6",
+    "firebase": "^7.15.0",
     "jwt-decode": "^2.2.0",
     "marked": "^0.7.0",
     "moment": "^2.26.0",
@@ -48,8 +50,7 @@
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.1.1",
     "vue-chartjs": "^3.5.0",
-    "vue-clipboard2": "^0.3.1",
-    "vue-virtual-scroller": "^1.0.0-rc.2"
+    "vue-clipboard2": "^0.3.1"
   },
   "devDependencies": {
     "@nuxtjs/style-resources": "^1.0.0",
