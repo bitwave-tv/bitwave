@@ -188,7 +188,7 @@
       return {
         showChatCoins: false,
 
-        messageBufferIndex: 0,
+        messageBufferIndex: -1,
         showUsernameSuggestions: false,
 
         autocomplete: null,
@@ -255,7 +255,7 @@
         this.$emit( 'send' );
 
         this.addToMessageBuffer( this.getMessage );
-        this.messageBufferIndex = this.getMessageBuffer.length;
+        this.messageBufferIndex = -1;
 
         this.setChatMessage( '' );
       },
@@ -264,14 +264,14 @@
         if ( !event.srcElement.value || event.srcElement.value === this.getMessageBuffer[ this.messageBufferIndex ] ) {
           // Up Arrow (keyCode 38)
           if ( event.key === 'ArrowUp' ) {
-            this.messageBufferIndex -= ( this.messageBufferIndex > 0 ) ? 1 : 0;
+            this.messageBufferIndex += ( this.messageBufferIndex < this.getMessageBuffer.length - 1 ) ? 1 : 0;
             this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
             event.preventDefault();
           }
           // Down Arrow (keyCode 40)
           else if ( event.key === 'ArrowDown' ) {
-            this.messageBufferIndex += ( this.messageBufferIndex < this.getMessageBuffer.length ) ? 1 : 0;
-            if ( this.messageBufferIndex === this.getMessageBuffer.length ) this.setMessage( '' );
+            this.messageBufferIndex -= ( this.messageBufferIndex > -1 ) ? 1 : 0;
+            if ( this.messageBufferIndex === -1 ) this.setMessage( '' );
             else this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
             event.preventDefault();
           }

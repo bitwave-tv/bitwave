@@ -282,16 +282,16 @@ export const mutations = {
   // Sets message buffer
   [$mutations.setMessageBuffer] (state, data ) {
     state[$states.messageBuffer] = data;
-    state[$states.messageBuffer] = state[$states.messageBuffer].splice( -state[$states.messageBufferLimit] );
+    state[$states.messageBuffer] = state[$states.messageBuffer].slice( 0, state[$states.messageBufferLimit] );
   },
 
   // Add a message  to message buffer (history)
   [$mutations.addToMessageBuffer] ( state, data ) {
     const bufferSize = state[$states.messageBuffer].length;
-    if ( bufferSize === 0 ) state[$states.messageBuffer].push( data );
+    if ( bufferSize === 0 ) state[$states.messageBuffer].unshift( data );
     if ( bufferSize > 0 && state[$states.messageBuffer][bufferSize - 1] !== data ) {
-      state[$states.messageBuffer].push( data );
-      state[$states.messageBuffer] = state[$states.messageBuffer].splice( -state[$states.messageBufferLimit] );
+      state[$states.messageBuffer].unshift( data );
+      state[$states.messageBuffer] = state[$states.messageBuffer].slice( 0, state[$states.messageBufferLimit] );
     }
     saveToLocalStorage( { [$states.messageBuffer]: state[$states.messageBuffer] } );
   },
@@ -476,8 +476,7 @@ export const actions = {
       [$states.recieveMentionsInLocal, $mutations.setRecieveMentionsInLocal],
       [$states.showBadge, $mutations.setShowBadge],
       [$states.messageBufferLimit, $mutations.setMessageBufferLimit],
-      //TODO: flip messageBufferIndex in ChatInput.vue
-      //[$states.messageBuffer, $mutations.setMessageBuffer],
+      [$states.messageBuffer, $mutations.setMessageBuffer],
     ]);
 
     loadFromLocalStorage( commit, settings );
