@@ -250,6 +250,8 @@
         if ( this.getMessage.length > 300 ) return;
         if ( this.autocomplete ) this.onTab();
 
+        if ( this.getMessage.length === 0 || /^[\s(\\n)]+$/.test( this.getMessage ) ) return;
+
         this.$emit( 'send' );
 
         this.addToMessageBuffer( this.getMessage );

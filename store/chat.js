@@ -39,6 +39,7 @@ const $states = {
 
   message    : 'MESSAGE',
   messageBuffer : 'MESSAGE_BUFFER',
+  messageBufferLimit : 'MESSAGE_BUFFER_LIMIT',
 
   viewerList       : 'VIEWER_LIST',
   roomViewerList   : 'ROOM_VIEWER_LIST',
@@ -84,6 +85,7 @@ const $mutations = {
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
 
+  setMessageBufferLimit : 'SET_MESSAGE_BUFFER_LIMIT',
   addToMessageBuffer : 'ADD_MESSAGE_BUFFER',
 
   setViewerList       : 'SET_VIEWERLIST',
@@ -138,8 +140,9 @@ export const state = () => ({
 
   [$states.recieveMentionsInLocal] : false,
 
-  [$states.message]          : '',
-  [$states.messageBuffer]    : [],
+  [$states.message]            : '',
+  [$states.messageBufferLimit] : 10,
+  [$states.messageBuffer]      : [],
 
   [$states.emoteMap] : new Map(),
 
@@ -320,13 +323,18 @@ export const mutations = {
     state[$states.message] += data;
   },
 
+  // Sets message buffer (history) max size
+  [$mutations.setMessageBufferLimit] ( state, data ) {
+    state[$states.messageBufferLimit] = data;
+  },
+
   // Sets message buffer (history)
   [$mutations.addToMessageBuffer] ( state, data ) {
     const bufferSize = state[$states.messageBuffer].length;
     if ( bufferSize === 0 ) state[$states.messageBuffer].push( data );
     if ( bufferSize > 0 && state[$states.messageBuffer][bufferSize - 1] !== data ) {
       state[$states.messageBuffer].push( data );
-      state[$states.messageBuffer] = state[$states.messageBuffer].splice( -10 );
+      state[$states.messageBuffer] = state[$states.messageBuffer].splice( -state[$states.messageBufferLimit] );
     }
   },
 
