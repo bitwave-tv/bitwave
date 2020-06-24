@@ -59,11 +59,16 @@ export const loadFromLocalStorage = ( key, commit, props ) => {
     return;
   }
 
+  let readAll = true;
   for( const prop of props.keys() ) {
     if( value.hasOwnProperty( prop ) ) {
+      console.log( props.get( prop ), value[prop] );
       commit( props.get( prop ), value[prop] );
     } else {
-      console.warn( `Couldn't get property ${prop} for ${key} read from localStorage` );
+      console.warn( `Couldn't get property '${prop}' for '${key}', read from localStorage` );
+      readAll = false;
     }
   }
+
+  return readAll;
 };
