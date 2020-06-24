@@ -409,6 +409,7 @@
         archive: false,
         editStreamData: false,
         previewData: false,
+        live: false,
         streamData : {
           title: this.title,
           description: this.description,
@@ -429,6 +430,11 @@
     },
 
     methods: {
+      async getFreshIdToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
+
       async getStreamData () {
         const stream = this.username.toLowerCase();
         try {
@@ -440,6 +446,7 @@
           this.archive = data.archive;
           this.streamData.archive = data.archive;
           this.oldCoverImage = data.cover;
+          this.live = data.live;
         } catch ( error ) {
           this.$toast.error( error.message, { icon: 'error', duration: 5000 } );
           this.editStreamData = false;
@@ -454,6 +461,7 @@
           nsfw: this.nsfw,
           cover: this.cover,
         };
+        this.live = false;
         this.saveLoading = false;
         this.enableSave = false;
         this.showArchiveNote = false;
@@ -495,9 +503,36 @@
           eventLabel    : this.username.toLowerCase(),
         });
 
-        this.saveLoading  = true;
-        const stream      = this.username.toLowerCase();
-        const streamRef   = db.collection( 'streams' ).doc( stream );
+        this.saveLoading = true;
+        const stream     = this.username.toLowerCase();
+        const streamRef  = db.collection( 'streams' ).doc( stream );
+
+
+        // Trigger Start / Stop Archiving
+        if ( this.live && this.archive !== this.streamData.archive ) {
+          await this.getFreshIdToken();
+          const endpoint = `https://api.bitwave.tv/v1/streamer/recorder/${this.streamData.archive ? 'start' : 'stop' }`;
+          const payload = { user: this.username.toLowerCase(), };
+          try {
+            const result = await this.$axios
+              .post(
+                endpoint,
+                payload,
+              );
+            console.log( result );
+            this.$toast.error(
+              `Failed to ${this.streamData.archive ? 'start' : 'stop'} recording`,
+              { icon: 'error', duration: 5000, position: 'top-center' }
+            );
+          } catch ( error ) {
+            console.error( error.message );
+            this.$toast.success(
+              `Successfully ${this.streamData.archive ? 'started' : 'stopped'} recording!`,
+              { icon: 'done', duration: 5000, position: 'top-center' }
+            );
+          }
+        }
+
 
         await streamRef.update({
           archive: !!this.streamData.archive,

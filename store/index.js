@@ -96,12 +96,12 @@ const $actions = {
 
 // Create Store
 export const state = () => ({
-  [$states.auth]        : null,
-  [$states.user]        : null,
-  [$states.channel]     : null,
-  [$states.newVersion]  : null,
-  [$states.alerts]      : {},
-  [$states.featureFlags]: {},
+  [$states.auth]            : null,
+  [$states.user]            : null,
+  [$states.channel]         : null,
+  [$states.newVersion]      : null,
+  [$states.alerts]          : {},
+  [$states.featureFlags]    : {},
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
@@ -323,12 +323,6 @@ export const actions = {
 
     // Run all our API actions in parallel
     await Promise.all( runParallel );
-  },
-
-  async nuxtClientInit ({ dispatch }, { req, params }) {
-    console.log( `Client Init: ${params}` );
-    console.log( `${req}` );
-    await dispatch( 'nuxtServerInit', { req, params } );
   },
 
   // not used due since we couldn't catch errors well here

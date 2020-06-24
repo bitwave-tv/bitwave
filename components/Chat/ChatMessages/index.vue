@@ -136,10 +136,11 @@
 </template>
 
 <script>
-  import moment from 'moment'
+  import moment from 'moment';
 
   import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
   import ChatMessageMenu from '@/components/Chat/ChatMessages/ChatMessageMenu';
+
   import { mapState } from 'vuex';
   import { Chat } from '@/store/chat';
 
