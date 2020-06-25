@@ -25,7 +25,7 @@ const $states = {
   autocomplete    : 'AUTOCOMPLETE',
   highDensity     : 'HIGH_DENSITY',
 
-  recieveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
+  receiveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
 
   message    : 'MESSAGE',
   messageBuffer : 'MESSAGE_BUFFER',
@@ -70,7 +70,7 @@ const $mutations = {
   setAutocomplete    : 'SET_AUTOCOMPLETE',
   setHighDensity     : 'SET_HIGH_DENSITY',
 
-  setRecieveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
+  setReceiveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
 
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
@@ -129,7 +129,7 @@ export const state = () => ({
   [$states.autocomplete]    : true,
   [$states.highDensity]     : false,
 
-  [$states.recieveMentionsInLocal] : false,
+  [$states.receiveMentionsInLocal] : false,
 
   [$states.message]            : '',
   [$states.messageBufferLimit] : 10,
@@ -257,9 +257,9 @@ export const mutations = {
   },
 
   // Set receive mentions in local
-  [$mutations.setRecieveMentionsInLocal] ( state, data ) {
-    state[$states.recieveMentionsInLocal] = data;
-    saveToLocalStorage( { [$states.recieveMentionsInLocal]: data } );
+  [$mutations.setReceiveMentionsInLocal] ( state, data ) {
+    state[$states.receiveMentionsInLocal] = data;
+    saveToLocalStorage( { [$states.receiveMentionsInLocal]: data } );
   },
 
   // Set current input message
@@ -473,7 +473,7 @@ export const actions = {
       [$states.notify, $mutations.setNotify],
       [$states.autocomplete, $mutations.setAutocomplete],
       [$states.highDensity, $mutations.setHighDensity],
-      [$states.recieveMentionsInLocal, $mutations.setRecieveMentionsInLocal],
+      [$states.receiveMentionsInLocal, $mutations.setReceiveMentionsInLocal],
       [$states.showBadge, $mutations.setShowBadge],
       [$states.messageBufferLimit, $mutations.setMessageBufferLimit],
       [$states.messageBuffer, $mutations.setMessageBuffer],
@@ -489,7 +489,7 @@ export const actions = {
       ['notify', $states.notify],
       ['autocomplete', $states.autocomplete],
       ['high-density', $states.highDensity],
-      ['at-in-local', $states.recieveMentionsInLocal],
+      ['at-in-local', $states.receiveMentionsInLocal],
       ['showbadge', $states.showBadge],
     ]);
 

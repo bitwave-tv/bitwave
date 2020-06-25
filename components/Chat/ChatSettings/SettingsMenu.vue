@@ -25,7 +25,7 @@
       </div>
 
       <v-switch
-        v-model="recieveMentionsInLocal"
+        v-model="receiveMentionsInLocal"
         :disabled="globalChat"
         class="mb-2"
         label="Recieve @'s while in local"
@@ -249,7 +249,7 @@
         setTtsVoice       : Chat.$mutations.setTtsVoice,
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
-        setRecieveMentionsInLocal : Chat.$mutations.setRecieveMentionsInLocal,
+        setReceiveMentionsInLocal : Chat.$mutations.setReceiveMentionsInLocal,
         setHighDensity    : Chat.$mutations.setHighDensity,
       }),
 
@@ -273,7 +273,7 @@
         getTtsVoice       : Chat.$states.ttsVoice,
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
-        getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
+        getReceiveMentionsInLocal : Chat.$states.receiveMentionsInLocal,
         getHighDensity    : Chat.$states.highDensity,
       }),
 
@@ -384,12 +384,12 @@
         get () { return this.getHighDensity }
       },
 
-      recieveMentionsInLocal: {
+      receiveMentionsInLocal: {
         set ( val ) {
-          this.setRecieveMentionsInLocal( val );
+          this.setReceiveMentionsInLocal( val );
           this.$analytics.logEvent( 'chat_recieve_mentions_in_local', { value: val } );
         },
-        get () { return this.getRecieveMentionsInLocal }
+        get () { return this.getReceiveMentionsInLocal }
       }
     },
 

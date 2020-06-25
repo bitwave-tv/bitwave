@@ -544,7 +544,7 @@
 
           // Include mentions
           // If enabled, allow cross-channel username tagging in local
-          if ( this.getRecieveMentionsInLocal && message.message.match( pattern ) ) return false;
+          if ( this.getReceiveMentionsInLocal && message.message.match( pattern ) ) return false;
 
           // Check if message is in our local channel or in our own channel
           const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
@@ -1052,7 +1052,7 @@
         notify            : Chat.$states.notify,
         getIgnoreList     : Chat.$states.ignoreList,
         getMessage        : Chat.$states.message,
-        getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
+        getReceiveMentionsInLocal : Chat.$states.receiveMentionsInLocal,
 
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,
