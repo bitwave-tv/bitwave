@@ -1,9 +1,6 @@
 // Created by xander on 6/13/2020
 import { auth, db } from '@/plugins/firebase.js';
 
-import * as utils from '@/plugins/store-utils.js';
-const logger = ( message, data ) => utils.logger( 'NOTIFICATIONS', message, data );
-
 const toastErrorConfig = {
   icon: 'error',
   duration: 3000,
@@ -74,7 +71,7 @@ export const actions = {
         // updateUIForPushEnabled( currentToken );
 
         commit( $mutations.setTokenFCM, currentToken );
-        await dispatch( $actions.saveTokenFCM )
+        await dispatch( $actions.saveTokenFCM );
 
         this.$toast.success( `Push notifications permissions approved!!`, toastSuccessConfig );
       } else {

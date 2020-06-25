@@ -1,9 +1,6 @@
 // Define Store states, getters, mutations & actions
 import { db } from '@/plugins/firebase.js';
 
-import * as utils from '@/plugins/store-utils.js';
-const logger = ( message, data ) => utils.logger( 'CHAT CONFIG', message, data );
-
 const $states = {
   configRef : 'CONFIG_REF',
   pinnedMessage : 'PINNED_MESSAGE',
