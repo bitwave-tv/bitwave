@@ -479,6 +479,27 @@ export const actions = {
       [$states.messageBuffer, $mutations.setMessageBuffer],
     ]);
 
+    let oldSettings = new Map([
+      ['showtimestamps', $states.timestamps],
+      ['globalchat', $states.global],
+      ['tts', $states.useTts],
+      ['useignore', $states.useIgnore],
+      //TODO: fix ignore list
+      //['ignorelist', $states.ignoreList],
+      ['notify', $states.notify],
+      ['autocomplete', $states.autocomplete],
+      ['high-density', $states.highDensity],
+      ['at-in-local', $states.recieveMentionsInLocal],
+      ['showbadge', $states.showBadge],
+    ]);
+
+    oldSettings.forEach(
+      ( newKey, oldKey ) => utils.migrate(
+        oldKey,
+        value => saveToLocalStorage( { [newKey]: value } )
+      )
+    );
+
     loadFromLocalStorage( commit, settings );
 
     // Get ignore list

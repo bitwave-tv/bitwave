@@ -72,3 +72,17 @@ export const loadFromLocalStorage = ( key, commit, props ) => {
 
   return readAll;
 };
+
+// Calls callback with value read from 'location' in localStorage before deleting it
+export const migrate = ( location, callback ) => {
+  let value = readFromLocalStorage( location );
+
+  if ( value !== null ) {
+    callback( value );
+    try {
+      localStorage.removeItem( location );
+    } catch ( error ) {
+      console.error( `Failed to remove '${location}' from localStorage`, error );
+    }
+  }
+};
