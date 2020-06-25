@@ -68,44 +68,60 @@
         </v-autocomplete>
 
         <!-- Toggles -->
-        <div class="d-flex flex-wrap">
+        <div class="d-flex justify-space-around">
+          <div class="d-flex flex-wrap flex-column">
 
-          <!-- Global / Local -->
-          <v-switch
-            v-model="overlay.global"
-            class="flex-grow-1"
-            :label="`${overlay.global ? 'Global' : 'Local'} Chat`"
-            color="primary"
-            hide-details
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
+            <!-- Global / Local -->
+            <v-switch
+              v-model="overlay.global"
+              class="flex-grow-1"
+              :label="`${overlay.global ? 'Global' : 'Local'} Chat`"
+              color="primary"
+              hide-details
+              :loading="saveLoading"
+              :disabled="saveLoading"
+              @change="enableSave = true"
+            />
 
-          <!-- Show Timestamps -->
-          <v-switch
-            v-model="overlay.showTimestamps"
-            class="flex-grow-1"
-            label="Show Timestamps"
-            color="primary"
-            hide-details
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
-        </div>
-        <div class="d-flex flex-wrap">
-          <!-- Show Avatars -->
-          <v-switch
-            v-model="overlay.showAvatars"
-            class="flex-grow-1"
-            label="Show Avatars"
-            color="primary"
-            hide-details
-            :loading="saveLoading"
-            :disabled="saveLoading"
-            @change="enableSave = true"
-          />
+            <!-- Show Timestamps -->
+            <v-switch
+              v-model="overlay.showTimestamps"
+              class="flex-grow-1"
+              label="Show Timestamps"
+              color="primary"
+              hide-details
+              :loading="saveLoading"
+              :disabled="saveLoading"
+              @change="enableSave = true"
+            />
+          </div>
+
+          <div class="d-flex flex-wrap flex-column">
+            <!-- Show Avatars -->
+            <v-switch
+              v-model="overlay.showAvatars"
+              class="flex-grow-1"
+              label="Show Avatars"
+              color="primary"
+              hide-details
+              :loading="saveLoading"
+              :disabled="saveLoading"
+              @change="enableSave = true"
+            />
+
+            <!-- High Density -->
+            <v-switch
+              v-if="false"
+              v-model="overlay.highDensity"
+              class="flex-grow-1"
+              label="High Density"
+              color="primary"
+              hide-details
+              :loading="saveLoading"
+              :disabled="saveLoading"
+              @change="enableSave = true"
+            />
+          </div>
         </div>
 
         <!-- History Size -->
@@ -133,6 +149,24 @@
               >add</v-icon>
             </template>
           </v-slider>
+        </div>
+
+        <div class="mt-3">
+
+          <!--<div class="d-flex justify-space-between">-->
+
+            <div class="subtitle-1">Background Color:</div>
+            <v-color-picker
+              v-model="overlay.colors.background"
+              hide-canvas
+              mode="hexa"
+              :dot-size="30"
+              width="100%"
+              light
+            />
+
+          <!--</div>-->
+
         </div>
       </v-card-text>
 
@@ -210,8 +244,12 @@
     showTimestamps: true,
     showTrolls: true,
     showAvatars: true,
+    highDensity: false,
     title: '',
     type: 'chat',
+    colors: {
+      background: '#80808080',
+    },
   };
 
   export default {
@@ -298,6 +336,7 @@
           showTrolls: true,
           showAvatars: this.overlay.showAvatars,
           title: title,
+          colors: this.overlay.colors,
         };
 
         const overlayRef = db.collection( 'overlays' ).doc( this.overlay.id );

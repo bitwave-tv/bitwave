@@ -108,7 +108,7 @@
 
           <v-spacer/>
           <v-btn
-            color="primary"
+            color="error"
             text
             @click="deleteOverlay(overlay)"
           >

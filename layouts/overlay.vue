@@ -18,6 +18,16 @@
 
       }
     },
+
+    mounted: function() {
+      const elHtml = document.getElementsByTagName('html')[0]
+      elHtml.style.overflowY = 'auto'
+    },
+
+    destroyed: function() {
+      const elHtml = document.getElementsByTagName('html')[0]
+      elHtml.style.overflowY = null
+    },
   }
 </script>
 
