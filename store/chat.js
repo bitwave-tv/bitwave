@@ -208,29 +208,34 @@ export const mutations = {
   // Set TTS enabled for trolls
   [$mutations.setTrollTts] ( state, data ) {
     state[$states.trollTts] = data;
+    saveToLocalStorage( { [$states.trollTts]: data } );
   },
 
   // Set TTS Rate
   [$mutations.setTtsRate] ( state, data ) {
     if ( !data ) return;
     state[$states.ttsRate] = JSON.parse( data );
+    saveToLocalStorage( { [$states.ttsRate]: data } );
   },
 
   // Set if TTS reads username
   [$mutations.setTtsReadUsername] ( state, data ) {
     state[$states.ttsReadUsername] = JSON.parse( data );
+    saveToLocalStorage( { [$states.ttsReadUsername]: data } );
   },
 
   // Set TTS Timeout
   [$mutations.setTtsTimeout] ( state, data ) {
     if ( !data ) return;
     state[$states.ttsTimeout] = JSON.parse( data );
+    saveToLocalStorage( { [$states.ttsTimeout]: data } );
   },
 
   // Set TTS Volume
   [$mutations.setTtsVolume] ( state, data ) {
     if ( !data ) return;
     state[$states.ttsVolume] = JSON.parse( data );
+    saveToLocalStorage( { [$states.ttsVolume]: data } );
   },
 
   // Set TTS voice Id (index)
@@ -266,11 +271,13 @@ export const mutations = {
   [$mutations.setMessage] ( state, data ) {
     if ( data === null ) state[$states.message] = '';
     else state[$states.message] = data;
+    saveToLocalStorage( { [$states.message]: state[$states.message] } );
   },
 
   // Append to current input message
   [$mutations.appendMessage] ( state, data ) {
     state[$states.message] += data;
+    saveToLocalStorage( { [$states.message]: state[$states.message] } );
   },
 
   // Sets message buffer (history) max size
@@ -394,7 +401,7 @@ export const actions = {
     try {
       localStorage.setItem( 'troll', data.chatToken );
     } catch ( error ) {
-      console.warn( `Failed to save 'troll' (tokeen) to localStorage`, error );
+      console.warn( `Failed to save 'troll' (token) to localStorage`, error );
     }
   },
 
@@ -477,6 +484,12 @@ export const actions = {
       [$states.showBadge, $mutations.setShowBadge],
       [$states.messageBufferLimit, $mutations.setMessageBufferLimit],
       [$states.messageBuffer, $mutations.setMessageBuffer],
+      [$states.trollTts, $mutations.setTrollTts],
+      [$states.ttsRate, $mutations.setTtsRate],
+      [$states.ttsReadUsername, $mutations.setTtsReadUsername],
+      [$states.ttsTimeout, $mutations.setTtsTimeout],
+      [$states.ttsVolume, $mutations.setTtsVolume],
+      [$states.message, $mutations.setMessage],
     ]);
 
     let oldSettings = new Map([
