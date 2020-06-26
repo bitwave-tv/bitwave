@@ -81,8 +81,8 @@
           min: this.values.reduce( (a, b) => Math.min(a, b) ),
           max: this.values.reduce( (a, b) => Math.max(a, b) ),
           average: this.values.reduce( (a, b) => a + b ) / this.values.length,
-          current: this.values[this.values.length - 1],
-          total: this.total,
+          current: this.values[this.values.length - 1].toFixed( 2 ),
+          total: this.total.toFixed( 2 ),
         };
       },
 
