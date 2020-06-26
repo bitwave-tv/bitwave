@@ -322,15 +322,20 @@ export const actions = {
     // Create user document
     const userId = userCredential.user.uid;
 
-    await db
-      .collection( 'users' )
-      .doc( userId )
-      .set({
-        _username: credential.username.toLowerCase(),
-        uid: userId,
-        username: credential.username,
-        email: credential.email,
-      });
+    const token = await userCredential.user.getIdToken();
+    this.$axios.setToken( token, 'Bearer' );
+
+    const endpoint = `https://api.bitwave.tv/v1/user/create`;
+    const payload = { user: credential.username };
+    try {
+      const result = await this.$axios.post(
+        endpoint,
+        payload,
+      );
+      console.log( result.data );
+    } catch ( error ) {
+      console.error( error );
+    }
 
     return true;
   },

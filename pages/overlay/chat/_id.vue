@@ -3,6 +3,7 @@
     id="overlay-container"
     class="fill-height"
     ref="container"
+    :style="cssProps"
   >
 
     <!-- Loading Spinner -->
@@ -137,10 +138,13 @@
 
         this.global  = this.overlay.global;
         this.channel = this.overlay.channel;
+        this.showTimestamps = this.overlay.showTimestamps;
 
         this.overlay.created = this.overlay.created.toDate();
         this.overlay.edited = this.overlay.edited.toDate();
+
         this.overlay.showAvatars = this.overlay.hasOwnProperty( 'showAvatars' ) ? this.overlay.showAvatars : true;
+
         console.log ( 'overlay config', this.overlay );
         this.connectChat();
       },
@@ -264,7 +268,19 @@
     },
 
     computed: {
+      cssProps() {
+        if ( !this.overlay ) return {
+          '--bg-color': 'transparent',
+        };
 
+        const colors = this.overlay.hasOwnProperty( 'colors' )
+          ? this.overlay.colors
+          : ({ background: 'transparent' });
+
+        return {
+          '--bg-color': colors.background,
+        }
+      },
     },
 
     async mounted () {
@@ -284,6 +300,8 @@
 
 <style lang='scss'>
   #overlay {
+    background-color: var(--bg-color);
+
     overflow-y: hidden;
 
     .msg {
