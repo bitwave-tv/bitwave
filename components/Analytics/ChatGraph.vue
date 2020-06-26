@@ -63,9 +63,7 @@
         type: 'trend',
         autoLineWidth: false,
         autoDraw: false,
-
         total: 0,
-        lastStatName: "",
       };
     },
 
@@ -78,9 +76,6 @@
     computed: {
       stats () {
         this.total += this.values[this.values.length - 1];
-        if( this.lastStatName !== this.statName ) this.resetTotal();
-        this.lastStatName = this.statName;
-
         return {
           value: this.values,
           min: this.values.reduce( (a, b) => Math.min(a, b) ),
