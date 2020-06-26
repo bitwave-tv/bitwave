@@ -71,6 +71,7 @@
       <v-spacer />
 
       <div class="d-flex">
+        <!-- Edit Stream Info Dialog -->
         <edit-stream-data
           v-if="channelOwner"
           :username="username"
@@ -78,24 +79,17 @@
           :description="description"
           :nsfw="nsfw"
         />
+
+        <!-- Restream Dialog -->
         <restream-dialog
           v-if="channelOwner"
           :username="name"
           :owner="uid"
           :live="live"
         />
-        <v-btn
-          v-if="false"
-          color="primary"
-          class="mr-2"
-          outlined
-          small
-          @click="showStreamStats = !showStreamStats"
-        >
-          <v-icon>timeline</v-icon>
-        </v-btn>
       </div>
 
+      <!-- Share Stream Dialog -->
       <ShareStream :user="name" />
     </div>
 
