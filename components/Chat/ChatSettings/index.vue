@@ -20,7 +20,7 @@
       </v-tooltip>
     </template>
 
-    <v-card class="mb-3" color="grey darken-4">
+    <v-card class="mb-0" color="grey darken-4">
       <!-- Title Bar -->
       <v-sheet
         tile

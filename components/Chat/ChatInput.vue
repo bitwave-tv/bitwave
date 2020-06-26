@@ -152,12 +152,8 @@
       value: '/cleantts ',
     },
     {
-      label: 'Viewer Stats',
-      value: '/views ',
-    },
-    {
-      label: 'Message Stats',
-      value: '/stats ',
+      label: 'Graph a stat',
+      value: '/graph ',
     },
     {
       label: 'Toggle User Badge (if available)',
