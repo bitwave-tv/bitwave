@@ -67,12 +67,6 @@
       };
     },
 
-    methods: {
-      resetTotal() {
-        this.total = 0;
-      },
-    },
-
     computed: {
       stats () {
         this.total += this.values[this.values.length - 1];
@@ -81,13 +75,13 @@
           min: this.values.reduce( (a, b) => Math.min(a, b) ),
           max: this.values.reduce( (a, b) => Math.max(a, b) ),
           average: this.values.reduce( (a, b) => a + b ) / this.values.length,
-          current: this.values[this.values.length - 1].toFixed( 2 ),
-          total: this.total.toFixed( 2 ),
+          current: this.values[this.values.length - 1],
+          total: this.total,
         };
       },
 
       dataLabels () {
-        const total = this.stats.total > 1000
+        const total = this.stats.total.toFixed( 1 ) > 1000
           ? `${this.stats.total/1000}k`
           : this.stats.total;
 
