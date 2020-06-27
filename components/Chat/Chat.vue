@@ -129,8 +129,6 @@
 
         messages: null,
 
-        ignoreChannelList: [],
-
         voicesListTTS: [],
 
         showPollClient: false,
@@ -270,13 +268,6 @@
           const ignoreChannelList = doc.get( 'ignoreChannelList' );
           if ( ignoreChannelList !== undefined ) {
             this.ignoreChannelList = ignoreChannelList;
-
-            // Save copy to browser
-            try {
-              localStorage.setItem( 'ignoreChannellist', JSON.stringify( this.ignoreChannelList ) );
-            } catch ( error ) {
-              console.warn( `Failed to save ignoreChannellist to browser` );
-            }
           } else {
             // Update account ignore channel list
             await doc.ref.update( 'ignoreChannelList', this.ignoreChannelList );
@@ -915,13 +906,9 @@
           console.log ( `Channel already ignored ${channel}` );
           return;
         }
-        this.ignoreChannelList.push( channel );
-        localStorage.setItem( 'ignoreChannelList', JSON.stringify( this.ignoreChannelList ) );
+        this.addIgnoreChannelList( channel );
         // Save ignore list to profile
-        if ( this.isAuth ) {
-          const userDoc = db.collection( 'users' ).doc( this.user.uid );
-          await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
-        }
+        this.saveToDb( 'users', 'ignoreChannelList', this.ignoreChannelList );
 
         // Remove messages
         this.messages = this.messages.filter( message => channel.toLowerCase() !==  message.channel.toLowerCase() );
@@ -938,15 +925,11 @@
       },
 
       async unignoreChannel ( channel ) {
-        const location = this.ignoreChannelList.findIndex( el => el.toLowerCase() === channel.toLowerCase() );
-        if ( location !== -1 ) {
-          this.ignoreChannelList.splice( location, 1 );
-          localStorage.setItem( 'ignoreChannelList', JSON.stringify( this.ignoreChannelList ) );
+        const exists = this.ignoreChannelList.includes( channel.toLowerCase() );
+        if ( exists ) {
+          this.removeIgnoreChannelList( channel.toLowerCase() );
           // Save ignore list to profile
-          if ( this.isAuth ) {
-            const userDoc = db.collection( 'users' ).doc( this.user.uid );
-            await userDoc.update( 'ignoreChannelList', this.ignoreChannelList );
-          }
+          this.saveToDb( 'users', 'ignoreChannelList', this.ignoreChannelList );
 
           // Confirmation Message
           await this.insertMessage( `Unignored Channel: ${channel}` );
@@ -979,6 +962,9 @@
         appendChatMessage : Chat.$mutations.appendMessage,
         setPinnedMessage  : Chat.$mutations.setPinnedMessage,
         setChatBadge      : Chat.$mutations.setShowBadge,
+        setIgnoreChannelList     : Chat.$mutations.setIgnoreChannelList,
+        addIgnoreChannelList     : Chat.$mutations.addIgnoreChannelList,
+        removeIgnoreChannelList  : Chat.$mutations.removeIgnoreChannelList,
       }),
 
       ...mapActions ({
@@ -1020,8 +1006,9 @@
         getTtsVolume      : Chat.$states.ttsVolume,
         getTtsVoice       : Chat.$states.ttsVoice,
         notify            : Chat.$states.notify,
-        getIgnoreList     : Chat.$states.ignoreList,
         getMessage        : Chat.$states.message,
+        getIgnoreList             : Chat.$states.ignoreList,
+        getIgnoreChannelList      : Chat.$states.ignoreChannelList,
         getReceiveMentionsInLocal : Chat.$states.receiveMentionsInLocal,
 
         getTrackMetrics          : Chat.$states.trackMetrics,
@@ -1057,6 +1044,13 @@
           this.setIgnoreList( val );
         },
         get () { return this.getIgnoreList; }
+      },
+
+      ignoreChannelList: {
+        set ( val ) {
+          this.setIgnoreChannelList( val );
+        },
+        get () { return this.getIgnoreChannelList; }
       }
     },
 
@@ -1132,14 +1126,6 @@
 
       // Load settings from localstorage
       await this.loadSettings();
-
-      // Get ignore channel list
-      try {
-        let ignores = localStorage.getItem( 'ignoreChannelList' );
-        if ( ignores ) this.ignoreChannelList = JSON.parse( ignores );
-      } catch ( error ) {
-        console.log( 'No ignore channel list found.' );
-      }
 
       // Stat tracking interval
       this.statInterval = setInterval( () => this.onChatStatTick(), this.tickPeriod * 1000 );
