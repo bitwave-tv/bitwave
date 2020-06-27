@@ -3,6 +3,8 @@ import { Chat } from '@/store/chat';
 
 import * as utils from '@/plugins/store-utils.js';
 const logger = ( message, data ) => utils.logger( 'STORE', message, data );
+const saveToLocalStorage = values => utils.saveToLocalStorage( 'store', values );
+const loadFromLocalStorage = ( commit, props ) => utils.loadFromLocalStorage( 'store', commit, props );
 
 let unsubscribeUser = null;
 
@@ -10,6 +12,8 @@ let unsubscribeUser = null;
 const $states = {
   auth : 'AUTH',
   user : 'USER',
+
+  blurNsfw  : 'BLUR_NSFW',
 
   channel   : 'CHANNEL',
 
@@ -55,6 +59,8 @@ const $mutations = {
   setAuth : 'SET_AUTH',
   setUser : 'SET_USER',
 
+  setBlurNsfw  : 'SET_BLUR_NSFW',
+
   setNewVersion : 'SET_LATEST_VERSION',
 
   setAlerts: 'SET_SYSTEM_ALERT',
@@ -79,6 +85,8 @@ const $actions = {
   updateFeatureFlags : 'UPDATE_FEATURE_FLAGS',
 
   updateViewers : 'UPDATE_VIEWERS',
+
+  loadSettings : 'LOAD_SETTINGS',
 };
 
 
@@ -90,6 +98,8 @@ export const state = () => ({
   [$states.newVersion]      : null,
   [$states.alerts]          : {},
   [$states.featureFlags]    : {},
+
+  [$states.blurNsfw]        : true,
 
   [$states.channelsViewers] : [],
   [$states.userlist]        : [],
@@ -225,6 +235,11 @@ export const mutations = {
 
   [$mutations.setUser] ( state, user ) {
     state[$states.user] = user;
+  },
+
+  [$mutations.setBlurNsfw] ( state, data ) {
+    state[$states.blurNsfw] = data;
+    saveToLocalStorage( { [$states.blurNsfw]: data } );
   },
 
   [$mutations.setMetaUser] ( state, data ) {
@@ -503,8 +518,15 @@ export const actions = {
       updateChannelViewers(),
       updateUserList(),
     ]);
-  }
+  },
 
+  async [$actions.loadSettings] ( { commit } ) {
+    let settings = new Map([
+      [$states.blurNsfw, $mutations.setBlurNsfw],
+    ]);
+
+    loadFromLocalStorage( commit, settings );
+  },
 };
 
 
