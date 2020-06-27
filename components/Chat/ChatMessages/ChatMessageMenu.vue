@@ -102,6 +102,13 @@
             <v-spacer />
 
             <v-btn
+              v-if="isChannelOwner"
+              color="error"
+              class="mr-2"
+              small
+              @click="banUser"
+            >Ban</v-btn>
+            <v-btn
               color="error"
               class="mr-2"
               small
@@ -138,6 +145,10 @@
       timestamp: {},
       global: {},
       attach: {},
+      isChannelOwner: {
+        type: Boolean,
+        default: false,
+      },
     },
 
     data() {
@@ -155,6 +166,10 @@
 
       unIgnoreUser () {
         this.$emit( 'unignore', ( this.username || this.displayName ).toLowerCase() );
+      },
+
+      banUser () {
+
       },
     },
 

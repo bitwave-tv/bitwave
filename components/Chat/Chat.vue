@@ -45,6 +45,7 @@
       :messages="messages"
       :show-timestamps="showTimestamps"
       :global="global"
+      :is-channel-owner="isChannelOwner"
       @reply="addUserTag"
       @whisper="addWhisper"
       @ignore="ignoreUser"
