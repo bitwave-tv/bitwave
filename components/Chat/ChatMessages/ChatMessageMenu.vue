@@ -168,8 +168,22 @@
         this.$emit( 'unignore', ( this.username || this.displayName ).toLowerCase() );
       },
 
-      banUser () {
-
+      async banUser () {
+        const endpoint = `https://api.bitwave.tv/v1/chat/ban`;
+        const payload =  {
+          user: this.username,
+          ban: this.username,
+        }
+        try {
+          const { data } = await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          this.$toast.success( data, { icon: 'done', duration: 5000, position: 'top-center' } );
+        } catch ( error ) {
+          console.error( error );
+          this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        }
       },
     },
 
