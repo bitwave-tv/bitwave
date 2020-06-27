@@ -179,7 +179,10 @@
             endpoint,
             payload,
           );
-          this.$toast.success( data, { icon: 'done', duration: 5000, position: 'top-center' } );
+          if ( data.success )
+            this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          else
+            this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
         } catch ( error ) {
           console.error( error );
           this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
