@@ -69,7 +69,11 @@ const $mutations = {
   setTtsVolume       : 'SET_TTS_VOLUME',
   setTtsVoice        : 'SET_TTS_VOICE',
   setNotify          : 'SET_NOTIFY',
+
   setIgnoreList      : 'SET_IGNORE_LIST',
+  addIgnoreList      : 'ADD_IGNORE_LIST',
+  removeIgnoreList   : 'REMOVE_IGNORE_LIST',
+
   setAutocomplete    : 'SET_AUTOCOMPLETE',
   setHighDensity     : 'SET_HIGH_DENSITY',
 
@@ -210,8 +214,20 @@ export const mutations = {
 
   // Set user ignore list
   [$mutations.setIgnoreList] ( state, data ) {
-    state[$states.ignoreList] = JSON.parse( data );
+    state[$states.ignoreList] = data;
     saveToLocalStorage( { [$states.ignoreList]: data } );
+  },
+
+  // Add user to ignore list
+  [$mutations.addIgnoreList] ( state, data ) {
+    state[$states.ignoreList].push( data );
+    saveToLocalStorage( { [$states.ignoreList]: state[$states.ignoreList] } );
+  },
+
+  // Filter user from ignore list
+  [$mutations.removeIgnoreList] ( state, data ) {
+    state[$states.ignoreList] = state[$states.ignoreList].filter( x => x !== data );
+    saveToLocalStorage( { [$states.ignoreList]: state[$states.ignoreList] } );
   },
 
   // Set TTS enabled for trolls
@@ -492,8 +508,7 @@ export const actions = {
       [$states.global, $mutations.setGlobal],
       [$states.useTts, $mutations.setUseTts],
       [$states.useIgnore, $mutations.setUseIgnore],
-      //TODO: fix ignore list
-      //[$states.ignoreList, $mutations.setIgnoreList],
+      [$states.ignoreList, $mutations.setIgnoreList],
       [$states.notify, $mutations.setNotify],
       [$states.autocomplete, $mutations.setAutocomplete],
       [$states.highDensity, $mutations.setHighDensity],
@@ -514,8 +529,7 @@ export const actions = {
       ['globalchat', $states.global],
       ['tts', $states.useTts],
       ['useignore', $states.useIgnore],
-      //TODO: fix ignore list
-      //['ignorelist', $states.ignoreList],
+      ['ignorelist', $states.ignoreList],
       ['notify', $states.notify],
       ['autocomplete', $states.autocomplete],
       ['high-density', $states.highDensity],
@@ -531,14 +545,6 @@ export const actions = {
     );
 
     loadFromLocalStorage( commit, settings );
-
-    // Get ignore list
-    try {
-      const ignores = localStorage.getItem( 'ignorelist' );
-      if ( ignores !== null ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
-    } catch ( error ) {
-      logger ( 'No ignore list found.' );
-    }
 
     // TODO: Implement
     // Get ignore channel list
