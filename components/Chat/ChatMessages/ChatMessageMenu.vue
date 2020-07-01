@@ -107,7 +107,7 @@
               class="mr-2"
               small
               @click="banUser"
-            >Ban</v-btn>
+            >Mute</v-btn>
             <v-btn
               color="error"
               class="mr-2"
