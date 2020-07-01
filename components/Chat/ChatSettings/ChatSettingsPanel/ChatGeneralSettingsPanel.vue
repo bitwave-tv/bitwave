@@ -21,7 +21,7 @@
       <v-switch
         v-model="receiveMentionsInLocal"
         :disabled="globalChat"
-        label="Recieve @'s in local"
+        label="Receive @'s in local"
         color="primary"
         hide-details
         dense
