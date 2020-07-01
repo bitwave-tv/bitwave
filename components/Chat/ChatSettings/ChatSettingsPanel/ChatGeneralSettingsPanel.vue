@@ -2,7 +2,7 @@
   <v-card
     flat
     tile
-    class="pb-3 px-3"
+    class="mb-3 px-3"
   >
     <!-- General Settings Toggles -->
     <div>
@@ -21,7 +21,7 @@
       <v-switch
         v-model="receiveMentionsInLocal"
         :disabled="globalChat"
-        label="Recieve @'s while in local"
+        label="Recieve @'s in local"
         color="primary"
         hide-details
         dense

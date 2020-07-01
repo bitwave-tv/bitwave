@@ -3,49 +3,33 @@
     <v-tabs
       v-model="settingsTab"
       class="elevation-2"
+      background-color="blue-grey darken-4"
+      color="white"
+      id="chat-settings"
     >
       <!-- Tab Slider Color -->
       <v-tabs-slider />
 
       <!-- Tabs -->
       <v-tab
-        :href="`#chat-settings-general`"
+        v-for="tab in tabs"
+        :key="tab.value"
+        :href="`#${tab.value}`"
       >
-        General
-      </v-tab>
-      <v-tab
-        :href="`#chat-settings-tts`"
-      >
-        TTS
-      </v-tab>
-      <v-tab
-        :href="`#chat-settings-beta`"
-      >
-        Beta
+        {{ tab.label }}
       </v-tab>
 
       <!-- TAB: General Settings -->
       <v-tab-item
-        value="chat-settings-general"
+        v-for="tab in tabs"
+        :key="tab.value"
+        :value="tab.value"
         class="chat-settings-panel"
       >
-        <chat-general-settings-panel />
-      </v-tab-item>
-
-      <!-- TAB: TTS Settings -->
-      <v-tab-item
-        value="chat-settings-tts"
-        class="chat-settings-panel"
-      >
-        <chat-tts-settings-panel />
-      </v-tab-item>
-
-      <!-- TAB: Beta Settings -->
-      <v-tab-item
-        value="chat-settings-beta"
-        class="chat-settings-panel"
-      >
-        <chat-beta-settings-panel />
+        <component
+          :is="tab.component"
+          :key="tab.value"
+        />
       </v-tab-item>
     </v-tabs>
   </div>
@@ -64,33 +48,42 @@
       ChatGeneralSettingsPanel,
     },
 
-    props: {
-
-    },
-
     data() {
       return {
+        // Default tab
         settingsTab: 'chat-settings-general',
-      }
-    },
-
-    methods: {
-
-    },
-
-    computed: {
-
-    },
-
-    async mounted () {
-
+        tabs: [
+          {
+            label: 'General',
+            value: 'chat-settings-general',
+            component: ChatGeneralSettingsPanel,
+          },
+          {
+            label: 'TTS',
+            value: 'chat-settings-tts',
+            component: ChatTtsSettingsPanel,
+          },
+          {
+            label: 'Beta',
+            value: 'chat-settings-beta',
+            component: ChatBetaSettingsPanel,
+          },
+        ],
+      };
     },
   }
 </script>
 
 <style lang="scss">
-  .chat-settings-panel {
+  /*#chat-settings .v-window__container {
+    width: 350px;
     height: 20rem;
-    overflow: auto;
+    overflow-y: auto;
+  }*/
+
+  .chat-settings-panel {
+    width: 350px;
+    height: 20rem;
+    overflow-y: auto;
   }
 </style>

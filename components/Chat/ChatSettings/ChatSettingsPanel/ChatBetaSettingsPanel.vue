@@ -4,11 +4,6 @@
     tile
     class="pb-3 px-3"
   >
-    <!-- Beta Settings Subheader -->
-    <v-subheader class="overline mb-0">
-      Experimental Options <sup class="red--text ml-2">BETA</sup>
-    </v-subheader>
-
     <!-- Beta Settings Toggles -->
     <div>
       <v-switch

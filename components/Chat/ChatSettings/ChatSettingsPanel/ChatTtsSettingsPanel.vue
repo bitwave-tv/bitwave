@@ -2,7 +2,7 @@
   <v-card
     flat
     tile
-    class="pb-3 px-3"
+    class="pb-3 mx-3"
   >
     <!-- TTS Settings -->
     <div>
@@ -67,10 +67,9 @@
           :items="ttsVoices"
           :disabled="!useTts"
           label="TTS Voice"
-          style="font-size: 12px;"
           hide-details
-          solo-inverted
           class="mb-3"
+          outlined
         />
 
         <!-- TTS Rate -->
@@ -131,6 +130,8 @@
             />
           </template>
         </v-slider>
+
+        <i class="caption grey--text">note: a value of 0 disables timeout.</i>
 
       </div>
     </div>
