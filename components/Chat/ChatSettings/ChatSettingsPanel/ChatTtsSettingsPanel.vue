@@ -17,13 +17,10 @@
       </v-alert>
 
       <!-- TTS Voice Options -->
-      <div
-        v-if="ttsVoicesExist"
-      >
+      <template v-else>
         <!-- Enable TTS -->
         <v-switch
           v-model="useTts"
-          :disabled="!ttsVoicesExist"
           label="Enable Chat TTS"
           color="primary"
           hide-details
@@ -133,7 +130,7 @@
 
         <i class="caption grey--text">note: a value of 0 disables timeout.</i>
 
-      </div>
+      </template>
     </div>
   </v-card>
 </template>
