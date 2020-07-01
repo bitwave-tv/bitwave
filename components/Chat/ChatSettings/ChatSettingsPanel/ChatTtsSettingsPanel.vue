@@ -2,7 +2,7 @@
   <v-card
     flat
     tile
-    class="pb-3 mx-3"
+    class="mb-3 mx-3"
   >
     <!-- TTS Settings -->
     <div>
