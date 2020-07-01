@@ -30,21 +30,14 @@
 
     </add-ons>
 
-
     <v-slide-y-transition mode="out-in">
-      <chat-rate
-        v-if="showChatStats"
-        :stats="chatStats"
+      <chat-graph
+        v-if="showGraph"
+        :values="graphValues"
+        :period="tickPeriod"
+        :statName="graphStat.stat"
       />
     </v-slide-y-transition>
-
-    <v-slide-y-transition mode="out-in">
-      <view-rate
-        v-if="showViewStats"
-        :stats="viewStats"
-      />
-    </v-slide-y-transition>
-
 
     <!-- Chat Messages -->
     <chat-messages
@@ -52,6 +45,7 @@
       :messages="messages"
       :show-timestamps="showTimestamps"
       :global="global"
+      :is-channel-owner="isChannelOwner"
       @reply="addUserTag"
       @whisper="addWhisper"
       @ignore="ignoreUser"
@@ -80,8 +74,7 @@
   import ChatInput from '@/components/Chat/ChatInput';
 
   const ChatPollVote = async () => await import ( '@/components/Chat/ChatPollVote' );
-  const ChatRate = async () => await import ( '@/components/Analytics/ChatRate' );
-  const ViewRate = async () => await import ( '@/components/Analytics/ViewRate' );
+  const ChatGraph = async () => await import ( '@/components/Analytics/ChatGraph' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { Chat } from '@/store/chat';
@@ -93,6 +86,8 @@
     stripHTML,
     spamDetection,
   } from '@/assets/js/ChatHelpers';
+
+  import { UserStats } from '@/assets/js/Stats/UserStats';
 
   import { ChatConfig } from '@/store/channel/chat-config';
 
@@ -116,8 +111,7 @@
       ChatInput,
       ChatMessages,
       ChatPollVote,
-      ChatRate,
-      ViewRate,
+      ChatGraph,
     },
 
     data() {
@@ -166,27 +160,16 @@
         statTickCount: 0,
 
         newMessageCount: 0,
-        showChatStats: false,
-        chatStats: {
-          display: false,
-          value: [ 0 ],
-          current: 0,
-          min: 0,
-          max: 0,
-          average: 0,
-          total: 0,
-        },
+        showGraph: false,
+        graphStat: { stat: 'messageCount', user: 'all' },
+        graphValues: [ 0 ],
 
         viewCount: 0,
         showViewStats: false,
-        viewStats: {
-          value: [ 0 ],
-          current: 0,
-          min: 0,
-          max: 0,
-          average: 0,
-          total: 0,
-        },
+        viewValues: [ 0 ],
+
+        tickPeriod: 3,
+        userStats: new UserStats( this.tickPeriod ),
       }
     },
 
@@ -544,7 +527,7 @@
 
           // Include mentions
           // If enabled, allow cross-channel username tagging in local
-          if ( this.getRecieveMentionsInLocal && message.message.match( pattern ) ) return false;
+          if ( this.getReceiveMentionsInLocal && message.message.match( pattern ) ) return false;
 
           // Check if message is in our local channel or in our own channel
           const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
@@ -558,44 +541,50 @@
         return false
       },
 
-      onStatTick () {
-        this.statTickCount++;
-
-        // Long rate stat updates
-        if ( this.statTickCount > this.longStatRate ) {
-          // calc stats
-          const calcStats = ( dataArr, newVal, oldTotal, defaultValue ) => {
-            if ( newVal === null ) return;
-
-            // Record length here to prevent skewing average
-            let length = dataArr.push( newVal );
-            // Place holder for data set in short tick updates
-            dataArr.push( defaultValue );
-            // Limit to 60 data snapshots
-            const val = dataArr.splice( -120 );
-
-            return {
-              value: val,
-              current: newVal,
-              min: val.reduce( ( a, b ) => Math.min( a, b ) ),
-              max: val.reduce( ( a, b ) => Math.max( a, b ) ),
-              average: val.reduce( ( a, b ) => a + b ) / length,
-              total: oldTotal + newVal,
-            };
-          };
-
-          this.chatStats = calcStats( this.chatStats.value, this.newMessageCount, this.chatStats.total, 0 );
-          this.viewStats = calcStats( this.viewStats.value, this.getChannelViews( this.page ), this.viewStats.total, this.getChannelViews( this.page ) );
-
-          this.newMessageCount = 0;
-          this.statTickCount   = 0;
+      changeStatOnGraph( stat, user ) {
+        const data = this.userStats.stat.get( user, stat );
+        if( data && data.values && data.values.length ) {
+          this.graphStat = { user: user, stat: stat };
+          this.showGraph = !this.showGraph;
         } else {
-          // Short rate stat update
-          this.chatStats.value.splice( this.chatStats.value.length - 1, 1, this.newMessageCount );
-          this.viewStats.value.splice( this.viewStats.value.length - 1, 1, this.getChannelViews( this.page ) );
-          this.chatStats.current = this.newMessageCount;
-          this.viewStats.current = this.getChannelViews( this.page );
+          this.insertMessage( 'Invalid stat name' );
         }
+      },
+
+      async onChatStatTick() {
+        // TODO: once chatsettings option is gone, maybe pass this as a prop instead?
+        if( !this.getTrackMetrics ) { this.newMessageCount = 0; return; }
+
+        this.userStats.calculate.viewerCount.total();
+
+        const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
+
+        await this.userStats.calculate.messageRate.total( newMessages );
+        this.userStats.calculate.messageRateDerivative.total();
+        this.userStats.calculate.spamminess.total( newMessages );
+        this.userStats.calculate.niceness.user( "all", 1 );
+
+        if( this.getTrackMetricsPerUser ) {
+          this.userStats.calculate.spamminess.everybody( newMessages );
+          await this.userStats.calculate.messageRate.everybody( newMessages );
+          this.userStats.calculate.messageRateDerivative.everybody();
+        }
+
+        this.userStats.userStats.forEach( ( stats, username ) => {
+          console.log(username,
+            JSON.stringify(Array.from(stats.entries())));
+        });
+
+        const data = this.userStats.stat.get( this.graphStat.user, this.graphStat.stat );
+        if( data && data.values && data.values.length ) {
+          this.graphValues = data.values.slice().reverse();
+        } else {
+          this.graphValues = [0];
+        }
+
+        //this.userStats.garbageCollect();
+
+        this.newMessageCount = 0;
       },
 
       async sendMessage () {
@@ -663,17 +652,7 @@
               await this.insertMessage( `Clean TTS: ${this.cleanTTS}` );
               break;
             case 'graph':
-            case 'stats':
-              if ( !this.showChatStats && this.showViewStats ) {
-                this.showViewStats = false;
-              }
-              this.showChatStats = !this.showChatStats;
-              break;
-            case 'views':
-              if ( !this.showViewStats && this.showChatStats ) {
-                this.showChatStats = false;
-              }
-              this.showViewStats = !this.showViewStats;
+              await this.changeStatOnGraph( params[2] ? params[2] : '', params[3] ? params[3] : 'all' );
               break;
             case 'ignorelist':
               await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
@@ -1052,7 +1031,10 @@
         notify            : Chat.$states.notify,
         getIgnoreList     : Chat.$states.ignoreList,
         getMessage        : Chat.$states.message,
-        getRecieveMentionsInLocal : Chat.$states.recieveMentionsInLocal,
+        getReceiveMentionsInLocal : Chat.$states.receiveMentionsInLocal,
+
+        getTrackMetrics          : Chat.$states.trackMetrics,
+        getTrackMetricsPerUser   : Chat.$states.trackMetricsPerUser,
 
         getChatToken      : Chat.$states.chatToken,
         displayName       : Chat.$states.displayName,
@@ -1134,6 +1116,13 @@
         await this.httpHydrate();
       }*/
 
+      this.userStats.calculate.viewerCount = {
+        total: () => {
+          const me = this.userStats;
+          const key = "viewerCount";
+          me.stat.value.set( me.ALL_USER, key, this.getChannelViews( this.page ) );
+        }
+      };
 
       // Add listener for voice changes, then update voices.
       try {
@@ -1163,7 +1152,7 @@
       }
 
       // Stat tracking interval
-      this.statInterval = setInterval( () => this.onStatTick(), 1000 );
+      this.statInterval = setInterval( () => this.onChatStatTick(), this.tickPeriod * 1000 );
 
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';

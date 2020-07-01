@@ -102,6 +102,13 @@
             <v-spacer />
 
             <v-btn
+              v-if="isChannelOwner"
+              color="error"
+              class="mr-2"
+              small
+              @click="banUser"
+            >Mute</v-btn>
+            <v-btn
               color="error"
               class="mr-2"
               small
@@ -138,6 +145,10 @@
       timestamp: {},
       global: {},
       attach: {},
+      isChannelOwner: {
+        type: Boolean,
+        default: false,
+      },
     },
 
     data() {
@@ -155,6 +166,27 @@
 
       unIgnoreUser () {
         this.$emit( 'unignore', ( this.username || this.displayName ).toLowerCase() );
+      },
+
+      async banUser () {
+        const endpoint = `https://api.bitwave.tv/v1/chat/ban`;
+        const payload =  {
+          user: this.username,
+          ban: this.username,
+        }
+        try {
+          const { data } = await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          if ( data.success )
+            this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          else
+            this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        } catch ( error ) {
+          console.error( error );
+          this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        }
       },
     },
 

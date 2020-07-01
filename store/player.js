@@ -1,15 +1,7 @@
 // Created by xander on 1/22/2020
 
-const saveToLocalStorage = ( values ) => {
-  try {
-    let existing = localStorage.getItem( 'player-settings' );
-    existing = JSON.parse( existing ) || {};
-    const data = JSON.stringify( { ...existing, ...values } );
-    if ( data ) localStorage.setItem( 'player-settings', data );
-  } catch ( error ) {
-    console.error( 'Failed to save to localStorage', error );
-  }
-};
+import * as utils from '@/plugins/store-utils.js';
+const saveToLocalStorage = values => utils.saveToLocalStorage( 'player-settings', values );
 
 const $states = {
   // Player properties
@@ -98,19 +90,10 @@ export const mutations = {
 // Actions
 export const actions = {
   async [$actions.loadSettings] ({ dispatch, commit }) {
-    // Check if we have access to localStorage
-    if ( localStorage === null ) {
-      console.error( 'Cannot access localStorage' );
-      return;
-    }
-
-    let keeplive = null;
-    try {
-      keeplive  = localStorage.getItem( 'keepLive' );
-    } catch ( error ) {
-      console.error( `Failed to get 'keepLive' from localStorage`, error );
-    }
-
+    // TODO(diingus): It is not obvious to me why keepLive is read separately, as it's
+    //                never written to directly (only through saveToLocalStorage() which
+    //                saves it wrapped in a single object), and git grep is inconclusive
+    const keeplive = utils.readFromLocalStorage( 'keepLive' );
     if ( keeplive ) {
       commit( $mutations.setKeepLive, JSON.parse(keeplive) );
       try {
@@ -120,20 +103,13 @@ export const actions = {
       }
     }
 
-    let playerSettings = null;
-    try {
-      playerSettings = localStorage.getItem( 'player-settings' );
-      playerSettings = JSON.parse( playerSettings );
-    } catch ( error ) {
-      console.error( `Failed to get 'keepLive' from localStorage`, error );
-    }
-
-    if ( !playerSettings || typeof playerSettings !== 'object') {
-      return;
-    }
-
-    if ( playerSettings.hasOwnProperty( 'keepLive' ) ) commit( $mutations.setKeepLive, playerSettings.keepLive );
-    if ( playerSettings.hasOwnProperty( 'disableBumps' ) ) commit( $mutations.setDisableBumps, playerSettings.disableBumps );
+    utils.loadFromLocalStorage( 'player-settings', commit,
+      new Map(
+        [
+          ['keepLive', $mutations.setKeepLive],
+          ['disableBumps', $mutations.setDisableBumps],
+      ])
+    );
   }
 };
 

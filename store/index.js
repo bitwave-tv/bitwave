@@ -1,22 +1,10 @@
 import { auth, db } from '@/plugins/firebase.js';
 import { Chat } from '@/store/chat';
 
-const logger = ( message, data ) => {
-  if ( process.client ) {
-    if ( data && typeof data === 'object' )
-      console.log( `%cSTORE:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
-    else
-      console.log( `%cSTORE:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-  } else {
-    if ( data && typeof data === 'object' )
-      console.log( `STORE: ${message} %o`, data );
-    else
-      console.log( `STORE: ${message}` );
-  }
-};
+import * as utils from '@/plugins/store-utils.js';
+const logger = ( message, data ) => utils.logger( 'STORE', message, data );
 
 let unsubscribeUser = null;
-
 
 // Define Store
 const $states = {
@@ -334,15 +322,20 @@ export const actions = {
     // Create user document
     const userId = userCredential.user.uid;
 
-    await db
-      .collection( 'users' )
-      .doc( userId )
-      .set({
-        _username: credential.username.toLowerCase(),
-        uid: userId,
-        username: credential.username,
-        email: credential.email,
-      });
+    const token = await userCredential.user.getIdToken();
+    this.$axios.setToken( token, 'Bearer' );
+
+    const endpoint = `https://api.bitwave.tv/v1/user/create`;
+    const payload = { user: credential.username };
+    try {
+      const result = await this.$axios.post(
+        endpoint,
+        payload,
+      );
+      console.log( result.data );
+    } catch ( error ) {
+      console.error( error );
+    }
 
     return true;
   },

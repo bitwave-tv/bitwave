@@ -127,6 +127,7 @@
         :timestamp="selectedChatMessage.timestamp"
         :channel="selectedChatMessage.channel"
         :global="selectedChatMessage.global"
+        :is-channel-owner="isChannelOwner"
         @ignore="onIgnore"
         @unignore="onUnignore"
       />
@@ -159,6 +160,10 @@
       showAvatars: {
         type: Boolean,
         default: true,
+      },
+      isChannelOwner: {
+        type: Boolean,
+        default: false,
       },
     },
 
