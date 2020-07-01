@@ -8,7 +8,6 @@
     top
     right
     offset-y
-    eager
     origin="bottom left"
     ref="chatSettingsMenu"
   >
