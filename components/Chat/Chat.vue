@@ -547,7 +547,7 @@
           this.graphStat = { user: user, stat: stat };
           this.showGraph = !this.showGraph;
         } else {
-          this.insertMessage( 'Invalid stat name' );
+          this.insertMessage( 'Invalid stat name (did you enable stat-tracking?)' );
         }
       },
 

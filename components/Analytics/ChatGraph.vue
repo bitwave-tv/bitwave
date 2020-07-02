@@ -67,12 +67,6 @@
       };
     },
 
-    methods: {
-      resetTotal() {
-        this.total = 0;
-      },
-    },
-
     computed: {
       stats () {
         this.total += this.values[this.values.length - 1];
@@ -87,7 +81,7 @@
       },
 
       dataLabels () {
-        const total = this.stats.total > 1000
+        const total = this.stats.total.toFixed( 1 ) > 1000
           ? `${this.stats.total/1000}k`
           : this.stats.total;
 
