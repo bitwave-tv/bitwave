@@ -31,6 +31,7 @@ const $getters = {
   isPremium    : 'IS_PREMIUM',
   isAdmin      : 'IS_ADMIN',
   getAuth      : 'GET_AUTH',
+  getAvatar    : 'GET_AVATAR',
   getUID       : 'GET_UID',
   getUser      : 'GET_USER',
   getUsername  : 'GET_USERNAME',
@@ -111,6 +112,32 @@ export const getters = {
         .hasOwnProperty( 'streamkey' );
   },
 
+  [$getters.getAuth] : state => {
+    return state[$states.auth];
+  },
+
+  [$getters.getUID] : state => {
+    return state[$states.auth]
+      ? state[$states.auth].uid
+      : null;
+  },
+
+  [$getters.getAvatar] : state => {
+    return state[$states.auth]
+      ? state[$states.auth].avatar
+      : null;
+  },
+
+  [$getters.getUsername] : state => {
+    return state[$states.auth]
+      ? state[$states.auth].username
+      : null;
+  },
+
+  [$getters.getUser] : state => {
+    return state[$states.user];
+  },
+
   [$getters.isPremium] : state => {
     const hasRank = state[$states.user]
       && state[$states.user]
@@ -119,24 +146,10 @@ export const getters = {
     return state[$states.user].rank.toLowerCase() === 'premium';
   },
 
-  [$getters.getAuth] : state => {
-    return state[$states.auth];
-  },
-
-  [$getters.getUID] : state => {
-    return state[$states.auth]
-      ?  state[$states.auth].uid
-      : null;
-  },
-
-  [$getters.getUser] : state => {
-    return state[$states.user];
-  },
-
-  [$getters.getUsername] : state => {
+  /*[$getters.getUsername] : state => {
     if ( state[$states.user] ) return state[$states.user].username || null;
     else return null;
-  },
+  },*/
 
   [$getters.getChannel] : state => {
     if ( !state[$states.channel] ) return 'global';
@@ -220,7 +233,7 @@ export const getters = {
 // Mutations
 export const mutations = {
   [$mutations.setAuth] ( state, auth ) {
-    state[$states.auth] = auth
+    state[$states.auth] = auth;
   },
 
   [$mutations.setUser] ( state, user ) {
@@ -282,14 +295,11 @@ export const actions = {
     const cookies = this.$cookies.getAll();
     if ( cookies ) {
       try {
-        if ( cookies.auth && cookies.user ) {
+        if ( cookies.auth ) {
           authUser = cookies.auth;
-          user     = cookies.user;
+          // commit( $mutations.setAuth, authUser );
 
-          commit( $mutations.setAuth, authUser );
-          commit( $mutations.setUser, user );
-
-          logger( `[${route.path}] ${user.username} logged in via nuxtServerInit: `, params );
+          logger( `[${route.path}] ${authUser.username} logged in via nuxtServerInit: `, params );
         } else {
           logger( `[${route.path}] User is not logged in.` );
         }
@@ -354,27 +364,44 @@ export const actions = {
 
     this.$axios.setToken( token, 'Bearer' );
 
-    const auth = {
-      accessToken: token,
-      uid: uid,
-    };
-
-    commit( $mutations.setAuth, auth );
-    this.$cookies.set( 'auth',  auth );
-
-    user = JSON.parse( JSON.stringify( user ) );
-
     if ( unsubscribeUser ) {
       console.warn( 'Already had firebase listener!' );
       unsubscribeUser();
     }
 
-    const userdocRef = db.collection( 'users' ).doc( uid );
+    const userdocRef = db
+      .collection( 'users' )
+      .doc( uid );
+
     unsubscribeUser = userdocRef.onSnapshot( async doc => {
+      // Get user data from database
       const data = doc.data();
+
+      // Newly created users trigger a snapshot to occur,
+      // But there will be missing data until the API server has completed
+      // generating the user document with default value, so return early.
+      if ( !data ) return;
+
+      // Log user data to console to assist in debugging
       if ( process.env.APP_DEBUG )  logger( 'User updated', data );
+
+      // Store a full copy of the user's profile in the store
       commit( $mutations.setUser, data );
-      this.$cookies.set( 'user',  data );
+
+      // TODO: Cleanup, removes old user cookie
+      // this.$cookies.set( 'user',  data );
+      this.$cookies.remove( 'user' );
+
+      const auth = {
+        accessToken: token,
+        uid: uid,
+        username: data.username,
+        avatar: data.avatar,
+      };
+
+      commit( $mutations.setAuth, auth );
+      this.$cookies.set( 'auth',  auth );
+
     });
 
     if ( process.client ) logger( 'Logged in!', user );

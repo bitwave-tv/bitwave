@@ -8,17 +8,13 @@
     @input="$emit( 'input', $event )"
   >
 
-    <v-layout
-      fill-height
-      column
-    >
+    <div class="d-flex flex-column fill-height">
       <!-- Site Navigation -->
       <navigation-list />
 
       <!-- Streamer List -->
       <streamer-list />
-
-    </v-layout>
+    </div>
 
     <!-- Minify Panel -->
     <template #append>

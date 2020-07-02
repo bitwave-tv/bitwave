@@ -194,6 +194,9 @@ module.exports = {
 
         // Assets
         '/sounds/tweet.mp3',
+        '/images/icon-2.png',
+        'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
+        'https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw',
         'https://fonts.googleapis.com/css?family=Material+Icons',
         'https://cdn.bitwave.tv/static/img/firework-banner.gif',
       ],
@@ -212,14 +215,14 @@ module.exports = {
       lang: 'en',
       display: 'standalone',
       background_color: '#000000',
-      theme_color: '#ffff00',
+      theme_color: '#13a9fe',
     },
 
     meta: {
       appleStatusBarStyle: 'black-translucent',
       name: '[bitwave.tv]',
       description: 'An open platform live streaming service for creators to freely express themselves.',
-      theme_color: '#ffff00',
+      theme_color: '#13a9fe',
       ogType: 'website',
       ogHost: 'http://bitwave.tv',
       twitterCard: 'summary_large_image',
