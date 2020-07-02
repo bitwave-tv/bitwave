@@ -150,6 +150,9 @@
       },
 
       async deleteArchive ( archive ) {
+        // Refresh auth token
+        await this.getFreshIdToken();
+
         const endpoint = `https://api.bitwave.tv/v1/replays/${archive.id}`;
         const options = {
           data: {
