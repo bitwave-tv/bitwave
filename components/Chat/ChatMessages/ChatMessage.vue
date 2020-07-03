@@ -200,7 +200,7 @@
     /* Big / Smol Text Styling */
 
     h1, h2, h3, h4, h5, h6 {
-      line-height: 1.25;
+      line-height: 1.0;
     }
 
     h1 {
@@ -232,13 +232,6 @@
       font-size: 0.625rem;
       font-weight: 500;
     }
-
-    /*
-    &.dense {
-      h1, h2, h3 {
-        font-size: 1rem;
-      }
-    }*/
 
   }
 </style>

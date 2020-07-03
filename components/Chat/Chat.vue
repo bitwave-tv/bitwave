@@ -16,6 +16,23 @@
     <!-- TODO: move structure and logic to subcomponent -->
     <add-ons style="position: relative;">
 
+      <!-- Chat Banner -->
+      <v-slide-x-reverse-transition>
+        <v-sheet
+          v-if="connecting && !loading"
+          color="error"
+          elevation="0"
+          tile
+          class="flex-grow-1"
+        >
+          <div class="px-3 py-2">connecting...</div>
+          <v-progress-linear
+            color="error darken-3"
+            indeterminate
+          />
+        </v-sheet>
+      </v-slide-x-reverse-transition>
+
       <!-- Show Poll to Users -->
       <v-slide-x-reverse-transition>
         <chat-poll-vote
@@ -30,6 +47,7 @@
 
     </add-ons>
 
+    <!-- Chat Stat Graph -->
     <v-slide-y-transition mode="out-in">
       <chat-graph
         v-if="showGraph"
@@ -122,6 +140,7 @@
         unsubscribePoll: null,
 
         loading: true,
+        connecting: true,
         socket: null,
         chatLimit: 50,
         userToken: null,
@@ -356,6 +375,7 @@
       },
 
       async socketConnect () {
+        this.connecting = false;
         if ( process.env.APP_DEBUG && false ) { // For testing...
           this.userToken.recaptcha = null;
         } else { // Get RECAPTCHA v3 Token
@@ -376,15 +396,15 @@
       },
 
       async socketReconnect () {
-        this.$toast.success( 'Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
+        this.connecting = false;
+        // this.$toast.success( 'Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
         console.log( 'Chat reconnected, requesting re-hydration' );
         await this.httpHydrate();
       },
 
       async socketError ( error, reason ) {
+        this.connecting = false;
         this.loading = true;
-        if ( process.env.APP_DEBUG && process.env.APP_DEBUG === 'true' )
-          this.$toast.error( `${error}${reason ? `: ${reason}` : '' }`, { icon: 'error', duration: 2000, position: 'top-right' } );
       },
 
       async getRecaptchaToken ( action ) {
@@ -1258,12 +1278,12 @@
   }
 
   .chat-desktop {
-     position : fixed;
-     top      : 48px;
-     right    : 0;
-     height   : calc(100vh - 48px);
-     width    : 450px;
-   }
+    position : fixed;
+    top      : 48px;
+    right    : 0;
+    height   : calc(100vh - 48px);
+    width    : 450px;
+  }
 
   .v-skeleton-loader__avatar {
     margin-right: 16px;

@@ -408,6 +408,6 @@
 
   #chat-scroll {
     overflow-y: scroll;
-    will-change: transform;
+    /*will-change: transform;*/
   }
 </style>
