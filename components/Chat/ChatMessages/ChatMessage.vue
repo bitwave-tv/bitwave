@@ -13,21 +13,15 @@
         v-if="props.avatar"
         :src="props.avatar"
         :alt="props.username"
-        :key="props.username"
+        :key="props.avatar"
       >
       <img
         v-else
         src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-        alt="hazmat suit trolll"
+        alt="hazmat suit bitwave troll"
         :style="{ background: props.color }"
-        :key="props.username"
         crossorigin
       >
-      <!--<div
-        v-else
-        class="v-icon material-icons"
-        :style="{ background: props.color }"
-      >person</div>-->
     </div>
 
     <!-- Chat Content -->

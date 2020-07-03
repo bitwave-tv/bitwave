@@ -448,9 +448,12 @@
           if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
 
           // For Text to Speech
-          const currentChat = m.channel.toLowerCase() === this.username.toLowerCase();
-          const myChat      = m.channel.toLowerCase() === this.page.toLowerCase();
-          if ( currentChat || myChat ) this.speak( m.message, m.username ); // Say Message
+          if ( this.getUseTts ) {
+            const currentChat = m.channel.toLowerCase() === this.username.toLowerCase();
+            const myChat      = m.channel.toLowerCase() === this.page.toLowerCase();
+            // Say Message
+            if ( currentChat || myChat ) this.speak( m.message, m.username );
+          }
 
           m.type = 'message';
 
@@ -489,11 +492,20 @@
           channel: data.channel,
         };
 
-        console.log( `New alert: `, m );
+        console.log( `New alert:`, m );
 
         if ( m.channel
           && m.channel.toLowerCase() !== this.page.toLowerCase() ) {
           return;
+        }
+
+        // If alert is to us, make sound and read it
+        if ( m.channel.toLowerCase() === this.username.toLowerCase() ) {
+          // Play ping
+          this.sound.play().then();
+
+          // Say Message
+          if ( this.getUseTtsAlerts ) this.speak( m.message, m.username );
         }
 
         this.messages.push( Object.freeze( m ) );
@@ -718,9 +730,8 @@
       },
 
       speak ( message, username ) {
-        if ( !this.getUseTts ) return;  // Check that TTS is enabled
         if ( this.ignoreList.find( user => user === username ) ) return; // Don't read ignored users
-        if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return;         // disables troll TTS
+        if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return; // disables troll TTS
 
         // Remove HTML related strings & links
         message = stripHTML( message );
@@ -752,7 +763,6 @@
           }
 
           voice.text = `${username} says: ` + voice.text;
-
         }
 
         voice.onend = e => {
@@ -1021,6 +1031,7 @@
         global            : Chat.$states.global,
         showTimestamps    : Chat.$states.timestamps,
         getUseTts         : Chat.$states.useTts,
+        getUseTtsAlerts   : Chat.$states.useTtsAlerts,
         useIgnore         : Chat.$states.useIgnore,
         getTrollTts       : Chat.$states.trollTts,
         getTtsRate        : Chat.$states.ttsRate,

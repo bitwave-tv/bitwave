@@ -83,7 +83,7 @@
 
   .chat-settings-panel {
     width: 350px;
-    height: 20rem;
+    height: 25rem;
     overflow-y: auto;
   }
 </style>

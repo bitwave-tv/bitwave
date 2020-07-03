@@ -13,6 +13,7 @@ const $states = {
   global          : 'GLOBAL',
   timestamps      : 'TIMESTAMPS',
   useTts          : 'USE_TTS',
+  useTtsAlerts    : 'USE_TTS_ALERTS',
   useIgnore       : 'USE_IGNORE',
   trollTts        : 'TROLL_TTS',
   ttsRate         : 'TTS_RATE',
@@ -61,6 +62,7 @@ const $mutations = {
   setGlobalSSR       : 'SET_GLOBAL_SSR',
   setTimestamps      : 'SET_TIMESTAMPS',
   setUseTts          : 'SET_USE_TTS',
+  setUseTtsAlerts    : 'SET_USE_TTS_ALERTS',
   setUseIgnore       : 'SET_USE_IGNORE',
   setTrollTts        : 'SET_TROLL_TTS',
   setTtsRate         : 'SET_TTS_RATE',
@@ -123,6 +125,7 @@ export const state = () => ({
   [$states.global]          : false,
   [$states.timestamps]      : true,
   [$states.useTts]          : false,
+  [$states.useTtsAlerts]    : true,
   [$states.useIgnore]       : true,
   [$states.trollTts]        : true,
   [$states.ttsRate]         : 10,
@@ -195,6 +198,17 @@ export const mutations = {
   [$mutations.setUseTts] ( state, data ) {
     state[$states.useTts] = JSON.parse( data );
     saveToLocalStorage( { [$states.useTts]: data } );
+    try {
+      if ( !data ) speechSynthesis.cancel();
+    } catch ( error ) {
+      console.warn( `cannot access 'speechSynthesis'` );
+    }
+  },
+
+  // Set use TTS Alerts
+  [$mutations.setUseTtsAlerts] ( state, data ) {
+    state[$states.useTtsAlerts] = JSON.parse( data );
+    saveToLocalStorage( { [$states.useTtsAlerts]: data } );
     try {
       if ( !data ) speechSynthesis.cancel();
     } catch ( error ) {
@@ -491,6 +505,7 @@ export const actions = {
       [$states.timestamps, $mutations.setTimestamps],
       [$states.global, $mutations.setGlobal],
       [$states.useTts, $mutations.setUseTts],
+      [$states.useTtsAlerts, $mutations.setUseTtsAlerts],
       [$states.useIgnore, $mutations.setUseIgnore],
       //TODO: fix ignore list
       //[$states.ignoreList, $mutations.setIgnoreList],

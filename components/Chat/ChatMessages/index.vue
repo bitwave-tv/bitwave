@@ -51,7 +51,10 @@
                 :color="msg.color"
                 class="my-1"
                 style="font-size: 14px; word-break: break-word;"
-              >{{ msg.message }}</v-alert>
+              >
+                <div class="overline grey--text">{{ msg.username }}</div>
+                <div class="white--text font-weight-bold body-1">{{ msg.message }}</div>
+              </v-alert>
             </div>
           </template>
 
