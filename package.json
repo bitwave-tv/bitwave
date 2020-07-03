@@ -43,7 +43,7 @@
     "marked": "^0.7.0",
     "moment": "^2.26.0",
     "nuxt": "^2.12.2",
-    "sass-loader": "^8.0.2",
+    "sass-loader": "^9.0.0",
     "socket.io-client": "^2.3.0",
     "video.js": "npm:@bitwave/video.js@^7.8.5",
     "videojs-contrib-dash": "^2.11.0",
