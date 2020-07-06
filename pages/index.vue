@@ -129,6 +129,9 @@
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import AboutUs from '@/components/Homepage/AboutUs';
 
+  import { mapState, mapMutations, mapActions } from 'vuex';
+  import { VStore } from "@/store";
+
   const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
   const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
 
@@ -172,12 +175,17 @@
         poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         chatMessages: null,
         offline: true,
-        blurNSFW: true,
       }
     },
 
     methods: {
+      ...mapMutations ({
+        setBlurNsfw : VStore.$mutations.setBlurNsfw,
+      }),
 
+      ...mapActions ({
+        loadSettings : VStore.$actions.loadSettings,
+      }),
     },
 
     async asyncData ({ $axios }) {
@@ -227,6 +235,17 @@
     },
 
     computed: {
+      ...mapState({
+        getBlurNsfw : VStore.$states.blurNsfw,
+      }),
+
+      blurNSFW: {
+        get () { return this.getBlurNsfw; },
+        set ( data ) {
+          this.setBlurNsfw( data );
+        }
+      },
+
       mobile () {
         return this.mounted
           ? this.$vuetify.breakpoint.smAndDown
@@ -237,6 +256,7 @@
     mounted () {
       this.mounted = true;
       if ( this.offline ) this.$toast.error( 'API Error: SSR Hydration failed', { duration: 5000, icon: 'error', position: 'top-center' } );
+      this.loadSettings();
     },
   }
 </script>

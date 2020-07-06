@@ -68,6 +68,9 @@
   import ReplayGrid from '@/components/Replay/ReplayGrid';
   import TrendingReplays from '@/components/Replay/TrendingReplays';
 
+  import { mapState, mapMutations, mapActions } from 'vuex';
+  import { VStore } from "@/store";
+
   const title = `Stream Replays - [bitwave.tv]`;
   const description = `Browse the most recent stream replays available.`;
   const image = `https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg`;
@@ -103,18 +106,35 @@
       SimpleFooter,
     },
 
-    data() {
-      return {
-        blurNSFW: true,
-      };
+    methods: {
+      ...mapMutations ({
+        setBlurNsfw : VStore.$mutations.setBlurNsfw,
+      }),
+
+      ...mapActions ({
+        loadSettings : VStore.$actions.loadSettings,
+      }),
     },
 
-    methods: {},
-
     computed: {
+      ...mapState({
+        getBlurNsfw : VStore.$states.blurNsfw,
+      }),
+
+      blurNSFW: {
+        get () { return this.getBlurNsfw; },
+        set ( data ) {
+          this.setBlurNsfw( data );
+        }
+      },
+
       version () {
         return `v${process.env.version}`;
       },
     },
+
+    mounted() {
+      this.loadSettings();
+    }
   };
 </script>

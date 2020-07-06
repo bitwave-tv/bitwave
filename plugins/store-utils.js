@@ -86,3 +86,13 @@ export const migrate = ( location, callback ) => {
     }
   }
 };
+
+export const saveToDb = async ( db, uid, collection, field, value ) => {
+  const userDoc = db.collection( collection ).doc( uid );
+  await userDoc.update( field, value );
+};
+
+export const saveToDbCallback = async ( db, uid, collection, field, value, callback ) => {
+  await saveToDb( db, uid, collection, field, value );
+  callback( { [field]: value} );
+};
