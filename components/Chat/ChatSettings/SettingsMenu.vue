@@ -51,7 +51,7 @@
     data() {
       return {
         // Default tab
-        settingsTab: 'chat-settings-general',
+        settingsTab: 0,
         tabs: [
           {
             label: 'General',
