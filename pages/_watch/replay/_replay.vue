@@ -193,11 +193,11 @@
           { rel: 'canonical', href: `https://bitwave.tv/${this.name}/replay/${this.archiveId}` },
         ],
         meta: [
-          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: ( this.description || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
-          { name: 'og:image',       hid:'og:image',        content: this.poster},
-          { name: 'author',         content: this.name },
-          { name: 'description',    hid: 'description',    content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
+          { name: 'og:title',            hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
+          { name: 'og:description',      hid: 'og:description', content: ( this.description || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
+          { name: 'og:image',            hid:'og:image',        content: this.poster},
+          { name: 'description',         hid: 'description',    content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
+          { name: 'author',              content: this.name },
           { name: 'profile:username',    content: this.name },
           { name: 'twitter:card',        content: 'summary_large_image' },
           { name: 'twitter:site',        content: '@BitwaveTV' },
@@ -253,7 +253,9 @@
 
     async asyncData ( { $axios, params, error } ) {
       // Timeout to prevent SSR from locking up
-      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+      const timeout = process.server
+        ? process.env.SSR_TIMEOUT
+        : 0;
 
       const getReplayHydration = async id => {
         let replayData;

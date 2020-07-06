@@ -152,9 +152,9 @@
 
     computed: {
       cacheBust () {
-        const coeff = 1000 * 60 * 10; // Ten minute cache buster
+        const coeff = 1000 * 60 * 30; // Thirty minute cache buster
         const timestamp = Math.round( Date.now() / coeff ) * coeff;
-        return `?shareid=${timestamp}`;
+        return `?sid=${timestamp.toFixed(9)}`;
       },
 
       streamlink () {
