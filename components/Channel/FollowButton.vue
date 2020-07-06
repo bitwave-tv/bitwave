@@ -42,19 +42,44 @@
           class="pa-2 mr-2 d-flex justify-space-end align-center"
         >
           <v-icon color="black">notifications_active</v-icon>
-          <h4 class="black--text body-1 font-weight-bold">
+          <h4 class="black--text body-1 font-weight-bold ml-2">
             Enable Push Notifications?
           </h4>
         </v-sheet>
 
         <v-card-text class="pb-0">
           <div class="subtitle-1 my-2 white--text">
-            Notifications will still be sent if bitwave is closed.
+            Notifications will still be sent to this device if bitwave is closed.
           </div>
+
           <div>
             You can always disable notifications by clicking the bell again.
           </div>
+
+          <div
+            v-if="isBraveBrowser"
+            class="mb-3"
+          >
+            <v-alert
+              dense
+              outlined
+              text
+              border="left"
+              color="yellow"
+              class="my-2"
+            >
+              Push notifications in Brave have to be manually enabled first by enabling:
+              <br>
+              Use Google Services for Push Messaging
+            </v-alert>
+            <v-img src="/images/brave-push_notifications.png"/>
+          </div>
         </v-card-text>
+
+        <hr
+          class="mt-3"
+          color="grey"
+        >
 
         <v-card-actions class="justify-end pa-3">
           <v-btn
@@ -104,6 +129,7 @@
         showConfirmNotifications: false,
         confirmNotifications: null,
         pushNotifications: false,
+        isBraveBrowser: false,
       }
     },
 
@@ -344,6 +370,9 @@
     },
 
     async mounted () {
+      // Brave browser detection to improve documentation
+      // see: https://github.com/bitwave-tv/bitwave/issues/209
+      this.isBraveBrowser = ( navigator.brave && await navigator.brave.isBrave() ) || false;
       this.unsubAuthChanged = auth.onAuthStateChanged( async user => await this.authenticated( user ) );
       await this.getFollowCount();
     },

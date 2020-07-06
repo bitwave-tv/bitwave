@@ -369,7 +369,7 @@
     overflow: hidden;
 
     .msg {
-      line-height: 1.25;
+      line-height: 1.15;
 
       /* Hover Chat Message */
       /*&:hover {
@@ -395,7 +395,7 @@
     }
 
     .dense .msg {
-      h1, h2, h3, h4, h5, h6 {
+      h1, h2, h3 {
         font-size: 1rem;
       }
 
