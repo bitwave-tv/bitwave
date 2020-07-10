@@ -12,9 +12,16 @@
     ref="chatSettingsMenu"
   >
     <template #activator="{ on: menu }">
-      <v-tooltip top :open-delay="500">
+      <v-tooltip
+        :open-delay="500"
+        top
+      >
         <template #activator="{ on: tooltip }">
-          <v-btn v-on="{ ...tooltip, focus: () => true, ...menu }" small icon>
+          <v-btn
+            v-on="{ ...tooltip, focus: () => true, ...menu, }"
+            small
+            icon
+          >
             <v-icon>settings</v-icon>
           </v-btn>
         </template>
@@ -22,7 +29,10 @@
       </v-tooltip>
     </template>
 
-    <div class="mb-3">
+    <div
+      class="mb-3"
+      style="height: 35rem;"
+    >
       <v-card
         color="grey darken-4"
       >
@@ -47,7 +57,9 @@
         </v-sheet>
 
         <!-- Tabbed Settings -->
-        <settings-menu @change="onTabChange" />
+        <settings-menu
+          @change="onTabChange"
+        />
 
       </v-card>
     </div>

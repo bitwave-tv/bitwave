@@ -14,7 +14,7 @@
       <v-tab
         v-for="tab in tabs"
         :key="tab.value"
-        :href="`#${tab.value}`"
+        :href="`${tab.value}`"
       >
         {{ tab.label }}
       </v-tab>
@@ -42,6 +42,7 @@
 
   export default {
     name: 'ChatSettings',
+
     components: {
       ChatBetaSettingsPanel,
       ChatTtsSettingsPanel,
@@ -50,8 +51,10 @@
 
     data() {
       return {
-        // Default tab
-        settingsTab: 0,
+        // Current tab selection
+        settingsTab: null,
+
+        // Dynamic tabs will swap out vue components on the fly
         tabs: [
           {
             label: 'General',
@@ -82,8 +85,8 @@
   }*/
 
   .chat-settings-panel {
+    /*height: 30rem;*/
     width: 350px;
-    height: 30rem;
     overflow-y: auto;
   }
 </style>
