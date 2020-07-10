@@ -65,6 +65,9 @@
               handlePartialData: true,
             },
           },
+          liveTracker: {
+            trackingThreshold: 5,
+          },
         });
 
 
