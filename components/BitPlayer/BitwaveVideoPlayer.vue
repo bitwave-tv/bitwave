@@ -127,6 +127,9 @@
               smoothQualityChange: true,
             },
           },
+          liveTracker: {
+            trackingThreshold: 5,
+          },
         });
 
         window.$bw = {
