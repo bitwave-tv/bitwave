@@ -128,7 +128,8 @@
             },
           },
           liveTracker: {
-            trackingThreshold: 5,
+            trackingThreshold: 0,
+            liveTolerance: 5,
           },
         });
 
