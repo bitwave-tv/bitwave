@@ -20,6 +20,7 @@
 
 <script>
   import videojs from 'video.js';
+  import '@videojs/http-streaming';
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
