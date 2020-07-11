@@ -5,6 +5,8 @@ const pkg = require('./package');
 module.exports = {
   mode: 'universal',
 
+  components: true,
+
   /*
   ** Environment variables
   */
