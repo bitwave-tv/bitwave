@@ -21,7 +21,9 @@
     </template>
 
     <!-- Chat Admin Menu -->
-    <chat-admin-menu @close="adminActionsMenu = false" />
+    <chat-admin-menu
+      @close="adminActionsMenu = false"
+    />
   </v-menu>
 </template>
 
