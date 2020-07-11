@@ -19,7 +19,7 @@
     "rollout:status": "kubectl rollout status deployment/bitwave-app -n bitwave-node"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.11.0",
+    "@nuxtjs/axios": "^5.12.0",
     "@nuxtjs/component-cache": "^1.1.5",
     "@nuxtjs/device": "^1.2.7",
     "@nuxtjs/dotenv": "^1.4.1",
@@ -42,10 +42,10 @@
     "jwt-decode": "^2.2.0",
     "marked": "^0.7.0",
     "moment": "^2.27.0",
-    "nuxt": "^2.12.2",
+    "nuxt": "^2.13.3",
     "sass-loader": "^8.0.2",
     "socket.io-client": "^2.3.0",
-    "video.js": "^7.8.4",
+    "video.js": "^7.9.0",
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.1.1",
