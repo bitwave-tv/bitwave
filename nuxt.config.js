@@ -240,6 +240,7 @@ module.exports = {
     '@/plugins/axiossr',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
+    { src: '@/plugins/commandParser.js', mode: 'client' },
     { src: '@/plugins/pwa.client.js', mode: 'client' },
     { src: '@/plugins/sw-hook', mode: 'client' },
   ],

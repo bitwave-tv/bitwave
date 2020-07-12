@@ -505,6 +505,8 @@ export const actions = {
       // No existing tokens, get new troll token
       await dispatch( $actions.createTrollToken );
     }
+
+    return token;
   },
 
   async [$actions.logout] ({ dispatch }) {

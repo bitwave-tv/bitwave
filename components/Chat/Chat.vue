@@ -10,7 +10,6 @@
       :page="page"
       :is-channel-owner="isChannelOwner"
       @add-channel-tag="addUserTag( page )"
-      @create-poll="createPoll"
     />
 
     <!-- TODO: move structure and logic to subcomponent -->
@@ -31,18 +30,6 @@
             indeterminate
           />
         </v-sheet>
-      </v-slide-x-reverse-transition>
-
-      <!-- Show Poll to Users -->
-      <v-slide-x-reverse-transition>
-        <chat-poll-vote
-          v-if="showPollClient"
-          :poll-data="pollData"
-          :is-owner="pollData.owner === ( user ? user.uid : null )"
-          @vote="votePoll"
-          @end="endPoll"
-          @destroy="destroyPoll"
-        />
       </v-slide-x-reverse-transition>
 
     </add-ons>
@@ -66,9 +53,9 @@
       :is-channel-owner="isChannelOwner"
       @reply="addUserTag"
       @whisper="addWhisper"
-      @ignore="ignoreUser"
-      @unignore="unignoreUser"
     />
+    <!--@ignore="ignoreUser"-->
+    <!--@unignore="unignoreUser"-->
 
     <!-- Chat Input -->
     <chat-input
@@ -84,14 +71,14 @@
 <script>
   import { auth, db } from '@/plugins/firebase.js';
 
-  import socketio from 'socket.io-client';
+  import * as _bitwaveChat from '@bitwave/chat-client';
+  const bitwaveChat = _bitwaveChat.default;
 
   import AddOns from '@/components/Chat/AddOns';
   import ChatHeader from '@/components/Chat/ChatHeader';
   import ChatMessages from '@/components/Chat/ChatMessages';
   import ChatInput from '@/components/Chat/ChatInput';
 
-  const ChatPollVote = async () => await import ( '@/components/Chat/ChatPollVote' );
   const ChatGraph = async () => await import ( '@/components/Analytics/ChatGraph' );
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
@@ -129,7 +116,6 @@
       ChatHeader,
       ChatInput,
       ChatMessages,
-      ChatPollVote,
       ChatGraph,
     },
 
@@ -138,43 +124,57 @@
         chatServer: chatServers.get( 'PROD' ),
 
         unsubscribeUser: null,
-        unsubscribePoll: null,
 
         loading: true,
         connecting: true,
-        socket: null,
         chatLimit: 50,
         userToken: null,
+
+        // [ Message -> Maybe Message ]
+        messageFilters: [
+          m => { if ( !this.useIgnore || !this.ignoreList.includes( m.username.toLowerCase() ) ) return m; },
+          m => {
+            // Do not ignore a channel we are in
+            const ignoreChannellist = this.ignoreChannelList.slice();
+            const index = ignoreChannellist.indexOf( this.page.toLowerCase() );
+            if (index > -1) {
+              ignoreChannellist.splice(index, 1);
+            }
+
+            // Remove ignored channel messages
+            if ( !ignoreChannellist.includes( message.channel.toLowerCase() ) ) return m;
+          },
+          m => { if ( !this.hideTrolls || !m.username.startsWith( 'troll:' ) ) return m; },
+          m => {
+          const isLocal = !this.global && !this.forceGlobal;
+            if( isLocal ) {
+              // Include mentions
+              // If enabled, allow cross-channel username tagging in local
+              const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+              if ( this.getReceiveMentionsInLocal && m.message.match( pattern ) ) return m;
+
+              // Check if message is in our local channel or in our own channel
+              const currChannel = m.channel.toLowerCase() === this.username.toLowerCase();
+              const myChannel   = m.channel.toLowerCase() === this.page.toLowerCase();
+
+              // if the message is NOT in the current channel AND NOT in our channel
+              // then it should be filtered
+              if ( !currChannel && !myChannel ) return null;
+            }
+          },
+        ],
 
         messages: null,
 
         voicesListTTS: [],
 
-        showPollClient: false,
-        pollData: {
-          channel: '',
-          display: false,
-          endsAt: 0,
-          id: null,
-          options: [
-            { label:'', votes: 0 },
-            { label:'', votes: 0 },
-          ],
-          owner: '',
-          title: '',
-          voteCount: 0,
-        },
-
         sound: process.server ? null : new Audio(),
 
-        willBeDestroyed: false,
         hideTrolls: false,
         cleanTTS: false,
         ttsTimeout: null,
 
         statInterval: null,
-        longStatRate: 10,
-        statTickCount: 0,
 
         newMessageCount: 0,
         showGraph: false,
@@ -199,6 +199,7 @@
 
       async connectToChat () {
 
+        // TODO: collapse if
         await this.initChat();
 
         if ( !this.getChatToken ) {
@@ -206,13 +207,34 @@
           return;
         }
 
-        const tokenUser = {
-          type  : 'unknown',
+        this.userToken = {
+          type  : 'unknown', //TODO: try removing
           token : this.getChatToken,
           page  : this.page,
         };
 
-        await this.connectChat( tokenUser );
+        this.connecting = false;
+        if ( process.env.APP_DEBUG && false ) { // For testing...
+          this.userToken.recaptcha = null;
+        } else { // Get RECAPTCHA v3 Token
+          this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
+        }
+
+        bitwaveChat.rcvMessageBulk = this.rcvMessageBulk;
+        bitwaveChat.updateUsernames = this.updateViewers;
+        bitwaveChat.alert = this.addAlert;
+
+        bitwaveChat.socketReconnect = () => { this.connecting = false; this.loading = false; };
+        bitwaveChat.socketError = () => { this.connecting = false; this.loading = true; };
+
+        bitwaveChat.global = this.global;
+        bitwaveChat.init( this.page, this.getChatToken, this.chatServer );
+
+        this.loading = false;
+      },
+
+      disconnectChat() {
+        bitwaveChat.disconnect();
       },
 
       async onResize () {
@@ -254,11 +276,14 @@
               page: this.page,
             };
 
-            await this.connectChat( tokenTroll );
+            await this.disconnectChat();
+            this.userToken = tokenTroll;
+            await this.connectChat();
           }
         }
       },
 
+      // TODO: why are these here?
       async subscribeToUser ( uid ) {
         const userdocRef = db
           .collection( 'users' )
@@ -326,77 +351,6 @@
         });
       },
 
-      async connectChat ( tokenUser ) {
-        // Remove event listeners and disconnect
-        if ( this.socket ) {
-          this.socket.off();
-          this.socket.disconnect();
-        }
-
-        if ( !tokenUser ) {
-          await this.socketError( `Invalid User Token` );
-          console.warn( `Failed to connect to chat. No user defined.` );
-          return;
-        }
-
-        this.userToken = tokenUser;
-
-        if ( this.willBeDestroyed ) return;
-
-        const socketOptions = { transports: [ 'websocket' ] };
-
-        this.socket = socketio( this.chatServer, socketOptions );
-
-        this.socket.on( 'connect',    async ()    => await this.socketConnect() );
-        this.socket.on( 'reconnect',  async ()    => await this.socketReconnect() );
-        this.socket.on( 'error',      async error => await this.socketError( `Connection Failed`, error ) );
-        this.socket.on( 'disconnect', async data  => await this.socketError( `Connection Lost`, data ) );
-
-        this.socket.on( 'update usernames', async () => await this.updateViewers() );
-
-        this.socket.on( 'bulkmessage', async data => await this.rcvMessageBulk( data ) );
-        this.socket.on( 'alert', async data => await this.addAlert( data ) );
-
-        this.socket.on( 'blocked',   data => this.setMessage( data.message ) );
-        this.socket.on( 'pollstate', data => this.updatePoll( data ) );
-
-        if ( process.env.APP_DEBUG )
-          this.socket.on( 'reconnecting', async attempt => await this.socketError( `Attempting to reconnect... (${ attempt })` ) );
-      },
-
-      async socketConnect () {
-        this.connecting = false;
-        if ( process.env.APP_DEBUG && false ) { // For testing...
-          this.userToken.recaptcha = null;
-        } else { // Get RECAPTCHA v3 Token
-          this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
-        }
-
-        // Attempt to connect...
-        this.socket.emit( 'new user', this.userToken );
-        this.loading = false;
-
-        // Request poll hydration
-        if ( this.showPollClient ) await this.socket.emit( 'hydratepoll', this.pollData.id );
-
-        if ( this.willBeDestroyed ) {
-          this.socket.off();
-          this.socket.disconnect();
-        }
-      },
-
-      async socketReconnect () {
-        this.connecting = false;
-        // this.$toast.success( 'Chat reconnected!', { icon: 'done', duration: 1000, position: 'top-right' }  );
-        console.log( 'Chat reconnected, requesting re-hydration' );
-        await this.httpHydrate();
-      },
-
-      async socketError ( error, reason ) {
-        this.connecting = false;
-        this.loading = true;
-      },
-
       async getRecaptchaToken ( action ) {
         return null;
         try {
@@ -408,37 +362,23 @@
         }
       },
 
-      async httpHydrate () {
-        try {
-          const { data } = await this.$axios.get( `https://chat.bitwave.tv/v1/messages${ this.global ? '' : `/${this.page}` }`, { progress: false } );
-          await this.hydrate( data.data );
-        } catch ( error ) {
-          console.error( error );
-        }
-      },
+      async hydrate () {
+        this.messages = [];
 
-      async hydrate ( data, isSSR ) {
-        if ( !data && !isSSR ) {
-          this.$toast.error( 'Error hydrating chat!', { icon: 'error', duration: 2000, position: 'top-right' } );
-          console.error( 'Failed to receive hydration data!' );
-          this.messages = [];
+        const success = bitwaveChat.hydrate();
+        if( !success ) {
+          this.$toast.error(
+            'Error hydrating chat!',
+            {
+              icon: 'error',
+              duration: 2000,
+              position: 'top-right'
+            }
+          );
           return;
         }
 
-        // Request poll hydration
-        if ( this.pollData.id ) await this.socket.emit( 'hydratepoll', this.pollData.id );
-
-        const size = data.length;
-        if ( !size ) {
-          console.log( 'Hydration data was empty' );
-          this.messages = [];
-          return;
-        }
-
-        this.messages = data
-          .filter( message => !this.filterMessage( message ) )
-          .map( message => Object.freeze( message ) );
-
+        // TODO: maybe unnecessary
         // Scroll after hydration
         if ( process.client ) {
           this.$nextTick( async () => {
@@ -449,16 +389,22 @@
       },
 
       async rcvMessageBulk ( messages ) {
-        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+        console.log(messages, typeof messages);
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
+
+          const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+
+          // Add username highlighting
+          m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
 
           // Notification Sounds
           if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
 
           // For Text to Speech
           if ( this.getUseTts ) {
+            // TODO: m.lowercase might be unnecessary
             const currentChat = m.channel.toLowerCase() === this.username.toLowerCase();
             const myChat      = m.channel.toLowerCase() === this.page.toLowerCase();
             // Say Message
@@ -466,6 +412,7 @@
           }
 
           m.type = 'message';
+          console.log(m);
 
           // Add message to list
           this.messages.push( Object.freeze( m ) );
@@ -473,18 +420,6 @@
           // Track message count
           if ( this.statInterval ) this.newMessageCount++;
         });
-
-        /*if ( this.$refs['chatmessages'] ) {
-          if ( !this.$refs['chatmessages'].showFAB ) {
-            this.messages = this.messages.splice( -this.chatLimit );
-          }
-        } else {
-          console.warn( `Failed to find 'chatmessages' component...` );
-        }*/
-
-        /*if ( !this.$refs['chatmessages'].showFAB ) {
-          this.messages = this.messages.splice( -this.chatLimit );
-        }*/
 
         if ( !this.$refs['chatmessages'].showFAB ) {
           if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
@@ -504,6 +439,7 @@
 
         console.log( `New alert:`, m );
 
+        // TODO: factor out these checks
         if ( m.channel
           && m.channel.toLowerCase() !== this.page.toLowerCase() ) {
           return;
@@ -514,6 +450,7 @@
           // Play ping
           this.sound.play().then();
 
+          // TODO: getUseTtsAlerts has no UI, I think
           // Say Message
           if ( this.getUseTtsAlerts ) this.speak( m.message, m.username );
         }
@@ -526,41 +463,18 @@
       },
 
       filterMessage ( message ) {
-        const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+        const maybeCompose = ( f, g ) => {
+          return x => {
+            if( !f || !g ) return undefined;
 
-        // Remove ignored user messages
-        if ( this.useIgnore && this.ignoreList.includes( message.username.toLowerCase() ) ) return true;
-
-        // Do not ignore a channel we are in
-        const ignoreChannellist = this.ignoreChannelList.filter( channel => channel.toLowerCase() !== this.page.toLowerCase() );
-
-        // Remove ignored channel messages
-        if ( ignoreChannellist.includes( message.channel.toLowerCase() ) ) return true;
-
-        // Remove trolls
-        if ( this.hideTrolls && message.username.startsWith( 'troll:' ) ) return true;
-
-        // Add username highlighting
-        message.message = message.message.replace( pattern, `<span class="highlight">$&</span>` );
-
-        // Local / Global filter
-        if ( !this.global && !this.forceGlobal ) {
-          // LOCAL CHAT
-
-          // Include mentions
-          // If enabled, allow cross-channel username tagging in local
-          if ( this.getReceiveMentionsInLocal && message.message.match( pattern ) ) return false;
-
-          // Check if message is in our local channel or in our own channel
-          const currChannel = message.channel.toLowerCase() === this.username.toLowerCase();
-          const myChannel   = message.channel.toLowerCase() === this.page.toLowerCase();
-
-          // if the message is NOT in the current channel AND NOT in our channel
-          // then it should be filtered
-          if ( !currChannel && !myChannel ) return true;
-        }
-
-        return false
+            const y = g( x );
+            if( !y ) return undefined;
+            else return f( x );
+          };
+        };
+        //    allFilters = foldl (>>=) (return message) this.messageFilters
+        const allFilters = this.messageFilters.reduce( maybeCompose, a => a );
+        return !!allFilters( message );
       },
 
       changeStatOnGraph( stat, user ) {
@@ -619,110 +533,15 @@
           showBadge : this.chatBadge,
         };
 
-        const pattern = /(?:^\/)(\w+)(?:\s+(\S+))?(?:\s+(.*))?/;
-        const params = this.getMessage.match( pattern );
+        const actions = await this.$chatCommandParser.parseOne( msg.message );
+        actions?.forEach( a => {
+          if( a.insertMessage ) this.insertMessage( a.insertMessage );
+          if( a.saveToDb ) this.saveToDb( ...a.saveToDb );
+          if( a.forceFilter ) this.messages.filter( a.forceFilter );
+          if( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
+        });
 
-        if ( params ) {
-          const command  = params[1].toLowerCase();
-          const argument = params[2] ? params[2].toLowerCase() : '';
-
-          switch ( command ) {
-            case 'dev':
-              this.chatServer = chatServers.get( 'DEV' );
-              if ( this.userToken ) await this.connectChat( this.userToken );
-              await this.insertMessage( 'Enabled developer mode.\nAttempting to connect to local dev server.' );
-              break;
-            case 'prod':
-            case 'production':
-              this.chatServer = chatServers.get( 'PROD' );
-              if ( this.userToken ) await this.connectChat( this.userToken );
-              await this.insertMessage( 'Disabled developer mode.\nAttempting to connect to production chat server.' );
-              break;
-            case 'local':
-              this.setGlobal( false );
-              break;
-            case 'global':
-              this.setGlobal( true );
-              break;
-            case 'ignore':
-            case 'i':
-              await this.ignoreUser( argument );
-              break;
-            case 'unignore':
-            case 'u':
-              await this.unignoreUser( argument );
-              break;
-            case 'ignorechannel':
-            case 'ic':
-              await this.ignoreChannel( argument );
-              break;
-            case 'unignorechannel':
-            case 'uic':
-            case 'uc':
-              await this.unignoreChannel( argument );
-              break;
-            case 'susi':
-            case 'trolls':
-              this.hideTrolls = !this.hideTrolls;
-              if ( this.hideTrolls ) this.messages = this.messages.filter( el => !el.username.startsWith( 'troll:' ) );
-              else await this.httpHydrate();
-              break;
-            case 'crc':
-            case 'cuckrockchris':
-            case 'cleantts':
-              this.cleanTTS = !this.cleanTTS;
-              await this.insertMessage( `Clean TTS: ${this.cleanTTS}` );
-              break;
-            case 'graph':
-              await this.changeStatOnGraph( params[2] ? params[2] : '', params[3] ? params[3] : 'all' );
-              break;
-            case 'ignorelist':
-              await this.insertMessage( `Ignored Users: ${this.ignoreList.join(', ')}` );
-              await this.insertMessage( `Ignored Channels: ${this.ignoreChannelList.join(', ')}` );
-              this.$ga.event({
-                eventCategory : 'chat',
-                eventAction   : 'ignorelist',
-              }); // Analytics
-              break;
-            case 'pin':
-              const msgToPin = msg.message.replace(/\/pin\s/i, '');
-              console.log( `User is ${this.isChannelOwner ? '' : 'not'} owner. '${msgToPin}'` );
-              this.createPinnedMessage( msgToPin );
-              break;
-            case 'badge':
-              this.setChatBadge( !this.chatBadge );
-              await this.insertMessage( `Badge ${this.chatBadge ? 'on' : 'off'}` );
-              break;
-            case 'skip':
-            case 's':
-              speechSynthesis.cancel(); // Skip TTS
-              break;
-            case 'w':
-            case 'whisper':
-              msg.message = msg.message.replace( '/w', '!w' );
-              this.socket.emit( 'message', msg );
-              break;
-            case 'bugreport':
-              this.$sentry.withScope(
-                scope => {
-                  scope.setExtra( 'global_chat', this.global );
-                  scope.setExtra( 'is_auth', this.isAuth );
-                  scope.setUser({
-                    username: this.username,
-                  });
-                  this.$sentry.captureMessage( 'Bug Report' );
-                },
-              );
-              this.$sentry.showReportDialog({
-                title: 'Something looks broken...',
-                labelName: 'Username',
-                labelSubmit: 'Submit Bug Report',
-              });
-              break;
-          }
-        } else {
-          this.socket.emit( 'message', msg );
-        }
+        if( !actions || actions.length === 0 ) bitwaveChat.sendMessage( msg );
       },
 
       async insertMessage ( message, color ) {
@@ -778,203 +597,11 @@
         voice.onend = e => {
           if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
           console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
-        }
+        };
 
         speechSynthesis.speak( voice );
         if ( this.getTtsTimeout > 0 ) {
           this.ttsTimeout = setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
-        }
-      },
-
-
-      // POLL FUNCTIONS -> SOCKET
-      //-------------------------
-      subscribeToPoll ( channel ) {
-        this.unsubscribePoll = db
-          .collection( 'polls' )
-          .where( 'channel', '==', channel.toLowerCase() )
-          .limit( 1 )
-          .onSnapshot( async result => {
-            if ( result.empty ) return;
-
-            const doc = result.docs[0];
-
-            this.pollData = doc.data();
-            this.pollData.id = doc.id;
-
-            this.showPollClient = this.pollData.display;
-
-            this.onResize(); // Scroll to bottom when showing / hiding polls
-          });
-      },
-
-      async createPoll ( poll ) {
-        if ( this.pollData.id ) {
-          const pollDocRef = db
-            .collection( 'polls' )
-            .doc( this.pollData.id );
-          const data = {
-            display: true,
-            endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
-            trollVotes: poll.allowTrollVotes,
-            options: poll.options,
-            title: poll.title,
-            resultsSaved: false,
-            voteCount: 0,
-          };
-          await pollDocRef.update( data );
-        } else {
-          const data = {
-            channel: this.page.toLowerCase(),
-            display: true,
-            endsAt: new Date( Date.now() + poll.time * 60 * 1000 ),
-            trollVotes: poll.allowTrollVotes,
-            options: poll.options,
-            owner: this.user.uid,
-            title: poll.title,
-            resultsSaved: false,
-            voteCount: 0,
-          };
-          this.pollData.id = await db
-            .collection( 'polls' )
-            .add( data );
-        }
-      },
-
-      // Add user vote to poll with matching poll id
-      votePoll ( vote ) {
-        // should pass option number & poll id
-        this.socket.emit( 'votepoll', { id: this.pollData.id, vote: vote } )
-      },
-
-      // Update poll with data from socket
-      async updatePoll ( data ) {
-        if ( this.pollData.id !== data.id ) return;
-        console.log( `Update Poll: `, data );
-        this.pollData.options = data.options;
-        this.pollData.voteCount  = data.voteCount;
-      },
-
-      // Change end time to now to end poll instantly
-      async endPoll () {
-        // tell server to update poll and transfer data to client
-        await db
-          .collection( 'polls' )
-          .doc( this.pollData.id )
-          .update( {
-            endsAt:  new Date( Date.now() ),
-            options: this.pollData.options,
-            resultsSaved: true,
-            voteCount: this.pollData.voteCount,
-          });
-      },
-
-
-      // Delete and hide poll
-      async destroyPoll ( pollId ) {
-        await db
-          .collection( 'polls' )
-          .doc( pollId )
-          .update( { 'display': false, 'options': null } );
-      },
-
-      async ignoreUser ( username ) {
-        username = username.replace('@', '');
-        const exists = this.ignoreList.find( el => el.toLowerCase() === username.toLowerCase() );
-        if ( exists ) {
-          console.log( `User already ignored: '${username}'` );
-
-          // Confirmation Message
-          await this.insertMessage( `You already ignore '${username}'` );
-          return;
-        }
-        this.addIgnoreList( username );
-        this.saveToDb( 'users', 'ignoreList',  this.ignoreList );
-
-        // Remove messages
-        if ( this.useIgnore )
-          this.messages = this.messages.filter( message => username.toLowerCase() !==  message.username.toLowerCase() );
-
-        // Confirmation Message
-        await this.insertMessage( `Ignored User: ${username}` );
-
-        // Analytics
-        this.$ga.event({
-          eventCategory : 'chat',
-          eventAction   : 'ignore',
-          eventLabel    : username,
-        });
-      },
-
-      async unignoreUser ( username ) {
-        username = username.replace('@', '');
-        const location = this.ignoreList.findIndex( el => el.toLowerCase() === username.toLowerCase() );
-        if ( location !== -1 ) {
-          this.removeIgnoreList( username.toLowerCase() );
-          this.saveToDb( 'users', 'ignoreList',  this.ignoreList );
-
-          // Confirmation Message
-          await this.insertMessage( `Unignored User: ${username}` );
-
-          // Analytics
-          this.$ga.event({
-            eventCategory : 'chat',
-            eventAction   : 'unignore',
-            eventLabel    : username,
-          });
-        } else {
-          console.log( `Ignored user not found: '${username}'` );
-
-          // Error Message
-          await this.insertMessage( `You are not ignoring '${username}'` );
-        }
-      },
-
-      async ignoreChannel ( channel ) {
-        const exists = this.ignoreChannelList.find( el => el.toLowerCase() === channel.toLowerCase() );
-        if ( exists ) {
-          console.log ( `Channel already ignored ${channel}` );
-          return;
-        }
-        this.addIgnoreChannelList( channel );
-        // Save ignore list to profile
-        this.saveToDb( 'users', 'ignoreChannelList', this.ignoreChannelList );
-
-        // Remove messages
-        this.messages = this.messages.filter( message => channel.toLowerCase() !==  message.channel.toLowerCase() );
-
-        // Confirmation Message
-        await this.insertMessage( `Ignored Channel: ${channel}` );
-
-        // Analytics
-        this.$ga.event({
-          eventCategory : 'chat',
-          eventAction   : 'ignore-channel',
-          eventLabel    : channel,
-        });
-      },
-
-      async unignoreChannel ( channel ) {
-        const exists = this.ignoreChannelList.includes( channel.toLowerCase() );
-        if ( exists ) {
-          this.removeIgnoreChannelList( channel.toLowerCase() );
-          // Save ignore list to profile
-          this.saveToDb( 'users', 'ignoreChannelList', this.ignoreChannelList );
-
-          // Confirmation Message
-          await this.insertMessage( `Unignored Channel: ${channel}` );
-
-          // Analytics
-          this.$ga.event({
-            eventCategory : 'chat',
-            eventAction   : 'unignore-channel',
-            eventLabel    : channel,
-          });
-        } else {
-          console.log( `Ignored channel not found: '${channel}'` );
-
-          // Confirmation Message
-          await this.insertMessage( `You do not ignore ${channel}'s channel` );
         }
       },
 
@@ -1087,7 +714,7 @@
 
     watch: {
       async global ( val, old ) {
-        await this.httpHydrate();
+        await this.hydrate();
       },
     },
 
@@ -1096,28 +723,8 @@
     async fetch () {
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
-
-      const getChatHydration = async ( channel ) => {
-        try {
-          const global = this.$store.state[Chat.namespace][Chat.$states.global];
-          if ( global === null ) return null;
-          const { data } = await this.$axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
-          if ( data && data.success ) return data.data;
-          return [];
-        } catch ( error ) {
-          console.log( `Chat hydration request failed` );
-          console.error( error.message );
-        }
-        return null;
-      };
-
-      this.hydrationData = await getChatHydration( this.chatChannel );
-
-      if ( this.hydrationData ) {
-        await this.hydrate( this.hydrationData, true );
-      } else {
-        await this.httpHydrate();
-      }
+      // TODO: timeout
+      await this.hydrate();
     },
 
     async mounted () {
@@ -1131,13 +738,6 @@
       // TODO: watch store token value locally,
       // TODO: create user token and reconnect on change
 
-
-      // Hydrate chat from SSR or API
-      /*if ( this.hydrationData ) {
-        await this.hydrate( this.hydrationData, true );
-      } else {
-        await this.httpHydrate();
-      }*/
 
       this.userStats.calculate.viewerCount = {
         total: () => {
@@ -1165,9 +765,6 @@
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
 
-      // Listen for new polls
-      this.subscribeToPoll( this.page );
-
       // Get channel chat configuration
       // this.loadChatConfig( this.page );
     },
@@ -1175,20 +772,12 @@
     beforeDestroy () {
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
       if ( this.unsubscribeUser )  this.unsubscribeUser();
-      if ( this.unsubscribePoll )  this.unsubscribePoll();
       if ( this.statInterval ) clearInterval( this.statInterval );
-      if ( this.socket ) {
-        this.socket.off();
-        this.socket.disconnect();
-      }
-      this.willBeDestroyed = true;
+      bitwaveChat.disconnect();
     },
 
     destroyed() {
-      if ( this.socket ) {
-        this.socket.off();
-        this.socket.disconnect();
-      }
+      // TODO: might need a bitwaveChat.disconnect() here
     }
   }
 </script>
