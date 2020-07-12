@@ -142,7 +142,7 @@
             }
 
             // Remove ignored channel messages
-            if ( !ignoreChannellist.includes( message.channel.toLowerCase() ) ) return m;
+            if ( !ignoreChannellist.includes( m.channel.toLowerCase() ) ) return m;
           },
           m => { if ( !this.hideTrolls || !m.username.startsWith( 'troll:' ) ) return m; },
           m => {
@@ -161,6 +161,7 @@
               // then it should be filtered
               if ( !currChannel && !myChannel ) return null;
             }
+            return m;
           },
         ],
 
@@ -474,7 +475,7 @@
         };
         //    allFilters = foldl (>>=) (return message) this.messageFilters
         const allFilters = this.messageFilters.reduce( maybeCompose, a => a );
-        return !!allFilters( message );
+        return !allFilters( message );
       },
 
       changeStatOnGraph( stat, user ) {
