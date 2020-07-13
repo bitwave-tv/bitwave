@@ -3,162 +3,164 @@ import { Chat } from '@/store/chat';
 let _store, _ga, _sentry,
     _store_state, _store_commit;
 
-const ignoreUser = async ( who ) => {
-  const ignoreList = _store_state[ Chat.$states.ignoreList ];
+const functions = {
+  async ignoreUser( who ) {
+    const ignoreList = _store_state[Chat.$states.ignoreList];
 
-  who = who.replace('@','');
-  const exists = ignoreList.find( el => el.toLowerCase() === who.toLowerCase() );
-  if( exists ) {
-    return [
-      {insertMessage: `You already ignore '${who}'`}
-    ];
-  }
+    who = who.replace( '@', '' );
+    const exists = ignoreList.find( el => el.toLowerCase() === who.toLowerCase() );
+    if( exists ) {
+      return [
+        { insertMessage: `You already ignore '${ who }'` }
+      ];
+    }
 
-  await _store_commit( Chat.$mutations.addIgnoreList, who );
-
-  // Analytics
-  _ga.event({
-    eventCategory : 'chat',
-    eventAction   : 'ignore',
-    eventLabel    : who,
-  });
-
-  return [
-    { saveToDb: ['users', 'ignoreList',  ignoreList] },
-    { forceFilter: message => who.toLowerCase() !==  message.username.toLowerCase() },
-    { insertMessage: `Ignored User: ${who}` },
-  ];
-};
-
-const unignoreUser = async ( who ) => {
-  const ignoreList = _store_state[ Chat.$states.ignoreList ];
-
-  who = who.replace('@','');
-  const exists = ignoreList.find( el => el.toLowerCase() === who.toLowerCase() );
-  if( exists ) {
-    await _store_commit( Chat.$mutations.removeIgnoreList, who.toLowerCase() );
+    await _store_commit( Chat.$mutations.addIgnoreList, who );
 
     // Analytics
-    _ga.event({
-      eventCategory : 'chat',
-      eventAction   : 'unignore',
-      eventLabel    : who,
-    });
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'ignore',
+      eventLabel: who,
+    } );
 
     return [
-      { insertMessage: `Unignored User: ${who}` }
+      { saveToDb: ['users', 'ignoreList', ignoreList] },
+      { forceFilter: message => who.toLowerCase() !== message.username.toLowerCase() },
+      { insertMessage: `Ignored User: ${ who }` },
     ];
-  } else {
-    return [
-      { insertMessage: `You are not ignoring '${who}'` }
-    ];
-  }
-};
+  },
 
-const ignoreChannel = async ( who ) => {
-  const ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
+  async unignoreUser( who ) {
+    const ignoreList = _store_state[Chat.$states.ignoreList];
 
-  const exists = ignoreChannelList.find( el => el.toLowerCase() === channel.toLowerCase() );
-  if ( exists ) {
-    return [
-      { insertMessage: `Channel already ignored ${who}` }
-    ];
-  }
+    who = who.replace( '@', '' );
+    const exists = ignoreList.find( el => el.toLowerCase() === who.toLowerCase() );
+    if( exists ) {
+      await _store_commit( Chat.$mutations.removeIgnoreList, who.toLowerCase() );
 
-  await _store_commit( Chat.$mutations.addIgnoreChannelList, who );
+      // Analytics
+      _ga.event( {
+        eventCategory: 'chat',
+        eventAction: 'unignore',
+        eventLabel: who,
+      } );
 
-  // Analytics
-  _ga.event({
-    eventCategory : 'chat',
-    eventAction   : 'ignore-channel',
-    eventLabel    : who,
-  });
+      return [
+        { insertMessage: `Unignored User: ${ who }` }
+      ];
+    } else {
+      return [
+        { insertMessage: `You are not ignoring '${ who }'` }
+      ];
+    }
+  },
 
-  return [
-    { saveToDb: ['users', 'ignoreChannelList',  ignoreChannelList] },
-    { forceFilter: message => who.toLowerCase() !==  message.username.toLowerCase() },
-    { insertMessage: `Ignored User: ${who}` },
-  ];
-};
+  async ignoreChannel( who ) {
+    const ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
 
-const unignoreChannel = async ( who ) => {
-  const ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
+    const exists = ignoreChannelList.find( el => el.toLowerCase() === who.toLowerCase() );
+    if( exists ) {
+      return [
+        { insertMessage: `Channel already ignored ${ who }` }
+      ];
+    }
 
-  const exists = ignoreChannelList.includes( who.toLowerCase() );
-  if ( exists ) {
-    await _store_commit( Chat.$mutations.removeIgnoreChannelList, who.toLowerCase() );
+    await _store_commit( Chat.$mutations.addIgnoreChannelList, who );
 
     // Analytics
-    _ga.event({
-      eventCategory : 'chat',
-      eventAction   : 'unignore-channel',
-      eventLabel    : who,
-    });
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'ignore-channel',
+      eventLabel: who,
+    } );
 
     return [
-      { insertMessage: `Unignored Channel: ${who}` },
-      { saveToDb: ['users', 'ignoreChannelList', ignoreChannelList] }
+      { saveToDb: ['users', 'ignoreChannelList', ignoreChannelList] },
+      { forceFilter: message => who.toLowerCase() !== message.username.toLowerCase() },
+      { insertMessage: `Ignored User: ${ who }` },
     ];
-  } else {
-    return [ { insertMessage: `You do not ignore ${who}'s channel` } ];
+  },
+
+  async unignoreChannel( who ) {
+    const ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
+
+    const exists = ignoreChannelList.includes( who.toLowerCase() );
+    if( exists ) {
+      await _store_commit( Chat.$mutations.removeIgnoreChannelList, who.toLowerCase() );
+
+      // Analytics
+      _ga.event( {
+        eventCategory: 'chat',
+        eventAction: 'unignore-channel',
+        eventLabel: who,
+      } );
+
+      return [
+        { insertMessage: `Unignored Channel: ${ who }` },
+        { saveToDb: ['users', 'ignoreChannelList', ignoreChannelList] }
+      ];
+    } else {
+      return [{ insertMessage: `You do not ignore ${ who }'s channel` }];
+    }
+
+  },
+
+  async hideTrolls() {
+    await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[Chat.$states.hideTrolls] );
+    return [
+      { forceFilter: el => !el.username.startsWith( 'troll:' ) }
+    ];
+  },
+
+  async cleanTts() {
+    await _store_commit( Chat.$mutations.setCleanTts, !_store_state[Chat.$states.cleanTts] );
+    return [
+      { insertMessage: `Clean TTS: ${ _store_state[Chat.$states.cleanTts] }` }
+    ];
+  },
+
+  graph( stat, user ) { return [{ changeStatOnGraph: [stat, user] }] },
+
+  ignoreList() {
+    const _ignoreList = _store_state[Chat.$states.ignoreList];
+    const _ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'ignorelist',
+    } ); // Analytics
+    return [
+      { insertMessage: `Ignored Users: ${ _ignoreList.join( ', ' ) }` },
+      { insertMessage: `Ignored Channels: ${ _ignoreChannelList.join( ', ' ) }` },
+    ]
+  },
+
+  async toggleBadge() {
+    const newstate = !_store_state[Chat.$states.showBadge];
+    await _store_commit( Chat.$mutations.setShowBadge, newstate );
+    return [{ insertMessage: `Badge ${ newstate ? 'on' : 'off' }` }]
+  },
+
+  skipTts() { speechSynthesis.cancel(); }, // Skip TTS
+
+  async bugReport() {
+    _sentry.withScope(
+      scope => {
+        scope.setExtra( 'global_chat', this.global );
+        scope.setExtra( 'is_auth', this.isAuth );
+        scope.setUser( {
+          username: this.username,
+        } );
+        this.$sentry.captureMessage( 'Bug Report' );
+      },
+    );
+    _sentry.showReportDialog( {
+      title: 'Something looks broken...',
+      labelName: 'Username',
+      labelSubmit: 'Submit Bug Report',
+    } );
+    return [];
   }
-
-};
-
-const hideTrolls = async () => {
-  await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[ Chat.$states.hideTrolls ] );
-  return [
-    { forceFilter: el => !el.username.startsWith( 'troll:' ) }
-  ];
-};
-
-const cleanTts = async () => {
-  await _store_commit( Chat.$mutations.setCleanTts, !_store_state[ Chat.$states.cleanTts ] );
-  return [
-    { insertMessage: `Clean TTS: ${_store_state[ Chat.$states.cleanTts ]}` }
-  ];
-};
-
-const graph = ( stat, user ) => [ { changeStatOnGraph: [ stat, user ] } ];
-
-const ignoreList = () => {
-  const _ignoreList = _store_state[ Chat.$states.ignoreList ];
-  const _ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
-  _ga.event({
-    eventCategory : 'chat',
-    eventAction   : 'ignorelist',
-  }); // Analytics
-  return [
-    { insertMessage: `Ignored Users: ${_ignoreList.join(', ')}` },
-    { insertMessage: `Ignored Channels: ${_ignoreChannelList.join(', ')}` },
-  ]
-};
-
-const toggleBadge = async () => {
-  const newstate = !_store_state[ Chat.$states.showBadge ];
-  await _store_commit( Chat.$mutations.setShowBadge, newstate );
-  return [ { insertMessage: `Badge ${newstate ? 'on' : 'off'}` } ]
-};
-
-const skipTts = () => speechSynthesis.cancel(); // Skip TTS
-
-const bugReport = async () => {
-  _sentry.withScope(
-    scope => {
-      scope.setExtra( 'global_chat', this.global );
-      scope.setExtra( 'is_auth', this.isAuth );
-      scope.setUser({
-        username: this.username,
-      });
-      this.$sentry.captureMessage( 'Bug Report' );
-    },
-  );
-  _sentry.showReportDialog({
-    title: 'Something looks broken...',
-    labelName: 'Username',
-    labelSubmit: 'Submit Bug Report',
-  });
-  return [];
 };
 
 const export_obj = {
@@ -169,27 +171,29 @@ const export_obj = {
     ["production", () => [{ chatServer: 'PROD' }, { insertMessage: 'Disabled developer mode.\nAttempting to connect to production chat server.' }]],
     ["local", () => { _store_commit( Chat.$mutations.setGlobal, false ); return []; } ],
     ["global", () => { _store_commit( Chat.$mutations.setGlobal, true ); return []; } ],
-    ["ignore", ignoreUser],
-    ["i", ignoreUser],
-    ["unignore", unignoreUser],
-    ["u", unignoreUser],
-    ["ignorechannel", ignoreChannel],
-    ["ic", ignoreChannel],
-    ["unignorechannel", unignoreChannel],
-    ["uic", unignoreChannel],
-    ["uc", unignoreChannel],
-    ["trolls", hideTrolls],
-    ["susi", hideTrolls],
-    ["cuckrockchris", cleanTts],
-    ["crc", cleanTts],
-    ["cleantts", cleanTts],
-    ["graph", graph],
-    ["ignorelist", ignoreList],
-    ["badge", toggleBadge],
-    ["skip", skipTts],
-    ["s", skipTts],
-    ["bugreport", bugReport],
+    ["ignore", functions.ignoreUser],
+    ["i", functions.ignoreUser],
+    ["unignore", functions.unignoreUser],
+    ["u", functions.unignoreUser],
+    ["ignorechannel", functions.ignoreChannel],
+    ["ic", functions.ignoreChannel],
+    ["unignorechannel", functions.unignoreChannel],
+    ["uic", functions.unignoreChannel],
+    ["uc", functions.unignoreChannel],
+    ["trolls", functions.hideTrolls],
+    ["susi", functions.hideTrolls],
+    ["cuckrockchris", functions.cleanTts],
+    ["crc", functions.cleanTts],
+    ["cleantts", functions.cleanTts],
+    ["graph", functions.graph],
+    ["ignorelist", functions.ignoreList],
+    ["badge", functions.toggleBadge],
+    ["skip", functions.skipTts],
+    ["s", functions.skipTts],
+    ["bugreport", functions.bugReport],
   ]),
+
+  ...functions,
 
   async parseOne( string ) {
     if( !string.startsWith( '/' ) ) return null;
@@ -208,9 +212,9 @@ const export_obj = {
 
 export default async ( { $ga, store, $sentry }, inject ) => {
   _store = store;
-  _store_state = store.state[ Chat.namespace ];
-  _store_commit = ( what, ...args ) => {
-    return _store.commit( `${Chat.namespace}/${what}`, ...args );
+  _store_state = await store.state[ Chat.namespace ];
+  _store_commit = async ( what, ...args ) => {
+    return await _store.commit( `${Chat.namespace}/${what}`, ...args );
   };
   _ga = $ga;
   _sentry = $sentry;

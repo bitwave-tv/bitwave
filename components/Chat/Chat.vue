@@ -53,9 +53,9 @@
       :is-channel-owner="isChannelOwner"
       @reply="addUserTag"
       @whisper="addWhisper"
+      @ignore="ignoreUser"
+      @unignore="unignoreUser"
     />
-    <!--@ignore="ignoreUser"-->
-    <!--@unignore="unignoreUser"-->
 
     <!-- Chat Input -->
     <chat-input
@@ -196,6 +196,13 @@
         }
       },
 
+      executeAction ( a ) {
+        if( a.insertMessage ) this.insertMessage( a.insertMessage );
+        if( a.saveToDb ) this.saveToDb( ...a.saveToDb );
+        if( a.forceFilter ) this.messages.filter( a.forceFilter );
+        if( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
+      },
+
       async connectToChat () {
 
         // TODO: collapse if
@@ -245,6 +252,16 @@
           this.$refs['chatmessages'].scrollToBottom( force );
         else
           console.warn('Could not find scroll container for chat.');
+      },
+
+      async ignoreUser ( user ) {
+        const actions = await this.$chatCommandParser.ignoreUser( user );
+        actions?.forEach( a => this.executeAction( a ) );
+      },
+
+      async unignoreUser ( user ) {
+        const actions = await this.$chatCommandParser.unignoreUser( user );
+        actions?.forEach( a => this.executeAction( a ) );
       },
 
       async addUserTag ( user ) {
@@ -534,12 +551,7 @@
         };
 
         const actions = await this.$chatCommandParser.parseOne( msg.message );
-        actions?.forEach( a => {
-          if( a.insertMessage ) this.insertMessage( a.insertMessage );
-          if( a.saveToDb ) this.saveToDb( ...a.saveToDb );
-          if( a.forceFilter ) this.messages.filter( a.forceFilter );
-          if( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
-        });
+        actions?.forEach( a => this.executeAction( a ) );
 
         if( !actions || actions.length === 0 ) bitwaveChat.sendMessage( msg );
       },
