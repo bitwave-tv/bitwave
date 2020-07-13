@@ -154,8 +154,8 @@
               if ( this.getReceiveMentionsInLocal && m.message.match( pattern ) ) return m;
 
               // Check if message is in our local channel or in our own channel
-              const currChannel = m.channel.toLowerCase() === this.username.toLowerCase();
-              const myChannel   = m.channel.toLowerCase() === this.page.toLowerCase();
+              const currChannel = this.$utils.normalizedCompare( m.channel, this.username );
+              const myChannel   = this.$utils.normalizedCompare( m.channel, this.page );
 
               // if the message is NOT in the current channel AND NOT in our channel
               // then it should be filtered
@@ -404,8 +404,9 @@
           // For Text to Speech
           if ( this.getUseTts ) {
             // TODO: m.lowercase might be unnecessary
-            const currentChat = m.channel.toLowerCase() === this.username.toLowerCase();
-            const myChat      = m.channel.toLowerCase() === this.page.toLowerCase();
+            // TODO: this code is identical to one of the filters
+            const currentChat = this.$utils.normalizedCompare( m.channel, this.username );
+            const myChat      = this.$utils.normalizedCompare( m.channel, this.page );
             // Say Message
             if ( currentChat || myChat ) this.speak( m.message, m.username );
           }
@@ -440,12 +441,12 @@
 
         // TODO: factor out these checks
         if ( m.channel
-          && m.channel.toLowerCase() !== this.page.toLowerCase() ) {
+          && this.$utils.normalizedCompare( m.channel, this.page ) ) {
           return;
         }
 
         // If alert is to us, make sound and read it
-        if ( m.channel.toLowerCase() === this.username.toLowerCase() ) {
+        if ( this.$utils.normalizedCompare( m.channel, this.username ) ) {
           // Play ping
           this.sound.play().then();
 
@@ -686,7 +687,7 @@
       },
 
       isChannelOwner () {
-        return this.page.toLowerCase() === this.username.toLowerCase();
+        return this.$utils.normalizedCompare( this.page, this.username );
       },
 
       page () {

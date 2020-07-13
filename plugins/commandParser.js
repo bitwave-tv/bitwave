@@ -106,7 +106,6 @@ const unignoreChannel = async ( who ) => {
 };
 
 const hideTrolls = async () => {
-  // TODO: add to store
   await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[ Chat.$states.hideTrolls ] );
   return [
     { forceFilter: el => !el.username.startsWith( 'troll:' ) }
@@ -114,7 +113,6 @@ const hideTrolls = async () => {
 };
 
 const cleanTts = async () => {
-  // TODO: add to store
   await _store_commit( Chat.$mutations.setCleanTts, !_store_state[ Chat.$states.cleanTts ] );
   return [
     { insertMessage: `Clean TTS: ${_store_state[ Chat.$states.cleanTts ]}` }
