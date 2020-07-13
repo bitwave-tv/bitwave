@@ -239,7 +239,7 @@
         bitwaveChat.socketError = () => { this.connecting = false; this.loading = true; };
 
         bitwaveChat.global = this.global;
-        bitwaveChat.init( this.page, this.getChatToken, this.chatServer );
+        bitwaveChat.init( this.page, this.userToken, this.chatServer );
 
         this.loading = false;
       },
