@@ -117,7 +117,7 @@ const cleanTts = async () => {
   // TODO: add to store
   await _store_commit( Chat.$mutations.setCleanTts, !_store_state[ Chat.$states.cleanTts ] );
   return [
-    { insertMessage: `Clean TTS: ${this.cleanTTS}` }
+    { insertMessage: `Clean TTS: ${_store_state[ Chat.$states.cleanTts ]}` }
   ];
 };
 

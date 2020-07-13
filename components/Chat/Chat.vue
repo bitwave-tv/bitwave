@@ -171,8 +171,6 @@
 
         sound: process.server ? null : new Audio(),
 
-        hideTrolls: false,
-        cleanTTS: false,
         ttsTimeout: null,
 
         statInterval: null,
@@ -473,7 +471,7 @@
             else return f( x );
           };
         };
-        //    allFilters = foldl (>>=) (return message) this.messageFilters
+        //    allFilters = foldl (>=>) id this.messageFilters
         const allFilters = this.messageFilters.reduce( maybeCompose, a => a );
         return !allFilters( message );
       },
@@ -566,7 +564,7 @@
         // Remove HTML related strings & links
         message = stripHTML( message );
 
-        if ( this.cleanTTS ) {
+        if ( this.cleanTts ) {
           if ( spamDetection( message ) ) {
             console.log( 'Spam detected, skipping TTS.' );
             return;
@@ -617,6 +615,8 @@
         addIgnoreList     : Chat.$mutations.addIgnoreList,
         removeIgnoreList  : Chat.$mutations.removeIgnoreList,
         setMessage        : Chat.$mutations.setMessage,
+        setHideTrolls     : Chat.$mutations.setHideTrolls,
+        setCleanTts       : Chat.$mutations.setCleanTts,
         appendChatMessage : Chat.$mutations.appendMessage,
         setPinnedMessage  : Chat.$mutations.setPinnedMessage,
         setChatBadge      : Chat.$mutations.setShowBadge,
@@ -658,7 +658,9 @@
         getUseTts         : Chat.$states.useTts,
         getUseTtsAlerts   : Chat.$states.useTtsAlerts,
         useIgnore         : Chat.$states.useIgnore,
+        getHideTrolls     : Chat.$states.hideTrolls,
         getTrollTts       : Chat.$states.trollTts,
+        getCleanTts       : Chat.$states.cleanTts,
         getTtsRate        : Chat.$states.ttsRate,
         getTtsReadUsername: Chat.$states.ttsReadUsername,
         getTtsTimeout     : Chat.$states.ttsTimeout,
@@ -710,7 +712,21 @@
           this.setIgnoreChannelList( val );
         },
         get () { return this.getIgnoreChannelList; }
-      }
+      },
+
+      hideTrolls: {
+        set ( val ) {
+          this.setHideTrolls( val );
+        },
+        get () { return this.getHideTrolls; }
+      },
+
+      cleanTts: {
+        set ( val ) {
+          this.setCleanTts( val );
+        },
+        get () { return this.getCleanTts; }
+      },
     },
 
     watch: {

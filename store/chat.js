@@ -15,6 +15,8 @@ const $states = {
   useTts          : 'USE_TTS',
   useTtsAlerts    : 'USE_TTS_ALERTS',
   useIgnore       : 'USE_IGNORE',
+  hideTrolls      : 'HIDE_TROLLS',
+  cleanTts        : 'CLEAN_TTS',
   trollTts        : 'TROLL_TTS',
   ttsRate         : 'TTS_RATE',
   ttsReadUsername : 'TTS_READ_USERNAME',
@@ -66,7 +68,9 @@ const $mutations = {
   setUseTts          : 'SET_USE_TTS',
   setUseTtsAlerts    : 'SET_USE_TTS_ALERTS',
   setUseIgnore       : 'SET_USE_IGNORE',
+  setHideTrolls      : 'SET_HIDE_TROLLS',
   setTrollTts        : 'SET_TROLL_TTS',
+  setCleanTts        : 'SET_CLEAN_TTS',
   setTtsRate         : 'SET_TTS_RATE',
   setTtsReadUsername : 'SET_TTS_READ_USERNAME',
   setTtsTimeout      : 'SET_TTS_TIMEOUT',
@@ -137,7 +141,9 @@ export const state = () => ({
   [$states.useTts]          : false,
   [$states.useTtsAlerts]    : true,
   [$states.useIgnore]       : true,
+  [$states.hideTrolls]      : false,
   [$states.trollTts]        : true,
+  [$states.cleanTts]        : false,
   [$states.ttsRate]         : 10,
   [$states.ttsReadUsername] : false,
   [$states.ttsTimeout]      : 0,
@@ -270,10 +276,22 @@ export const mutations = {
     saveToLocalStorage( { [$states.ignoreChannelList]: state[$states.ignoreChannelList] } );
   },
 
+  // Set troll messages visibility
+  [$mutations.setHideTrolls] ( state, data ) {
+    state[$states.hideTrolls] = data;
+    saveToLocalStorage( { [$states.hideTrolls]: data } );
+  },
+
   // Set TTS enabled for trolls
   [$mutations.setTrollTts] ( state, data ) {
     state[$states.trollTts] = data;
     saveToLocalStorage( { [$states.trollTts]: data } );
+  },
+
+  // Set TTS sanitization
+  [$mutations.setCleanTts] ( state, data ) {
+    state[$states.cleanTts] = data;
+    saveToLocalStorage( { [$states.cleanTts]: data } );
   },
 
   // Set TTS Rate
