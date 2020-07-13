@@ -196,11 +196,16 @@
         }
       },
 
-      executeAction ( a ) {
+      async executeAction ( a ) {
         if( a.insertMessage ) this.insertMessage( a.insertMessage );
         if( a.saveToDb ) this.saveToDb( ...a.saveToDb );
         if( a.forceFilter ) this.messages.filter( a.forceFilter );
         if( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
+        if( a.chatServer ) {
+          this.chatServer = chatServers.get( a.chatServer );
+          await this.disconnectChat();
+          await this.connectToChat();
+        }
       },
 
       async connectToChat () {
