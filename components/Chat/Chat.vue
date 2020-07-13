@@ -731,6 +731,7 @@
 
     watch: {
       async global ( val, old ) {
+        bitwaveChat.global = val;
         await this.hydrate();
       },
     },
