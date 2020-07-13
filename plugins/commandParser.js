@@ -1,4 +1,5 @@
 import { Chat } from '@/store/chat';
+import { VStore } from "@/store";
 
 let _store, _ga, _sentry,
     _store_state, _store_commit;
@@ -146,8 +147,8 @@ const functions = {
   async bugReport() {
     _sentry.withScope(
       scope => {
-        scope.setExtra( 'global_chat', this.global );
-        scope.setExtra( 'is_auth', this.isAuth );
+        scope.setExtra( 'global_chat', _store_state[ Chat.$states.global ] );
+        scope.setExtra( 'is_auth', _store.state[ VStore.namespace ][ VStore.$states.auth ] );
         scope.setUser( {
           username: this.username,
         } );
