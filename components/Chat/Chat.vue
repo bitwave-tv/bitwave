@@ -750,8 +750,7 @@
       },
     },
 
-    fetchOnServer: false,
-
+    /*fetchOnServer: false,
     async fetch () {
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
@@ -760,10 +759,12 @@
 
       // await this.hydrate();
       this.$nextTick( async () => await this.hydrate() );
-    },
+    },*/
 
     async mounted () {
       await this.connectToChat();
+
+      await this.hydrate();
 
       this.setRoom( this.page );
 
@@ -799,8 +800,6 @@
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
-
-      await this.hydrate();
 
       // Get channel chat configuration
       // this.loadChatConfig( this.page );
