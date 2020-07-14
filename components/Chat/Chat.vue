@@ -402,8 +402,10 @@
 
         // Scroll immediately after hydration
         if ( process.client ) {
-          if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
-          else console.warn( 'Failed to find chat container after hydration' );
+          this.$nextTick( () => {
+            if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
+            else console.warn( 'Failed to find chat container after hydration' );
+          });
         }
       },
 
