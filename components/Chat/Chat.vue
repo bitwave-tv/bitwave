@@ -750,7 +750,7 @@
       },
     },
 
-    fetchOnServer: false,
+    /*fetchOnServer: false,
 
     async fetch () {
       // Timeout to prevent SSR from locking up
@@ -760,9 +760,11 @@
       this.$nextTick( async () => {
         await this.hydrate();
       });
-    },
+    },*/
 
     async mounted () {
+      await this.hydrate();
+
       await this.connectToChat();
 
       this.setRoom( this.page );
