@@ -750,21 +750,19 @@
       },
     },
 
-    /*fetchOnServer: false,
+    fetchOnServer: false,
 
     async fetch () {
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
       // TODO: timeout
-      this.$nextTick( async () => {
-        await this.hydrate();
-      });
-    },*/
+
+      // await this.hydrate();
+      this.$nextTick( async () => await this.hydrate() );
+    },
 
     async mounted () {
-      await this.hydrate();
-
       await this.connectToChat();
 
       this.setRoom( this.page );
@@ -802,6 +800,8 @@
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
 
+      await this.hydrate();
+
       // Get channel chat configuration
       // this.loadChatConfig( this.page );
     },
@@ -815,6 +815,7 @@
 
     destroyed() {
       // TODO: might need a bitwaveChat.disconnect() here
+      bitwaveChat.disconnect();
     }
   }
 </script>
