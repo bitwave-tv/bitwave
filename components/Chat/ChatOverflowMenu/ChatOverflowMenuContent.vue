@@ -64,7 +64,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'ChatOverflowMenu',
+    name: 'ChatOverflowMenuContent',
 
     props: {
       channel: { type: String },
