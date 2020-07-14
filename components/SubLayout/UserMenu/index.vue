@@ -38,12 +38,12 @@
           </v-btn>
         </template>
 
-        <user-menu />
+        <lazy-user-menu-content />
       </v-menu>
     </div>
 
     <div
-      v-if="!isAuth"
+      v-else
     >
       <v-btn
         color="primary"
@@ -58,7 +58,7 @@
         v-model="showLogin"
         width="500"
       >
-        <login-dialog @close="showLogin = false"/>
+        <lazy-login-dialog @close="showLogin = false"/>
     </v-dialog>
   </div>
 
@@ -66,19 +66,11 @@
 </template>
 
 <script>
-  const UserMenu = async () => await import( '~/components/SubLayout/UserMenu/UserMenu' );
-  const LoginDialog = async () => await import( '~/components/LoginDialog' );
-
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
   export default {
     name: 'UserMenuButton',
-
-    components: {
-      UserMenu,
-      LoginDialog,
-    },
 
     data() {
       return {

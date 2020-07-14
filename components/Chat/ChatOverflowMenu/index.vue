@@ -19,30 +19,16 @@
     </template>
 
     <!-- Chat Overflow Menu -->
-    <chat-overflow-menu :channel="page"/>
+    <lazy-chat-overflow-menu-content :channel="page"/>
   </v-menu>
 </template>
 
 <script>
-const ChatOverflowMenu = async () => await import ( '@/components/Chat/ChatOverflowMenu/ChatOverflowMenu' );
-
   export default {
     name: 'ChatOverflowMenuButton',
-
-    components: {
-      ChatOverflowMenu,
-    },
 
     props: {
       page: { type: String },
     },
-
-    data () {
-      return {};
-    },
-
-    methods: {},
-
-    computed: {},
   };
 </script>

@@ -133,7 +133,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'UserMenu',
+    name: 'UserMenuContent',
 
     components: {
       BraintreeDropIn,
