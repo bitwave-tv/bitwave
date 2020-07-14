@@ -52,10 +52,14 @@
         </div>
 
         <!-- Chat Admin Menu -->
-        <chat-admin-menu />
+        <chat-admin-menu
+          class="mr-2"
+        />
 
         <!-- Chat Overflow Menu -->
-        <chat-overflow-menu :page="page" />
+        <chat-overflow-menu
+          :page="page"
+        />
 
       </div>
     </v-sheet>

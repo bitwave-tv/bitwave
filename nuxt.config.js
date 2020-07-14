@@ -5,6 +5,8 @@ const pkg = require('./package');
 module.exports = {
   mode: 'universal',
 
+  components: true,
+
   /*
   ** Environment variables
   */
@@ -357,7 +359,7 @@ module.exports = {
 
     // crossorigin: true,
 
-    extractCSS: true,
+    // extractCSS: true,
 
     // parallel: process.env.APP_DEBUG === 'true',
 

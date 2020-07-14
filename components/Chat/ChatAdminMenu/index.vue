@@ -21,7 +21,9 @@
     </template>
 
     <!-- Chat Admin Menu -->
-    <chat-admin-menu @close="adminActionsMenu = false" />
+    <chat-admin-menu-alerts
+      @close="adminActionsMenu = false"
+    />
   </v-menu>
 </template>
 
@@ -29,14 +31,14 @@
 import { mapGetters } from 'vuex';
 import { VStore } from '@/store';
 
-const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
+// const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
 
   export default {
     name: 'ChatAdminMenuButton',
 
-    components: {
+    /*components: {
       ChatAdminMenu,
-    },
+    },*/
 
     props: {},
 

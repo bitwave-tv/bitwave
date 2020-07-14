@@ -174,7 +174,7 @@
   import { auth } from '@/plugins/firebase';
 
   export default {
-    name: 'ChatAdminMenu',
+    name: 'ChatAdminMenuAlerts',
 
     data () {
       return {
