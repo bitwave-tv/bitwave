@@ -43,7 +43,7 @@
     </div>
 
     <div
-      v-if="!isAuth"
+      v-else
     >
       <v-btn
         color="primary"

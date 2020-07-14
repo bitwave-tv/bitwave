@@ -24,20 +24,11 @@
 </template>
 
 <script>
-
   export default {
     name: 'ChatOverflowMenuButton',
 
     props: {
       page: { type: String },
     },
-
-    data () {
-      return {};
-    },
-
-    methods: {},
-
-    computed: {},
   };
 </script>
