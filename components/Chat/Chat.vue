@@ -197,11 +197,11 @@
       },
 
       async executeAction ( a ) {
-        if( a.insertMessage ) this.insertMessage( a.insertMessage );
-        if( a.saveToDb ) this.saveToDb( ...a.saveToDb );
-        if( a.forceFilter ) this.messages.filter( a.forceFilter );
-        if( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
-        if( a.chatServer ) {
+        if ( a.insertMessage ) await this.insertMessage( a.insertMessage );
+        if ( a.saveToDb ) this.saveToDb( ...a.saveToDb );
+        if ( a.forceFilter ) this.messages.filter( a.forceFilter );
+        if ( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
+        if ( a.chatServer ) {
           this.chatServer = chatServers.get( a.chatServer );
           await this.disconnectChat();
           await this.connectToChat();
@@ -373,6 +373,7 @@
       },
 
       async getRecaptchaToken ( action ) {
+        // TODO: replace with hcpatcha
         return null;
         try {
           await this.$recaptcha.init();
@@ -399,13 +400,10 @@
           return;
         }
 
-        // TODO: maybe unnecessary
-        // Scroll after hydration
+        // Scroll immediately after hydration
         if ( process.client ) {
-          this.$nextTick( async () => {
-            if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
-            else console.warn( 'Failed to find chat container after hydration' );
-          } );
+          if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
+          else console.warn( 'Failed to find chat container after hydration' );
         }
       },
 
@@ -470,7 +468,6 @@
           // Play ping
           this.sound.play().then();
 
-          // TODO: getUseTtsAlerts has no UI, I think
           // Say Message
           if ( this.getUseTtsAlerts ) this.speak( m.message, m.username );
         }
@@ -574,6 +571,7 @@
       },
 
       speak ( message, username ) {
+        // TODO: remove from speak function. Speak should JUST do TTS, no filter logic
         if ( this.ignoreList.find( user => user === username ) ) return; // Don't read ignored users
         if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return; // disables troll TTS
 
@@ -642,15 +640,15 @@
       }),
 
       ...mapActions ({
-        updateViewers: VStore.$actions.updateViewers,
+        updateViewers : VStore.$actions.updateViewers,
       }),
 
       ...mapActions ( Chat.namespace, {
-        loadSettings : Chat.$actions.loadSettings,
-        initChat : Chat.$actions.init,
-        logoutChat : Chat.$actions.logout,
-        updateChatToken : Chat.$actions.updateChatToken,
-        exchangeIdTokenChatToken: Chat.$actions.exchangeIdTokenChatToken,
+        loadSettings             : Chat.$actions.loadSettings,
+        initChat                 : Chat.$actions.init,
+        logoutChat               : Chat.$actions.logout,
+        updateChatToken          : Chat.$actions.updateChatToken,
+        exchangeIdTokenChatToken : Chat.$actions.exchangeIdTokenChatToken,
       }),
 
       ...mapActions ( ChatConfig.namespace, {
@@ -662,9 +660,9 @@
 
     computed: {
       ...mapGetters({
-        isAuth       : VStore.$getters.isAuth,
-        user         : VStore.$getters.getUser,
-        _username    : VStore.$getters.getUsername,
+        isAuth          : VStore.$getters.isAuth,
+        user            : VStore.$getters.getUser,
+        _username       : VStore.$getters.getUsername,
         getChannelViews : VStore.$getters.getChannelViews,
       }),
 
@@ -757,6 +755,7 @@
     async fetch () {
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+
       // TODO: timeout
       await this.hydrate();
     },
