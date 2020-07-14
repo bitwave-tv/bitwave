@@ -410,7 +410,6 @@
       },
 
       async rcvMessageBulk ( messages ) {
-        console.log(messages, typeof messages);
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
@@ -434,7 +433,6 @@
           }
 
           m.type = 'message';
-          console.log(m);
 
           // Add message to list
           this.messages.push( Object.freeze( m ) );
