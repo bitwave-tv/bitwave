@@ -558,7 +558,7 @@
         const actions = await this.$chatCommandParser.parseOne( msg.message );
         actions?.forEach( a => this.executeAction( a ) );
 
-        if( !actions || actions.length === 0 ) bitwaveChat.sendMessage( msg );
+        if( !actions ) bitwaveChat.sendMessage( msg );
       },
 
       async insertMessage ( message, color ) {

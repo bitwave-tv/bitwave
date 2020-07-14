@@ -206,7 +206,7 @@ const export_obj = {
       return await command( ...tokens );
     }
 
-    return [];
+    return undefined;
   },
 
 };
