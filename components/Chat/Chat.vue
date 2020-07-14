@@ -186,6 +186,8 @@
 
         tickPeriod: 3,
         userStats: new UserStats( this.tickPeriod ),
+
+        hydrated: false,
       }
     },
 
@@ -402,8 +404,10 @@
 
         // Scroll immediately after hydration
         if ( process.client ) {
-          if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
-          else console.warn( 'Failed to find chat container after hydration' );
+          this.$nextTick( () => {
+            if ( this.$refs['chatmessages'] ) this.$refs['chatmessages'].jumpToBottom();
+            else console.warn( 'Failed to find chat container after hydration' );
+          });
         }
       },
 
@@ -418,10 +422,10 @@
           m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
 
           // Notification Sounds
-          if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
+          if ( this.notify && this.hydrated ) if ( pattern.test( m.message ) ) this.sound.play().then();
 
           // For Text to Speech
-          if ( this.getUseTts ) {
+          if ( this.getUseTts && this.hydrated ) {
             // TODO: m.lowercase might be unnecessary
             // TODO: this code is identical to one of the filters
             const currentChat = this.$utils.normalizedCompare( m.channel, this.username );
@@ -436,10 +440,10 @@
           this.messages.push( Object.freeze( m ) );
 
           // Track message count
-          if ( this.statInterval ) this.newMessageCount++;
+          if ( this.statInterval && this.hydrated ) this.newMessageCount++;
         });
 
-        if ( !this.$refs['chatmessages'].showFAB ) {
+        if ( !this.$refs['chatmessages'].showFAB && this.hydrated ) {
           if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           // this.scrollToBottom();
           this.$nextTick( () => this.scrollToBottom() );
@@ -751,21 +755,20 @@
     },
 
     /*fetchOnServer: false,
-
     async fetch () {
       // Timeout to prevent SSR from locking up
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
       // TODO: timeout
-      this.$nextTick( async () => {
-        await this.hydrate();
-      });
+
+      // await this.hydrate();
+      this.$nextTick( async () => await this.hydrate() );
     },*/
 
     async mounted () {
-      await this.hydrate();
-
       await this.connectToChat();
+      await this.hydrate();
+      this.hydrated = true;
 
       this.setRoom( this.page );
 
@@ -815,6 +818,7 @@
 
     destroyed() {
       // TODO: might need a bitwaveChat.disconnect() here
+      bitwaveChat.disconnect();
     }
   }
 </script>
