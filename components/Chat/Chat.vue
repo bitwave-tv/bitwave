@@ -387,7 +387,7 @@
       async hydrate () {
         this.messages = [];
 
-        const success = bitwaveChat.hydrate();
+        const success = await bitwaveChat.hydrate();
         if( !success ) {
           this.$toast.error(
             'Error hydrating chat!',
@@ -757,7 +757,9 @@
       const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
       // TODO: timeout
-      await this.hydrate();
+      this.$nextTick( async () => {
+        await this.hydrate();
+      });
     },
 
     async mounted () {
