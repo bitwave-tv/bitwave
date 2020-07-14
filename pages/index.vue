@@ -69,7 +69,7 @@
           <v-lazy
             :min-height="200"
           >
-            <trending-replays
+            <lazy-trending-replays
               :limit="6"
               :blur-nsfw="blurNSFW"
               :cols="12"
@@ -99,7 +99,7 @@
           <v-lazy
             :min-height="200"
           >
-            <replay-grid
+            <lazy-replay-grid
               :limit="6"
               :blur-nsfw="blurNSFW"
               :cols="12"
@@ -123,17 +123,17 @@
 </template>
 
 <script>
-  import StreamGrid from '@/components/StreamGrid'
-  import BannerVideo from '@/components/Homepage/BannerVideo';
-  import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
-  import AboutUs from '@/components/Homepage/AboutUs';
+  // import StreamGrid from '@/components/StreamGrid'
+  // import BannerVideo from '@/components/Homepage/BannerVideo';
+  // import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
+  // import SimpleFooter from '@/components/SubLayout/SimpleFooter';
+  // import AboutUs from '@/components/Homepage/AboutUs';
+
+  // const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
+  // const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
 
   import { mapState, mapMutations, mapActions } from 'vuex';
   import { VStore } from "@/store";
-
-  const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
-  const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
 
   export default {
     scrollToTop: true,
@@ -158,7 +158,7 @@
       }
     },
 
-    components: {
+    /*components: {
       TrendingReplays,
       ReplayGrid,
       AboutUs,
@@ -166,7 +166,7 @@
       MessageOfTheDay,
       BannerVideo,
       StreamGrid,
-    },
+    },*/
 
     data () {
       return {
