@@ -18,11 +18,12 @@
       <!-- Chat Banner -->
       <v-slide-x-reverse-transition>
         <v-sheet
-          v-if="connecting && !loading"
+          v-if="connecting"
           color="error"
           elevation="0"
           tile
           class="flex-grow-1"
+          :style="{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 1, }"
         >
           <div class="px-3 py-2">connecting...</div>
           <v-progress-linear
@@ -132,7 +133,10 @@
 
         // [ Message -> Maybe Message ]
         messageFilters: [
-          m => { if ( !this.useIgnore || !this.ignoreList.includes( m.username.toLowerCase() ) ) return m; },
+          m => {
+            // Remove ignored users
+            if ( !this.useIgnore || !this.ignoreList.includes( m.username.toLowerCase() ) ) return m;
+          },
           m => {
             // Do not ignore a channel we are in
             const ignoreChannellist = this.ignoreChannelList.slice();
@@ -144,7 +148,10 @@
             // Remove ignored channel messages
             if ( !ignoreChannellist.includes( m.channel.toLowerCase() ) ) return m;
           },
-          m => { if ( !this.hideTrolls || !m.username.startsWith( 'troll:' ) ) return m; },
+          m => {
+            // Remove trolls
+            if ( !this.hideTrolls || !m.username.startsWith( 'troll:' ) ) return m;
+          },
           m => {
           const isLocal = !this.global && !this.forceGlobal;
             if( isLocal ) {
@@ -186,8 +193,6 @@
 
         tickPeriod: 3,
         userStats: new UserStats( this.tickPeriod ),
-
-        hydrated: false,
       }
     },
 
@@ -233,6 +238,7 @@
           this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
         }
 
+        bitwaveChat.onHydrate = this.onHydration;
         bitwaveChat.rcvMessageBulk = this.rcvMessageBulk;
         bitwaveChat.updateUsernames = this.updateViewers;
         bitwaveChat.alert = this.addAlert;
@@ -256,7 +262,7 @@
 
       async scrollToBottom ( force ) {
         if ( this.$refs['chatmessages'] )
-          this.$refs['chatmessages'].scrollToBottom( force );
+          await this.$refs['chatmessages'].scrollToBottom( force );
         else
           console.warn('Could not find scroll container for chat.');
       },
@@ -387,6 +393,10 @@
       },
 
       async hydrate () {
+        // This can be removed if we put it in onHydration()
+        // but placing it here forces chat to clear when toggling
+        // Local vs. Global which looks nicer than having
+        // Global and Local animated and mix when leaving local
         this.messages = [];
 
         const success = await bitwaveChat.hydrate();
@@ -411,6 +421,30 @@
         }
       },
 
+      async onHydration ( messages ) {
+        this.messages = [];
+        messages.forEach( m => {
+          // Filter messages
+          if ( this.filterMessage( m ) ) return;
+
+          const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+
+          // Add username highlighting
+          m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
+
+          m.type = 'message';
+
+          // Add message to list
+          this.messages.push( Object.freeze( m ) );
+        });
+
+        /*if ( !this.$refs['chatmessages'].showFAB ) {
+          if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
+          // this.scrollToBottom();
+          this.$nextTick( () => this.scrollToBottom() );
+        }*/
+      },
+
       async rcvMessageBulk ( messages ) {
         messages.forEach( m => {
           // Filter messages
@@ -422,10 +456,10 @@
           m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
 
           // Notification Sounds
-          if ( this.notify && this.hydrated ) if ( pattern.test( m.message ) ) this.sound.play().then();
+          if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
 
           // For Text to Speech
-          if ( this.getUseTts && this.hydrated ) {
+          if ( this.getUseTts ) {
             // TODO: m.lowercase might be unnecessary
             // TODO: this code is identical to one of the filters
             const currentChat = this.$utils.normalizedCompare( m.channel, this.username );
@@ -440,10 +474,10 @@
           this.messages.push( Object.freeze( m ) );
 
           // Track message count
-          if ( this.statInterval && this.hydrated ) this.newMessageCount++;
+          if ( this.statInterval ) this.newMessageCount++;
         });
 
-        if ( !this.$refs['chatmessages'].showFAB && this.hydrated ) {
+        if ( !this.$refs['chatmessages'].showFAB ) {
           if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           // this.scrollToBottom();
           this.$nextTick( () => this.scrollToBottom() );
@@ -768,7 +802,6 @@
     async mounted () {
       await this.connectToChat();
       await this.hydrate();
-      this.hydrated = true;
 
       this.setRoom( this.page );
 
