@@ -54,7 +54,7 @@ $c6: #113a5a;*/
 $rgbSpeed: 8s;
 
 .rgb-text {
-  animation: rainbow $rgbSpeed ease infinite;
+  animation: rainbow $rgbSpeed linear infinite;
   background-image: repeating-linear-gradient(45deg, red, orange, yellow, #00ff11, blue, #00ff11, yellow, orange, red );
   background-size: 1000% 1000%;
   background-clip: text;
