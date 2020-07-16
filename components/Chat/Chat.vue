@@ -153,7 +153,7 @@
             if ( !this.hideTrolls || !m.username.startsWith( 'troll:' ) ) return m;
           },
           m => {
-          const isLocal = !this.global && !this.forceGlobal;
+            const isLocal = !this.global && !this.forceGlobal;
             if( isLocal ) {
               // Include mentions
               // If enabled, allow cross-channel username tagging in local
@@ -464,8 +464,16 @@
             // TODO: this code is identical to one of the filters
             const currentChat = this.$utils.normalizedCompare( m.channel, this.username );
             const myChat      = this.$utils.normalizedCompare( m.channel, this.page );
+
             // Say Message
-            if ( currentChat || myChat ) this.speak( m.message, m.username );
+            if ( currentChat || myChat ) {
+              const useTts = ( username ) => {
+                if ( this.ignoreList.find( user => user === m.username ) ) return false; // Don't read ignored users
+                if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return false; // disables troll TTS
+                return true;
+              }
+              if ( useTts( m.username ) ) this.speak( m.message, m.username );
+            }
           }
 
           m.type = 'message';
@@ -609,10 +617,6 @@
       },
 
       speak ( message, username ) {
-        // TODO: remove from speak function. Speak should JUST do TTS, no filter logic
-        if ( this.ignoreList.find( user => user === username ) ) return; // Don't read ignored users
-        if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return; // disables troll TTS
-
         // Remove HTML related strings & links
         message = stripHTML( message );
 
