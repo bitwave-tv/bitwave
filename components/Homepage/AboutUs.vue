@@ -19,16 +19,22 @@
     </v-card-title>
 
     <v-card-text>
-      <div class="d-flex mb-2 align-center">
-        <v-btn
-          small
-          outlined
-          color="accent"
-          href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
-          target="_blank"
-          class="my-1 mr-2"
-        >Donate</v-btn>
-        Please consider donating to help us cover operating costs, and support freedom of expression.
+      <div class="mb-2">
+        <div class="d-flex align-center">
+          <v-btn
+            small
+            outlined
+            color="accent"
+            href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAN2HKQ9CTYZY&source=url"
+            target="_blank"
+            class="my-1 mr-2"
+          >Donate</v-btn>
+          Please consider donating to help us cover operating costs, and support freedom of expression.
+        </div>
+        <div>
+          BTC: 36D7De9cLmLDyoFSdhMwNZjn4WyCXg7aNj<br>
+          ETH: 0xAEbF3f100123AD2F967A5af61B4dA152080D6027
+        </div>
       </div>
 
       <div class="mb-1">A straight forward streaming service built entirely on open source software.</div>

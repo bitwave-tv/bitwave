@@ -16,22 +16,25 @@
     <add-ons style="position: relative;">
 
       <!-- Chat Banner -->
-      <v-slide-x-reverse-transition>
-        <v-sheet
-          v-if="connecting"
-          color="error"
-          elevation="0"
-          tile
-          class="flex-grow-1"
-          :style="{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 1, }"
-        >
-          <div class="px-3 py-2">connecting...</div>
-          <v-progress-linear
-            color="error darken-3"
-            indeterminate
-          />
-        </v-sheet>
-      </v-slide-x-reverse-transition>
+      <div
+        :style="{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 1, }"
+      >
+        <v-slide-x-reverse-transition>
+          <v-sheet
+            v-if="connecting"
+            color="error"
+            elevation="0"
+            tile
+            class="flex-grow-1"
+          >
+            <div class="px-3 py-2">connecting...</div>
+            <v-progress-linear
+              color="error darken-3"
+              indeterminate
+            />
+          </v-sheet>
+        </v-slide-x-reverse-transition>
+      </div>
 
     </add-ons>
 
@@ -472,7 +475,10 @@
                 if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return false; // disables troll TTS
                 return true;
               }
-              if ( useTts( m.username ) ) this.speak( m.message, m.username );
+              if ( useTts( m.username ) ) {
+                console.log( 'tts' );
+                this.speak( m.message, m.username );
+              }
             }
           }
 
