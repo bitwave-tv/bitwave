@@ -301,7 +301,7 @@
 
             await this.disconnectChat();
             this.userToken = tokenTroll;
-            await this.connectChat();
+            await this.connectToChat();
           }
         }
       },
