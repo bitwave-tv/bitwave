@@ -250,7 +250,8 @@
         bitwaveChat.socketError = () => { this.connecting = false; this.loading = true; };
 
         bitwaveChat.global = this.global;
-        bitwaveChat.init( this.page, this.userToken, this.chatServer );
+
+        await bitwaveChat.init( this.page, this.userToken, this.chatServer );
 
         this.loading = false;
       },
@@ -426,6 +427,10 @@
 
       async onHydration ( messages ) {
         this.messages = [];
+
+        // Return early if we are missing data
+        if ( !messages ) return;
+
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
@@ -440,15 +445,12 @@
           // Add message to list
           this.messages.push( Object.freeze( m ) );
         });
-
-        /*if ( !this.$refs['chatmessages'].showFAB ) {
-          if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
-          // this.scrollToBottom();
-          this.$nextTick( () => this.scrollToBottom() );
-        }*/
       },
 
       async rcvMessageBulk ( messages ) {
+        // Return early if we are missing data
+        if ( !messages ) return;
+
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
@@ -465,6 +467,7 @@
           if ( this.getUseTts ) {
             // TODO: m.lowercase might be unnecessary
             // TODO: this code is identical to one of the filters
+            // Dispatch TODO: Is it actually identical to one of the filters? I'm not sure that's true
             const currentChat = this.$utils.normalizedCompare( m.channel, this.username );
             const myChat      = this.$utils.normalizedCompare( m.channel, this.page );
 
@@ -510,8 +513,9 @@
         console.log( `New alert:`, m );
 
         // TODO: factor out these checks
-        if ( m.channel
-          && this.$utils.normalizedCompare( m.channel, this.page ) ) {
+
+        // Only show local alerts
+        if ( m.channel && !this.$utils.normalizedCompare( m.channel, this.page ) ) {
           return;
         }
 
@@ -655,9 +659,9 @@
           voice.text = `${username} says: ` + voice.text;
         }
 
-        voice.onend = e => {
+        voice.onend = ( evt ) => {
           if ( this.ttsTimeout ) clearTimeout( this.ttsTimeout );
-          console.log( `TTS Finished in ${(e.elapsedTime / 1000).toFixed(1)} seconds.`, e );
+          console.log( `TTS Finished in ${(evt.elapsedTime / 1000).toFixed(1)} seconds.`, evt );
         };
 
         speechSynthesis.speak( voice );
