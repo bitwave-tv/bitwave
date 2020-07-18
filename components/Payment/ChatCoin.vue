@@ -52,14 +52,7 @@
           </v-card-title>
 
           <v-card-text>
-            <checkout
-              :productId="productId"
-              :amount="amount"
-              :token="token"
-              :paypal="true"
-              :url="url"
-              :btn-class="'v-btn theme--light yellow'"
-            />
+            <coin-checkout />
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -179,7 +172,7 @@
 </template>
 
 <script>
-  const Checkout = async () => await import ( '@/components/Payment/Checkout' );
+  const CoinCheckout = async () => await import ( '@/components/Payment/Stripe/CoinCheckout' );
 
   import { mapState, mapGetters } from 'vuex';
   import { VStore } from '@/store';
@@ -189,7 +182,7 @@
     name: 'ChatCoin',
 
     components: {
-      Checkout,
+      CoinCheckout,
     },
 
     data () {
