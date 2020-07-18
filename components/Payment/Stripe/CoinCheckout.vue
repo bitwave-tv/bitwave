@@ -61,14 +61,14 @@
   const STRIPE_CHECKOUT_URL = 'https://js.stripe.com';
   const loadStripeCheckout = ( pk, version = 'v3' ) => {
     return new Promise( resolve => {
-      if (window.Stripe) {
+      if ( window.Stripe ) {
         resolve( window.Stripe );
         return;
       }
-      let e = document.createElement('script');
+      const e = document.createElement( 'script' );
       e.src = `${STRIPE_CHECKOUT_URL}/${version}`;
       e.type='text/javascript';
-      document.getElementsByTagName('head')[0].appendChild(e);
+      document.getElementsByTagName('head')[0].appendChild( e );
       e.addEventListener( 'load', () => resolve( window.Stripe ) );
     });
   };
@@ -132,7 +132,7 @@
 
     computed: {
       form () {
-        return document.getElementById('payment-form');
+        return document.getElementById( 'payment-form' );
       },
 
       style () {
@@ -162,7 +162,7 @@
     async mounted () {
       const options = {};
 
-      const Stripe = ( await loadStripeCheckout( this.stripePk, 'v3' ) );
+      const Stripe = await loadStripeCheckout( this.stripePk, 'v3' );
       this.stripe = Stripe( this.stripePk, options );
 
       this.elements = this.stripe.elements();
@@ -172,8 +172,8 @@
       this.card.mount( '#card-element' );
 
       this.card.addEventListener( 'change', ({ error }) => {
-        const displayError = document.getElementById('card-errors');
-        if (error) {
+        const displayError = document.getElementById( 'card-errors' );
+        if ( error ) {
           displayError.textContent = error.message;
           return;
         }
@@ -204,10 +204,10 @@
           });
 
           if ( result.error ) {
-            const errorElement = document.getElementById('card-errors');
+            const errorElement = document.getElementById( 'card-errors' );
             errorElement.textContent = result.error.message;
             console.error(result.error);
-            this.$emit('error', result.error);
+            this.$emit( 'error', result.error );
             return;
           }
 

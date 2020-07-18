@@ -31,7 +31,7 @@
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
-  const intentUrl = `https://api.bitwave.tv/v1/payments/intent/color`;
+  const intentUrl = `https://api.bitwave.tv/v1/payments/intent`;
   const product = 'username-color'
 
   const STRIPE_CHECKOUT_URL = 'https://js.stripe.com';
@@ -139,7 +139,7 @@
     async mounted () {
       const options = {};
 
-      const Stripe = ( await loadStripeCheckout( this.stripePk, 'v3' ) );
+      const Stripe = await loadStripeCheckout( this.stripePk, 'v3' );
       this.stripe = Stripe( this.stripePk, options );
 
       this.elements = this.stripe.elements();
