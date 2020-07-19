@@ -498,7 +498,8 @@
         });
 
         if ( !this.$refs['chatmessages'].showFAB ) {
-          if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
+          // if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
+          if ( this.messages.length > this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           // this.scrollToBottom();
           this.$nextTick( () => this.scrollToBottom() );
         }
