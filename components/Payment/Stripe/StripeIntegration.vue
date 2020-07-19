@@ -137,10 +137,7 @@
     },
 
     async mounted () {
-      const options = {};
-
-      const Stripe = await loadStripeCheckout( this.stripePk, 'v3' );
-      this.stripe = Stripe( this.stripePk, options );
+      this.stripe = this.$stripe.import();
 
       this.elements = this.stripe.elements();
 
@@ -174,7 +171,7 @@
           const paymentIntentResult = await this.getPaymentIntent();
 
           // const { token, error } = await this.stripe.createToken(data);
-          const result = await this.stripe.confirmCardPayment(paymentIntentResult.clientSecret, {
+          const result = await this.stripe.confirmCardPayment( paymentIntentResult.clientSecret, {
             payment_method: {
               card: this.card,
             },

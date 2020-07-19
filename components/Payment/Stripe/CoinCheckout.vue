@@ -8,12 +8,12 @@
     <div
       v-show="!success"
     >
-      <form id="payment-form">
-        <slot name="card-element">
-          <div id="card-element"></div>
+      <form id="payment-form-cc">
+        <slot name="card-element-cc">
+          <div id="card-element-cc"></div>
         </slot>
-        <slot name="card-errors">
-          <div id="card-errors" role="alert"></div>
+        <slot name="card-errors-cc">
+          <div id="card-errors-cc" role="alert"></div>
         </slot>
         <button ref="submitButtonRef" type="submit"></button>
       </form>
@@ -132,7 +132,7 @@
 
     computed: {
       form () {
-        return document.getElementById( 'payment-form' );
+        return document.getElementById( 'payment-form-cc' );
       },
 
       style () {
@@ -160,19 +160,16 @@
     },
 
     async mounted () {
-      const options = {};
-
-      const Stripe = await loadStripeCheckout( this.stripePk, 'v3' );
-      this.stripe = Stripe( this.stripePk, options );
+      this.stripe = this.$stripe.import();
 
       this.elements = this.stripe.elements();
 
       this.card = this.elements.create( 'card', { style: this.style } );
 
-      this.card.mount( '#card-element' );
+      this.card.mount( '#card-element-cc' );
 
       this.card.addEventListener( 'change', ({ error }) => {
-        const displayError = document.getElementById( 'card-errors' );
+        const displayError = document.getElementById( 'card-errors-cc' );
         if ( error ) {
           displayError.textContent = error.message;
           return;

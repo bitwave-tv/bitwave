@@ -262,6 +262,7 @@ module.exports = {
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
     [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
+    [ 'nuxt-stripe-module', { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } ],
   ],
 
   /*
