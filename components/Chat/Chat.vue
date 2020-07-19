@@ -375,6 +375,9 @@
                   token : chatToken,
                   page  : this.page,
                 };
+                // Reconnect to chat
+                // prevents duplicating connection
+                await this.disconnectChat();
                 await this.connectToChat( tokenUser ); // Connect to chat server
               }
             };
