@@ -17,10 +17,9 @@
       >
       <img
         v-else
-        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
+        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png"
         alt="hazmat suit bitwave troll"
         :style="{ background: props.color }"
-        crossorigin
       >
     </div>
 
