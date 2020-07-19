@@ -43,7 +43,7 @@
                   <v-btn
                     v-on="{ ...tooltip, /*focus: () => true, ...menu,*/ }"
                     small
-                    color="primary black--text"
+                    color="primary darken-4 black--text"
                     class="mr-2"
                   >POLL</v-btn>
                 </template>

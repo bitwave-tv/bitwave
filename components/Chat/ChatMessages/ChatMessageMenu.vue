@@ -105,6 +105,7 @@
               v-if="isChannelOwner"
               color="error"
               class="mr-2"
+              outlined
               small
               @click="banUser"
             >Mute</v-btn>
@@ -112,6 +113,7 @@
               v-if="isChannelOwner"
               color="success"
               class="mr-2"
+              outlined
               small
               @click="unbanUser"
             >Un-Mute</v-btn>
