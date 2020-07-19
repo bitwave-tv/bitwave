@@ -57,6 +57,42 @@
         </v-card>
       </v-dialog>
 
+      <!-- Buy Username Color -->
+      <v-dialog
+        v-model="show"
+        width="500"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="mb-3"
+            color="primary"
+            v-on="on"
+            small
+            block
+            @click.stop="show = !show"
+          >
+            Buy Chat Color - $5
+          </v-btn>
+        </template>
+
+        <v-card colr="grey darken-4">
+          <!-- Title Bar -->
+          <v-sheet
+            tile
+            color="primary"
+            class="d-flex align-center justify-space-between pl-2"
+          >
+            <h5 class="ma-2 black--text title primary font-weight-medium">
+              $5 - Purchase chat color
+            </h5>
+          </v-sheet>
+
+          <div class="px-4 py-4">
+            <lazy-purchase-color />
+          </div>
+        </v-card>
+      </v-dialog>
+
       <!-- Coin Balance -->
       <v-alert
         color="white"

@@ -67,8 +67,6 @@
       }
     },
 
-    methods: {},
-
     computed: {
       url() {
         return `${this.server}/${this.endpoint}`;
