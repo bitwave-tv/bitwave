@@ -34,21 +34,6 @@
   const intentUrl = `https://api.bitwave.tv/v1/payments/intent`;
   const product = 'username-color'
 
-  const STRIPE_CHECKOUT_URL = 'https://js.stripe.com';
-  const loadStripeCheckout = ( pk, version = 'v3' ) => {
-    return new Promise( resolve => {
-      if (window.Stripe) {
-        resolve( window.Stripe );
-        return;
-      }
-      let e = document.createElement('script');
-      e.src = `${STRIPE_CHECKOUT_URL}/${version}`;
-      e.type='text/javascript';
-      document.getElementsByTagName('head')[0].appendChild(e);
-      e.addEventListener( 'load', () => resolve( window.Stripe ) );
-    });
-  };
-
   export default {
     name: 'PurchaseColor',
 
@@ -146,8 +131,8 @@
       this.card.mount( '#card-element' );
 
       this.card.addEventListener( 'change', ({ error }) => {
-        const displayError = document.getElementById('card-errors');
-        if (error) {
+        const displayError = document.getElementById( 'card-errors' );
+        if ( error ) {
           displayError.textContent = error.message;
           return;
         }
@@ -170,7 +155,6 @@
 
           const paymentIntentResult = await this.getPaymentIntent();
 
-          // const { token, error } = await this.stripe.createToken(data);
           const result = await this.stripe.confirmCardPayment( paymentIntentResult.clientSecret, {
             payment_method: {
               card: this.card,
@@ -178,10 +162,10 @@
           });
 
           if ( result.error ) {
-            const errorElement = document.getElementById('card-errors');
+            const errorElement = document.getElementById( 'card-errors' );
             errorElement.textContent = result.error.message;
-            console.error(result.error);
-            this.$emit('error', result.error);
+            console.error( result.error );
+            this.$emit( 'error', result.error );
             return;
           }
 
@@ -189,8 +173,8 @@
 
           this.success = true;
           this.$emit( 'success', true );
-        } catch (error) {
-          console.error(error);
+        } catch ( error ) {
+          console.error( error );
           this.$emit( 'error', error );
         } finally {
           this.loading = false;

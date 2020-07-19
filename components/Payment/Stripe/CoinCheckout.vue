@@ -58,21 +58,6 @@
   const intentUrl = `https://api.bitwave.tv/v1/payments/intent`;
   // const product = 'coins-100';
 
-  const STRIPE_CHECKOUT_URL = 'https://js.stripe.com';
-  const loadStripeCheckout = ( pk, version = 'v3' ) => {
-    return new Promise( resolve => {
-      if ( window.Stripe ) {
-        resolve( window.Stripe );
-        return;
-      }
-      const e = document.createElement( 'script' );
-      e.src = `${STRIPE_CHECKOUT_URL}/${version}`;
-      e.type='text/javascript';
-      document.getElementsByTagName('head')[0].appendChild( e );
-      e.addEventListener( 'load', () => resolve( window.Stripe ) );
-    });
-  };
-
   export default {
     name: 'CoinCheckout',
 
@@ -193,7 +178,6 @@
 
           const paymentIntentResult = await this.getPaymentIntent();
 
-          // const { token, error } = await this.stripe.createToken(data);
           const result = await this.stripe.confirmCardPayment(paymentIntentResult.clientSecret, {
             payment_method: {
               card: this.card,
