@@ -207,7 +207,7 @@
         This will make it seems like streams are 'jumpy' or inconsistent, but will ensure
         that you are always watching the most recent stream.<br>
         Disabling this means streams will be <i>smoother</i>,but can sometimes fall up to
-        a full minute behind the live broadcast due to netowrk or hardware lag.<br>
+        a full minute behind the live broadcast due to network or hardware lag.<br>
         This setting defaults to <kbd>disabled</kbd> when you refresh the page.
       </div>
       <v-switch
