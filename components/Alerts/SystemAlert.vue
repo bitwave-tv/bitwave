@@ -7,7 +7,7 @@
   >
     <v-icon color="black" size="24">{{ icon || `warning` }}</v-icon>
 
-    <div class=" overline d-flex mx-2 text-truncate">
+    <div class="overline d-flex mx-2 text-truncate">
       <div
         :class="[ { marquee: scroll || needsScroll  }, textColor || 'black--text' ]"
         class="body-1	black--text font--weight-bold"
@@ -28,7 +28,7 @@
       x-small
       dark
     >
-      <v-icon color="white">close</v-icon>
+      <v-icon color="black">close</v-icon>
     </v-btn>
   </v-system-bar>
 </template>
@@ -37,21 +37,39 @@
   export default {
     name: 'SystemAlert',
 
-    props: { message: String, icon: String, color: String, textColor: String, scroll: Boolean },
+    props: {
+      message: String,
+      icon: String,
+      color: String,
+      textColor: String,
+      scroll: Boolean
+    },
 
     data () {
       return {
         alertMounted: false,
         marqueeDuration: '30s',
         needsScroll: false,
+        requestResize: false,
       }
     },
 
     methods: {
       onResize () {
-        this.$nextTick( () => {
+        if ( this.requestResize ) return;
+        this.requestResize = true;
+
+        // Throttle to half second updates, on RAF
+        setTimeout( () => {
+          requestAnimationFrame( () => {
+            this.updateProps();
+            this.requestResize = false;
+          });
+        }, 500 );
+
+        /*this.$nextTick( () => {
           this.updateProps();
-        });
+        });*/
       },
 
       updateProps () {
@@ -72,7 +90,7 @@
 <style lang="scss">
   .marquee {
     width: 100%;
-    max-width: 720px;
+    max-width: 1000px;
     white-space: nowrap;
     overflow: hidden;
     box-sizing: border-box;

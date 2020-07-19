@@ -93,7 +93,9 @@
         type: Boolean,
         default: true,
       },
-      badge: { type: String },
+      badge: {
+        type: String
+      },
       color: {},
       message: {
         type: String,
@@ -105,20 +107,23 @@
         type: String,
       },
       userStyling: {},
-      routePrefix: { type: String },
+      routePrefix: {
+        type: String
+      },
       channel: {
         type: String,
       },
-      showChannel: { type: Boolean },
+      showChannel: {
+        type: Boolean
+      },
       timestamp: {
         type: Object,
       },
       global: {
-        type: Boolean|undefined,
+        type: Boolean | undefined,
         required: false,
       }
     },
-
   }
 </script>
 
@@ -203,7 +208,7 @@
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.375rem;
       font-weight: 700;
     }
 

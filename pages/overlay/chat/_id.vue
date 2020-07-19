@@ -145,7 +145,7 @@
 
         this.overlay.showAvatars = this.overlay.hasOwnProperty( 'showAvatars' ) ? this.overlay.showAvatars : true;
 
-        console.log ( 'overlay config', this.overlay );
+        console.log ( 'overlay config:', this.overlay );
         this.connectChat();
       },
 
@@ -171,23 +171,22 @@
         // Timeout to prevent SSR from locking up
         const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
 
-        const getChatHydration = async ( channel ) => {
+        const getChatHydration = async ( channel, global ) => {
           try {
-            const global = this.global;
             if ( global === null ) return null;
             const { data } = await this.$axios.getSSR( `https://chat.bitwave.tv/v1/messages${ global ? '' : `/${channel}` }`, { timeout } );
             if ( data && data.success ) return data.data;
             return [];
           } catch ( error ) {
-            console.log( `Chat hydration request failed` );
+            console.error( `Chat hydration request failed` );
             console.error( error.message );
           }
           return null;
         };
 
         try {
-          const chatMessages = await getChatHydration( this.channel );
-          await this.hydrate( chatMessages );
+          const chatMessages = await getChatHydration( this.channel, this.global );
+          if ( chatMessages ) await this.hydrate( chatMessages );
         } catch ( error ) {
           console.log( error );
         }
@@ -207,7 +206,7 @@
 
         this.loaded = true;
 
-        console.log(`Loaded: ${this.loaded}`);
+        console.log( `Loaded: ${this.loaded}` );
 
         this.$nextTick( () =>
           this.scrollContainer.scroll({

@@ -20,7 +20,7 @@
 
     <v-card-text>
       <div class="mb-2">
-        <div class="d-flex align-center">
+        <div class="mb-2 d-flex align-center">
           <v-btn
             small
             outlined

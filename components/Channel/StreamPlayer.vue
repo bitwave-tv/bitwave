@@ -58,7 +58,7 @@
           plugins: { qualityLevels: {} },
           poster: this.poster,
           html5: {
-            hls: {
+            vhs: {
               overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
@@ -67,7 +67,7 @@
           },
           liveTracker: {
             trackingThreshold: 0,
-            liveTolerance: 5,
+            liveTolerance: 6,
           },
         });
 
@@ -160,7 +160,6 @@
 
       onVolumeChange () {
         try {
-
           localStorage.setItem( 'volume', this.player.volume() );
           localStorage.setItem( 'muted',  this.player.muted() );
         } catch ( error ) {

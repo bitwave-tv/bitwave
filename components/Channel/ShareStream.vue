@@ -102,7 +102,9 @@
     name: 'ShareStream',
 
     props: {
-      user: { type: String },
+      user: {
+        type: String
+      },
     },
 
     data() {

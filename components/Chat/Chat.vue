@@ -17,7 +17,13 @@
 
       <!-- Chat Banner -->
       <div
-        :style="{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 1, }"
+        :style="{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 1,
+        }"
       >
         <v-slide-x-reverse-transition>
           <v-sheet
@@ -29,7 +35,7 @@
           >
             <div class="px-3 py-2">connecting...</div>
             <v-progress-linear
-              color="error darken-3"
+              color="error darken-4"
               indeterminate
             />
           </v-sheet>
@@ -196,6 +202,8 @@
 
         tickPeriod: 3,
         userStats: new UserStats( this.tickPeriod ),
+
+        requestResize: false,
       }
     },
 
@@ -261,7 +269,18 @@
       },
 
       async onResize () {
-        await this.$nextTick( async () => await this.scrollToBottom( false ) );
+        if ( this.requestResize ) return;
+        this.requestResize = true;
+
+        // Throttle to half second updates, on RAF
+        setTimeout( () => {
+          requestAnimationFrame( async() => {
+            await this.scrollToBottom( false );
+            this.requestResize = false;
+          });
+        }, 500 );
+
+        // await this.$nextTick( async () => await this.scrollToBottom( false ) );
       },
 
       async scrollToBottom ( force ) {

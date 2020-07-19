@@ -409,7 +409,7 @@
 
             // Channel does not exist in database (404)
             if ( !streamDoc.exists ) {
-              console.error( `Database query did not find streamer!` );
+              console.error( `Database query did not find streamer!`, channel );
               return {
                 success: false,
                 error: { statusCode: 404, message: `Could not find channel '${channel}'.` },
@@ -519,8 +519,7 @@
           };
         }
 
-        // Should never occur
-        console.error( `Something is REALLY fucked up! This should never occur`, this );
+        // This should be unreachable
         return {
           success: false,
           error: { statusCode: 500, message: `This should never occur.` },
