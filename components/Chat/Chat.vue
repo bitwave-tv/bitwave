@@ -375,7 +375,7 @@
                   token : chatToken,
                   page  : this.page,
                 };
-                await this.connectChat( tokenUser ); // Connect to chat server
+                await this.connectToChat( tokenUser ); // Connect to chat server
               }
             };
             await getNewToken();
