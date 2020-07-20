@@ -16,7 +16,7 @@ const functions = {
       ];
     }
 
-    await _store_commit( Chat.$mutations.addIgnoreList, who );
+    await _store_commit( Chat.$mutations.addIgnoreList, who.toLowerCase() );
 
     // Analytics
     _ga.event( {
@@ -67,7 +67,7 @@ const functions = {
       ];
     }
 
-    await _store_commit( Chat.$mutations.addIgnoreChannelList, who );
+    await _store_commit( Chat.$mutations.addIgnoreChannelList, who.toLowerCase() );
 
     // Analytics
     _ga.event( {

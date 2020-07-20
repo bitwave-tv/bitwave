@@ -144,7 +144,8 @@
         messageFilters: [
           m => {
             // Remove ignored users
-            if ( !this.useIgnore || !this.ignoreList.includes( m.username.toLowerCase() ) ) return m;
+            if ( !this.useIgnore || !this.ignoreList.includes( m.username.toLowerCase() ) )
+              return m;
           },
           m => {
             // Do not ignore a channel we are in
@@ -217,7 +218,7 @@
       async executeAction ( a ) {
         if ( a.insertMessage ) await this.insertMessage( a.insertMessage );
         if ( a.saveToDb ) this.saveToDb( ...a.saveToDb );
-        if ( a.forceFilter ) this.messages.filter( a.forceFilter );
+        if ( a.forceFilter ) this.messages = this.messages.filter( a.forceFilter );
         if ( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
         if ( a.chatServer ) {
           this.chatServer = chatServers.get( a.chatServer );
