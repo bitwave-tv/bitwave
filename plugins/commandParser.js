@@ -161,6 +161,10 @@ const functions = {
       labelSubmit: 'Submit Bug Report',
     } );
     return [];
+  },
+
+  whisper( who, ...what ) {
+    return [];
   }
 };
 
@@ -192,13 +196,16 @@ const export_obj = {
     ["skip", functions.skipTts],
     ["s", functions.skipTts],
     ["bugreport", functions.bugReport],
+    // TODO: fix whispers :trout:
+    ["whisper", functions.whisper],
+    ["w", functions.whisper],
   ]),
 
   ...functions,
 
   async parseOne( string ) {
     if( !string.startsWith( '/' ) ) return null;
-    const tokens = string.replace( '/', '' ).split( ' ' );
+    const tokens = string.replace( '/', '' ).split( ' ' ).filter( t => t.length );
     const command = this.commands.get( tokens[0] );
 
     if( command ) {
