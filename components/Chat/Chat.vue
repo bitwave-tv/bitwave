@@ -574,7 +574,8 @@
         return !allFilters( message );
       },
 
-      changeStatOnGraph( stat, user ) {
+      changeStatOnGraph( stat, _user ) {
+        const user = _user ?? "all";
         const data = this.userStats.stat.get( user, stat );
         if( data && data.values && data.values.length ) {
           this.graphStat = { user: user, stat: stat };
