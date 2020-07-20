@@ -562,7 +562,7 @@ export const actions = {
     loggingOut = false; // Unlock when completed
   },
 
-  [$actions.loadSettings] ({ commit }) {
+  [$actions.loadSettings] ({ state, commit }) {
     let settings = new Map([
       [$states.timestamps, $mutations.setTimestamps],
       [$states.global, $mutations.setGlobal],
@@ -606,6 +606,12 @@ export const actions = {
         value => saveToLocalStorage( { [newKey]: value } )
       )
     );
+
+    // TODO: centralised migrate function?
+    const oldIgnoreList = state[ Chat.$states.ignoreList ];
+    const oldIgnoreChannelList = state[ Chat.$states.ignoreChannelList ];
+    commit( Chat.$mutations.setIgnoreList, oldIgnoreList.map( i => i.toLowerCase() ) );
+    commit( Chat.$mutations.setIgnoreChannelList, oldIgnoreChannelList.map( i => i.toLowerCase() ) );
 
     loadFromLocalStorage( commit, settings );
   },
