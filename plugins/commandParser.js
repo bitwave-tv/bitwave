@@ -6,6 +6,12 @@ let _store, _ga, _sentry,
 
 const functions = {
   async ignoreUser( who ) {
+    if( who.toLowerCase() === '[bitwave.tv]' ) {
+      return [
+        { insertMessage: "I'm afraid I can't let you do that, Dave." }
+      ];
+    }
+
     const ignoreList = _store_state[Chat.$states.ignoreList];
 
     who = who.replace( '@', '' );
