@@ -739,6 +739,7 @@
         user            : VStore.$getters.getUser,
         _username       : VStore.$getters.getUsername,
         getChannelViews : VStore.$getters.getChannelViews,
+        channelsViewers : VStore.$states.channelsViewers,
       }),
 
       ...mapState ( Chat.namespace, {
@@ -856,6 +857,39 @@
           me.stat.value.set( me.ALL_USER, key, this.getChannelViews( this.page ) );
         }
       };
+
+      this.userStats.calculate.hIndex = {
+        total: () => {
+          const channels = this.channelsViewers?.filter( c => c.viewCount !== 0 );
+          for( const channel of channels ) {
+            const viewCount = channel.viewCount;
+            let g = 0,
+                i = 1,
+                r = 0;
+
+            for( const channelIter of channels ) {
+              const viewCompare = channelIter.viewCount;
+              if( viewCount < viewCompare ) i++;
+              else if( viewCount === viewCompare ) r++;
+              r--;
+            }
+
+            g = i + r;
+            // TODO(JerryatricBird): `h' is used undeclared here
+            if( g > h ) {
+              if( g > viewCount ) {
+                while( g > i ) {
+                  g--;
+                  if( g === viewCount ) h = g; // TODO(JerryatricBird): break; here?
+                }
+              } else {
+                h = g
+              }
+            }
+          }
+          this.userStats.value.set( this.userStats.ALL_USER, "hIndex", h );
+        }
+      }
 
       // Add listener for voice changes, then update voices.
       try {
