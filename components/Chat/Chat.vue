@@ -862,6 +862,11 @@
       this.userStats.calculate.hIndex = {
         total: () => {
           const channels = this.channelsViewers?.filter( c => c.viewCount !== 0 );
+          if( !channels ) {
+            this.userStats.value.set( this.userStats.ALL_USER, "hIndex", 0 );
+            return;
+          }
+
           let h = 0;
           for( const channel of channels ) {
             const viewCount = channel.viewCount;
