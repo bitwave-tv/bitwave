@@ -593,6 +593,7 @@
 
         await this.userStats.calculate.messageRate.total( newMessages );
         this.userStats.calculate.messageRateDerivative.total();
+        this.userStats.calculate.hIndex.total( newMessages );
         this.userStats.calculate.spamminess.total( newMessages );
         this.userStats.calculate.niceness.user( "all", 1 );
 
@@ -861,27 +862,24 @@
       this.userStats.calculate.hIndex = {
         total: () => {
           const channels = this.channelsViewers?.filter( c => c.viewCount !== 0 );
+          let h = 0;
           for( const channel of channels ) {
             const viewCount = channel.viewCount;
-            let g = 0,
-                i = 1,
-                r = 0;
+            let g = 0,  // i + r
+                i = 1,  // i := # of larger streams +1
+                r = -1; // r := # of other equally-sized streams
 
             for( const channelIter of channels ) {
               const viewCompare = channelIter.viewCount;
               if( viewCount < viewCompare ) i++;
               else if( viewCount === viewCompare ) r++;
-              r--;
             }
 
             g = i + r;
-            // TODO(JerryatricBird): `h' is used undeclared here
+            // Maximises h; g is the new candidate for h
             if( g > h ) {
-              if( g > viewCount ) {
-                while( g > i ) {
-                  g--;
-                  if( g === viewCount ) h = g; // TODO(JerryatricBird): break; here?
-                }
+              if( i <= viewCount && viewCount < g ) {
+                h = viewCount;
               } else {
                 h = g
               }
