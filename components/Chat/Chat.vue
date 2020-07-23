@@ -223,7 +223,12 @@
       async executeAction ( a ) {
         if ( a.insertMessage ) await this.insertMessage( a.insertMessage );
         if ( a.saveToDb ) this.saveToDb( ...a.saveToDb );
-        if ( a.forceFilter ) this.messages = this.messages.filter( a.forceFilter );
+        if ( a.forceFilter ) {
+          if ( this.useIgnore )
+            this.messages = this.messages.filter( a.forceFilter );
+          else
+            await this.insertMessage( 'NOTE: You have ignore users turned off' );
+        }
         if ( a.changeStatOnGraph ) this.changeStatOnGraph( ...a.changeStatOnGraph );
         if ( a.chatServer ) {
           this.chatServer = chatServers.get( a.chatServer );
