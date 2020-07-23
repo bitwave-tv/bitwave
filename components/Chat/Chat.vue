@@ -254,11 +254,11 @@
         };
 
         this.connecting = false;
-        if ( process.env.APP_DEBUG && false ) { // For testing...
-          this.userToken.recaptcha = null;
-        } else { // Get RECAPTCHA v3 Token
-          this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
-        }
+
+        // TODO: replace with hcaptcha
+        this.userToken.recaptcha = null;
+        // Get RECAPTCHA v3 Token
+        // this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
 
         bitwaveChat.onHydrate = this.onHydration;
         bitwaveChat.rcvMessageBulk = this.rcvMessageBulk;
@@ -431,8 +431,8 @@
         });
       },
 
-      async getRecaptchaToken ( action ) {
-        // TODO: replace with hcpatcha
+      // TODO: replace with hcpatcha
+      /*async getRecaptchaToken ( action ) {
         return null;
         try {
           await this.$recaptcha.init();
@@ -441,7 +441,7 @@
           console.error( error );
           return null;
         }
-      },
+      },*/
 
       async hydrate () {
         // This can be removed if we put it in onHydration()

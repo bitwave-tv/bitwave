@@ -15,7 +15,7 @@
           <v-avatar size="32">
             <img
               v-if="avatar"
-              :src="`${avatar}`"
+              :src="avatar"
               :alt="name"
             />
             <v-icon v-else>account_circle</v-icon>

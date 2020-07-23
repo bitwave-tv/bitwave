@@ -13,6 +13,7 @@ module.exports = {
   env: {
     version: pkg.version || '0.0.0',
     VERSION: pkg.version || '0.0.0',
+
     APP_DEBUG: process.env.APP_DEBUG || false,
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
 
@@ -256,12 +257,12 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/device',
     '@nuxtjs/pwa',
-    '@nuxtjs/recaptcha',
+    /*'@nuxtjs/recaptcha',*/
     '@nuxtjs/toast',
     '@nuxtjs/sentry',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
-    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
+    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 2 } ],
     [ 'nuxt-stripe-module', { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } ],
   ],
 
@@ -301,11 +302,11 @@ module.exports = {
   /*
   ** reCAPTCHA v3
   */
-  recaptcha: {
+  /*recaptcha: {
     hideBadge: true,
     siteKey: '6LcEX8QUAAAAADjiUPfbzkyn0KYAaEK263quzCGh',
     version: 3,
-  },
+  },*/
 
   /*
   ** Sentry
@@ -357,6 +358,8 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+
+    devtools: process.env.NODE_ENV === 'development',
 
     // crossorigin: true,
 
