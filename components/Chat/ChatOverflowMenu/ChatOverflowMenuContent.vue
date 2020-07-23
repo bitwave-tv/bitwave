@@ -153,8 +153,9 @@
       bugReport () {
         this.$sentry.withScope(
           scope => {
-            scope.setExtra( 'global_chat', this.global );
-            scope.setExtra( 'is_auth', this.isAuth );
+            // TODO: fix this, currently they aren't loaded from the store and throw errors
+            // scope.setExtra( 'global_chat', this.global );
+            // scope.setExtra( 'is_auth', this.isAuth );
             scope.setUser({
               username: this.username,
             });
@@ -171,6 +172,7 @@
 
     computed: {
       ...mapGetters({
+        username : VStore.$getters.getUsername,
         getPWaPrompt: VStore.$getters.getPWaPrompt,
       }),
 
