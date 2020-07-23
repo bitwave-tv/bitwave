@@ -19,7 +19,7 @@
     "rollout:status": "kubectl rollout status deployment/bitwave-app -n bitwave-node"
   },
   "dependencies": {
-    "@bitwave/chat-client": "^0.3.4",
+    "@bitwave/chat-client": "^0.3.5",
     "@nuxtjs/axios": "^5.12.0",
     "@nuxtjs/component-cache": "^1.1.6",
     "@nuxtjs/device": "^1.2.7",
