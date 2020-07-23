@@ -30,10 +30,10 @@ module.exports = {
     title: pkg.name,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport',     content: 'width=device-width, initial-scale=1' },
-      { name: 'description',  hid: 'description', content: pkg.description},
-      { name: 'og:site_name', content: '[bitwave.tv]' },
-      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
+      { property: 'viewport',     content: 'width=device-width, initial-scale=1' },
+      { property: 'description',  hid: 'description', content: pkg.description},
+      { property: 'og:site_name', content: '[bitwave.tv]' },
+      { property: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
       // https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg // old image
     ],
     script: [],
