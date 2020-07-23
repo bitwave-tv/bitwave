@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    class="chat-autocomplete body-2 py-1"
+    class="chat-autocomplete body-2 pl-1 ml-3 py-1"
     color="grey darken-4"
   >
 
@@ -120,8 +120,8 @@
   .chat-autocomplete {
     position: absolute;
     top: 0;
-    transform: translate( 12.5%, -100% );
-    width: 75%;
+    transform: translate( 0%, -100% );
+    width: 90%;
     max-height: 300px;
     overflow-y: hidden;
     /*opacity: .9;*/
