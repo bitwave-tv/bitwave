@@ -2,7 +2,7 @@
   <v-card
     flat
     tile
-    class="mb-3 mx-3"
+    class="px-3"
   >
     <!-- TTS Settings -->
     <div>
@@ -64,7 +64,7 @@
         <v-divider class="mt-3" />
 
         <!-- TTS Voice Settings Labels -->
-        <v-subheader class="overline mb-0">
+        <v-subheader class="overline mb-0 px-0">
           TTS Voice Settings
         </v-subheader>
 

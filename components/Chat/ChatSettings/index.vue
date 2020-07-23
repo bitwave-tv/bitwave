@@ -3,7 +3,7 @@
     v-model="showChatSettings"
     :close-on-content-click="false"
     transition="slide-x-transition"
-    :max-width="350"
+    :max-width="320"
     max-height="90vh"
     top
     right
@@ -30,8 +30,7 @@
     </template>
 
     <div
-      class="mb-3"
-      style="height: 35rem;"
+      style="height: 36rem;"
     >
       <v-card
         color="grey darken-4"

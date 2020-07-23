@@ -57,7 +57,7 @@
     data() {
       return {
         // Current tab selection
-        settingsTab: 0,
+        settingsTab: 'chat-settings-general',
 
         // Dynamic tabs will swap out vue components on the fly
         tabs: [
@@ -91,7 +91,7 @@
 
   .chat-settings-panel {
     height: 30rem;
-    width: 350px;
+    width: 320px;
     overflow-y: auto;
   }
 </style>
