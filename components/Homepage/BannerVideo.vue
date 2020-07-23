@@ -7,7 +7,7 @@
     <!-- Stream Player -->
     <div
       class="flex-grow-1 align-self-center"
-      style="min-width: 40%;"
+      style="min-width: 40%"
     >
       <video
         playsinline
@@ -31,7 +31,7 @@
     <div
       v-if="displayChat"
       class="d-flex flex-shrink-1"
-      :style="{ width: mobile ? '100%' : '450px', 'max-height': mobile ? '500px' : '555px' }"
+      :style="{ width: mobile ? '100%' : '450px', 'height': mobile ? '500px' : '555px' }"
     >
       <chat
         :chat-channel="name"
