@@ -196,6 +196,17 @@
 
           this.success = true;
           this.$emit( 'success', true );
+
+          this.$ga.event({
+            eventCategory : 'merchant',
+            eventAction   : 'purchased coins',
+            eventLabel    : 'coins',
+            eventValue    : 10.00,
+          });
+          this.$analytics.logEvent( 'purchase', {
+            currency: 'USD',
+            value: 10.00,
+          });
         } catch (error) {
           console.error(error);
           this.error = error;
