@@ -330,6 +330,7 @@
       if ( result.success ) {
         return result.data;
       } else {
+        error( '404 Replay not found or removed!' );
         return {
           name: params.watch,
           title: 'SSR Error',
