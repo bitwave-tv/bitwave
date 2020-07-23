@@ -429,7 +429,7 @@
         // but placing it here forces chat to clear when toggling
         // Local vs. Global which looks nicer than having
         // Global and Local animated and mix when leaving local
-        this.messages = [];
+        // this.messages = [];
 
         const success = await bitwaveChat.hydrate();
         if( !success ) {
@@ -828,7 +828,22 @@
     watch: {
       async global ( val, old ) {
         bitwaveChat.global = val;
+
+        // Forces chat to fully clear when toggling
+        // This should look nicer?
+        // this.messages = [];
+
         await this.hydrate();
+      },
+
+      // hydrate when turning trolls back on
+      async getHideTrolls ( val ) {
+        if ( !val ) await this.hydrate();
+      },
+
+      // hydrate when turning ignore off
+      async useIgnore ( val ) {
+        if ( !val ) await this.hydrate();
       },
     },
 
