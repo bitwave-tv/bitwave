@@ -17,26 +17,49 @@
     <!-- Toolbar -->
     <v-app-bar
       app
-      :clipped-left="false"
+      :clipped-left="true"
       dark
       dense
       fixed
       color="accentwave"
     >
-      <v-btn
+      <!--<v-btn
         icon
         @click.stop="drawer = !drawer"
       >
         <v-icon>menu</v-icon>
-      </v-btn>
+      </v-btn>-->
 
       <v-toolbar-title class="pl-0">
+
         <v-btn
+          :ripple="false"
+          to="/"
+          depressed
+          tile
+          exact
+          id="logo_image"
+          x-small
+          exact-active-class="app-title-active"
+          class="text-none py-1 mx-0 px-0"
+        >
+          <v-avatar tile size="40">
+            <img
+              :src="bwLogo"
+              alt="bitwave.tv logo"
+              title="bitwave.tv homepage"
+            />
+          </v-avatar>
+        </v-btn>
+
+        <v-btn
+          :v-if="!mobile"
+          :ripple="false"
           to="/"
           depressed
           text
           exact
-          id="logo"
+          id="logo_text"
           exact-active-class="app-title-active"
           class="text-none title px-2"
         >{{ title }}</v-btn>
@@ -46,7 +69,7 @@
 
       <stream-here-btn />
 
-      <notifications />
+      <notifications v-if="isAuth" />
 
       <user-menu class="ml-2" />
 
@@ -56,8 +79,8 @@
     <sidebar v-model="drawer" />
 
     <!-- Content -->
-    <v-content>
-      <nuxt />
+    <v-content class="mx-0">
+      <nuxt class="px-0 mx-0" />
     </v-content>
 
     <!-- Fireworks overlay -->
@@ -91,6 +114,7 @@
 
     data () {
       return {
+        bwLogo: '/images/icon-2.png',
         title: '[bitwave.tv]',
         drawer: null,
         ssr: true,
@@ -128,6 +152,7 @@
       ...mapGetters({
         isUpdateAvailable: VStore.$getters.isUpdateAvailable,
         getAlerts: VStore.$getters.getAlerts,
+        isAuth: VStore.$getters.isAuth,
       }),
 
       systemAlert () {
@@ -151,6 +176,12 @@
       showFireworks () {
         return this.fireworks
           && this.fireworks.display;
+      },
+
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
       },
     },
 

@@ -3,6 +3,8 @@
     :value="value"
     :mini-variant="collapsed"
     :mini-variant-width="64"
+    :clipped="true"
+    fixed
     color="accentwave"
     app
     @input="$emit( 'input', $event )"
@@ -11,6 +13,8 @@
     <div class="d-flex flex-column fill-height">
       <!-- Site Navigation -->
       <navigation-list />
+
+      <v-divider class="px-2" />
 
       <!-- Streamer List -->
       <streamer-list />
