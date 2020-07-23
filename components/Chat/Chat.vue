@@ -144,7 +144,9 @@
         messageFilters: [
           m => {
             // Remove ignored users
-            if ( !this.useIgnore || !this.ignoreList.includes( m.username.toLowerCase() ) )
+            if ( this.useIgnore && this.ignoreList.includes( m.username.toLowerCase() ) )
+              return null;
+            else
               return m;
           },
           m => {
@@ -160,7 +162,10 @@
           },
           m => {
             // Remove trolls
-            if ( !this.hideTrolls || !m.username.startsWith( 'troll:' ) ) return m;
+            if ( this.hideTrolls && m.username.startsWith( 'troll:' ) )
+              return null;
+            else
+              return m;
           },
           m => {
             const isLocal = !this.global && !this.forceGlobal;
