@@ -28,7 +28,9 @@
         <!-- Live Now Header -->
         <div class="mb-4">
           <div class="d-flex justify-space-between align-end">
-            <div class="headline font-weight-light grey--text">Live Now</div>
+            <div class="headline font-weight-grey white--text">
+              Live Now
+            </div>
             <v-switch
               v-model="blurNSFW"
               label="Blur NSFW thumbnails"
@@ -260,4 +262,3 @@
     },
   }
 </script>
-
