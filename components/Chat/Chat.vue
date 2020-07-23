@@ -365,7 +365,21 @@
           // Save local ignore list to account
           const ignoreList = doc.get( 'ignoreList' );
           if ( ignoreList !== undefined ) {
+
+            // TODO: This should be persisted in localstorage, probably?
+            // This benefit this has, is that you can login and have your settings
+            // Then log out without having your ignore list stay with you
+            // The downside is that the ignore list cannot be applied during hydration
+            // as it does not yet exist. This means ignored user messages will briefly
+            // appear in chat until the user's profile data has loaded
+            // Another way to handle this would be to mirror to localstorage,
+            // but then to remove the ignore list upon logging out.
+
+            // Sets active ignore list to list loaded from user data
             this.ignoreList = ignoreList;
+
+            // Apply's the current user's ignore list to chat (needed to filter hydration data
+            this.applyChatFilters();
           } else {
             // Update account ignore list
             await doc.ref.update( 'ignoreList', this.ignoreList );
@@ -533,6 +547,11 @@
           // this.scrollToBottom();
           this.$nextTick( () => this.scrollToBottom() );
         }
+      },
+
+      // Apply's all active filters on messages
+      applyChatFilters () {
+        this.messages = this.messages?.filter( message => !this.filterMessage( message ) ) ;
       },
 
       addAlert ( data ) {
@@ -835,7 +854,6 @@
         bitwaveChat.global = val;
 
         // Forces chat to fully clear when toggling
-        // This should look nicer?
         // this.messages = [];
 
         await this.hydrate();
@@ -848,22 +866,17 @@
 
       // hydrate when turning ignore off
       async useIgnore ( val ) {
+        // It would probably be better to keep a "master" copy of messages
+        // so that we can avoid a hydration call and just re-filter from master
         if ( !val ) await this.hydrate();
+        else this.applyChatFilters();
       },
     },
 
-    /*fetchOnServer: false,
-    async fetch () {
-      // Timeout to prevent SSR from locking up
-      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
-
-      // TODO: timeout
-
-      // await this.hydrate();
-      this.$nextTick( async () => await this.hydrate() );
-    },*/
-
     async mounted () {
+      // Load settings from localstorage
+      await this.loadSettings();
+
       await this.connectToChat();
       await this.hydrate();
 
@@ -891,9 +904,6 @@
       } catch ( error ) {
         console.error( error );
       }
-
-      // Load settings from localstorage
-      await this.loadSettings();
 
       // Stat tracking interval
       this.statInterval = setInterval( () => this.onChatStatTick(), this.tickPeriod * 1000 );
