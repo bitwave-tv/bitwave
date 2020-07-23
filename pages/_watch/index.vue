@@ -136,9 +136,10 @@
         ],
         meta: [
           { property: 'og:title',            hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { property: 'og:description',      hid: 'og:description', content: (this.description || '').substring( 0, 200 ) },
-          { property: 'og:image',            hid: 'og:image',       content: this.poster},
-          { property: 'description',         hid: 'description',    content: (this.name || '').substring( 0, 200 ) },
+          { property: 'og:url',              hid: 'og:url',         content: `https://bitwave.tv/${this.name}` },
+          { property: 'og:description',      hid: 'og:description', content: ( this.description || '' ).substring( 0, 200 ) },
+          { property: 'og:image',            hid: 'og:image',       content: this.poster },
+          { property: 'description',         hid: 'description',    content: ( this.name || '' ).substring( 0, 200 ) },
           { property: 'author',              content: this.name },
           { property: 'profile:username',    content: this.name },
           { property: 'twitter:card',        content: 'summary_large_image' },

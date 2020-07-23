@@ -88,6 +88,7 @@
         ],
         meta: [
           { property: 'og:title',            hid: 'og:title',       content: title },
+          { property: 'og:url',              hid: 'og:url',         content: `https://bitwave.tv/replays` },
           { property: 'og:description',      hid: 'og:description', content: description },
           { property: 'og:image',            hid:'og:image',        content: image },
           { property: 'description',         hid: 'description',    content: description },

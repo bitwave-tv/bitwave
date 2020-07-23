@@ -146,6 +146,7 @@
         ],
         meta: [
           { property: 'og:title',            hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
+          { property: 'og:url',              hid: 'og:url',         content: `https://bitwave.tv` },
           { property: 'og:description',      hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
           { property: 'og:image',            hid:'og:image',        content: this.poster},
           { property: 'description',         hid: 'description',    content: 'An open platform live streaming service for creators to freely express themselves.' },
