@@ -179,10 +179,6 @@
       }
     },
 
-    beforeDestroy () {
-
-    }
-
   }
 </script>
 

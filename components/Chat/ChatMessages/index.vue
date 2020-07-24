@@ -7,10 +7,16 @@
       id="chat-scroll"
       ref="scroller"
     >
-      <transition-group
+      <!-- fade-transition -->
+      <!-- This appears to be the primary source of chat lag sadly -->
+      <!--<transition-group
         name="fade-transition"
         :duration="150"
         tag="div"
+        :class="{ dense: highDensity }"
+      >-->
+      <!-- It is much quicker to simply directly render into chat and re-use by index -->
+      <div
         :class="{ dense: highDensity }"
       >
         <!-- Skeleton placeholders (for SSR) -->
@@ -34,7 +40,8 @@
         <div
           v-if="messages"
           v-for="( msg, index ) in messages"
-          :key="msg._id"
+          kkey="msg._id"
+          :key="index"
           class="pb-1 pl-3 pr-1"
         >
 
@@ -51,7 +58,10 @@
                 :color="msg.color"
                 class="my-1"
                 style="font-size: 14px; word-break: break-word;"
-              >{{ msg.message }}</v-alert>
+              >
+                <div class="overline grey--text">{{ msg.username }}</div>
+                <div class="white--text font-weight-bold body-1">{{ msg.message }}</div>
+              </v-alert>
             </div>
           </template>
 
@@ -94,8 +104,8 @@
           </template>
 
         </div>
-
-      </transition-group>
+      </div>
+      <!--</transition-group>-->
     </div>
 
     <!-- FAB for Scroll Down -->
@@ -366,7 +376,7 @@
     overflow: hidden;
 
     .msg {
-      line-height: 1.25;
+      line-height: 1.15;
 
       /* Hover Chat Message */
       /*&:hover {
@@ -392,7 +402,7 @@
     }
 
     .dense .msg {
-      h1, h2, h3, h4, h5, h6 {
+      h1, h2, h3 {
         font-size: 1rem;
       }
 
@@ -405,6 +415,6 @@
 
   #chat-scroll {
     overflow-y: scroll;
-    will-change: transform;
+    /*will-change: transform;*/
   }
 </style>

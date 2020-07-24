@@ -5,12 +5,15 @@ const pkg = require('./package');
 module.exports = {
   mode: 'universal',
 
+  components: true,
+
   /*
   ** Environment variables
   */
   env: {
     version: pkg.version || '0.0.0',
     VERSION: pkg.version || '0.0.0',
+
     APP_DEBUG: process.env.APP_DEBUG || false,
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
 
@@ -28,10 +31,10 @@ module.exports = {
     title: pkg.name,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport',     content: 'width=device-width, initial-scale=1' },
-      { name: 'description',  hid: 'description', content: pkg.description},
-      { name: 'og:site_name', content: '[bitwave.tv]' },
-      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
+      { property: 'viewport',     content: 'width=device-width, initial-scale=1' },
+      { property: 'og:site_name', content: '[bitwave.tv]' },
+      { property: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
+      { property: 'description',  content: pkg.description, hid: 'description' },
       // https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg // old image
     ],
     script: [],
@@ -194,6 +197,9 @@ module.exports = {
 
         // Assets
         '/sounds/tweet.mp3',
+        '/images/icon-2.png',
+        'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
+        'https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw',
         'https://fonts.googleapis.com/css?family=Material+Icons',
         'https://cdn.bitwave.tv/static/img/firework-banner.gif',
       ],
@@ -212,16 +218,16 @@ module.exports = {
       lang: 'en',
       display: 'standalone',
       background_color: '#000000',
-      theme_color: '#ffff00',
+      theme_color: '#13a9fe',
     },
 
     meta: {
       appleStatusBarStyle: 'black-translucent',
       name: '[bitwave.tv]',
       description: 'An open platform live streaming service for creators to freely express themselves.',
-      theme_color: '#ffff00',
+      theme_color: '#13a9fe',
       ogType: 'website',
-      ogHost: 'http://bitwave.tv',
+      ogHost: 'https://bitwave.tv',
       twitterCard: 'summary_large_image',
       twitterSite: '@BitwaveTV',
       // twitterCreator: '',
@@ -237,6 +243,8 @@ module.exports = {
     '@/plugins/axiossr',
     '@/plugins/firebase',
     '@/plugins/VueClipboard',
+    '@/plugins/utils.js',
+    { src: '@/plugins/commandParser.js', mode: 'client' },
     { src: '@/plugins/pwa.client.js', mode: 'client' },
     { src: '@/plugins/sw-hook', mode: 'client' },
   ],
@@ -249,12 +257,13 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/device',
     '@nuxtjs/pwa',
-    '@nuxtjs/recaptcha',
+    /*'@nuxtjs/recaptcha',*/
     '@nuxtjs/toast',
     '@nuxtjs/sentry',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
-    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
+    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 2 } ],
+    [ 'nuxt-stripe-module', { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } ],
   ],
 
   /*
@@ -293,11 +302,11 @@ module.exports = {
   /*
   ** reCAPTCHA v3
   */
-  recaptcha: {
+  /*recaptcha: {
     hideBadge: true,
     siteKey: '6LcEX8QUAAAAADjiUPfbzkyn0KYAaEK263quzCGh',
     version: 3,
-  },
+  },*/
 
   /*
   ** Sentry
@@ -350,9 +359,11 @@ module.exports = {
     ** You can extend webpack config here
     */
 
+    devtools: process.env.NODE_ENV === 'development',
+
     // crossorigin: true,
 
-    extractCSS: true,
+    // extractCSS: true,
 
     // parallel: process.env.APP_DEBUG === 'true',
 

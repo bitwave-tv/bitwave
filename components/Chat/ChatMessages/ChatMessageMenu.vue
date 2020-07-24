@@ -91,7 +91,7 @@
 
         <!-- Action items -->
         <div class="mt-3">
-          <div class="d-flex">
+          <div class="d-flex align-center">
             <v-btn
               color="red darken-2"
               class=""
@@ -105,9 +105,24 @@
               v-if="isChannelOwner"
               color="error"
               class="mr-2"
+              outlined
               small
               @click="banUser"
             >Mute</v-btn>
+            <v-btn
+              v-if="isChannelOwner"
+              color="success"
+              class="mr-2"
+              outlined
+              small
+              @click="unbanUser"
+            >Un-Mute</v-btn>
+
+            <v-divider
+              vertical
+              class="mr-2"
+            />
+
             <v-btn
               color="error"
               class="mr-2"
@@ -170,6 +185,27 @@
 
       async banUser () {
         const endpoint = `https://api.bitwave.tv/v1/chat/ban`;
+        const payload =  {
+          user: this.username,
+          ban: this.username,
+        }
+        try {
+          const { data } = await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          if ( data.success )
+            this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          else
+            this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        } catch ( error ) {
+          console.error( error );
+          this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        }
+      },
+
+      async unbanUser () {
+        const endpoint = `https://api.bitwave.tv/v1/chat/unban`;
         const payload =  {
           user: this.username,
           ban: this.username,

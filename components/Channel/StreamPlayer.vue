@@ -20,6 +20,7 @@
 
 <script>
   import videojs from 'video.js';
+  import '@videojs/http-streaming';
   import 'videojs-contrib-quality-levels'
   import 'videojs-hls-quality-selector'
 
@@ -57,12 +58,16 @@
           plugins: { qualityLevels: {} },
           poster: this.poster,
           html5: {
-            hls: {
+            vhs: {
               overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
               enableLowInitialPlaylist: true,
               handlePartialData: true,
             },
+          },
+          liveTracker: {
+            trackingThreshold: 0,
+            liveTolerance: 6,
           },
         });
 
@@ -135,7 +140,7 @@
 
         window.$bw = {
           getVideoLogs: this.player.log.history,
-          hls: this.player.tech({ IWillNotUseThisInPlugins: true }).hls,
+          hls: this.player.tech({ IWillNotUseThisInPlugins: true }).vhs,
           player: this.player,
         };
 
@@ -155,7 +160,6 @@
 
       onVolumeChange () {
         try {
-
           localStorage.setItem( 'volume', this.player.volume() );
           localStorage.setItem( 'muted',  this.player.muted() );
         } catch ( error ) {
@@ -182,14 +186,15 @@
         if ( this.player ) this.player.dispose();
       },
 
-      async getRandomBump () {
-        const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump` );
+      async getRandomBump ( attempt ) {
+        const { data } = await this.$axios.get( `https://api.bitwave.tv/api/bump${ attempt ? `?${attempt}` : ''}` );
         // limit to checking 5 most recent bumps
-        if ( this.recentBumps.length >= 10 ) this.recentBumps = this.recentBumps.splice( -10 );
+        if ( this.recentBumps.length >= 20 ) this.recentBumps = this.recentBumps.splice( -20 );
         // Recurse until we get a fresh bump
         if ( this.recentBumps.includes( data.url ) ){
           console.log(`Recently seen ${data.url}, getting a new bump`);
-          return this.getRandomBump();
+          const nextAttempt = attempt ? attempt + 1 : 1;
+          return this.getRandomBump( nextAttempt );
         }
         this.recentBumps.push( data.url );
         return data.url;

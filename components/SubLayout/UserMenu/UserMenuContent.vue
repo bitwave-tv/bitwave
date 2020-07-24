@@ -8,6 +8,7 @@
           v-if="avatar"
           class="v-avatar ml-0 mr-4"
           style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+          :title="username"
         >
           <source
             v-if="avatars"
@@ -132,7 +133,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'UserMenu',
+    name: 'UserMenuContent',
 
     components: {
       BraintreeDropIn,

@@ -33,13 +33,25 @@
             offset-y
             left
           >
-            <template #activator="{ on }">
-              <v-btn
-                v-on="on"
-                small
-                color="primary black--text"
-                class="mr-2"
-              >POLL</v-btn>
+            <template #activator="{ on: menu }">
+              <v-tooltip
+                left
+                color="error"
+                transition="slide-x-reverse-transition"
+              >
+                <template #activator="{ on: tooltip }">
+                  <v-btn
+                    v-on="{ ...tooltip, /*focus: () => true, ...menu,*/ }"
+                    small
+                    color="primary darken-4 black--text"
+                    class="mr-2"
+                  >POLL</v-btn>
+                </template>
+                <span>
+                  <v-icon>warning</v-icon>
+                  Temporarily Disabled Due to a Bug
+                </span>
+              </v-tooltip>
             </template>
 
             <!-- Create Poll Dialog -->
@@ -52,10 +64,14 @@
         </div>
 
         <!-- Chat Admin Menu -->
-        <chat-admin-menu />
+        <chat-admin-menu
+          class="mr-2"
+        />
 
         <!-- Chat Overflow Menu -->
-        <chat-overflow-menu :page="page" />
+        <chat-overflow-menu
+          :page="page"
+        />
 
       </div>
     </v-sheet>

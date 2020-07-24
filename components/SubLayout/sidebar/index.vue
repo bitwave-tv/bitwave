@@ -8,32 +8,31 @@
     @input="$emit( 'input', $event )"
   >
 
-    <v-layout
-      fill-height
-      column
-    >
+    <div class="d-flex flex-column fill-height">
       <!-- Site Navigation -->
       <navigation-list />
 
       <!-- Streamer List -->
       <streamer-list />
-
-    </v-layout>
+    </div>
 
     <!-- Minify Panel -->
     <template #append>
-      <div class="my-2 mx-2">
-        <v-btn
-          color="secondary"
-          class="px-0"
-          block
-          outlined
-          small
-          @click.stop="toggleCollapse"
-        >
-          <v-icon>{{ `chevron_${collapsed ? 'right' : 'left'}` }}</v-icon>
-        </v-btn>
-      </div>
+      <v-sheet color="blue-grey darken-4">
+        <v-divider />
+        <div class="py-2 px-2">
+          <v-btn
+            color="primary"
+            class="px-0"
+            block
+            outlined
+            x-small
+            @click.stop="toggleCollapse"
+          >
+            <v-icon>{{ `chevron_${collapsed ? 'right' : 'left'}` }}</v-icon>
+          </v-btn>
+        </div>
+      </v-sheet>
     </template>
 
   </v-navigation-drawer>

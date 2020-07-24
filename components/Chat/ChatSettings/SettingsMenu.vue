@@ -8,7 +8,7 @@
       id="chat-settings"
     >
       <!-- Tab Slider Color -->
-      <v-tabs-slider />
+      <v-tabs-slider/>
 
       <!-- Tabs -->
       <v-tab
@@ -18,8 +18,13 @@
       >
         {{ tab.label }}
       </v-tab>
+    </v-tabs>
 
-      <!-- TAB: General Settings -->
+
+    <!-- TAB: General Settings -->
+    <v-tabs-items
+      v-model="settingsTab"
+    >
       <v-tab-item
         v-for="tab in tabs"
         :key="tab.value"
@@ -31,7 +36,7 @@
           :key="tab.value"
         />
       </v-tab-item>
-    </v-tabs>
+    </v-tabs-items>
   </div>
 </template>
 
@@ -42,6 +47,7 @@
 
   export default {
     name: 'ChatSettings',
+
     components: {
       ChatBetaSettingsPanel,
       ChatTtsSettingsPanel,
@@ -50,8 +56,10 @@
 
     data() {
       return {
-        // Default tab
+        // Current tab selection
         settingsTab: 'chat-settings-general',
+
+        // Dynamic tabs will swap out vue components on the fly
         tabs: [
           {
             label: 'General',
@@ -82,8 +90,8 @@
   }*/
 
   .chat-settings-panel {
-    width: 350px;
-    height: 20rem;
+    height: 30rem;
+    width: 320px;
     overflow-y: auto;
   }
 </style>

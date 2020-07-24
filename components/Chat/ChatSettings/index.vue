@@ -3,7 +3,7 @@
     v-model="showChatSettings"
     :close-on-content-click="false"
     transition="slide-x-transition"
-    :max-width="350"
+    :max-width="320"
     max-height="90vh"
     top
     right
@@ -12,9 +12,16 @@
     ref="chatSettingsMenu"
   >
     <template #activator="{ on: menu }">
-      <v-tooltip top :open-delay="500">
+      <v-tooltip
+        :open-delay="500"
+        top
+      >
         <template #activator="{ on: tooltip }">
-          <v-btn v-on="{ ...tooltip, focus: () => true, ...menu }" small icon>
+          <v-btn
+            v-on="{ ...tooltip, focus: () => true, ...menu, }"
+            small
+            icon
+          >
             <v-icon>settings</v-icon>
           </v-btn>
         </template>
@@ -22,7 +29,9 @@
       </v-tooltip>
     </template>
 
-    <div class="mb-3">
+    <div
+      style="height: 36rem;"
+    >
       <v-card
         color="grey darken-4"
       >
@@ -47,7 +56,9 @@
         </v-sheet>
 
         <!-- Tabbed Settings -->
-        <settings-menu @change="onTabChange" />
+        <settings-menu
+          @change="onTabChange"
+        />
 
       </v-card>
     </div>

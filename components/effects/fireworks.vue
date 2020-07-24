@@ -41,7 +41,7 @@
         heroDelay: 2.5,
         duration: 10,
         transitionDuration: 0.5,
-        message: 'dlive is the future',
+        message: 'Open Platform Livestreaming',
         subtext: '[bitwave.tv]',
       };
     },

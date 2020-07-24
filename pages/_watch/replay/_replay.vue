@@ -15,7 +15,7 @@
           <v-avatar size="32">
             <img
               v-if="avatar"
-              :src="`${avatar}`"
+              :src="avatar"
               :alt="name"
             />
             <v-icon v-else>account_circle</v-icon>
@@ -193,17 +193,18 @@
           { rel: 'canonical', href: `https://bitwave.tv/${this.name}/replay/${this.archiveId}` },
         ],
         meta: [
-          { name: 'og:title',       hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: ( this.description || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
-          { name: 'og:image',       hid:'og:image',        content: this.poster},
-          { name: 'author',         content: this.name },
-          { name: 'description',    hid: 'description',    content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
-          { name: 'profile:username',    content: this.name },
-          { name: 'twitter:card',        content: 'summary_large_image' },
-          { name: 'twitter:site',        content: '@BitwaveTV' },
-          { name: 'twitter:title',       content: ( this.title || '' ).substring( 0,  70 ) },
-          { name: 'twitter:description', content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
-          { name: 'twitter:image',       content: this.poster },
+          { property: 'og:title',            hid: 'og:title',       content: `${this.title} - [bitwave.tv]` },
+          { property: 'og:url',              hid: 'og:url',         content: `https://bitwave.tv/${this.name}/replay/${this.archiveId}` },
+          { property: 'og:description',      hid: 'og:description', content: ( this.description || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
+          { property: 'og:image',            hid:'og:image',        content: this.poster},
+          { property: 'description',         hid: 'description',    content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
+          { property: 'author',              content: this.name },
+          { property: 'profile:username',    content: this.name },
+          { property: 'twitter:card',        content: 'summary_large_image' },
+          { property: 'twitter:site',        content: '@BitwaveTV' },
+          { property: 'twitter:title',       content: ( this.title || '' ).substring( 0,  70 ) },
+          { property: 'twitter:description', content: ( this.description  || `${this.name ? this.name : 'Unknown streamer'}'s stream replay.` ).substring( 0, 200 ) },
+          { property: 'twitter:image',       content: this.poster },
         ],
       }
     },
@@ -253,7 +254,9 @@
 
     async asyncData ( { $axios, params, error } ) {
       // Timeout to prevent SSR from locking up
-      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+      const timeout = process.server
+        ? process.env.SSR_TIMEOUT
+        : 0;
 
       const getReplayHydration = async id => {
         let replayData;
@@ -327,6 +330,7 @@
       if ( result.success ) {
         return result.data;
       } else {
+        error( '404 Replay not found or removed!' );
         return {
           name: params.watch,
           title: 'SSR Error',

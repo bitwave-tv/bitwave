@@ -68,6 +68,9 @@
   import ReplayGrid from '@/components/Replay/ReplayGrid';
   import TrendingReplays from '@/components/Replay/TrendingReplays';
 
+  import { mapState, mapMutations, mapActions } from 'vuex';
+  import { VStore } from "@/store";
+
   const title = `Stream Replays - [bitwave.tv]`;
   const description = `Browse the most recent stream replays available.`;
   const image = `https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg`;
@@ -84,15 +87,16 @@
           { rel: 'canonical', href: `https://bitwave.tv/replays` },
         ],
         meta: [
-          { name: 'og:title',       hid: 'og:title',       content: title },
-          { name: 'og:description', hid: 'og:description', content: description },
-          { name: 'og:image',       hid:'og:image',        content: image },
-          { name: 'description',    hid: 'description',    content: description },
-          { name: 'twitter:card',        content: 'summary_large_image' },
-          { name: 'twitter:site',        content: '@BitwaveTV' },
-          { name: 'twitter:title',       content: title },
-          { name: 'twitter:description', content: description },
-          { name: 'twitter:image',       content: image },
+          { property: 'og:title',            hid: 'og:title',       content: title },
+          { property: 'og:url',              hid: 'og:url',         content: `https://bitwave.tv/replays` },
+          { property: 'og:description',      hid: 'og:description', content: description },
+          { property: 'og:image',            hid:'og:image',        content: image },
+          { property: 'description',         hid: 'description',    content: description },
+          { property: 'twitter:card',        content: 'summary_large_image' },
+          { property: 'twitter:site',        content: '@BitwaveTV' },
+          { property: 'twitter:title',       content: title },
+          { property: 'twitter:description', content: description },
+          { property: 'twitter:image',       content: image },
         ],
       }
     },
@@ -103,18 +107,35 @@
       SimpleFooter,
     },
 
-    data() {
-      return {
-        blurNSFW: true,
-      };
+    methods: {
+      ...mapMutations ({
+        setBlurNsfw : VStore.$mutations.setBlurNsfw,
+      }),
+
+      ...mapActions ({
+        loadSettings : VStore.$actions.loadSettings,
+      }),
     },
 
-    methods: {},
-
     computed: {
+      ...mapState({
+        getBlurNsfw : VStore.$states.blurNsfw,
+      }),
+
+      blurNSFW: {
+        get () { return this.getBlurNsfw; },
+        set ( data ) {
+          this.setBlurNsfw( data );
+        }
+      },
+
       version () {
         return `v${process.env.version}`;
       },
     },
+
+    mounted() {
+      this.loadSettings();
+    }
   };
 </script>

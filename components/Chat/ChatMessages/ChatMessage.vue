@@ -13,21 +13,14 @@
         v-if="props.avatar"
         :src="props.avatar"
         :alt="props.username"
-        :key="props.username"
+        :key="props.avatar"
       >
       <img
         v-else
-        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-        alt="hazmat suit trolll"
+        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png"
+        alt="hazmat suit bitwave troll"
         :style="{ background: props.color }"
-        :key="props.username"
-        crossorigin
       >
-      <!--<div
-        v-else
-        class="v-icon material-icons"
-        :style="{ background: props.color }"
-      >person</div>-->
     </div>
 
     <!-- Chat Content -->
@@ -100,7 +93,9 @@
         type: Boolean,
         default: true,
       },
-      badge: { type: String },
+      badge: {
+        type: String
+      },
       color: {},
       message: {
         type: String,
@@ -112,20 +107,23 @@
         type: String,
       },
       userStyling: {},
-      routePrefix: { type: String },
+      routePrefix: {
+        type: String
+      },
       channel: {
         type: String,
       },
-      showChannel: { type: Boolean },
+      showChannel: {
+        type: Boolean
+      },
       timestamp: {
         type: Object,
       },
       global: {
-        type: Boolean|undefined,
+        type: Boolean | undefined,
         required: false,
       }
     },
-
   }
 </script>
 
@@ -206,11 +204,11 @@
     /* Big / Smol Text Styling */
 
     h1, h2, h3, h4, h5, h6 {
-      line-height: 1.25;
+      line-height: 1.0;
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.375rem;
       font-weight: 700;
     }
 
@@ -238,13 +236,6 @@
       font-size: 0.625rem;
       font-weight: 500;
     }
-
-    /*
-    &.dense {
-      h1, h2, h3 {
-        font-size: 1rem;
-      }
-    }*/
 
   }
 </style>

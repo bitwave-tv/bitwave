@@ -46,3 +46,25 @@ $c6: #113a5a;*/
     background: linear-gradient(0deg, rgba(10,10,25,1) 0%, rgba(21,21,34,1) 100%);
   }
 }*/
+
+
+
+/* Fun Text */
+
+$rgbSpeed: 8s;
+
+.rgb-text {
+  animation: rainbow $rgbSpeed linear infinite;
+  background-image: repeating-linear-gradient(45deg, red, orange, yellow, #00ff11, blue, #00ff11, yellow, orange, red );
+  background-size: 1000% 1000%;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+@keyframes rainbow {
+  0%   { background-position: 0 50% }
+  50%  { background-position: 100% 25% }
+  100% { background-position: 0 50% }
+}

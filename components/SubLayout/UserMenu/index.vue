@@ -1,81 +1,64 @@
 <template>
   <div>
-    <v-menu
+    <div
       v-if="isAuth"
-      v-model="profileMenu"
-      :close-on-content-click="true"
-      bottom
-      offset-y
-      left
-      transition="slide-y-transition"
     >
-      <template #activator="{ on }">
-        <v-btn
-          v-on="on"
-          color="transparent"
-          class="black--text"
-          rounded
-          fab
-          small
-        >
-          <!-- Avatar with webp support -->
-          <picture
-            v-if="avatar"
-            class="v-avatar ml-0"
-            style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
+      <v-menu
+        v-model="profileMenu"
+        :close-on-content-click="true"
+        bottom
+        offset-y
+        left
+        transition="slide-y-transition"
+      >
+        <template #activator="{ on }">
+          <v-btn
+            v-on="on"
+            color="transparent"
+            class="black--text"
+            rounded
+            small
+            fab
           >
-            <source
-              v-if="avatars"
-              :srcset="`${avatars.webp}`"
-              type="image/webp"
+            <!-- Avatar with webp support -->
+            <picture
+              class="v-avatar ml-0"
+              style="height: 40px; min-width: 40px; width: 40px; background: #212121;"
             >
-            <img
-              :src="`${avatar}`"
-              :alt="username"
-            >
-          </picture>
+              <source
+                v-if="avatars"
+                :srcset="avatars.webp"
+                type="image/webp"
+              >
+              <img
+                :src="avatar"
+                :alt="username"
+              >
+            </picture>
+          </v-btn>
+        </template>
 
-          <v-avatar
-            v-else
-            size="32"
-            color="grey darken-4"
-          >
-            <!-- Troll Hazzy -->
-            <img
-              src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-              alt="hazmat suit trolll"
-              crossorigin
-            >
-            <!--<v-icon v-else color="white">person</v-icon>-->
-          </v-avatar>
-
-        </v-btn>
-      </template>
-
-      <user-menu />
-
-    </v-menu>
+        <lazy-user-menu-content />
+      </v-menu>
+    </div>
 
     <div
       v-else
-      class="text-xs-center"
     >
+      <v-btn
+        color="primary"
+        class="black--text"
+        small
+        @click="showLogin = true"
+      >
+        Login
+      </v-btn>
+
       <v-dialog
         v-model="showLogin"
         width="500"
       >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            v-on="on"
-            color="primary"
-            class="black--text"
-            small
-          >
-            Login
-          </v-btn>
-        </template>
-
-        <login-dialog @close="showLogin = false"/>
+        <lazy-login-dialog @close="showLogin = false"/>
     </v-dialog>
   </div>
 
@@ -83,24 +66,17 @@
 </template>
 
 <script>
-  const UserMenu = async () => await import( '~/components/SubLayout/UserMenu/UserMenu' );
-  const LoginDialog = async () => await import( '~/components/LoginDialog' );
-
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
   export default {
     name: 'UserMenuButton',
 
-    components: {
-      UserMenu,
-      LoginDialog,
-    },
-
     data() {
       return {
         profileMenu: false,
         showLogin: false,
+        defaultProfilePic: 'https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw',
       };
     },
 
@@ -108,19 +84,26 @@
 
     computed: {
       ...mapGetters({
-        isAuth   : VStore.$getters.isAuth,
-        username : VStore.$getters.getUsername,
-        user     : VStore.$getters.getUser,
+        isAuth    : VStore.$getters.isAuth,
+        username  : VStore.$getters.getUsername,
+        auth      : VStore.$getters.getAuth,
+        getAvatar : VStore.$getters.getAvatar,
       }),
 
       avatar () {
-        if ( this.user ) return this.user.avatar;
-        else return false;
+        if ( this.auth
+          && this.auth.hasOwnProperty( 'avatar' )
+          && this.auth.avatar  ) {
+          return this.auth.avatar;
+        } else return this.defaultProfilePic;
       },
 
       avatars () {
-        if ( this.user ) return this.user.avatars;
-        else return false;
+        if ( this.user
+          && this.user.hasOwnProperty( 'avatars' )
+          && this.user.avatars.length > 0 ) {
+          return this.user.avatars;
+        } else return false;
       },
     },
   };

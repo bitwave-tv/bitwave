@@ -13,7 +13,10 @@ const $states = {
   global          : 'GLOBAL',
   timestamps      : 'TIMESTAMPS',
   useTts          : 'USE_TTS',
+  useTtsAlerts    : 'USE_TTS_ALERTS',
   useIgnore       : 'USE_IGNORE',
+  hideTrolls      : 'HIDE_TROLLS',
+  cleanTts        : 'CLEAN_TTS',
   trollTts        : 'TROLL_TTS',
   ttsRate         : 'TTS_RATE',
   ttsReadUsername : 'TTS_READ_USERNAME',
@@ -21,9 +24,11 @@ const $states = {
   ttsVolume       : 'TTS_VOLUME',
   ttsVoice        : 'TTS_VOICE',
   notify          : 'NOTIFY',
-  ignoreList      : 'IGNORE_LIST',
   autocomplete    : 'AUTOCOMPLETE',
   highDensity     : 'HIGH_DENSITY',
+
+  ignoreList          : 'IGNORE_LIST',
+  ignoreChannelList   : 'CHANNEL_IGNORE_LIST',
 
   receiveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
 
@@ -61,15 +66,26 @@ const $mutations = {
   setGlobalSSR       : 'SET_GLOBAL_SSR',
   setTimestamps      : 'SET_TIMESTAMPS',
   setUseTts          : 'SET_USE_TTS',
+  setUseTtsAlerts    : 'SET_USE_TTS_ALERTS',
   setUseIgnore       : 'SET_USE_IGNORE',
+  setHideTrolls      : 'SET_HIDE_TROLLS',
   setTrollTts        : 'SET_TROLL_TTS',
+  setCleanTts        : 'SET_CLEAN_TTS',
   setTtsRate         : 'SET_TTS_RATE',
   setTtsReadUsername : 'SET_TTS_READ_USERNAME',
   setTtsTimeout      : 'SET_TTS_TIMEOUT',
   setTtsVolume       : 'SET_TTS_VOLUME',
   setTtsVoice        : 'SET_TTS_VOICE',
   setNotify          : 'SET_NOTIFY',
+
   setIgnoreList      : 'SET_IGNORE_LIST',
+  addIgnoreList      : 'ADD_IGNORE_LIST',
+  removeIgnoreList   : 'REMOVE_IGNORE_LIST',
+
+  setIgnoreChannelList      : 'SET_CHANNEL_IGNORE_LIST',
+  addIgnoreChannelList      : 'ADD_CHANNEL_IGNORE_LIST',
+  removeIgnoreChannelList   : 'REMOVE_CHANNEL_IGNORE_LIST',
+
   setAutocomplete    : 'SET_AUTOCOMPLETE',
   setHighDensity     : 'SET_HIGH_DENSITY',
 
@@ -123,17 +139,22 @@ export const state = () => ({
   [$states.global]          : false,
   [$states.timestamps]      : true,
   [$states.useTts]          : false,
+  [$states.useTtsAlerts]    : true,
   [$states.useIgnore]       : true,
+  [$states.hideTrolls]      : false,
   [$states.trollTts]        : true,
+  [$states.cleanTts]        : false,
   [$states.ttsRate]         : 10,
   [$states.ttsReadUsername] : false,
   [$states.ttsTimeout]      : 0,
   [$states.ttsVolume]       : 10,
   [$states.ttsVoice]        : 1,
   [$states.notify]          : true,
-  [$states.ignoreList]      : [],
   [$states.autocomplete]    : true,
   [$states.highDensity]     : false,
+
+  [$states.ignoreList]          : [],
+  [$states.ignoreChannelList]   : [],
 
   [$states.receiveMentionsInLocal] : false,
 
@@ -202,6 +223,17 @@ export const mutations = {
     }
   },
 
+  // Set use TTS Alerts
+  [$mutations.setUseTtsAlerts] ( state, data ) {
+    state[$states.useTtsAlerts] = JSON.parse( data );
+    saveToLocalStorage( { [$states.useTtsAlerts]: data } );
+    try {
+      if ( !data ) speechSynthesis.cancel();
+    } catch ( error ) {
+      console.warn( `cannot access 'speechSynthesis'` );
+    }
+  },
+
   // Set use ignore
   [$mutations.setUseIgnore] ( state, data ) {
     state[$states.useIgnore] = JSON.parse( data );
@@ -210,14 +242,56 @@ export const mutations = {
 
   // Set user ignore list
   [$mutations.setIgnoreList] ( state, data ) {
-    state[$states.ignoreList] = JSON.parse( data );
+    state[$states.ignoreList] = data;
     saveToLocalStorage( { [$states.ignoreList]: data } );
+  },
+
+  // Add user to ignore list
+  [$mutations.addIgnoreList] ( state, data ) {
+    state[$states.ignoreList].push( data );
+    saveToLocalStorage( { [$states.ignoreList]: state[$states.ignoreList] } );
+  },
+
+  // Filter user from ignore list
+  [$mutations.removeIgnoreList] ( state, data ) {
+    state[$states.ignoreList] = state[$states.ignoreList].filter( x => x !== data );
+    saveToLocalStorage( { [$states.ignoreList]: state[$states.ignoreList] } );
+  },
+
+  // Set channel ignore list
+  [$mutations.setIgnoreChannelList] ( state, data ) {
+    state[$states.ignoreChannelList] = data;
+    saveToLocalStorage( { [$states.ignoreChannelList]: data } );
+  },
+
+  // Add channel to ignore list
+  [$mutations.addIgnoreChannelList] ( state, data ) {
+    state[$states.ignoreChannelList].push( data );
+    saveToLocalStorage( { [$states.ignoreChannelList]: state[$states.ignoreChannelList] } );
+  },
+
+  // Filter channel from ignore list
+  [$mutations.removeIgnoreChannelList] ( state, data ) {
+    state[$states.ignoreChannelList] = state[$states.ignoreChannelList].filter( x => x !== data );
+    saveToLocalStorage( { [$states.ignoreChannelList]: state[$states.ignoreChannelList] } );
+  },
+
+  // Set troll messages visibility
+  [$mutations.setHideTrolls] ( state, data ) {
+    state[$states.hideTrolls] = data;
+    saveToLocalStorage( { [$states.hideTrolls]: data } );
   },
 
   // Set TTS enabled for trolls
   [$mutations.setTrollTts] ( state, data ) {
     state[$states.trollTts] = data;
     saveToLocalStorage( { [$states.trollTts]: data } );
+  },
+
+  // Set TTS sanitization
+  [$mutations.setCleanTts] ( state, data ) {
+    state[$states.cleanTts] = data;
+    saveToLocalStorage( { [$states.cleanTts]: data } );
   },
 
   // Set TTS Rate
@@ -449,6 +523,8 @@ export const actions = {
       // No existing tokens, get new troll token
       await dispatch( $actions.createTrollToken );
     }
+
+    return token;
   },
 
   async [$actions.logout] ({ dispatch }) {
@@ -486,14 +562,15 @@ export const actions = {
     loggingOut = false; // Unlock when completed
   },
 
-  [$actions.loadSettings] ({ commit }) {
+  [$actions.loadSettings] ({ state, commit }) {
     let settings = new Map([
       [$states.timestamps, $mutations.setTimestamps],
       [$states.global, $mutations.setGlobal],
       [$states.useTts, $mutations.setUseTts],
+      [$states.useTtsAlerts, $mutations.setUseTtsAlerts],
       [$states.useIgnore, $mutations.setUseIgnore],
-      //TODO: fix ignore list
-      //[$states.ignoreList, $mutations.setIgnoreList],
+      [$states.ignoreList, $mutations.setIgnoreList],
+      [$states.ignoreChannelList, $mutations.setIgnoreChannelList],
       [$states.notify, $mutations.setNotify],
       [$states.autocomplete, $mutations.setAutocomplete],
       [$states.highDensity, $mutations.setHighDensity],
@@ -514,8 +591,8 @@ export const actions = {
       ['globalchat', $states.global],
       ['tts', $states.useTts],
       ['useignore', $states.useIgnore],
-      //TODO: fix ignore list
-      //['ignorelist', $states.ignoreList],
+      ['ignorelist', $states.ignoreList],
+      ['ignoreChannellist', $states.ignoreChannelList],
       ['notify', $states.notify],
       ['autocomplete', $states.autocomplete],
       ['high-density', $states.highDensity],
@@ -530,33 +607,13 @@ export const actions = {
       )
     );
 
+    // TODO: centralised migrate function?
+    const oldIgnoreList = state[ Chat.$states.ignoreList ];
+    const oldIgnoreChannelList = state[ Chat.$states.ignoreChannelList ];
+    commit( Chat.$mutations.setIgnoreList, oldIgnoreList.map( i => i.toLowerCase() ) );
+    commit( Chat.$mutations.setIgnoreChannelList, oldIgnoreChannelList.map( i => i.toLowerCase() ) );
+
     loadFromLocalStorage( commit, settings );
-
-    // Get ignore list
-    try {
-      const ignores = localStorage.getItem( 'ignorelist' );
-      if ( ignores !== null ) commit( $mutations.setIgnoreList, JSON.parse( ignores ) );
-    } catch ( error ) {
-      logger ( 'No ignore list found.' );
-    }
-
-    // TODO: Implement
-    // Get ignore channel list
-    /*try {
-      let ignores = localStorage.getItem( 'ignoreChannelList' );
-      if ( ignores ) this.ignoreChannelList = JSON.parse( ignores );
-    } catch ( error ) {
-      console.log( 'No ignore channel list found.' );
-    }*/
-
-    // Get ignore channel list
-    /*try {
-      const ignores = localStorage.getItem( 'ignoreChannelList' );
-      if ( !!ignores ) commit( $mutations.setChannelIgnoreList, JSON.parse( ignores ) );
-    } catch ( error ) {
-      console.log( 'No ignore channel list found.' );
-    }*/
-
   },
 };
 

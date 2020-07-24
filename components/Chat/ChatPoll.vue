@@ -1,8 +1,11 @@
 <template>
   <div class="d-flex">
 
-    <!-- Yellow Sidebar -->
-    <v-sheet color="primary" tile>
+    <!-- Colored Sidebar -->
+    <v-sheet
+      color="primary"
+      tile
+    >
       <div style="width:8px;"></div>
     </v-sheet>
 
@@ -11,6 +14,7 @@
       id="poll-body"
       class="pa-3"
       color="grey darken-4"
+      tile
     >
 
       <!-- Poll Title -->

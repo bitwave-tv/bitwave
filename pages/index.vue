@@ -69,7 +69,7 @@
           <v-lazy
             :min-height="200"
           >
-            <trending-replays
+            <lazy-trending-replays
               :limit="6"
               :blur-nsfw="blurNSFW"
               :cols="12"
@@ -99,7 +99,7 @@
           <v-lazy
             :min-height="200"
           >
-            <replay-grid
+            <lazy-replay-grid
               :limit="6"
               :blur-nsfw="blurNSFW"
               :cols="12"
@@ -123,14 +123,17 @@
 </template>
 
 <script>
-  import StreamGrid from '@/components/StreamGrid'
-  import BannerVideo from '@/components/Homepage/BannerVideo';
-  import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
-  import AboutUs from '@/components/Homepage/AboutUs';
+  // import StreamGrid from '@/components/StreamGrid'
+  // import BannerVideo from '@/components/Homepage/BannerVideo';
+  // import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
+  // import SimpleFooter from '@/components/SubLayout/SimpleFooter';
+  // import AboutUs from '@/components/Homepage/AboutUs';
 
-  const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
-  const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
+  // const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
+  // const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
+
+  import { mapState, mapMutations, mapActions } from 'vuex';
+  import { VStore } from "@/store";
 
   export default {
     scrollToTop: true,
@@ -142,20 +145,21 @@
           { rel: 'canonical', href: `https://bitwave.tv` },
         ],
         meta: [
-          { name: 'og:title',       hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
-          { name: 'og:description', hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
-          { name: 'og:image',       hid:'og:image',        content: this.poster},
-          { name: 'description',    hid: 'description',    content: 'An open platform live streaming service for creators to freely express themselves.' },
-          { name: 'twitter:card',        content: 'summary_large_image' },
-          { name: 'twitter:site',        content: '@BitwaveTV' },
-          { name: 'twitter:title',       content: 'Livestream Homepage - [bitwave.tv]' },
-          { name: 'twitter:description', content: 'An open platform live streaming service for creators to freely express themselves.' },
-          { name: 'twitter:image',       content: this.poster },
+          { property: 'og:title',            hid: 'og:title',       content: `Livestream Homepage - [bitwave.tv]` },
+          { property: 'og:url',              hid: 'og:url',         content: `https://bitwave.tv` },
+          { property: 'og:description',      hid: 'og:description', content: `An open platform live streaming service for creators to freely express themselves.` },
+          { property: 'og:image',            hid:'og:image',        content: this.poster},
+          { property: 'description',         hid: 'description',    content: 'An open platform live streaming service for creators to freely express themselves.' },
+          { property: 'twitter:card',        content: 'summary_large_image' },
+          { property: 'twitter:site',        content: '@BitwaveTV' },
+          { property: 'twitter:title',       content: 'Livestream Homepage - [bitwave.tv]' },
+          { property: 'twitter:description', content: 'An open platform live streaming service for creators to freely express themselves.' },
+          { property: 'twitter:image',       content: this.poster },
         ],
       }
     },
 
-    components: {
+    /*components: {
       TrendingReplays,
       ReplayGrid,
       AboutUs,
@@ -163,7 +167,7 @@
       MessageOfTheDay,
       BannerVideo,
       StreamGrid,
-    },
+    },*/
 
     data () {
       return {
@@ -172,12 +176,17 @@
         poster: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg',
         chatMessages: null,
         offline: true,
-        blurNSFW: true,
       }
     },
 
     methods: {
+      ...mapMutations ({
+        setBlurNsfw : VStore.$mutations.setBlurNsfw,
+      }),
 
+      ...mapActions ({
+        loadSettings : VStore.$actions.loadSettings,
+      }),
     },
 
     async asyncData ({ $axios }) {
@@ -227,6 +236,17 @@
     },
 
     computed: {
+      ...mapState({
+        getBlurNsfw : VStore.$states.blurNsfw,
+      }),
+
+      blurNSFW: {
+        get () { return this.getBlurNsfw; },
+        set ( data ) {
+          this.setBlurNsfw( data );
+        }
+      },
+
       mobile () {
         return this.mounted
           ? this.$vuetify.breakpoint.smAndDown
@@ -237,6 +257,7 @@
     mounted () {
       this.mounted = true;
       if ( this.offline ) this.$toast.error( 'API Error: SSR Hydration failed', { duration: 5000, icon: 'error', position: 'top-center' } );
+      this.loadSettings();
     },
   }
 </script>

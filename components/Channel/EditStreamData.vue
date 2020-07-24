@@ -183,9 +183,9 @@
                     dense
                   >
                     <div class="caption">
-                      <span class="font-weight-bold">Note:</span> modifying the archive setting will <strong>not</strong> affect an in progress stream.<br>
-                      A stream must be fully restarted in order to apply changes.<br>
-                      Archives cannot be enabled / disabled mid stream.
+                      <span class="font-weight-bold">Note:</span>
+                      modifying the archive setting will affect an in progress stream.<br>
+                      Replays can be enabled / disabled mid stream.
                     </div>
 
                     <template #close>

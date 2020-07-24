@@ -13,6 +13,15 @@
             </div>
           </div>
 
+          <v-list-item @click="bugReport">
+            <v-list-item-action class="mr-1">
+              <v-icon small>bug_report</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Submit Feedback</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item @click="popoutChat">
             <v-list-item-action class="mr-1">
               <v-icon small>open_in_new</v-icon>
@@ -55,7 +64,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'ChatOverflowMenu',
+    name: 'ChatOverflowMenuContent',
 
     props: {
       channel: { type: String },
@@ -141,10 +150,29 @@
         }
       },
 
+      bugReport () {
+        this.$sentry.withScope(
+          scope => {
+            // TODO: fix this, currently they aren't loaded from the store and throw errors
+            // scope.setExtra( 'global_chat', this.global );
+            // scope.setExtra( 'is_auth', this.isAuth );
+            scope.setUser({
+              username: this.username,
+            });
+            this.$sentry.captureMessage( 'Bug Report' );
+          },
+        );
+        this.$sentry.showReportDialog({
+          title: 'Something looks broken...',
+          labelName: 'Username',
+          labelSubmit: 'Submit Bug Report',
+        });
+      },
     },
 
     computed: {
       ...mapGetters({
+        username : VStore.$getters.getUsername,
         getPWaPrompt: VStore.$getters.getPWaPrompt,
       }),
 

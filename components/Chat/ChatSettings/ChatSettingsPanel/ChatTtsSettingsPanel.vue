@@ -2,7 +2,7 @@
   <v-card
     flat
     tile
-    class="mb-3 mx-3"
+    class="px-3"
   >
     <!-- TTS Settings -->
     <div>
@@ -22,6 +22,16 @@
         <v-switch
           v-model="useTts"
           label="Enable Chat TTS"
+          color="primary"
+          hide-details
+          dense
+          inset
+        />
+
+        <!-- Enable TTS Alerts -->
+        <v-switch
+          v-model="useTtsAlerts"
+          label="Alert TTS"
           color="primary"
           hide-details
           dense
@@ -54,7 +64,7 @@
         <v-divider class="mt-3" />
 
         <!-- TTS Voice Settings Labels -->
-        <v-subheader class="overline mb-0">
+        <v-subheader class="overline mb-0 px-0">
           TTS Voice Settings
         </v-subheader>
 
@@ -151,6 +161,7 @@
     methods: {
       ...mapMutations (Chat.namespace, {
         setUseTts          : Chat.$mutations.setUseTts,
+        setUseTtsAlerts    : Chat.$mutations.setUseTtsAlerts,
         setTrollTts        : Chat.$mutations.setTrollTts,
         setTtsRate         : Chat.$mutations.setTtsRate,
         setTtsReadUsername : Chat.$mutations.setTtsReadUsername,
@@ -168,6 +179,7 @@
     computed: {
       ...mapState (Chat.namespace, {
         getUseTts          : Chat.$states.useTts,
+        getUseTtsAlerts    : Chat.$states.useTtsAlerts,
         getTrollTts        : Chat.$states.trollTts,
         getTtsRate         : Chat.$states.ttsRate,
         getTtsReadUsername : Chat.$states.ttsReadUsername,
@@ -186,6 +198,14 @@
           this.$analytics.logEvent( 'use_tts', { value: val } );
         },
         get () { return this.getUseTts }
+      },
+
+      useTtsAlerts: {
+        set ( val ) {
+          this.setUseTtsAlerts( val );
+          this.$analytics.logEvent( 'use_tts_alerts', { value: val } );
+        },
+        get () { return this.getUseTtsAlerts }
       },
 
       trollTts: {

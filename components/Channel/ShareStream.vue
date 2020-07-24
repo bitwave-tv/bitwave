@@ -96,16 +96,21 @@
 </template>
 
 <script>
+  import { shortUUID } from '@/assets/js/short-uuid';
+
   export default {
     name: 'ShareStream',
 
     props: {
-      user: { type: String },
+      user: {
+        type: String
+      },
     },
 
     data() {
       return {
         showShare: false,
+        shareId: null,
       };
     },
 
@@ -152,9 +157,7 @@
 
     computed: {
       cacheBust () {
-        const coeff = 1000 * 60 * 10; // Ten minute cache buster
-        const timestamp = Math.round( Date.now() / coeff ) * coeff;
-        return `?shareid=${timestamp}`;
+        return `?sid=${this.shareId}`;
       },
 
       streamlink () {
@@ -176,5 +179,9 @@
         return `${base}?text=${encodeURI(text)}&url=${url}&hashtags=${hashtags}&via=${via}&related=${related}`;
       },
     },
+
+    mounted() {
+      this.shareId = shortUUID()
+    }
   };
 </script>
