@@ -56,7 +56,7 @@
         <!-- Trending Replay Header -->
         <div class="mb-4">
           <div class="d-flex justify-space-between align-end">
-            <div class="headline font-weight-light grey--text">Trending Replays</div>
+            <div class="headline font-weight-grey white--text">Trending Replays</div>
             <v-switch
               v-model="blurNSFW"
               label="Blur NSFW thumbnails"
@@ -86,7 +86,7 @@
         <!-- Recent Replay Header -->
         <div class="mb-4">
           <div class="d-flex justify-space-between align-end">
-            <div class="headline font-weight-light grey--text">Recent Replays</div>
+            <div class="headline font-weight-grey white--text">Recent Replays</div>
             <v-switch
               v-model="blurNSFW"
               label="Blur NSFW thumbnails"
