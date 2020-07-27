@@ -24,7 +24,9 @@
       <div class="d-flex">
 
         <!-- Create Poll Button -->
-        <div v-if="isChannelOwner">
+        <div
+          v-if="isChannelOwner"
+        >
           <v-menu
             v-model="showPoll"
             :close-on-content-click="false"
@@ -65,7 +67,7 @@
 
         <!-- Chat Admin Menu -->
         <lazy-chat-admin-menu-button
-          v-if="isAdmin"
+          v-if="isChannelOwner || isAdmin"
           class="mr-2"
         />
 
