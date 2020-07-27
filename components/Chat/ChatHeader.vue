@@ -23,6 +23,7 @@
 
       <div class="d-flex">
 
+        <!-- TODO: Move this to it's own component during poll refactor -->
         <!-- Create Poll Button -->
         <div
           v-if="isChannelOwner"
@@ -83,7 +84,6 @@
 
 <script>
 import ViewerList from '@/components/Chat/ViewerList';
-// import ChatAdminMenuButton from '@/components/Chat/ChatAdminMenuButtonButton';
 import ChatOverflowMenu from '@/components/Chat/ChatOverflowMenu';
 import { mapGetters } from 'vuex';
 import { VStore } from '@/store';
@@ -95,7 +95,6 @@ const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
 
     components: {
       ViewerList,
-      // ChatAdminMenuButton,
       ChatOverflowMenu,
       ChatPoll,
     },
