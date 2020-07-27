@@ -154,7 +154,7 @@
             const ignoreChannellist = this.ignoreChannelList.slice();
             const index = ignoreChannellist.indexOf( this.page.toLowerCase() );
             if (index > -1) {
-              ignoreChannellist.splice(index, 1);
+              ignoreChannellist.splice( index, 1 );
             }
 
             // Remove ignored channel messages
@@ -302,12 +302,12 @@
       },
 
       async ignoreUser ( user ) {
-        const actions = await this.$chatCommandParser.ignoreUser( user );
+        const actions = await this.$chatCommandParser.ignoreUser( user.toLowerCase() );
         actions?.forEach( a => this.executeAction( a ) );
       },
 
       async unignoreUser ( user ) {
-        const actions = await this.$chatCommandParser.unignoreUser( user );
+        const actions = await this.$chatCommandParser.unignoreUser( user.toLowerCase() );
         actions?.forEach( a => this.executeAction( a ) );
       },
 
@@ -521,7 +521,7 @@
             // Say Message
             if ( currentChat || myChat ) {
               const useTts = ( username ) => {
-                if ( this.ignoreList.find( user => user === m.username ) ) return false; // Don't read ignored users
+                if ( this.ignoreList.find( user => user.toLowerCase() === m.username.toLowerCase() ) ) return false; // Don't read ignored users
                 if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return false; // disables troll TTS
                 return true;
               }
