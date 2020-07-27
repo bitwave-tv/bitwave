@@ -60,9 +60,6 @@
             :color="alert.color"
             class="my-3"
           >
-            <!--<div>
-              <span class="overline grey&#45;&#45;text">{{ getTimeAgo( alert.timestamp._seconds * 1000 ) }}</span>
-            </div>-->
             <div class="d-flex align-center">
               <div><span class="font-weight-bold">{{ alert.username }}</span> spent <span class="font-weight-bold">{{ alert.amount }} coins</span>:</div>
               <v-spacer />
@@ -82,6 +79,7 @@
             No alerts received yet.
           </v-alert>
 
+          <!-- Skeleton loader -->
           <component
             is="v-slide-x-transition"
             hide-on-leave
@@ -110,7 +108,7 @@
                 outlined
                 text
                 border="left"
-                color="grey"
+                color="blue"
                 class="my-3"
               >
                 <v-skeleton-loader
@@ -125,7 +123,7 @@
                 outlined
                 text
                 border="left"
-                color="grey"
+                color="red"
                 class="my-3"
               >
                 <v-skeleton-loader
@@ -153,14 +151,14 @@
             :loading="loading"
             @click="getSuperchats"
           >
-            Refresh
+            Reload
           </v-btn>
           <v-btn
             color="primary"
             small
             :loading="loading"
             :disabled="!offset"
-            @click=""
+            @click="getMoreSuperchats"
           >
             Load More
           </v-btn>
@@ -229,6 +227,32 @@
         this.loading = false;
       },
 
+      async getMoreSuperchats () {
+        if ( !this.username || this.loading ) return;
+
+        this.loading = true;
+
+        await this.updateToken();
+
+        const endpoint = `https://api.bitwave.tv/v1/coins/${this.username}/alerts/${this.offset}`;
+        const payload =  {};
+        try {
+          const { data } = await this.$axios.get( endpoint, payload, );
+          if ( data.success  ) {
+            this.offset     = data.offset;
+            this.totalCount += data.totalCount;
+            this.totalCoins += data.totalCoins;
+            this.chatAlerts.push( ...data.data );
+          } else {
+            console.error( `Failed to load any alerts`, data );
+          }
+        } catch ( error ) {
+          console.error( error );
+        }
+
+        this.loading = false;
+      },
+
       getTimeAgo( time ) {
         return timeAgo( time );
       },
@@ -246,7 +270,6 @@
 
     beforeDestroy () {
       if ( this.unsubAuthChanged ) this.unsubAuthChanged();
-      if ( this.profileListener )  this.profileListener();
     },
   };
 </script>

@@ -171,9 +171,10 @@
 </template>
 
 <script>
-  import videojs from 'video.js'
-  import 'videojs-contrib-quality-levels'
-  import 'videojs-hls-quality-selector'
+  import videojs from 'video.js';
+  import 'videojs-contrib-quality-levels';
+  import 'videojs-hls-quality-selector';
+  import '@/assets/js/VideoPlayer/TriSpinner';
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { db } from '@/plugins/firebase.js';
@@ -358,7 +359,12 @@
           fill: false,
           // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
-          plugins: { qualityLevels: {} },
+          plugins: {
+            qualityLevels: {},
+            bitwaveTriSpinner: {
+              size: 58,
+            },
+          },
           poster: this.poster,
           inactivityTimeout: 2000,
           suppressNotSupportedError: true,

@@ -52,6 +52,7 @@
   import '@videojs/http-streaming';
   import 'videojs-contrib-quality-levels';
   import 'videojs-hls-quality-selector';
+  import '@/assets/js/VideoPlayer/TriSpinner';
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 
@@ -107,7 +108,12 @@
           suppressNotSupportedError: true,
 
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
-          plugins: { qualityLevels: {} },
+          plugins: {
+            qualityLevels: {},
+            bitwaveTriSpinner: {
+              size: 58,
+            },
+          },
           inactivityTimeout: 2000,
           controlBar: {
             currentTimeDisplay : false,
