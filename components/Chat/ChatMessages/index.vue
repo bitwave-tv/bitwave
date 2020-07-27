@@ -30,7 +30,7 @@
           <v-skeleton-loader
             ref="skeleton"
             :boilerplate="false"
-            :type="`avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
+            :type="`list-item-avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
             class="d-flex"
             dark
           ></v-skeleton-loader>
