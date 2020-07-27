@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card>
+    <v-card
+      class="d-flex flex-column"
+      style="max-height: 80vh;"
+    >
       <!-- Title Bar -->
       <v-sheet
         tile
@@ -16,7 +19,7 @@
 
           <!-- Total Alert Count -->
           <v-chip
-            class="mr-2"
+            class="mr-3"
             color="primary"
             outlined
             small
@@ -44,7 +47,7 @@
         <v-sheet
           color="black"
           class="px-3"
-          style="max-height: 65vh; overflow-y: auto;"
+          style="overflow-y: auto;"
         >
           <div class="my-3 overline grey--text">Most Recent</div>
           <v-alert
@@ -136,13 +139,15 @@
 
         </v-sheet>
 
+      <v-divider />
+
       <div
         class="pa-3"
       >
         <div class="d-flex">
           <v-spacer />
           <v-btn
-            class="mr-2"
+            class="mr-3"
             color="primary"
             small
             :loading="loading"
@@ -154,6 +159,7 @@
             color="primary"
             small
             :loading="loading"
+            :disabled="!offset"
             @click=""
           >
             Load More
@@ -175,11 +181,11 @@
 
     data() {
       return {
-        loading: true,
+        loading: false,
 
         offset: null,
-        totalCount: 0,  // Total count of alerts
-        totalCoins: 0,  // Total value of coins
+        totalCount: 0,    // Total count of alerts
+        totalCoins: 0,    // Total value of coins
         chatAlerts: null, // Array of alerts and data
       };
     },
@@ -197,11 +203,11 @@
       },
 
       async getSuperchats () {
-        if ( !this.username ) return;
-
-        await this.updateToken();
+        if ( !this.username || this.loading ) return;
 
         this.loading = true;
+
+        await this.updateToken();
 
         const endpoint = `https://api.bitwave.tv/v1/coins/${this.username}/alerts`;
         const payload =  {};
