@@ -22,18 +22,26 @@
           </v-avatar>
           <div class="mx-2">{{ name }}</div>
         </div>
+
         <div class="d-flex align-center">
+
+          <!-- NSFW Icon -->
           <template v-if="nsfw">
             <div class="font-weight-bold red--text body-2">NSFW</div>
             <v-divider vertical class="mx-2"/>
           </template>
-          <KickStreamButton
+
+          <!-- Admin Button -->
+          <lazy-admin-channel-button
             v-if="isAdmin"
             :streamer="name"
           />
+
+          <!-- Follow Button -->
           <FollowButton
             :streamer-id="owner"
           />
+
         </div>
       </div>
     </v-sheet>
@@ -178,7 +186,6 @@
   import { VStore } from '@/store';
   import { Player } from '@/store/player';
 
-  const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
   const Stickers = async () => await import ( '@/components/effects/Stickers' );
 
   export default {
@@ -211,7 +218,6 @@
 
     components: {
       Stickers,
-      KickStreamButton,
       ReplayInfo,
       FollowButton,
       Chat,

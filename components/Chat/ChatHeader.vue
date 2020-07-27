@@ -64,7 +64,8 @@
         </div>
 
         <!-- Chat Admin Menu -->
-        <chat-admin-menu
+        <lazy-chat-admin-menu-button
+          v-if="isAdmin"
           class="mr-2"
         />
 
@@ -80,8 +81,10 @@
 
 <script>
 import ViewerList from '@/components/Chat/ViewerList';
-import ChatAdminMenu from '@/components/Chat/ChatAdminMenu';
+// import ChatAdminMenuButton from '@/components/Chat/ChatAdminMenuButtonButton';
 import ChatOverflowMenu from '@/components/Chat/ChatOverflowMenu';
+import { mapGetters } from 'vuex';
+import { VStore } from '@/store';
 
 const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
 
@@ -90,7 +93,7 @@ const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
 
     components: {
       ViewerList,
-      ChatAdminMenu,
+      // ChatAdminMenuButton,
       ChatOverflowMenu,
       ChatPoll,
     },
@@ -114,6 +117,12 @@ const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
       createPoll ( poll ) {
         this.$emit( 'create-poll', poll );
       },
+    },
+
+    computed: {
+      ...mapGetters({
+        isAdmin: VStore.$getters.isAdmin,
+      }),
     },
   };
 </script>

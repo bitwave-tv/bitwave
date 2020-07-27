@@ -1,7 +1,6 @@
 <template>
   <!-- Admin Menu -->
   <v-menu
-    v-if="isAdmin"
     v-model="adminActionsMenu"
     :close-on-content-click="false"
     bottom
@@ -21,24 +20,16 @@
     </template>
 
     <!-- Chat Admin Menu -->
-    <chat-admin-menu-alerts
+    <lazy-chat-admin-menu
       @close="adminActionsMenu = false"
     />
+
   </v-menu>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import { VStore } from '@/store';
-
-// const ChatAdminMenu = async () => await import ( '@/components/Admin/ChatAdminMenu' );
-
   export default {
     name: 'ChatAdminMenuButton',
-
-    /*components: {
-      ChatAdminMenu,
-    },*/
 
     props: {},
 
@@ -46,14 +37,6 @@ import { VStore } from '@/store';
       return {
         adminActionsMenu: false,
       };
-    },
-
-    methods: {},
-
-    computed: {
-      ...mapGetters({
-        isAdmin: VStore.$getters.isAdmin,
-      }),
     },
   };
 </script>
