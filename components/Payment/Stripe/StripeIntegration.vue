@@ -173,6 +173,16 @@
 
           this.success = true;
           this.$emit( 'success', true );
+
+          this.$ga.event({
+            eventCategory : 'merchant',
+            eventAction   : 'purchased color',
+            eventLabel    : this.username.toLowerCase(),
+          });
+          this.$analytics.logEvent( 'purchase', {
+            currency: 'USD',
+            value: 5.00,
+          });
         } catch ( error ) {
           console.error( error );
           this.$emit( 'error', error );

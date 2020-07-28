@@ -13,6 +13,7 @@ module.exports = {
   env: {
     version: pkg.version || '0.0.0',
     VERSION: pkg.version || '0.0.0',
+
     APP_DEBUG: process.env.APP_DEBUG || false,
     BITWAVE_ENV: process.env.BITWAVE_ENV || process.env.NODE_ENV || 'production',
 
@@ -30,10 +31,10 @@ module.exports = {
     title: pkg.name,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport',     content: 'width=device-width, initial-scale=1' },
-      { name: 'description',  hid: 'description', content: pkg.description},
-      { name: 'og:site_name', content: '[bitwave.tv]' },
-      { name: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
+      { property: 'viewport',     content: 'width=device-width, initial-scale=1' },
+      { property: 'og:site_name', content: '[bitwave.tv]' },
+      { property: 'og:image',     content: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg', hid: 'og:image' },
+      { property: 'description',  content: pkg.description, hid: 'description' },
       // https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg // old image
     ],
     script: [],
@@ -226,7 +227,7 @@ module.exports = {
       description: 'An open platform live streaming service for creators to freely express themselves.',
       theme_color: '#13a9fe',
       ogType: 'website',
-      ogHost: 'http://bitwave.tv',
+      ogHost: 'https://bitwave.tv',
       twitterCard: 'summary_large_image',
       twitterSite: '@BitwaveTV',
       // twitterCreator: '',
@@ -256,12 +257,12 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/device',
     '@nuxtjs/pwa',
-    '@nuxtjs/recaptcha',
+    /*'@nuxtjs/recaptcha',*/
     '@nuxtjs/toast',
     '@nuxtjs/sentry',
     'cookie-universal-nuxt',
     [ '@nuxtjs/google-analytics', { id: 'UA-133753190-2' } ],
-    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 1 } ],
+    [ '@nuxtjs/component-cache', { maxAge: 1000 * 60 * 2 } ],
     [ 'nuxt-stripe-module', { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } ],
   ],
 
@@ -301,11 +302,11 @@ module.exports = {
   /*
   ** reCAPTCHA v3
   */
-  recaptcha: {
+  /*recaptcha: {
     hideBadge: true,
     siteKey: '6LcEX8QUAAAAADjiUPfbzkyn0KYAaEK263quzCGh',
     version: 3,
-  },
+  },*/
 
   /*
   ** Sentry
@@ -357,6 +358,8 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+
+    devtools: process.env.NODE_ENV === 'development',
 
     // crossorigin: true,
 
