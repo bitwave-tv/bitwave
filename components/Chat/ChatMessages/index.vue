@@ -247,7 +247,7 @@
             this.jumpToBottom( scrollHeight );
             this.scrolling = false;
             this.atBottom = true;
-        }, 500 );
+        }, 250 );
       },
 
       jumpToBottom ( scrollGoal ) {
@@ -288,8 +288,9 @@
         if ( !this.onScrollTimer ) {
           const scrollStart  = this.chatContainer.scrollTop;
           const scrollHStart = this.chatContainer.scrollHeight;
+
           this.onScrollTimer = setTimeout( () => {
-            let scrollPosition  = this.chatContainer.scrollTop;
+            let scrollPosition    = this.chatContainer.scrollTop;
             const scrollHPosition = this.chatContainer.scrollHeight;
 
             const scrollHDiff = scrollHPosition - scrollHStart;

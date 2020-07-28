@@ -8,7 +8,7 @@
     >
       <h4 class="black--text body-2">
         <v-icon color="black">local_atm</v-icon>
-        Coin Store
+        wavecoin store
       </h4>
       <v-btn
         color="black"
@@ -38,7 +38,7 @@
             small
             block
           >
-            Buy 100 Coins - $10
+            Buy 100 wavecoins - $10
           </v-btn>
 
         </template>
@@ -48,7 +48,7 @@
             class="title primary black--text"
             primary-title
           >
-            ${{ this.amount }} - Buy 100 Coins
+            ${{ this.amount }} - Buy 100 wavecoins
           </v-card-title>
 
           <v-card-text>
@@ -102,7 +102,7 @@
         <div class="d-flex justify-space-between align-end">
           <div class="mr-2">Balance: </div>
           <div>
-            <span class="headline">{{ coins }}</span> coins
+            <span class="headline">{{ coins }}</span> <span>🌊coins</span>
           </div>
         </div>
       </v-alert>
