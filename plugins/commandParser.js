@@ -14,15 +14,15 @@ const functions = {
 
     const ignoreList = _store_state[Chat.$states.ignoreList];
 
-    who = who.replace( '@', '' );
-    const exists = ignoreList.find( el => el.toLowerCase() === who.toLowerCase() );
+    who = who.replace( '@', '' ).toLowerCase();
+    const exists = ignoreList.find( el => el.toLowerCase() === who );
     if( exists ) {
       return [
         { insertMessage: `You already ignore '${ who }'` }
       ];
     }
 
-    await _store_commit( Chat.$mutations.addIgnoreList, who.toLowerCase() );
+    await _store_commit( Chat.$mutations.addIgnoreList, who );
 
     // Analytics
     _ga.event( {
@@ -33,7 +33,7 @@ const functions = {
 
     return [
       { saveToDb: ['users', 'ignoreList', ignoreList] },
-      { forceFilter: message => who.toLowerCase() !== message.username.toLowerCase() },
+      { forceFilter: message => who !== message.username.toLowerCase() },
       { insertMessage: `Ignored User: ${ who }` },
     ];
   },
@@ -41,10 +41,10 @@ const functions = {
   async unignoreUser( who ) {
     const ignoreList = _store_state[Chat.$states.ignoreList];
 
-    who = who.replace( '@', '' );
-    const exists = ignoreList.find( el => el.toLowerCase() === who.toLowerCase() );
+    who = who.replace( '@', '' ).toLowerCase();
+    const exists = ignoreList.find( el => el.toLowerCase() === who );
     if( exists ) {
-      await _store_commit( Chat.$mutations.removeIgnoreList, who.toLowerCase() );
+      await _store_commit( Chat.$mutations.removeIgnoreList, who );
 
       // Analytics
       _ga.event( {
@@ -66,14 +66,15 @@ const functions = {
   async ignoreChannel( who ) {
     const ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
 
-    const exists = ignoreChannelList.find( el => el.toLowerCase() === who.toLowerCase() );
+    who = who.replace( '@', '' ).toLowerCase();
+    const exists = ignoreChannelList.find( el => el.toLowerCase() === who );
     if( exists ) {
       return [
         { insertMessage: `Channel already ignored ${ who }` }
       ];
     }
 
-    await _store_commit( Chat.$mutations.addIgnoreChannelList, who.toLowerCase() );
+    await _store_commit( Chat.$mutations.addIgnoreChannelList, who );
 
     // Analytics
     _ga.event( {
@@ -83,18 +84,19 @@ const functions = {
     } );
 
     return [
-      { saveToDb: ['users', 'ignoreChannelList', ignoreChannelList] },
-      { forceFilter: message => who.toLowerCase() !== message.username.toLowerCase() },
-      { insertMessage: `Ignored User: ${ who }` },
+      { saveToDb: [ 'users', 'ignoreChannelList', ignoreChannelList ] },
+      { forceFilter: message => who !== message.username.toLowerCase() },
+      { insertMessage: `Ignored Channel: ${ who }` },
     ];
   },
 
   async unignoreChannel( who ) {
     const ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
 
-    const exists = ignoreChannelList.includes( who.toLowerCase() );
+    who = who.replace( '@', '' ).toLowerCase();
+    const exists = ignoreChannelList.includes( who );
     if( exists ) {
-      await _store_commit( Chat.$mutations.removeIgnoreChannelList, who.toLowerCase() );
+      await _store_commit( Chat.$mutations.removeIgnoreChannelList, who );
 
       // Analytics
       _ga.event( {
