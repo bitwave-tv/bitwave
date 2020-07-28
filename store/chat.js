@@ -30,7 +30,10 @@ const $states = {
   ignoreList          : 'IGNORE_LIST',
   ignoreChannelList   : 'CHANNEL_IGNORE_LIST',
 
-  receiveMentionsInLocal : 'RECIEVE_MENTIONS_IN_LOCAL',
+  statTickRate      : 'STAT_TICK_RATE',
+  statHistogramSize : 'STAT_HISTOGRAM_SIZE',
+
+  receiveMentionsInLocal : 'RECEIVE_MENTIONS_IN_LOCAL',
 
   message    : 'MESSAGE',
   messageBuffer : 'MESSAGE_BUFFER',
@@ -89,7 +92,10 @@ const $mutations = {
   setAutocomplete    : 'SET_AUTOCOMPLETE',
   setHighDensity     : 'SET_HIGH_DENSITY',
 
-  setReceiveMentionsInLocal : 'SET_RECIEVE_MENTIONS_IN_LOCAL',
+  setStatTickRate      : 'STAT_TICK_RATE',
+  setStatHistogramSize : 'STAT_HISTOGRAM_SIZE',
+
+  setReceiveMentionsInLocal : 'SET_RECEIVE_MENTIONS_IN_LOCAL',
 
   setMessage    : 'SET_MESSAGE',
   appendMessage : 'APPEND_MESSAGE',
@@ -155,6 +161,9 @@ export const state = () => ({
 
   [$states.ignoreList]          : [],
   [$states.ignoreChannelList]   : [],
+
+  [$states.statTickRate]      : 3,
+  [$states.statHistogramSize] : 25,
 
   [$states.receiveMentionsInLocal] : false,
 
@@ -342,6 +351,18 @@ export const mutations = {
   [$mutations.setHighDensity] ( state, data ) {
     state[$states.highDensity] = JSON.parse( data );
     saveToLocalStorage( { [$states.highDensity]: data } );
+  },
+
+  // Set how often stats are calculated (in secs)
+  [$mutations.setStatTickRate] ( state, data ) {
+    state[$states.statTickRate] = data;
+    saveToLocalStorage( { [$states.statTickRate]: data } );
+  },
+
+  // Set the histogram size for all stats
+  [$mutations.setStatHistogramSize] ( state, data ) {
+    state[$states.statHistogramSize] = data;
+    saveToLocalStorage( { [$states.statHistogramSize]: data } );
   },
 
   // Set receive mentions in local
