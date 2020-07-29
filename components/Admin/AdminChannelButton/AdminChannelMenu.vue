@@ -23,25 +23,30 @@
         <div class="px-3 pb-4">
 
           <!-- Channel Specific Admin Tools -->
-          <v-subheader class="overline mb-0 px-0">
+          <div class="overline my-2 px-0">
             Channel Admin Tools
-          </v-subheader>
+          </div>
 
           <!-- Stream Admin Control -->
           <admin-stream-control
             :streamer="streamer"
+            @close="closeMenu"
           />
 
           <!-- Platform Admin Tools -->
-          <v-subheader class="overline mb-0 px-0">
+          <div class="overline my-2 px-0">
             Platform Admin Tools
-          </v-subheader>
+          </div>
 
           <!-- Create Alert -->
-          <admin-create-banner />
+          <admin-create-banner
+            @close="closeMenu"
+          />
 
           <!-- Create Fireworks -->
-          <admin-create-fireworks />
+          <admin-create-fireworks
+            @close="closeMenu"
+          />
 
         </div>
       </v-card>

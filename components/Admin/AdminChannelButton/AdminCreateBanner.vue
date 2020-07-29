@@ -104,6 +104,7 @@
             payload,
           );
           this.$toast.success( data, { icon: 'done', duration: 5000, position: 'top-center' } );
+          this.$emit( 'close' );
           this.showSystemAlertDialog = false;
         } catch ( error ) {
           this.$toast.error( error.message, { icon: 'error', duration: 5000, position: 'top-center' } );

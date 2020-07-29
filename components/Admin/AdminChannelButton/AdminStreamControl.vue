@@ -3,6 +3,7 @@
       <v-dialog
         v-model="dialog"
         :width="$vuetify.breakpoint.mdAndDown ? '95%' : '400'"
+        @close="close"
       >
         <template v-slot:activator="{ on }">
           <v-btn
@@ -212,7 +213,7 @@
           console.error( error );
           this.error( error.message );
         }
-        this.dialog = false;
+        this.close();
       },
 
       async transcodeStreamer ( mode, options ) {
@@ -231,7 +232,8 @@
           console.error( error );
           this.error( error.message );
         }
-        this.dialog = false;
+
+        this.close();
       },
 
       success ( data ) {
@@ -244,6 +246,12 @@
 
       createEndpoint ( base, token, reset ) {
         return `${base}?reset=${!!reset}`;
+      },
+
+      /* Close Menu */
+      close () {
+        this.$emit( 'close' );
+        this.dialog = false;
       },
     },
   };
