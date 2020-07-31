@@ -3,7 +3,7 @@
   <v-sheet
     id="chat-input"
     class="pa-2 mt-2"
-    color="gray"
+    color="grey"
   >
 
     <!-- Text Input Field -->
@@ -44,7 +44,7 @@
 
       <chat-mod-tools v-if="false"/>
 
-      <!-- Chat Shekel -->
+      <!-- WaveCoin™ -->
       <v-menu
         v-if="true"
         v-model="showChatCoins"
