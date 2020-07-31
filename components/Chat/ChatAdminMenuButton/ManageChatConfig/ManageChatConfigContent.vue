@@ -2,14 +2,14 @@
     <div>
       <div class="pa-3">
         <!-- Current Settings -->
-        <div class="d-flex px-3 caption">
+        <div class="d-flex px-3 caption" v-if="false">
           <div class="flex-grow-1">
             <div>Allow Links: {{ config.allowLinks }}</div>
             <div>Block Spam: {{ config.blockSpam }}</div>
           </div>
           <div class="flex-grow-1">
-            <div>Short Rate: {{ 1 / ( config.rates.short / 10 ) }} per 1 Second</div>
-            <div>Long Rate: {{ 1 / ( config.rates.long / 20 ) }} per 30 Seconds</div>
+            <div>Short Rate: {{ ( 1 / ( config.rates.short / 10 ) ).toFixed( 2 ) }} per 1 Second</div>
+            <div>Long Rate: {{ ( 1 / ( config.rates.long / 20 ) ).toFixed( 2 ) }} per 30 Seconds</div>
           </div>
         </div>
 
@@ -23,7 +23,7 @@
             hide-details
             dense
             inset
-            class="mt-1"
+            class="mt-2"
             :disabled="saving"
           />
 
@@ -35,9 +35,84 @@
             hide-details
             dense
             inset
-            class="mt-1"
+            class="mt-2"
             :disabled="saving"
           />
+        </div>
+
+        <!-- Quick config rate limiter -->
+        <v-subheader>Rate Limiter Configuration</v-subheader>
+        <div class="d-flex mt-4 justify-space-around">
+          <v-btn
+            outlined
+            small
+            color="red"
+            class="mx-2"
+            :disabled="saving"
+            @click="() => { this.config.rates.short = 10; this.config.rates.long = 20; }"
+          >
+            slow
+          </v-btn>
+          <v-btn
+            outlined
+            small
+            color="green"
+            class="mx-2"
+            :disabled="saving"
+            @click="() => { this.config.rates.short = 5; this.config.rates.long = 5; }"
+          >
+            default
+          </v-btn>
+          <v-btn
+            outlined
+            small
+            color="blue"
+            class="mx-2"
+            :disabled="saving"
+            @click="() => { this.config.rates.short = 2.5; this.config.rates.long = 2.5; }"
+          >
+            double
+          </v-btn>
+          <v-btn
+            outlined
+            small
+            color="purple"
+            class="mx-2"
+            :disabled="saving"
+            @click="() => { this.config.rates.short = 1; this.config.rates.long = 1; }"
+          >
+            insane
+          </v-btn>
+        </div>
+
+        <div class="mb-4">
+          <v-subheader>Short Rate: {{ ( 1 / ( config.rates.short / 10 ) ).toFixed( 2 ) }} per 1 Second</v-subheader>
+          <div class="px-3">
+            <v-slider
+              v-model="config.rates.short"
+              step=".5"
+              min="1"
+              max="10"
+              ticks
+              hide-details
+              dense
+              :disabled="saving"
+            ></v-slider>
+          </div>
+
+          <v-subheader>Long Rate: {{ ( 1 / ( config.rates.long / 20 ) ).toFixed( 2 ) }} per 30 Seconds</v-subheader>
+          <div class="px-3">
+            <v-slider
+              v-model="config.rates.long"
+              step="1"
+              min="1"
+              max="20"
+              ticks
+              hide-details
+              dense
+              :disabled="saving"
+            ></v-slider>
+          </div>
         </div>
 
         <div class="d-flex">
@@ -64,6 +139,7 @@
     data() {
       return {
         saving: true,
+        shortRateTicks: [ 1, 2, 2.5, 5, 10 ],
         config: {
           allowLinks: true,
           blockSpam: false,
