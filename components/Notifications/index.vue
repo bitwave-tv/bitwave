@@ -13,7 +13,6 @@
           v-on="on"
           icon
           text
-          :disabled="!isAuth"
           @click="markAsRead"
         >
           <v-badge

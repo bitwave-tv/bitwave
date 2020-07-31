@@ -1,36 +1,6 @@
 <template>
     <div>
       <!-- Navigation List -->
-
-        <v-list
-          class="pt-0 pb-1"
-          dense
-        >
-          <v-list-item
-            v-for="( item, i ) in items"
-            :key="i"
-            :to="item.to"
-            router
-            exact
-            @click="onClick"
-            no-prefetch
-          >
-            <v-list-item-avatar class="my-1" tile>
-
-              <img
-                :src="icon2"
-                alt="bitwave.tv logo"
-                title="bitwave.tv homepage"
-              />
-
-            </v-list-item-avatar>
-            <v-list-item-content class="py-0">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-              <v-list-item-subtitle>[bitwave.tv]</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
       <div
         v-if="getPWaPrompt"
       >
@@ -45,22 +15,6 @@
           no-prefetch
         >
           GET APP
-        </v-btn>
-      </div>
-
-      <div v-else>
-        <v-btn
-          class="text-center py-2"
-          style="height: auto;"
-          to="/streamkey"
-          text
-          tile
-          block
-          small
-          @click="onClick"
-          no-prefetch
-        >
-          STREAM
         </v-btn>
       </div>
 

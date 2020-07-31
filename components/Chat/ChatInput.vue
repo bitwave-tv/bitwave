@@ -2,42 +2,40 @@
   <!-- Chat Input -->
   <v-sheet
     id="chat-input"
-    class="pa-2"
-    color="black"
+    class="pa-2 mt-2"
+    color="grey"
   >
 
     <!-- Text Input Field -->
-    <div class="d-flex">
-      <v-text-field
-        ref="chatmessageinput"
-        :value="getMessage"
-        :label="`Chat ${global ? 'globally' : ''} as ${username}...`"
-        :loading="loading"
-        :disabled="loading"
-        color="primary"
-        autocomplete="new-chat-message"
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="true"
-        single-line
-        validate-on-blur
-        outlined
-        dense
-        clearable
-        counter="300"
-        @change="value => this.setChatMessage( value )"
-        @keyup.delete="updateMessage"
-        @keyup.enter.prevent="sendMessage"
-        @keyup.prevent="event => lastMessageHandler( event )"
-        @cut="event => lastMessageHandler( event )"
-        @keydown="onDetectAutocomplete"
-        @click:clear="setChatMessage( '' )"
-        @keydown.tab.prevent="event => onTab( event )"
-        @keydown.down="event => onArrow( event )"
-        @keydown.up="event => onArrow( event )"
-        @drop="onDrop"
-      />
-    </div>
+    <v-text-field
+      ref="chatmessageinput"
+      :value="getMessage"
+      :label="`Chat ${global ? 'globally' : ''} as ${username}...`"
+      :loading="loading"
+      :disabled="loading"
+      color="primary"
+      style="margin-bottom: -18px;"
+      autocomplete="new-chat-message"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="true"
+      single-line
+      validate-on-blur
+      outlined
+      dense
+      clearable
+      @change="value => this.setChatMessage( value )"
+      @keyup.delete="updateMessage"
+      @keyup.enter.prevent="sendMessage"
+      @keyup.prevent="event => lastMessageHandler( event )"
+      @cut="event => lastMessageHandler( event )"
+      @keydown="onDetectAutocomplete"
+      @click:clear="setChatMessage( '' )"
+      @keydown.tab.prevent="event => onTab( event )"
+      @keydown.down="event => onArrow( event )"
+      @keydown.up="event => onArrow( event )"
+      @drop="onDrop"
+    />
 
     <!-- Bottom Buttons -->
     <div class="d-flex align-center">
@@ -46,7 +44,7 @@
 
       <chat-mod-tools v-if="false"/>
 
-      <!-- Chat Coin -->
+      <!-- WaveCoin™ -->
       <v-menu
         v-if="true"
         v-model="showChatCoins"
@@ -84,7 +82,7 @@
         @click="sendMessage"
       >
         send
-        <v-icon small>send</v-icon>
+        <v-icon small right>send</v-icon>
       </v-btn>
     </div>
 
