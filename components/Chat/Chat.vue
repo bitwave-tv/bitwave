@@ -873,6 +873,15 @@
         if ( !val ) await this.hydrate();
         else this.applyChatFilters();
       },
+
+      async getStatTickRate ( val ) {
+        if ( this.statInterval ) clearInterval( this.statInterval );
+        this.statInterval = window.setInterval( () => this.onChatStatTick(), val * 1000 )
+      },
+
+      async getStatHistogramSize ( val ) {
+        this.userStats.defaultHistogramSettings = { create: true, size: val };
+      },
     },
 
     async mounted () {
