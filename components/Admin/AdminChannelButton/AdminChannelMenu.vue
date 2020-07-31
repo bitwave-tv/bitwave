@@ -40,12 +40,12 @@
 
           <!-- Create Alert -->
           <admin-create-banner
-            @close="closeMenu"
+            @cclose="closeMenu"
           />
 
           <!-- Create Fireworks -->
           <admin-create-fireworks
-            @close="closeMenu"
+            @cclose="closeMenu"
           />
 
         </div>
@@ -54,17 +54,8 @@
 </template>
 
 <script>
-  import AdminCreateFireworks from '@/components/Admin/AdminChannelButton/AdminCreateFireworks';
-  import AdminCreateBanner from '@/components/Admin/AdminChannelButton/AdminCreateBanner';
-  import AdminStreamControl from '@/components/Admin/AdminChannelButton/AdminStreamControl';
   export default {
     name: 'AdminChannelMenu',
-
-    components: {
-      AdminStreamControl,
-      AdminCreateBanner,
-      AdminCreateFireworks,
-    },
 
     props: {
       streamer: { type: String },

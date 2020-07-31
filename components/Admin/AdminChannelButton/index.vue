@@ -2,7 +2,7 @@
     <div>
       <v-menu
         v-model="adminActionsMenu"
-        :close-on-content-click="true"
+        :close-on-content-click="false"
         bottom
         offset-y
         transition="slide-y-transition"
