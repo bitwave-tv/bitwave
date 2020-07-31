@@ -9,8 +9,9 @@
     app
     @input="$emit( 'input', $event )"
   >
-
     <div class="d-flex flex-column fill-height">
+      <v-divider />
+
       <!-- Site Navigation -->
       <navigation-list />
 
