@@ -18,8 +18,17 @@
             <dashboard-superchats />
           </v-col>
 
+          <!-- Chat -->
           <v-col>
-            <div>CHAT SHOULD GO HERE</div>
+            <div
+              v-if="displayChat"
+              class="d-flex flex-shrink-1"
+              :style="{ width: mobile ? '100%' : '450px', 'height': mobile ? '500px' : '555px' }"
+            >
+              <chat
+                :chat-channel="username"
+              />
+            </div>
           </v-col>
         </v-row>
       </v-container>
@@ -28,25 +37,41 @@
 </template>
 
 <script>
+  import { mapGetters, mapState } from 'vuex';
+  import { Chat as ChatStore } from '@/store/chat';
+  import { VStore } from '@/store';
+
   export default {
     name: 'dashboard',
 
     middleware: 'auth',
 
     data() {
-      return {};
+      return {
+        mounted: false,
+      };
     },
 
     methods: {},
 
-    computed: {},
+    computed: {
+      ...mapGetters( {
+        username: VStore.$getters.getUsername,
+      }),
+
+      ...mapState(ChatStore.namespace, {
+        displayChat: ChatStore.$states.displayChat
+      }),
+
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
+      },
+    },
 
     mounted() {
-
+      this.mounted = true;
     },
   };
 </script>
-
-<style lang='scss'>
-
-</style>
