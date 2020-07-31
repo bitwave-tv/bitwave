@@ -33,20 +33,10 @@
             Streamer Dashboard
           </v-btn>
 
-          <!-- View Banned Users -->
-          <!--<v-btn
-            class="d-flex my-3"
-            color="primary black&#45;&#45;text"
-            block
-            small
-            :disabled="true"
-            @click.prevent="showMutedUsers = true"
-          >
-            View Muted Users
-          </v-btn>-->
+          <!-- View Muted Users -->
           <lazy-view-muted-users-dialog />
 
-          <!-- View Banned Users -->
+          <!-- Modify Chat Configuration -->
           <v-btn
             class="d-flex my-3"
             color="primary black--text"
