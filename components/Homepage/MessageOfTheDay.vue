@@ -2,7 +2,7 @@
   <v-row class="justify-center">
     <div class="d-flex align-center">
       <div class="title text-center mx-3 d-flex flex-column">
-        <span class="font-weight-light white--text display-1">Open Platform Livescreaming</span>
+        <span class="font-weight-light white--text">Open Platform Livescreaming</span>
         <div>
           <span class="overline font-weight-black rgb-text">viewer discretion is advised</span>
         </div>
