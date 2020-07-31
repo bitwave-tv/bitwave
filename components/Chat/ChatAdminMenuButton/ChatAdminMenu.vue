@@ -34,16 +34,17 @@
           </v-btn>
 
           <!-- View Banned Users -->
-          <v-btn
+          <!--<v-btn
             class="d-flex my-3"
-            color="primary black--text"
+            color="primary black&#45;&#45;text"
             block
             small
             :disabled="true"
             @click.prevent="showMutedUsers = true"
           >
             View Muted Users
-          </v-btn>
+          </v-btn>-->
+          <lazy-view-muted-users-dialog />
 
           <!-- View Banned Users -->
           <v-btn
