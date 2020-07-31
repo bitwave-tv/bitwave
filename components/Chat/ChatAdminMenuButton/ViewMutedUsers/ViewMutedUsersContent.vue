@@ -106,21 +106,14 @@
         this.$axios.setToken( token, 'Bearer' );
       },
 
-
       async getBans () {
         this.loading = true;
         await this.getFreshIdToken();
 
         const endpoint = `https://api.bitwave.tv/v1/chat/bans`;
-        const payload = {
-          user: 'thisdoesntmatter',
-        };
 
         try {
-          const { data } = await this.$axios.post(
-            endpoint,
-            payload,
-          );
+          const { data } = await this.$axios.get( endpoint );
 
           console.log( data );
 

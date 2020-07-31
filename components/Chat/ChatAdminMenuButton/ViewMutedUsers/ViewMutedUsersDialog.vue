@@ -48,14 +48,8 @@
 </template>
 
 <script>
-  // import ViewMutedUsersContent from '@/components/Chat/ChatAdminMenuButton/ViewMutedUsers/ViewMutedUsersContent';
-
   export default {
     name: 'ViewMutedUsersDialog',
-
-    /*components: {
-      ViewMutedUsersContent,
-    },*/
 
     data() {
       return {

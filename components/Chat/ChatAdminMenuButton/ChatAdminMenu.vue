@@ -20,11 +20,11 @@
           </v-btn>
         </v-sheet>
 
-        <div class="px-3 pb-3">
+        <div class="px-3 pt-3 pb-1">
 
           <!-- View Streamer Dashboard -->
           <v-btn
-            class="d-flex my-3"
+            class="d-flex mb-3"
             color="primary black--text"
             block
             small
@@ -37,16 +37,7 @@
           <lazy-view-muted-users-dialog />
 
           <!-- Modify Chat Configuration -->
-          <v-btn
-            class="d-flex my-3"
-            color="primary black--text"
-            block
-            small
-            :disabled="true"
-            @click.prevent="showMutedUsers = true"
-          >
-            Modify Chat Configuration
-          </v-btn>
+          <lazy-manage-chat-config-dialog />
 
         </div>
       </v-card>
