@@ -7,6 +7,7 @@
       class="data-table-no-hover"
       :loading="loading"
       loading-text="Loading... Please wait"
+      no-data-text="You haven't muted any users :)"
       :search="search"
       :items-per-page="5"
     >
