@@ -79,8 +79,8 @@
     <sidebar v-model="drawer" />
 
     <!-- Content -->
-    <v-content class="mx-0">
-      <nuxt class="px-0 mx-0" />
+    <v-content>
+      <nuxt />
     </v-content>
 
     <!-- Fireworks overlay -->
