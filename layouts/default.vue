@@ -30,20 +30,21 @@
         <v-icon>menu</v-icon>
       </v-btn>-->
 
-      <v-toolbar-title class="pl-0">
+      <v-toolbar-title
+        class="pl-0"
+      >
 
         <v-btn
           :ripple="false"
-          to="/"
           depressed
-          tile
+          icon
           exact
           id="logo_image"
-          x-small
           exact-active-class="app-title-active"
           class="text-none py-1 mx-0 px-0"
+          @click.stop="drawer = !drawer"
         >
-          <v-avatar tile size="40">
+          <v-avatar tile size="32">
             <img
               :src="bwLogo"
               alt="bitwave.tv logo"
