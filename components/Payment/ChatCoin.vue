@@ -59,7 +59,7 @@
 
       <!-- Buy Username Color -->
       <v-dialog
-        v-model="show"
+        v-model="showBuyColor"
         width="500"
       >
         <template v-slot:activator="{ on }">
@@ -69,7 +69,7 @@
             v-on="on"
             small
             block
-            @click.stop="show = !show"
+            @click.stop="showBuyColor = !showBuyColor"
           >
             Buy Chat Color - $5
           </v-btn>
@@ -223,6 +223,7 @@
 
     data () {
       return {
+        showBuyColor: false,
         showPurchasePopup: false,
         redeemAlertPopup: false,
         token: 'production_ndjvk9d7_4q2xfsbyxjmm8brs',
