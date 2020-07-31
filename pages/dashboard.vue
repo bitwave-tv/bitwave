@@ -10,8 +10,15 @@
         <v-row>
 
           <v-col>
-            <div>STREAM PLAYER GOES HERE</div>
-            <div class="caption">IT SHOULD PROBABLY BE AUTOMUTED TOO</div>
+            <v-responsive height="calc( 100% + 32px )">
+              <iframe
+                :src="`/embed/${username}`"
+                frameborder="none"
+                scrolling="no"
+                width="100%"
+                height="100%"
+              ></iframe>
+            </v-responsive>
           </v-col>
 
           <v-col>
