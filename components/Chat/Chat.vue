@@ -206,7 +206,6 @@
         showViewStats: false,
         viewValues: [ 0 ],
 
-        tickPeriod: 3,
         userStats: new UserStats( this.tickPeriod ),
 
         requestResize: false,
@@ -795,6 +794,9 @@
         getIgnoreChannelList      : Chat.$states.ignoreChannelList,
         getReceiveMentionsInLocal : Chat.$states.receiveMentionsInLocal,
 
+        getStatTickRate      : Chat.$states.statTickRate,
+        getStatHistogramSize : Chat.$states.statHistogramSize,
+
         getTrackMetrics          : Chat.$states.trackMetrics,
         getTrackMetricsPerUser   : Chat.$states.trackMetricsPerUser,
 
@@ -874,6 +876,15 @@
         if ( !val ) await this.hydrate();
         else this.applyChatFilters();
       },
+
+      async getStatTickRate ( val ) {
+        if ( this.statInterval ) clearInterval( this.statInterval );
+        this.statInterval = window.setInterval( () => this.onChatStatTick(), val * 1000 )
+      },
+
+      async getStatHistogramSize ( val ) {
+        this.userStats.defaultHistogramSettings = { create: true, size: val };
+      },
     },
 
     async mounted () {
@@ -944,7 +955,8 @@
       }
 
       // Stat tracking interval
-      this.statInterval = setInterval( () => this.onChatStatTick(), this.tickPeriod * 1000 );
+      this.userStats.defaultHistogramSettings = { create: true, size: this.getStatHistogramSize };
+      this.statInterval = setInterval( () => this.onChatStatTick(), this.getStatTickRate * 1000 );
 
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
