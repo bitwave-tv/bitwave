@@ -449,6 +449,7 @@
         // Local vs. Global which looks nicer than having
         // Global and Local animated and mix when leaving local
         // this.messages = [];
+        if ( !this.messages ) this.messages = [];
 
         const success = await bitwaveChat.hydrate();
         if( !success ) {
