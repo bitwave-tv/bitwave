@@ -119,7 +119,7 @@
 <style lang='scss'>
   .chat-autocomplete {
     position: absolute;
-    top: 0;
+    top: -.5rem;
     transform: translate( 5%, -100% );
     width: 90%;
     max-height: 300px;
