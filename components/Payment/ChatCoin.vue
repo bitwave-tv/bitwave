@@ -182,8 +182,7 @@
             ></v-text-field>
 
             <div class="d-flex align-end mt-3">
-              <div class="grey--text overline">Hello Senator</div>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 class="d-flex ml-2"
                 color="primary"
