@@ -625,6 +625,7 @@
 
         await this.userStats.calculate.messageRate.total( newMessages );
         this.userStats.calculate.messageRateDerivative.total();
+        this.userStats.calculate.hIndex.total( newMessages );
         this.userStats.calculate.spamminess.total( newMessages );
         this.userStats.calculate.niceness.user( "all", 1 );
 
@@ -771,6 +772,7 @@
         user            : VStore.$getters.getUser,
         _username       : VStore.$getters.getUsername,
         getChannelViews : VStore.$getters.getChannelViews,
+        channelsViewers : VStore.$states.channelsViewers,
       }),
 
       ...mapState ( Chat.namespace, {
@@ -897,6 +899,41 @@
           me.stat.value.set( me.ALL_USER, key, this.getChannelViews( this.page ) );
         }
       };
+
+      this.userStats.calculate.hIndex = {
+        total: () => {
+          const channels = this.channelsViewers?.filter( c => c.viewCount !== 0 );
+          if( !channels ) {
+            this.userStats.value.set( this.userStats.ALL_USER, "hIndex", 0 );
+            return;
+          }
+
+          let h = 0;
+          for( const channel of channels ) {
+            const viewCount = channel.viewCount;
+            let g = 0,  // i + r
+                i = 1,  // i := # of larger streams +1
+                r = -1; // r := # of other equally-sized streams
+
+            for( const channelIter of channels ) {
+              const viewCompare = channelIter.viewCount;
+              if( viewCount < viewCompare ) i++;
+              else if( viewCount === viewCompare ) r++;
+            }
+
+            g = i + r;
+            // Maximises h; g is the new candidate for h
+            if( g > h ) {
+              if( i <= viewCount && viewCount < g ) {
+                h = viewCount;
+              } else {
+                h = g
+              }
+            }
+          }
+          this.userStats.value.set( this.userStats.ALL_USER, "hIndex", h );
+        }
+      }
 
       // Add listener for voice changes, then update voices.
       try {
