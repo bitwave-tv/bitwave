@@ -1,20 +1,22 @@
 <template>
   <v-card  color="accentwave">
     <v-card-title class="headline pb-2">
-      <div class="d-flex align-center">
-        <v-img
-          class="d-block mx-3"
-          contain
-          max-height="2rem"
-          max-width="2rem"
-          src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw"
-          alt="Cool blobby with sunglasses"
-          crossorigin
-        />
-        <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
-      </div>
-      <div class="subheading font-weight-light grey--text" style="word-break: break-word;">
-        An open platform live streaming service for creators to freely express themselves.
+      <div>
+        <div class="d-flex align-center">
+          <v-img
+            class="d-block mx-3"
+            contain
+            max-height="2rem"
+            max-width="2rem"
+            src="https://cdn.bitwave.tv/static/emotes/cool_blobby.gif?_bw"
+            alt="Cool blobby with sunglasses"
+            crossorigin
+          />
+          <h6 class="headline" style="width:100%">Welcome to [bitwave.tv]</h6>
+        </div>
+        <div class="subheading font-weight-light grey--text" style="word-break: break-word;">
+          An open platform live streaming service for creators to freely express themselves.
+        </div>
       </div>
     </v-card-title>
 

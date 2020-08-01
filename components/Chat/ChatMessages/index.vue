@@ -30,7 +30,7 @@
           <v-skeleton-loader
             ref="skeleton"
             :boilerplate="false"
-            :type="`avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
+            :type="`list-item-avatar, ${ i % 2 ? 'paragraph' : 'sentences' }`"
             class="d-flex"
             dark
           ></v-skeleton-loader>
@@ -247,7 +247,7 @@
             this.jumpToBottom( scrollHeight );
             this.scrolling = false;
             this.atBottom = true;
-        }, 500 );
+        }, 250 );
       },
 
       jumpToBottom ( scrollGoal ) {
@@ -288,8 +288,9 @@
         if ( !this.onScrollTimer ) {
           const scrollStart  = this.chatContainer.scrollTop;
           const scrollHStart = this.chatContainer.scrollHeight;
+
           this.onScrollTimer = setTimeout( () => {
-            let scrollPosition  = this.chatContainer.scrollTop;
+            let scrollPosition    = this.chatContainer.scrollTop;
             const scrollHPosition = this.chatContainer.scrollHeight;
 
             const scrollHDiff = scrollHPosition - scrollHStart;

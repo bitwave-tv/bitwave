@@ -23,8 +23,11 @@
 
       <div class="d-flex">
 
+        <!-- TODO: Move this to it's own component during poll refactor -->
         <!-- Create Poll Button -->
-        <div v-if="isChannelOwner">
+        <div
+          v-if="isChannelOwner"
+        >
           <v-menu
             v-model="showPoll"
             :close-on-content-click="false"
@@ -64,7 +67,8 @@
         </div>
 
         <!-- Chat Admin Menu -->
-        <chat-admin-menu
+        <lazy-chat-admin-menu-button
+          v-if="isChannelOwner || isAdmin"
           class="mr-2"
         />
 
@@ -80,8 +84,9 @@
 
 <script>
 import ViewerList from '@/components/Chat/ViewerList';
-import ChatAdminMenu from '@/components/Chat/ChatAdminMenu';
 import ChatOverflowMenu from '@/components/Chat/ChatOverflowMenu';
+import { mapGetters } from 'vuex';
+import { VStore } from '@/store';
 
 const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
 
@@ -90,7 +95,6 @@ const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
 
     components: {
       ViewerList,
-      ChatAdminMenu,
       ChatOverflowMenu,
       ChatPoll,
     },
@@ -114,6 +118,12 @@ const ChatPoll = async () => await import ( '@/components/Chat/ChatPoll' );
       createPoll ( poll ) {
         this.$emit( 'create-poll', poll );
       },
+    },
+
+    computed: {
+      ...mapGetters({
+        isAdmin: VStore.$getters.isAdmin,
+      }),
     },
   };
 </script>

@@ -1,7 +1,16 @@
 <template>
   <div>
     <div class="mt-3 grey--text caption">NOTE: All purchases support bitwave media directly currently. Additional monetization options for streamers is in progress.</div>
-    <div class="mt-3 grey--text caption"><i>coins are nonrefundable and cannot be redeemed for cash value.</i></div>
+    <div class="mt-3 white--text caption"><i>wavecoins are nonrefundable and cannot be redeemed for cash value.</i></div>
+
+    <nuxt-link
+      to="/wavecoin-acceptable-use-policy"
+      class="mb-3 caption"
+      no-prefetch
+    >
+      Read our wavevoin acceptable use policy (WC-AUP)
+    </nuxt-link>
+
     <div class="mt-3 mb-3 grey--text caption">Donations within the last 30 days are eligable for credit.<br>Email support@bitwave.tv for assistance.</div>
 
     <!-- Make a purchase -->

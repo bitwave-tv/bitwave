@@ -8,7 +8,7 @@
     >
       <h4 class="black--text body-2">
         <v-icon color="black">local_atm</v-icon>
-        Coin Store
+        wavecoin store
       </h4>
       <v-btn
         color="black"
@@ -38,7 +38,7 @@
             small
             block
           >
-            Buy 100 Coins - $10
+            Buy 100 wavecoins - $10
           </v-btn>
 
         </template>
@@ -48,7 +48,7 @@
             class="title primary black--text"
             primary-title
           >
-            ${{ this.amount }} - Buy 100 Coins
+            ${{ this.amount }} - Buy 100 wavecoins
           </v-card-title>
 
           <v-card-text>
@@ -59,7 +59,7 @@
 
       <!-- Buy Username Color -->
       <v-dialog
-        v-model="show"
+        v-model="showBuyColor"
         width="500"
       >
         <template v-slot:activator="{ on }">
@@ -69,7 +69,7 @@
             v-on="on"
             small
             block
-            @click.stop="show = !show"
+            @click.stop="showBuyColor = !showBuyColor"
           >
             Buy Chat Color - $5
           </v-btn>
@@ -102,7 +102,7 @@
         <div class="d-flex justify-space-between align-end">
           <div class="mr-2">Balance: </div>
           <div>
-            <span class="headline">{{ coins }}</span> coins
+            <span class="headline">{{ coins }}</span> <span>🌊coins</span>
           </div>
         </div>
       </v-alert>
@@ -182,8 +182,7 @@
             ></v-text-field>
 
             <div class="d-flex align-end mt-3">
-              <div class="grey--text overline">Hello Senator</div>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 class="d-flex ml-2"
                 color="primary"
@@ -223,6 +222,7 @@
 
     data () {
       return {
+        showBuyColor: false,
         showPurchasePopup: false,
         redeemAlertPopup: false,
         token: 'production_ndjvk9d7_4q2xfsbyxjmm8brs',

@@ -137,7 +137,7 @@
 
         loading: true,
         connecting: true,
-        chatLimit: 50,
+        chatLimit: 100,
         userToken: null,
 
         // [ Message -> Maybe Message ]
@@ -154,7 +154,7 @@
             const ignoreChannellist = this.ignoreChannelList.slice();
             const index = ignoreChannellist.indexOf( this.page.toLowerCase() );
             if (index > -1) {
-              ignoreChannellist.splice(index, 1);
+              ignoreChannellist.splice( index, 1 );
             }
 
             // Remove ignored channel messages
@@ -302,12 +302,12 @@
       },
 
       async ignoreUser ( user ) {
-        const actions = await this.$chatCommandParser.ignoreUser( user );
+        const actions = await this.$chatCommandParser.ignoreUser( user.toLowerCase() );
         actions?.forEach( a => this.executeAction( a ) );
       },
 
       async unignoreUser ( user ) {
-        const actions = await this.$chatCommandParser.unignoreUser( user );
+        const actions = await this.$chatCommandParser.unignoreUser( user.toLowerCase() );
         actions?.forEach( a => this.executeAction( a ) );
       },
 
@@ -521,7 +521,7 @@
             // Say Message
             if ( currentChat || myChat ) {
               const useTts = ( username ) => {
-                if ( this.ignoreList.find( user => user === m.username ) ) return false; // Don't read ignored users
+                if ( this.ignoreList.find( user => user.toLowerCase() === m.username.toLowerCase() ) ) return false; // Don't read ignored users
                 if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return false; // disables troll TTS
                 return true;
               }
@@ -544,8 +544,8 @@
         if ( !this.$refs['chatmessages'].showFAB ) {
           // if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           if ( this.messages.length > this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
-          // this.scrollToBottom();
-          this.$nextTick( () => this.scrollToBottom() );
+          // await this.scrollToBottom();
+          this.$nextTick( async () => await this.scrollToBottom() );
         }
       },
 
@@ -961,7 +961,7 @@
   #chat-scroll {
     height: 100%;
     margin-right: 1px;
-    overscroll-behavior: auto;
+    overscroll-behavior: contain;
 
     &::-webkit-scrollbar-track
     {

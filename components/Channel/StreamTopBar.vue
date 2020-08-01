@@ -31,7 +31,7 @@
             </template>
 
             <!-- Admin Button -->
-            <KickStreamButton
+            <lazy-admin-channel-button
               v-if="isAdmin"
               :streamer="name"
             />
@@ -52,14 +52,12 @@
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
   import FollowButton from '@/components/Channel/FollowButton';
-  const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
 
   export default {
     name: 'StreamTopBar',
 
     components: {
       FollowButton,
-      KickStreamButton,
     },
 
     props: {

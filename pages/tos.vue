@@ -314,13 +314,5 @@
     components: {
       SimpleFooter,
     },
-
-    data() {
-      return {}
-    },
-
-    methods: {},
-
-    computed: {},
   }
 </script>

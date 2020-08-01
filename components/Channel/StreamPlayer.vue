@@ -21,8 +21,9 @@
 <script>
   import videojs from 'video.js';
   import '@videojs/http-streaming';
-  import 'videojs-contrib-quality-levels'
-  import 'videojs-hls-quality-selector'
+  import 'videojs-contrib-quality-levels';
+  import 'videojs-hls-quality-selector';
+  import '@/assets/js/VideoPlayer/TriSpinner';
 
   const DEBUG_VIDEO_JS = false;
 
@@ -55,7 +56,12 @@
           fill: true,
           // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
-          plugins: { qualityLevels: {} },
+          plugins: {
+            qualityLevels: {},
+            bitwaveTriSpinner: {
+              size: 58,
+            },
+          },
           poster: this.poster,
           html5: {
             vhs: {

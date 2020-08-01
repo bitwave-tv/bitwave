@@ -22,18 +22,26 @@
           </v-avatar>
           <div class="mx-2">{{ name }}</div>
         </div>
+
         <div class="d-flex align-center">
+
+          <!-- NSFW Icon -->
           <template v-if="nsfw">
             <div class="font-weight-bold red--text body-2">NSFW</div>
             <v-divider vertical class="mx-2"/>
           </template>
-          <KickStreamButton
+
+          <!-- Admin Button -->
+          <lazy-admin-channel-button
             v-if="isAdmin"
             :streamer="name"
           />
+
+          <!-- Follow Button -->
           <FollowButton
             :streamer-id="owner"
           />
+
         </div>
       </div>
     </v-sheet>
@@ -163,9 +171,10 @@
 </template>
 
 <script>
-  import videojs from 'video.js'
-  import 'videojs-contrib-quality-levels'
-  import 'videojs-hls-quality-selector'
+  import videojs from 'video.js';
+  import 'videojs-contrib-quality-levels';
+  import 'videojs-hls-quality-selector';
+  import '@/assets/js/VideoPlayer/TriSpinner';
 
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
   import { db } from '@/plugins/firebase.js';
@@ -178,7 +187,6 @@
   import { VStore } from '@/store';
   import { Player } from '@/store/player';
 
-  const KickStreamButton = async () => await import( '@/components/Admin/KickStreamButton' );
   const Stickers = async () => await import ( '@/components/effects/Stickers' );
 
   export default {
@@ -211,7 +219,6 @@
 
     components: {
       Stickers,
-      KickStreamButton,
       ReplayInfo,
       FollowButton,
       Chat,
@@ -352,7 +359,12 @@
           fill: false,
           // aspectRation: '16:9',
           playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
-          plugins: { qualityLevels: {} },
+          plugins: {
+            qualityLevels: {},
+            bitwaveTriSpinner: {
+              size: 58,
+            },
+          },
           poster: this.poster,
           inactivityTimeout: 2000,
           suppressNotSupportedError: true,

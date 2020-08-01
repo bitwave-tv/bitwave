@@ -2,8 +2,8 @@
   <!-- Chat Input -->
   <v-sheet
     id="chat-input"
-    class="pa-2 mt-2"
-    color="grey"
+    class="pa-2 mt-1"
+    color="grey darken-4"
   >
 
     <!-- Text Input Field -->
@@ -13,16 +13,18 @@
       :label="`Chat ${global ? 'globally' : ''} as ${username}...`"
       :loading="loading"
       :disabled="loading"
+      class="mb-0"
       color="primary"
-      style="margin-bottom: -18px;"
       autocomplete="new-chat-message"
       autocorrect="off"
       autocapitalize="off"
       spellcheck="true"
+      :counter="300"
+      :hide-details="false"
       single-line
+      dense
       validate-on-blur
       outlined
-      dense
       clearable
       @change="value => this.setChatMessage( value )"
       @keyup.delete="updateMessage"
