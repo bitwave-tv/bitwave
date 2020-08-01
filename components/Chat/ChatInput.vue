@@ -247,7 +247,7 @@
         // Don't send a message if auto completing
         if ( this.autocomplete ) {
           // Add exception for instances where we have no match or an exact match.
-          const send = !this.autocompleteValue || this.autocomplete[0].toLowerCase() === this.autocompleteValue.value.trim().toLowerCase();
+          const send = !this.autocompleteValue || this.$utils.normalizedCompare ( this.autocomplete[0], this.autocompleteValue.value.trim() );
           if ( !send ) return this.onTab();
         }
 
