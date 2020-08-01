@@ -1,5 +1,8 @@
 <template>
-  <div v-html="compiledMarkdown"></div>
+  <div
+    class="mkdjs"
+    v-html="compiledMarkdown"
+  ></div>
 </template>
 
 <script>
@@ -52,3 +55,16 @@
     },
   }
 </script>
+
+<style lang="scss">
+  .mkdjs {
+    .code,
+    code,
+    pre {
+      white-space: pre;
+      overflow-x: auto;
+      display: inline-block;
+      min-width: 100%;
+    }
+  }
+</style>
