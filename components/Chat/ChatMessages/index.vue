@@ -402,7 +402,7 @@
       z-index: 3;
     }
 
-    .dense .msg {
+    .dense .content .msg {
       h1, h2, h3 {
         font-size: 1rem;
       }

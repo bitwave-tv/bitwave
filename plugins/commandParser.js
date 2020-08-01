@@ -175,7 +175,22 @@ const functions = {
     ];
   },
 
+  /**
+   * TOGGLE HIGH DENSITY
+   * */
+  async toggleHighDensity () {
+    const highDensity = !_store_state[ Chat.$states.highDensity ];
+    await _store_commit( Chat.$mutations.setHighDensity, highDensity );
 
+    // Analytics
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'QOL',
+      eventLabel: `${highDensity ? 'enable' : 'disable'}-high-density`,
+    } );
+
+    return [];
+  },
 
   async hideTrolls() {
     await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[ Chat.$states.hideTrolls ] );
@@ -199,6 +214,7 @@ const functions = {
     _ga.event( {
       eventCategory: 'chat',
       eventAction: 'ignorelist',
+      eventLabel: `show-ignore-list`
     } ); // Analytics
     return [
       { insertMessage: `Ignored Users: ${ _ignoreList.join( ', ' ) }` },
@@ -257,6 +273,9 @@ const export_obj = {
     ["uic", functions.unignoreChannel],
     ["uc", functions.unignoreChannel],
     ["purgechannels", functions.purgeIgnoreChannel],
+    ["highdensity", functions.toggleHighDensity],
+    ["dense", functions.toggleHighDensity],
+    ["troll", functions.hideTrolls],
     ["trolls", functions.hideTrolls],
     ["susi", functions.hideTrolls],
     ["cuckrockchris", functions.cleanTts],

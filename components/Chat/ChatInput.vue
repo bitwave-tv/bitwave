@@ -168,6 +168,10 @@
       value: '/badge ',
     },
     {
+      label: 'Toggle high density',
+      value: '/dense ',
+    },
+    {
       label: 'Bug Report',
       value: '/bugreport ',
     },
