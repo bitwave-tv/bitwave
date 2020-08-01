@@ -61,6 +61,7 @@
 <script>
   import videojs from 'video.js';
   import 'videojs-contrib-quality-levels';
+  import '@/assets/js/VideoPlayer/TriSpinner';
   // import 'videojs-contrib-dash';
 
   import { mapState, mapMutations } from 'vuex';
@@ -104,9 +105,13 @@
         try {
           this.player = videojs( 'solo-player', {
             // liveui: true,
-            // playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
             inactivityTimeout: 1000,
             suppressNotSupportedError: true,
+            plugins: {
+              bitwaveTriSpinner: {
+                size: 58,
+              },
+            },
             userActions: {
               hotkeys: true,
             },
