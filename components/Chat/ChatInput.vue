@@ -132,6 +132,14 @@
       value: '/unignorechannel ',
     },
     {
+      label: 'purge channel ignores',
+      value: '/purgechannels ',
+    },
+    {
+      label: 'purge user ignores',
+      value: '/purgeusers ',
+    },
+    {
       label: 'whisper',
       value: '/w @',
     },

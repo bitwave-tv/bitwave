@@ -81,10 +81,12 @@ const $mutations = {
   setIgnoreList      : 'SET_IGNORE_LIST',
   addIgnoreList      : 'ADD_IGNORE_LIST',
   removeIgnoreList   : 'REMOVE_IGNORE_LIST',
+  purgeIgnoreList    : 'PURGE_IGNORE_LIST',
 
   setIgnoreChannelList      : 'SET_CHANNEL_IGNORE_LIST',
   addIgnoreChannelList      : 'ADD_CHANNEL_IGNORE_LIST',
   removeIgnoreChannelList   : 'REMOVE_CHANNEL_IGNORE_LIST',
+  purgeIgnoreChannelList    : 'PURGE_CHANNEL_IGNORE_LIST',
 
   setAutocomplete    : 'SET_AUTOCOMPLETE',
   setHighDensity     : 'SET_HIGH_DENSITY',
@@ -258,6 +260,12 @@ export const mutations = {
     saveToLocalStorage( { [$states.ignoreList]: state[$states.ignoreList] } );
   },
 
+  // Purge all users from ignore list
+  [$mutations.purgeIgnoreList] ( state ) {
+    state[$states.ignoreList] = [];
+    saveToLocalStorage( { [$states.ignoreList]: state[$states.ignoreList] } );
+  },
+
   // Set channel ignore list
   [$mutations.setIgnoreChannelList] ( state, data ) {
     state[$states.ignoreChannelList] = data;
@@ -273,6 +281,12 @@ export const mutations = {
   // Filter channel from ignore list
   [$mutations.removeIgnoreChannelList] ( state, data ) {
     state[$states.ignoreChannelList] = state[$states.ignoreChannelList].filter( x => x !== data );
+    saveToLocalStorage( { [$states.ignoreChannelList]: state[$states.ignoreChannelList] } );
+  },
+
+  // Filter channel from ignore list
+  [$mutations.purgeIgnoreChannelList] ( state ) {
+    state[$states.ignoreChannelList] = [];
     saveToLocalStorage( { [$states.ignoreChannelList]: state[$states.ignoreChannelList] } );
   },
 

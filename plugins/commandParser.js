@@ -9,7 +9,7 @@ const functions = {
   /**
    * IGNORE USER
    * */
-  async ignoreUser( who ) {
+  async ignoreUser ( who ) {
     if( who.toLowerCase() === '[bitwave.tv]' ) {
       return [
         { insertMessage: "I'm afraid I can't let you do that, Dave." }
@@ -45,7 +45,7 @@ const functions = {
   /**
    * UN-IGNORE USER
    * */
-  async unignoreUser( who ) {
+  async unignoreUser ( who ) {
     const ignoreList = _store_state[ Chat.$states.ignoreList ];
 
     who = who.replace( '@', '' ).toLowerCase();
@@ -74,9 +74,31 @@ const functions = {
   },
 
   /**
+   * PURGE IGNORE USER
+   * */
+  async purgeIgnoreUser () {
+    const ignoreList = _store_state[ Chat.$states.ignoreList ];
+    await _store_commit( Chat.$mutations.purgeIgnoreList );
+    const ignoreListUpdated = _store_state[ Chat.$states.ignoreList ];
+
+    // Analytics
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'purge-ignore',
+      eventLabel: 'purge-users',
+    } );
+
+    return [
+      { saveToDb: [ 'users', 'ignoreList', ignoreListUpdated ] },
+      { insertMessage: `Purged all users from ignore user list!` },
+    ];
+  },
+
+
+  /**
    * IGNORE CHANNEL
    * */
-  async ignoreChannel( who ) {
+  async ignoreChannel ( who ) {
     const ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
 
     who = who.replace( '@', '' ).toLowerCase();
@@ -106,7 +128,7 @@ const functions = {
   /**
    * UN-IGNORE CHANNEL
    * */
-  async unignoreChannel( who ) {
+  async unignoreChannel ( who ) {
     const ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
 
     who = who.replace( '@', '' ).toLowerCase();
@@ -132,6 +154,28 @@ const functions = {
     }
 
   },
+
+  /**
+   * PURGE IGNORE CHANNEL
+   * */
+  async purgeIgnoreChannel () {
+    await _store_commit( Chat.$mutations.purgeIgnoreChannelList );
+    const ignoreChannelListUpdated = _store_state[ Chat.$states.ignoreChannelList ];
+
+    // Analytics
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'purge-ignore',
+      eventLabel: 'purge-channels',
+    } );
+
+    return [
+      { saveToDb: [ 'users', 'ignoreChannelList', ignoreChannelListUpdated ] },
+      { insertMessage: `Purged all channels from ignore channel list!` },
+    ];
+  },
+
+
 
   async hideTrolls() {
     await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[ Chat.$states.hideTrolls ] );
@@ -206,11 +250,13 @@ const export_obj = {
     ["i", functions.ignoreUser],
     ["unignore", functions.unignoreUser],
     ["u", functions.unignoreUser],
+    ["purgeusers", functions.purgeIgnoreUser],
     ["ignorechannel", functions.ignoreChannel],
     ["ic", functions.ignoreChannel],
     ["unignorechannel", functions.unignoreChannel],
     ["uic", functions.unignoreChannel],
     ["uc", functions.unignoreChannel],
+    ["purgechannels", functions.purgeIgnoreChannel],
     ["trolls", functions.hideTrolls],
     ["susi", functions.hideTrolls],
     ["cuckrockchris", functions.cleanTts],
