@@ -210,15 +210,15 @@
 
           // "Keep Live" Feature
           this.player.liveTracker.on( 'liveedgechange', async () => {
-            // This is currently an opt-in feature
-            if ( !this.pinToLive ) return;
-
             // Only respond to when we fall behind
             if ( this.player.liveTracker.atLiveEdge() ) {
               // Set to 1x playback rate once we catch up
               this.player.playbackRate( 1 );
               return;
             }
+            
+            // This is currently an opt-in feature
+            if ( !this.pinToLive ) return;
 
             // Don't respond to when user has paused the player
             if ( this.player.paused() ) return;
