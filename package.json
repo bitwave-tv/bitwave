@@ -27,7 +27,7 @@
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/manifest": "^3.0.0-beta.16",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
-    "@nuxtjs/sentry": "^4.3.3",
+    "@nuxtjs/sentry": "^4.3.4",
     "@nuxtjs/toast": "^3.3.1",
     "@sentry/browser": "^5.20.1",
     "@videojs/http-streaming": "^2.1.0",
