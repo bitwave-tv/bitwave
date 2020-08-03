@@ -49,7 +49,7 @@
       <chat-graph
         v-if="showGraph"
         :values="graphValues"
-        :period="tickPeriod"
+        :period="getStatTickRate"
         :statName="graphStat.stat"
       />
     </v-slide-y-transition>
@@ -206,7 +206,7 @@
         showViewStats: false,
         viewValues: [ 0 ],
 
-        userStats: new UserStats( this.tickPeriod ),
+        userStats: new UserStats( this.getStatTickRate ),
 
         requestResize: false,
       }
@@ -598,7 +598,7 @@
             else return f( x );
           };
         };
-        //    allFilters = foldl (>=>) id this.messageFilters
+        //    allFilters = foldl (>=>) return this.messageFilters
         const allFilters = this.messageFilters.reduce( maybeCompose, a => a );
         return !allFilters( message );
       },
@@ -915,7 +915,7 @@
         total: () => {
           const channels = this.channelsViewers?.filter( c => c.viewCount !== 0 );
           if( !channels ) {
-            this.userStats.value.set( this.userStats.ALL_USER, "hIndex", 0 );
+            this.userStats.stat.value.set( this.userStats.ALL_USER, "hIndex", 0 );
             return;
           }
 
@@ -942,7 +942,7 @@
               }
             }
           }
-          this.userStats.value.set( this.userStats.ALL_USER, "hIndex", h );
+          this.userStats.stat.value.set( this.userStats.ALL_USER, "hIndex", h );
         }
       }
 
