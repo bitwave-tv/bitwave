@@ -57,7 +57,7 @@
     <!-- Chat Messages -->
     <chat-messages
       ref="chatmessages"
-      :messages="messages"
+      :messages="shownMessages"
       :show-timestamps="showTimestamps"
       :global="global"
       :is-channel-owner="isChannelOwner"
@@ -140,6 +140,52 @@
         chatLimit: 50,
         userToken: null,
 
+        messageProcessors: [
+          m => {
+            // Add username highlighting
+            const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+            m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
+            return m;
+          },
+          m => {
+            m.type = 'message';
+            return m;
+          },
+        ],
+
+        messageNotificationProcessors: [
+          m => {
+            // Notification Sounds
+            const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
+            if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
+            return m;
+          },
+          m => {
+            // For Text to Speech
+            if ( this.getUseTts ) {
+              // TODO: m.lowercase might be unnecessary
+              // TODO: this code is identical to one of the filters
+              // Dispatch TODO: Is it actually identical to one of the filters? I'm not sure that's true
+              const currentChat = this.$utils.normalizedCompare(m.channel, this.username);
+              const myChat = this.$utils.normalizedCompare(m.channel, this.page);
+
+              // Say Message
+              if (currentChat || myChat) {
+                const useTts = (username) => {
+                  if (this.ignoreList.find(user => user.toLowerCase() === m.username.toLowerCase())) return false; // Don't read ignored users
+                  if (!this.getTrollTts && /troll:\w+/.test(username)) return false; // disables troll TTS
+                  return true;
+                }
+                if (useTts(m.username)) {
+                  console.log('tts');
+                  this.speak(m.message, m.username);
+                }
+              }
+            }
+            return m;
+          }
+        ],
+
         // [ Message -> Maybe Message ]
         messageFilters: [
           m => {
@@ -187,6 +233,7 @@
           },
         ],
 
+        shownMessages: null,
         messages: null,
 
         voicesListTTS: [],
@@ -224,7 +271,7 @@
         if ( a.saveToDb ) this.saveToDb( ...a.saveToDb );
         if ( a.forceFilter ) {
           if ( this.useIgnore )
-            this.messages = this.messages.filter( a.forceFilter );
+            this.shownMessages = this.messages.filter( a.forceFilter );
           else
             await this.insertMessage( 'NOTE: You have ignore users turned off' );
         }
@@ -259,10 +306,10 @@
         // Get RECAPTCHA v3 Token
         // this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
 
-        bitwaveChat.onHydrate = this.onHydration;
-        bitwaveChat.rcvMessageBulk = this.rcvMessageBulk;
+        bitwaveChat.onHydrate = d => { this.messages = d ?? []; this.onHydration( this.messages ); };
+        bitwaveChat.rcvMessageBulk = d => { this.messages = this.messages.concat( d ?? [] ); this.rcvMessageBulk( d ); };
+        bitwaveChat.alert = a => { a && this.messages.push(a); this.addAlert(a); };
         bitwaveChat.updateUsernames = this.updateViewers;
-        bitwaveChat.alert = this.addAlert;
 
         bitwaveChat.socketReconnect = () => { this.connecting = false; this.loading = false; };
         bitwaveChat.socketError = () => { this.connecting = false; this.loading = true; };
@@ -473,24 +520,22 @@
       },
 
       async onHydration ( messages ) {
-        this.messages = [];
+        this.shownMessages = [];
 
         // Return early if we are missing data
         if ( !messages ) return;
+
+        const processMessage =
+          this.messageProcessors.reduce( this.maybeCompose, a => a );
 
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
 
-          const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
-
-          // Add username highlighting
-          m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
-
-          m.type = 'message';
+          processMessage(m);
 
           // Add message to list
-          this.messages.push( Object.freeze( m ) );
+          this.shownMessages.push( Object.freeze( m ) );
         });
       },
 
@@ -498,60 +543,34 @@
         // Return early if we are missing data
         if ( !messages ) return;
 
+        const processMessage =
+          (this.messageProcessors.concat(this.messageNotificationProcessors))
+            .reduce( this.maybeCompose, a => a );
+
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
 
-          const pattern = new RegExp( `@${this.username}\\b`, 'gi' );
-
-          // Add username highlighting
-          m.message = m.message.replace( pattern, `<span class="highlight">$&</span>` );
-
-          // Notification Sounds
-          if ( this.notify ) if ( pattern.test( m.message ) ) this.sound.play().then();
-
-          // For Text to Speech
-          if ( this.getUseTts ) {
-            // TODO: m.lowercase might be unnecessary
-            // TODO: this code is identical to one of the filters
-            // Dispatch TODO: Is it actually identical to one of the filters? I'm not sure that's true
-            const currentChat = this.$utils.normalizedCompare( m.channel, this.username );
-            const myChat      = this.$utils.normalizedCompare( m.channel, this.page );
-
-            // Say Message
-            if ( currentChat || myChat ) {
-              const useTts = ( username ) => {
-                if ( this.ignoreList.find( user => user.toLowerCase() === m.username.toLowerCase() ) ) return false; // Don't read ignored users
-                if ( !this.getTrollTts && /troll:\w+/.test( username ) ) return false; // disables troll TTS
-                return true;
-              }
-              if ( useTts( m.username ) ) {
-                console.log( 'tts' );
-                this.speak( m.message, m.username );
-              }
-            }
-          }
-
-          m.type = 'message';
+          processMessage(m);
 
           // Add message to list
-          this.messages.push( Object.freeze( m ) );
+          this.shownMessages.push( Object.freeze( m ) );
 
           // Track message count
           if ( this.statInterval ) this.newMessageCount++;
         });
 
         if ( !this.$refs['chatmessages'].showFAB ) {
-          // if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
-          if ( this.messages.length > this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
+          if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
+          if ( this.shownMessages.length > this.chatLimit ) this.messages.splice( 0, this.shownMessages.length - this.chatLimit );
           // await this.scrollToBottom();
           this.$nextTick( async () => await this.scrollToBottom() );
         }
       },
 
-      // Apply's all active filters on messages
+      // Applies all active filters on messages
       applyChatFilters () {
-        this.messages = this.messages?.filter( message => !this.filterMessage( message ) ) ;
+        this.shownMessages = this.messages?.filter( message => !this.filterMessage( message ) ) ;
       },
 
       addAlert ( data ) {
@@ -581,25 +600,26 @@
           if ( this.getUseTtsAlerts ) this.speak( m.message, m.username );
         }
 
-        this.messages.push( Object.freeze( m ) );
+        this.shownMessages.push( Object.freeze( m ) );
 
         if ( !this.$refs['chatmessages'].showFAB ) {
           this.$nextTick( () => this.scrollToBottom() );
         }
       },
 
-      filterMessage ( message ) {
-        const maybeCompose = ( f, g ) => {
-          return x => {
-            if( !f || !g ) return undefined;
+      maybeCompose ( f, g ) {
+        return x => {
+          if( !f || !g ) return undefined;
 
-            const y = g( x );
-            if( !y ) return undefined;
-            else return f( x );
-          };
+          const y = g( x );
+          if( !y ) return undefined;
+          else return f( x );
         };
+      },
+
+      filterMessage ( message ) {
         //    allFilters = foldl (>=>) id this.messageFilters
-        const allFilters = this.messageFilters.reduce( maybeCompose, a => a );
+        const allFilters = this.messageFilters.reduce( this.maybeCompose, a => a );
         return !allFilters( message );
       },
 
@@ -620,7 +640,11 @@
 
         this.userStats.calculate.viewerCount.total();
 
-        const newMessages = this.messages.slice( this.messages.length - this.newMessageCount, this.messages.length );
+        const newMessages =
+          this.shownMessages.slice(
+            this.shownMessages.length - this.newMessageCount,
+            this.shownMessages.length
+          );
 
         await this.userStats.calculate.messageRate.total( newMessages );
         this.userStats.calculate.messageRateDerivative.total();
