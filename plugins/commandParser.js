@@ -192,6 +192,25 @@ const functions = {
     return [];
   },
 
+  /**
+   * DEV HELPER- GET AUTH TOKEN
+   * */
+  async getAuthToken () {
+    console.log( _store.state );
+    const auth = _store.state[ VStore.$states.auth ];
+    if ( auth ) {
+      const token = auth.accessToken;
+      const copied = navigator.clipboard.writeText( token );
+      return [
+        { insertMessage: `Token copied to clipboard!` },
+      ];
+    } else {
+      return [
+        { insertMessage: `Not Authorized! Are you even logged it?` },
+      ];
+    }
+  },
+
   async hideTrolls() {
     await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[ Chat.$states.hideTrolls ] );
     return [
@@ -287,6 +306,7 @@ const export_obj = {
     ["skip", functions.skipTts],
     ["s", functions.skipTts],
     ["bugreport", functions.bugReport],
+    ["token", functions.getAuthToken],
     // TODO: fix whispers :trout:
     ["whisper", functions.whisper],
     ["w", functions.whisper],
