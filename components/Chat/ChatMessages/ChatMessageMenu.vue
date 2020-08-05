@@ -102,7 +102,8 @@
             <v-spacer />
 
             <v-btn
-              v-if="isChannelOwner"
+              v-if="isChannelOwner && both || !isBanned"
+              :loading="loading"
               color="error"
               class="mr-2"
               outlined
@@ -110,7 +111,8 @@
               @click="banUser"
             >Mute</v-btn>
             <v-btn
-              v-if="isChannelOwner"
+              v-if="isChannelOwner && both || isBanned"
+              :loading="loading"
               color="success"
               class="mr-2"
               outlined
@@ -124,14 +126,14 @@
             />
 
             <v-btn
-              v-if="!ignored"
+              v-if="!isIgnored"
               color="error"
               class="mr-2"
               small
               @click="ignoreUser"
             >Ignore</v-btn>
             <v-btn
-              v-if="ignored"
+              v-if="isIgnored"
               color="success"
               class="mr-2"
               small
@@ -147,6 +149,7 @@
 <script>
   import { mapState } from 'vuex';
   import { Chat } from '@/store/chat';
+  import { auth } from '@/plugins/firebase';
 
   export default {
     name: 'ChatMessageMenu',
@@ -172,7 +175,10 @@
     },
 
     data() {
-      return {};
+      return {
+        bannedUsers: [],
+        loading: false,
+      };
     },
 
     methods: {
@@ -186,6 +192,29 @@
 
       unIgnoreUser () {
         this.$emit( 'unignore', ( this.username || this.displayName ).toLowerCase() );
+      },
+
+      async getFreshIdToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
+
+      async getBans () {
+        this.loading = true;
+        await this.getFreshIdToken();
+
+        const endpoint = `https://api.bitwave.tv/v1/chat/bans`;
+
+        try {
+          const { data } = await this.$axios.get( endpoint );
+          console.log( data );
+
+          this.bannedUsers = data.users.map( ( user, _ ) => user ).reverse();
+        } catch ( error ) {
+          console.error( error )
+          this.bannedUsers = null;
+        }
+        this.loading = false;
       },
 
       async banUser () {
@@ -240,13 +269,23 @@
         return this.username && this.username.startsWith( 'troll:' );
       },
 
-      ignored () {
+      isIgnored () {
         return this.ignoreList.includes( this.$utils.normalize( this.username ) );
-      }
+      },
+
+      isBanned () {
+        return this.bannedUsers?.includes( this.$utils.normalize( this.username ) );
+      },
+
+      both () {
+        return this.bannedUsers === null;
+      },
     },
 
-    mounted() {
-
+    async mounted() {
+      setTimeout( async () => {
+        await this.getBans();
+      }, 1000 );
     },
   };
 </script>
