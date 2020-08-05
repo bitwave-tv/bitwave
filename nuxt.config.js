@@ -22,6 +22,8 @@ module.exports = {
     IPINFO_TOKEN: process.env.IPINFO_TOKEN || '28731f83a6e092',
 
     SSR_TIMEOUT: parseInt( process.env.SSR_TIMEOUT ) || 10 * 1000,
+
+    HCAPTCHA_SITE_KEY: process.env.HCAPTCHA_SITE_KEY || 'e1cc20cd-84ec-46fc-b25e-fae288611957',
   },
 
   /*
