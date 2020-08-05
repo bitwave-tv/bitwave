@@ -61,10 +61,5 @@
         this.$emit( 'error', data );
       },
     },
-
-    mounted() {
-      console.log( `sitekey: ${this.sitekey}` );
-      console.log( `env sitekey: ${process.env.HCAPTCHA_SITE_KEY}` );
-    }
   };
 </script>
