@@ -1,11 +1,14 @@
 // General utility functions that have been factored out of code
 
 const export_obj = {
+  normalize( a ) {
+    return a && a.toLowerCase && a.toLowerCase();
+  },
+
   // TODO: shorten name?
   normalizedCompare( a, b ) {
     // first line of checks unnecessary with typescript
-    return a && b && a.toLowerCase && b.toLowerCase
-      && a.toLowerCase() === b.toLowerCase();
+    return this.normalize( a ) === this.normalize( b );
   }
 };
 

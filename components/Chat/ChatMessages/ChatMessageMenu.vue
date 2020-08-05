@@ -38,7 +38,7 @@
             <img
               v-else
               src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-              alt="hazmat suit trolll"
+              alt="hazmat suit troll"
               :style="{ background: color }"
               :key="username"
               crossorigin
@@ -78,7 +78,7 @@
         </div>
 
         <div class="body-2 mb-2">
-          This menu is still in development, but the ignore and unignore button both work. Confirmation messages will appear in chat.
+          This menu is still in development, but the ignore button both works. Confirmation will appear in chat.
         </div>
 
         <div class="caption mb-2">
@@ -124,12 +124,14 @@
             />
 
             <v-btn
+              v-if="!ignored"
               color="error"
               class="mr-2"
               small
               @click="ignoreUser"
             >Ignore</v-btn>
             <v-btn
+              v-if="ignored"
               color="success"
               class="mr-2"
               small
@@ -143,6 +145,9 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+  import { Chat } from '@/store/chat';
+
   export default {
     name: 'ChatMessageMenu',
 
@@ -227,9 +232,17 @@
     },
 
     computed: {
+      ...mapState ( Chat.namespace, {
+        ignoreList: Chat.$states.ignoreList,
+      }),
+
       isTroll () {
         return this.username && this.username.startsWith( 'troll:' );
       },
+
+      ignored () {
+        return this.ignoreList.includes( this.$utils.normalize( this.username ) );
+      }
     },
 
     mounted() {
