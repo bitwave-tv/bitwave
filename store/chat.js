@@ -1,13 +1,16 @@
-// Define Store states, getters, mutations & actions
+// Chat.js - Chat related Vuex Store
 
 import jwt_decode from 'jwt-decode';
 import * as utils from '@/plugins/store-utils.js';
+
+// Helper functions
 const saveToLocalStorage = values => utils.saveToLocalStorage( 'chat', values );
 const loadFromLocalStorage = ( commit, props ) => utils.loadFromLocalStorage( 'chat', commit, props );
 const logger = ( message, data ) => utils.logger( 'CHAT STORE', message, data );
 
 let loggingOut = false;
 
+// Define Store states, getters, mutations & actions
 const $states = {
   room            : 'ROOM',
   global          : 'GLOBAL',
@@ -167,7 +170,7 @@ export const state = () => ({
   [$states.statTickRate]      : 3,
   [$states.statHistogramSize] : 25,
 
-  [$states.receiveMentionsInLocal] : false,
+  [$states.receiveMentionsInLocal] : true,
 
   [$states.message]            : '',
   [$states.messageBufferLimit] : 10,
@@ -505,10 +508,12 @@ export const actions = {
   },
 
 
-  async [$actions.exchangeIdTokenChatToken] ({ dispatch }, idToken) {
+  async [$actions.exchangeIdTokenChatToken] ( { dispatch }, idToken ) {
     try {
-      const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken } );
+      const { data } = await this.$axios.post( `https://api.bitwave.tv/api/token`, { token: idToken }, { progress: false } );
       await dispatch( $actions.updateChatToken, data.chatToken );
+
+      // TODO: Can this be replaced with saveToLocalStorage
       try {
         localStorage.setItem( 'chatToken', data.chatToken );
       } catch ( error ) {
@@ -521,9 +526,11 @@ export const actions = {
   },
 
 
-  async [$actions.createTrollToken] ({ dispatch }) {
-    const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token' );
+  async [$actions.createTrollToken] ( { dispatch } ) {
+    const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/troll-token', { progress: false } );
     await dispatch( $actions.updateChatToken, data.chatToken );
+
+    // TODO: Can this be replaced with saveToLocalStorage
     try {
       localStorage.setItem( 'troll', data.chatToken );
     } catch ( error ) {
@@ -532,7 +539,7 @@ export const actions = {
   },
 
 
-  async [$actions.init] ({ dispatch }) {
+  async [$actions.init] ( { dispatch } ) {
     // Find existing tokens in localStorage
     const findChatToken = () => {
       let token = null;
@@ -562,7 +569,7 @@ export const actions = {
     return token;
   },
 
-  async [$actions.logout] ({ dispatch }) {
+  async [$actions.logout] ( { dispatch } ) {
     // Prevent edge case where logout is called from multiple locations
     if ( loggingOut ) {
       if ( process.env.APP_DEBUG ) logger ( `Logout is already in progress.` );
@@ -597,7 +604,7 @@ export const actions = {
     loggingOut = false; // Unlock when completed
   },
 
-  [$actions.loadSettings] ({ state, commit }) {
+  [$actions.loadSettings] ( { state, commit } ) {
     let settings = new Map([
       [$states.timestamps, $mutations.setTimestamps],
       [$states.global, $mutations.setGlobal],
