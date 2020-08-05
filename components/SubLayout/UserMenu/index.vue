@@ -56,7 +56,7 @@
 
       <v-dialog
         v-model="showLogin"
-        width="500"
+        width="420"
       >
         <lazy-login-dialog @close="showLogin = false"/>
     </v-dialog>

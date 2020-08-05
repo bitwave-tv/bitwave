@@ -59,10 +59,8 @@
         <settings-menu
           @change="onTabChange"
         />
-
       </v-card>
     </div>
-
   </v-menu>
 </template>
 
@@ -88,7 +86,7 @@
       },
 
       onTabChange () {
-        this.$nextTick( () => this.$refs.chatSettingsMenu.onResize() );
+        // this.$nextTick( () => this.$refs.chatSettingsMenu.onResize() );
       }
     },
   };

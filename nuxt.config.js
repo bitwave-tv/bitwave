@@ -247,6 +247,7 @@ module.exports = {
     { src: '@/plugins/commandParser.js', mode: 'client' },
     { src: '@/plugins/pwa.client.js', mode: 'client' },
     { src: '@/plugins/sw-hook', mode: 'client' },
+    { src: '@/plugins/VueCountdown', mode: 'client' },
   ],
 
   /*

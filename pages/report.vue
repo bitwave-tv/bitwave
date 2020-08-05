@@ -7,18 +7,25 @@
       justify-space-around
     >
       <v-flex xs12 md8 lg6 xl4>
-        <v-card class="my-3">
-          <v-card-title>
+        <v-card
+          class="my-3"
+        >
+          <v-sheet
+            color="red"
+            class="pa-3"
+          >
             <h3>
               <v-icon>warning</v-icon>
               Report Content
             </h3>
-          </v-card-title>
-          <hr>
+          </v-sheet>
+
           <v-card-text>
             <v-form ref="report">
               <v-layout column>
                 <v-flex>
+
+                  <div class="mb-2">Who are you?</div>
                   <v-text-field
                     v-model="name"
                     label="legal name"
@@ -29,8 +36,10 @@
                     :loading="submitting"
                     :disabled="submitting || submitted"
                     validate-on-blur
-                    outline
+                    outlined
                   ></v-text-field>
+
+                  <div class="mb-2">If we need to reply, how do we contact you?</div>
                   <v-text-field
                     v-model="email"
                     label="email"
@@ -42,12 +51,27 @@
                     :loading="submitting"
                     :disabled="submitting || submitted"
                     validate-on-blur
-                    outline
+                    outlined
                   ></v-text-field>
+
+                  <div class="mb-2">What are you writing this report about? OR <b>WHO</b> is this report about?</div>
+                  <v-text-field
+                    v-model="subject"
+                    label="Streamer URL / Username / Topic"
+                    name="subject"
+                    type="subject"
+                    required
+                    :rules="[ rules.required ]"
+                    :loading="submitting"
+                    :disabled="submitting || submitted"
+                    validate-on-blur
+                    outlined
+                  ></v-text-field>
+
                   <v-textarea
                     v-model="report"
                     name="report"
-                    outline
+                    outlined
                     label="message"
                     color="primary"
                     required
@@ -88,6 +112,7 @@
       return {
         name: '',
         email: '',
+        subject: '',
         report: '',
 
         reportResult: '',
@@ -120,6 +145,7 @@
         const payload = {
           name: this.name,
           email: this.email,
+          subject: this.subject,
           report: this.report,
         };
 

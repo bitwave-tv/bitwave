@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.23.1",
+  "version": "1.23.5",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "scripts": {
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@bitwave/chat-client": "^0.3.5",
+    "@hcaptcha/vue-hcaptcha": "^0.2.2",
     "@nuxtjs/axios": "^5.12.0",
     "@nuxtjs/component-cache": "^1.1.6",
     "@nuxtjs/device": "^1.2.7",
@@ -27,7 +28,7 @@
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/manifest": "^3.0.0-beta.16",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
-    "@nuxtjs/sentry": "^4.3.3",
+    "@nuxtjs/sentry": "^4.3.4",
     "@nuxtjs/toast": "^3.3.1",
     "@sentry/browser": "^5.20.1",
     "@videojs/http-streaming": "^2.1.0",
@@ -42,7 +43,7 @@
     "jwt-decode": "^2.2.0",
     "marked": "^0.7.0",
     "moment": "^2.27.0",
-    "nuxt": "^2.14.0",
+    "nuxt": "^2.14.1",
     "nuxt-stripe-module": "^2.1.0",
     "sass-loader": "^9.0.2",
     "socket.io-client": "^2.3.0",
@@ -50,6 +51,7 @@
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
     "videojs-hls-quality-selector": "^1.1.1",
+    "vue-awesome-countdown": "^1.1.2",
     "vue-chartjs": "^3.5.0",
     "vue-clipboard2": "^0.3.1"
   },

@@ -28,6 +28,19 @@
           },
         }"
         >
+          <div
+            v-if="showCountdown"
+            style="position:absolute;"
+          >
+            <div
+              style="position: relative; top: 1rem; left: 1rem; z-index: 10; opacity: 75%;"
+            >
+              <countdown
+                :timestamp="scheduled"
+                :key="scheduled"
+              />
+            </div>
+          </div>
 
           <!-- Bitwave Stream Player -->
           <bitwave-video-player
@@ -179,6 +192,7 @@
         url: null,
         type: null,
         timestamp: null,
+        scheduled: null,
       }
     },
 
@@ -247,6 +261,11 @@
         // Process timestamp
         this.timestamp = data.timestamp
           ? data.timestamp.toDate()
+          : null;
+
+        // Process scheduled date
+        this.scheduled = data.scheduled
+          ? data.scheduled.toDate()
           : null;
 
         // Stream media
@@ -432,6 +451,7 @@
               nsfw: data.nsfw,
               url: data.url,
               owner: data.owner,
+              scheduled: data.scheduled,
             };
 
             console.log( `Bypass should be successfull...` );
@@ -474,6 +494,11 @@
             ? new Date( data.timestamp )
             : null;
 
+          // Process scheduled date
+          const scheduled = data.scheduled
+            ? new Date( data.scheduled )
+            : null;
+
           // Process cover image
           const poster = live
             ? data.thumbnail
@@ -507,6 +532,7 @@
               url,
               type,
               timestamp,
+              scheduled,
             }
           }
         }
@@ -589,6 +615,17 @@
             ? '50%'
             : '0'
           : '450px';
+      },
+
+      showCountdown () {
+        if ( this.live ) return false;
+        if ( !this.scheduled ) return false;
+        if ( !this.timestamp ) return false;
+
+        // Do not show countdown if last streamed timestamp is after scheduled
+        if ( this.timestamp > this.scheduled ) return false;
+
+        return true;
       },
     },
 
