@@ -199,11 +199,17 @@ const functions = {
     console.log( _store.state );
     const auth = _store.state[ VStore.$states.auth ];
     if ( auth ) {
-      const token = auth.accessToken;
-      const copied = navigator.clipboard.writeText( token );
-      return [
-        { insertMessage: `Token copied to clipboard!` },
-      ];
+      try {
+        const token = auth.accessToken;
+        await navigator.clipboard.writeText( token );
+        return [
+          { insertMessage: `Token copied to clipboard!` },
+        ];
+      } catch ( error ) {
+        return [
+          { insertMessage: `Failed to copy token: ${error.message}` },
+        ];
+      }
     } else {
       return [
         { insertMessage: `Not Authorized! Are you even logged it?` },
