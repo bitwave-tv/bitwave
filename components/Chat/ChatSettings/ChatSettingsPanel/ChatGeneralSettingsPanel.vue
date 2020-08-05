@@ -10,23 +10,51 @@
       <!-- Global Chat -->
       <v-switch
         v-model="globalChat"
-        label="Global Chat"
         color="primary"
         hide-details
         dense
         inset
-      />
+      >
+        <template #label>
+          <div>
+            <span>Global Chat</span>
+            <v-tooltip top color="blue-grey darken-4">
+              <template #activator="{ on: tooltip }">
+                <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+                  <v-icon color="grey">help_outline</v-icon>
+                </v-btn>
+              </template>
+              <span><b>OFF</b> Local - messages from this channel<br>
+                <b>ON</b> Global - messages from every chat</span>
+            </v-tooltip>
+          </div>
+        </template>
+      </v-switch>
 
       <!-- Receive @'s in Local -->
       <v-switch
         v-model="receiveMentionsInLocal"
         :disabled="globalChat"
-        label="Receive @'s in local"
         color="primary"
         hide-details
         dense
         inset
-      />
+      >
+        <template #label>
+          <div>
+            <span>Receive @'s in local</span>
+            <v-tooltip top color="blue-grey darken-4">
+              <template #activator="{ on: tooltip }">
+                <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+                  <v-icon color="grey">help_outline</v-icon>
+                </v-btn>
+              </template>
+              <span>Show chat messages that you are @tagged in<br>
+                 from every channels</span>
+            </v-tooltip>
+          </div>
+        </template>
+      </v-switch>
 
       <!-- Ignore -->
       <v-switch
@@ -71,12 +99,28 @@
       <!-- Dense Chat -->
       <v-switch
         v-model="denseChat"
-        label="Higher Density Chat"
+        label=""
         color="primary"
         hide-details
         dense
         inset
-      />
+      >
+        <template #label>
+          <div>
+            <span>High Density</span>
+            <v-tooltip top color="blue-grey darken-4">
+              <template #activator="{ on: tooltip }">
+                <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+                  <v-icon color="grey">help_outline</v-icon>
+                </v-btn>
+              </template>
+              <span>Reduce big chat to small chat.<br>
+                Reduces big emotes to small varient.<br>
+                This can help make chat more readable.</span>
+            </v-tooltip>
+          </div>
+        </template>
+      </v-switch>
     </div>
   </v-card>
 </template>
