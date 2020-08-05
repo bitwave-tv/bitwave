@@ -99,6 +99,7 @@
               single-line
               type="number"
               style="width: 50px"
+              dense
             />
           </template>
         </v-slider>
@@ -135,6 +136,7 @@
               single-line
               type="number"
               style="width: 50px"
+              dense
             />
           </template>
         </v-slider>
