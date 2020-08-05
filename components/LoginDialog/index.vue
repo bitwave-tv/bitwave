@@ -159,7 +159,7 @@
 
         <v-alert
           v-model="alert"
-          class="mt-4 mb-0"
+          class="mt-4 mb-4"
           dismissible
           :type="alertType"
           transition="expand-transition"
