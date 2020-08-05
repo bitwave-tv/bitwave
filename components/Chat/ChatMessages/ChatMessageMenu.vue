@@ -5,7 +5,7 @@
     :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '40%'"
     @input=" val => $emit('input', val )"
   >
-    <v-card>
+    <v-card tile raised elevation="24">
       <!-- Title Bar -->
       <v-sheet
         tile
@@ -26,9 +26,9 @@
 
       <div class="pa-3">
 
-        <div class="d-flex align-center grey--text mb-4">
+        <div class="d-flex align-center grey--text mb-1">
           <!-- Avatar -->
-          <v-avatar size="32">
+          <v-avatar size="64">
             <img
               v-if="avatar"
               :src="avatar"
@@ -48,45 +48,29 @@
           <!-- User Badge -->
           <div
             v-show="badge"
-            class="badge pl-1 d-flex align-center"
+            class="badge pl-2 d-flex align-center"
             v-html="badge"
           ></div>
 
           <!-- Username -->
-          <div
-            class="username text-truncate flex-grow-1 subtitle-2 pl-1"
+          <h1
+            class="username text-truncate flex-grow-1 pl-1"
             :style="userStyling"
-          >{{ username }}</div>
-
-          <v-spacer></v-spacer>
-
-
-          <!-- Action Buttons for user -->
-          <!--<v-btn
-            color="primary"
-            class="mr-2"
-            disabled
-            small
-          >Whisper</v-btn>-->
+          >{{ username }}</h1>
 
           <v-btn
+            class="align-self-center"
             color="primary"
             :disabled="isTroll"
             :to="`/${username}`"
             small
           >Profile</v-btn>
-        </div>
 
-        <div class="body-2 mb-2">
-          This menu is still in development, but the ignore button both works. Confirmation will appear in chat.
         </div>
-
-        <div class="caption mb-2">
-          Type <kbd>/ignorelist</kbd> to view a list of all users you currently ignore.<br>
-          If you are still seeing messages in chat, ensure you have enabled "ignore messages" in chat settings.<br>
-          Ignoring users without this setting enabled will block TTS from reading their messages.
-        </div>
-
+      </div>
+    </v-card>
+    <v-card tile elevation="0" color="#151515">
+      <div class="pa-3">
         <hr color="grey" />
 
         <!-- Action items -->
