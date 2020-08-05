@@ -1,5 +1,7 @@
 <template>
   <v-card>
+
+    <!-- Header Bar -->
     <v-sheet
       tile
       color="primary"
@@ -11,12 +13,16 @@
       </h2>
     </v-sheet>
 
+    <!-- Body Content -->
     <v-card-text class="px-4 py-0">
       <v-form
         ref="loginForm"
         v-model="valid"
         onSubmit="return false"
       >
+
+        <!-- DONT BE STUPID - DONT DOX YOURSELF -->
+        <!-- general purpose warning to idiots -->
         <div class="mt-4">
           <v-alert
             v-if="signUp"
@@ -31,10 +37,10 @@
           </v-alert>
         </div>
 
+        <!-- Username Field -->
         <v-text-field
           v-if="signUp"
           id="username"
-          class=""
           key="username"
           ref="username"
           v-model="user.username"
@@ -52,9 +58,9 @@
           :success-messages="usernameSuccess"
         />
 
+        <!-- Email Field -->
         <v-text-field
           id="email"
-          class=""
           key="email"
           v-model="user.email"
           :rules="rules.email"
@@ -69,9 +75,9 @@
           :autofocus="!signUp"
         />
 
+        <!-- Password Field -->
         <v-text-field
           id="password"
-          class=""
           key="password"
           v-model="user.password"
           :append-icon="showPassword ? 'visibility' : 'visibility_off'"
@@ -90,12 +96,13 @@
           :persistent-hint="signUp"
         />
 
+        <!-- 18+ Confirmation / cover your ass legally -->
         <v-checkbox
           v-if="signUp"
           label="I confirm that I am 18 years of age or older."
           color="primary"
           class="pt-0 mt-0 mb-2"
-          :rules="[ val => val || 'You must be 18 to use this site!' ]"
+          :rules="[ rules.adultCheck ]"
           validate-on-blur
           :disabled="loading"
           tabindex="4"
@@ -103,6 +110,7 @@
           hide-details
         />
 
+        <!-- HCAPTCHA -->
         <div
           v-if="signUp"
           class="d-flex mb-2"
@@ -116,6 +124,7 @@
           />
         </div>
 
+        <!-- Login Button -->
         <v-btn
           v-if="!signUp"
           block
@@ -125,25 +134,9 @@
           type="submit"
           @click="signIn(user.email, user.password)"
           tabindex="6"
-        >
-          Login
-        </v-btn>
+        >Login</v-btn>
 
-        <v-btn
-          v-if="signUp"
-          block
-          color="primary"
-          class="black--text"
-          :loading="loading"
-          type="submit"
-          @click="createHcaptchaUser"
-          tabindex="6 "
-        >
-          Register
-        </v-btn>
-
-        <div v-if="signUp" class="my-2 overline grey--text"><i>by clicking register you agree to our <a href="/tos">tos</a></i></div>
-
+        <!-- Stay Logged In Checkbox -->
         <div class="d-flex">
           <v-checkbox
             v-if="!signUp"
@@ -157,6 +150,24 @@
           />
         </div>
 
+
+        <!-- Reister Button -->
+        <v-btn
+          v-if="signUp"
+          block
+          color="primary"
+          class="black--text"
+          :loading="loading"
+          type="submit"
+          @click="createHcaptchaUser"
+          tabindex="6 "
+        >Register</v-btn>
+
+        <!-- Some Cover Your Ass Legal Text -->
+        <div v-if="signUp" class="my-2 overline grey--text"><i>by clicking register you agree to our <a href="/tos">tos</a></i></div>
+
+
+        <!-- General Success / Error Alert -->
         <v-alert
           v-model="alert"
           class="mt-4 mb-4"
@@ -164,25 +175,21 @@
           :type="alertType"
           transition="expand-transition"
           dense
-        >
-          {{ alertMessage }}
-        </v-alert>
+        >{{ alertMessage }}</v-alert>
+
       </v-form>
-
     </v-card-text>
-
     <v-divider/>
 
+    <!-- Bottom Actions Buttons -->
     <v-card-actions
       class="flex-wrap-reverse justify-space-around"
     >
       <v-btn
-        href="#"
         text
         color="accent"
         @click="resetPassword(user.email)"
       >Forgot Password?</v-btn>
-
       <v-btn
         color="red"
         text
@@ -200,9 +207,6 @@
 
 <script>
   import { auth } from '@/plugins/firebase.js'
-
-  import { mapActions } from 'vuex'
-  import { VStore } from '@/store';
 
   export default {
     name: 'LoginDialog',
@@ -230,6 +234,7 @@
         captchaToken: null,
 
         rules: {
+          adultCheck: [ val => val || 'You must be 18 to use this site!' ],
           required: value => !!value || 'Required.',
           min: value => ( value && value.length >= 8 ) || 'Min 8 characters',
           name: v => !!v || 'Name is required',
@@ -237,19 +242,12 @@
             v => !!v || 'Email is required',
             v => /.+@.+/.test(v) || 'E-mail must be valid',
           ],
-          emailMatch: () => ( `The email and password you entered don't match` ),
         },
-
       }
     },
 
     methods: {
-      ...mapActions({
-        registerUser : VStore.$actions.registerUser,
-        loginUser    : VStore.$actions.loginUser,
-      }),
-
-      // Toggle Register / Login
+      // Toggle Form Mode
       switchForm () {
         this.signUp = !this.signUp;
         this.resetValidation();
@@ -257,49 +255,22 @@
         this.reset();
       },
 
+      // CAPTCHA verified
       async onCaptchaVerify ( token ) {
         this.captchaToken = token;
         await this.validate();
       },
 
+      // CAPTCHA Expired
       async onCpatchaExpired ( data ) {
         this.captchaToken = null;
         await this.validate();
       },
 
+      // CAPTCHA Error
       async onCaptchaError ( data ) {
         this.captchaToken = null;
         await this.validate();
-      },
-
-      // Create User
-      async createUser ( username, email, password ) {
-        if ( !this.$refs.loginForm.validate() ) return;
-
-        this.$ga.event({
-          eventCategory : 'login',
-          eventAction   : 'register',
-        });
-
-        this.loading = true;
-        try {
-          // Verify Username is valid & not taken
-          const checkUsername = await this.$axios.$post('https://api.bitwave.tv/api/check-username', { username: username });
-          if ( !checkUsername.valid ) {
-            console.log( checkUsername.error );
-            this.showError( checkUsername.error );
-          } else {
-            await this.registerUser({
-              credential: { username, email, password },
-              stayLoggedIn: this.shouldStayLoggedIn,
-            });
-            this.showSuccess( 'User Created!' );
-          }
-        } catch ( error ) {
-          console.log( error );
-          this.showError( error );
-        }
-        this.loading = false;
       },
 
       // Create hCaptcha User
@@ -307,7 +278,6 @@
 
         // Put form in loading state
         this.loading = true;
-
 
         // Validate inputs and captcha solution
         const valid = await this.validate();
@@ -317,13 +287,11 @@
           return false;
         }
 
-
         // Log analytics
         this.$ga.event({
           eventCategory : 'login',
           eventAction   : 'register',
         });
-
 
         // Send off our data!
         try {
@@ -334,7 +302,6 @@
             password: this.user.password,
             captcha: this.captchaToken,
           };
-
 
           // Submit to API server
           const result = await this.$axios.$post( endpoint, payload );
@@ -352,7 +319,6 @@
           this.loading = false;
           return false;
         }
-
 
         // Now finally (attempt to) login to our newly created user.
         // In theory this should never fail cuz we just registered
@@ -390,6 +356,7 @@
         this.loading = false;
       },
 
+      // Reset Password
       async resetPassword ( email ) {
         this.$ga.event({
           eventCategory : 'login',
@@ -403,7 +370,6 @@
           this.showError( error.message );
         }
       },
-
 
       // Validate Data
       async validate () {
@@ -429,6 +395,7 @@
         return true;
       },
 
+      // Check Username
       async checkUsername ( username ) {
 
         // default state
@@ -465,10 +432,12 @@
 
       },
 
+      // Reset Form
       reset () {
         this.$refs.loginForm.reset();
       },
 
+      // Reset form Validation errors
       resetValidation () {
         this.usernameError   = '';
         this.usernameSuccess = '';
@@ -476,34 +445,34 @@
         this.hideAlert();
       },
 
-      async authenticated ( user ) {
-        if ( user ) {
-          if ( process.client )
-            console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
-
-          if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
-
-          setTimeout( () => this.show = false, 1000 );
-        } else {
-          if ( process.client )
-            console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
-        }
-      },
-
+      // Show error alert
       showError ( message ) {
         this.alertType = 'error';
         this.alert = true;
         this.alertMessage = message;
       },
 
+      // Show success alert
       showSuccess ( message ) {
         this.alertType = 'success';
         this.alert = true;
         this.alertMessage = message;
       },
 
+      // Hide alert
       hideAlert () {
         this.alert = false;
+      },
+
+      // onAuth handlers
+      async authenticated ( user ) {
+        if ( user ) {
+          if ( process.client ) console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
+          if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
+          setTimeout( () => this.emit( 'close' ), 1000 );
+        } else {
+          if ( process.client ) console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+        }
       },
     },
 
