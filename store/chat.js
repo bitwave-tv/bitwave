@@ -155,7 +155,7 @@ export const state = () => ({
   [$states.hideTrolls]      : false,
   [$states.trollTts]        : true,
   [$states.cleanTts]        : false,
-  [$states.ttsRate]         : 10,
+  [$states.ttsRate]         : 12,
   [$states.ttsReadUsername] : false,
   [$states.ttsTimeout]      : 0,
   [$states.ttsVolume]       : 10,

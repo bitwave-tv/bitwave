@@ -77,13 +77,14 @@
           hide-details
           class="mb-3"
           outlined
+          dense
         />
 
         <!-- TTS Rate -->
         <v-slider
+          v-model="ttsRate"
           :disabled="!useTts"
           label="Speed"
-          v-model="ttsRate"
           class="align-center"
           :max="20"
           :min="1"
@@ -104,9 +105,9 @@
 
         <!-- TTS Volume -->
         <v-slider
+          v-model="ttsVolume"
           :disabled="!useTts"
           label="Vol."
-          v-model="ttsVolume"
           class="align-center"
           :max="10"
           :min="0"
@@ -116,9 +117,9 @@
 
         <!-- TTS Timeout -->
         <v-slider
+          v-model="ttsTimeout"
           :disabled="!useTts"
           label="Timeout"
-          v-model="ttsTimeout"
           class="align-center"
           :max="60"
           :min="0"
@@ -138,7 +139,10 @@
           </template>
         </v-slider>
 
-        <i class="caption grey--text">note: a value of 0 disables timeout.</i>
+        <div class="mt-2 caption grey--text" style="line-height: 1.1rem;">
+          <span>this limits the max amount of time a tts message.</span><br>
+          <span>note: <i>a value of 0 disables timeout.</i></span>
+        </div>
 
       </template>
     </div>
