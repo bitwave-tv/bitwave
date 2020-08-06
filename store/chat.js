@@ -18,6 +18,7 @@ const $states = {
   useTts          : 'USE_TTS',
   useTtsAlerts    : 'USE_TTS_ALERTS',
   useIgnore       : 'USE_IGNORE',
+  recursiveIgnore : 'RECURSIVE_IGNORE',
   hideTrolls      : 'HIDE_TROLLS',
   cleanTts        : 'CLEAN_TTS',
   trollTts        : 'TROLL_TTS',
@@ -74,6 +75,7 @@ const $mutations = {
   setUseTts          : 'SET_USE_TTS',
   setUseTtsAlerts    : 'SET_USE_TTS_ALERTS',
   setUseIgnore       : 'SET_USE_IGNORE',
+  setRecursiveIgnore : 'SET_RECURSIVE_IGNORE',
   setHideTrolls      : 'SET_HIDE_TROLLS',
   setTrollTts        : 'SET_TROLL_TTS',
   setCleanTts        : 'SET_CLEAN_TTS',
@@ -152,6 +154,7 @@ export const state = () => ({
   [$states.useTts]          : false,
   [$states.useTtsAlerts]    : true,
   [$states.useIgnore]       : true,
+  [$states.recursiveIgnore] : true,
   [$states.hideTrolls]      : false,
   [$states.trollTts]        : true,
   [$states.cleanTts]        : false,
@@ -252,6 +255,12 @@ export const mutations = {
   [$mutations.setUseIgnore] ( state, data ) {
     state[$states.useIgnore] = JSON.parse( data );
     saveToLocalStorage( { [$states.useIgnore]: data } );
+  },
+
+  // Set use ignore
+  [$mutations.setRecursiveIgnore] ( state, data ) {
+    state[$states.recursiveIgnore] = JSON.parse( data );
+    saveToLocalStorage( { [$states.recursiveIgnore]: data } );
   },
 
   // Set user ignore list
