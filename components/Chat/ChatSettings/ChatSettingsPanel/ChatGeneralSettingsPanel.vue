@@ -5,11 +5,12 @@
     class="mb-3 px-3"
   >
     <!-- General Settings Toggles -->
-    <div>
+    <div id="general-chat-settings">
 
       <!-- Global Chat -->
       <v-switch
         v-model="globalChat"
+        class="mt-3"
         color="primary"
         hide-details
         dense
@@ -24,8 +25,8 @@
                   <v-icon color="grey">help_outline</v-icon>
                 </v-btn>
               </template>
-              <span><b>OFF</b> Local - messages from this channel<br>
-                <b>ON</b> Global - messages from every chat</span>
+              <span><b>OFF</b> - messages from this channel<br>
+                <b>ON</b> - messages from every chat</span>
             </v-tooltip>
           </div>
         </template>
@@ -42,19 +43,21 @@
       >
         <template #label>
           <div>
-            <span>Receive @'s in local</span>
+            <span>Receive <b>@mentions</b> in local</span>
             <v-tooltip top color="blue-grey darken-4">
               <template #activator="{ on: tooltip }">
                 <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
                   <v-icon color="grey">help_outline</v-icon>
                 </v-btn>
               </template>
-              <span>Show chat messages that you are @tagged in<br>
-                 from every channels</span>
+              <span>Show chat messages that you are <b>@tagged</b> in<br>
+                 from every channel</span>
             </v-tooltip>
           </div>
         </template>
       </v-switch>
+
+      <v-divider class="divider" />
 
       <!-- Ignore -->
       <v-switch
@@ -65,6 +68,32 @@
         dense
         inset
       />
+
+      <!-- Ignore -->
+      <v-switch
+        v-model="recursiveIgnore"
+        label="Recursively ignore"
+        color="primary"
+        hide-details
+        dense
+        inset
+      >
+        <template #label>
+          <div>
+            <span>Recursively Ignore</span>
+            <v-tooltip top color="blue-grey darken-4">
+              <template #activator="{ on: tooltip }">
+                <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+                  <v-icon color="grey">help_outline</v-icon>
+                </v-btn>
+              </template>
+              <span>Ignores messages that <b>@mention</b> ignored users</span>
+            </v-tooltip>
+          </div>
+        </template>
+      </v-switch>
+
+      <v-divider class="divider" />
 
       <!-- Notification Sounds -->
       <v-switch
@@ -114,9 +143,12 @@
                   <v-icon color="grey">help_outline</v-icon>
                 </v-btn>
               </template>
-              <span>Reduce big chat to small chat.<br>
-                Reduces big emotes to small varient.<br>
-                This can help make chat more readable.</span>
+              <div style="text-align: center">
+                <span>
+                  Shrinks big text and big emotes to<br>
+                  their small variants.
+                </span>
+              </div>
             </v-tooltip>
           </div>
         </template>
@@ -141,6 +173,7 @@
         setModeGlobal     : Chat.$mutations.setGlobal,
         setModeTimestamps : Chat.$mutations.setTimestamps,
         setUseIgnore      : Chat.$mutations.setUseIgnore,
+        setRecursiveIgnore: Chat.$mutations.setRecursiveIgnore,
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
         setHighDensity    : Chat.$mutations.setHighDensity,
@@ -158,6 +191,7 @@
         getModeGlobal     : Chat.$states.global,
         getModeTimestamps : Chat.$states.timestamps,
         getUseIgnore      : Chat.$states.useIgnore,
+        getRecursiveIgnore: Chat.$states.recursiveIgnore,
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
         getHighDensity    : Chat.$states.highDensity,
@@ -186,6 +220,14 @@
           this.$analytics.logEvent( 'use_ignore', { value: val } );
         },
         get () { return this.getUseIgnore }
+      },
+
+      recursiveIgnore: {
+        set ( val ) {
+          this.setRecursiveIgnore( val );
+          this.$analytics.logEvent( 'use_recursive_ignore', { value: val } );
+        },
+        get () { return this.getRecursiveIgnore }
       },
 
       notificationSound: {
@@ -222,3 +264,17 @@
     },
   };
 </script>
+
+<style lang="scss">
+  #general-chat-settings > * {
+    height: 45px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0 0 0 0;
+    align-self: center;
+  }
+  #general-chat-settings > .divider {
+    margin: 11.25px 0 11.25px 0;
+    padding: 0 0 0 0;
+  }
+</style>

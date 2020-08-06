@@ -185,6 +185,12 @@
             }
             return m;
           },
+          m => {
+            if( this.getRecursiveIgnore )
+              for( const i of this.ignoreList )
+                if( m.message.toLowerCase().includes( `@${i}` ) ) return null;
+            return m;
+          }
         ],
 
         messages: null,
@@ -780,6 +786,7 @@
         getUseTts         : Chat.$states.useTts,
         getUseTtsAlerts   : Chat.$states.useTtsAlerts,
         useIgnore         : Chat.$states.useIgnore,
+        getRecursiveIgnore: Chat.$states.recursiveIgnore,
         getHideTrolls     : Chat.$states.hideTrolls,
         getTrollTts       : Chat.$states.trollTts,
         getCleanTts       : Chat.$states.cleanTts,
