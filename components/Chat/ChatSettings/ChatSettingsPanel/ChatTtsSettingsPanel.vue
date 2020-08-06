@@ -61,12 +61,15 @@
           class="mb-3"
         />
 
-        <v-divider class="mt-3" />
 
-        <!-- TTS Voice Settings Labels -->
-        <v-subheader class="overline mb-0 px-0">
-          TTS Voice Settings
-        </v-subheader>
+        <div class="d-flex my-3">
+          <!-- TTS Voice Settings Labels -->
+          <span class="overline align-self-center mr-2">
+            TTS Voice Settings
+          </span>
+
+          <v-divider id="divider"/>
+        </div>
 
         <!-- TTS Voice -->
         <v-select
