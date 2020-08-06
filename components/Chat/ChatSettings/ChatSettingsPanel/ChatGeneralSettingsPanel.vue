@@ -5,7 +5,7 @@
     class="mb-3 px-3"
   >
     <!-- General Settings Toggles -->
-    <div id="settings">
+    <div id="general-chat-settings">
 
       <!-- Global Chat -->
       <v-switch
@@ -57,7 +57,7 @@
         </template>
       </v-switch>
 
-      <v-divider id="divider" />
+      <v-divider class="divider" />
 
       <!-- Ignore -->
       <v-switch
@@ -93,7 +93,7 @@
         </template>
       </v-switch>
 
-      <v-divider id="divider" />
+      <v-divider class="divider" />
 
       <!-- Notification Sounds -->
       <v-switch
@@ -266,14 +266,14 @@
 </script>
 
 <style lang="scss">
-  #settings > * {
+  #general-chat-settings > * {
     height: 45px;
     padding-top: 10px;
     padding-bottom: 10px;
     margin: 0 0 0 0;
     align-self: center;
   }
-  #divider {
+  #general-chat-settings > .divider {
     margin: 11.25px 0 11.25px 0;
     padding: 0 0 0 0;
   }
