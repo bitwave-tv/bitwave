@@ -120,7 +120,7 @@
     </div>
 
     <!-- Footer -->
-    <simple-footer />
+    <simple-footer :version="version" />
   </div>
 </template>
 

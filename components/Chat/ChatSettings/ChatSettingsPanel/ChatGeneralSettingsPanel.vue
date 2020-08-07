@@ -57,9 +57,15 @@
         </template>
       </v-switch>
 
-      <v-divider class="my-3" />
+      <!-- Ignore Messages Groups -->
+      <div class="d-flex align-center my-3">
+        <span class="overline mr-2 grey--text">
+          Ignore Options
+        </span>
+        <v-divider />
+      </div>
 
-      <!-- Ignore -->
+      <!-- User Ignore (users) -->
       <v-switch
         v-model="useIgnore"
         label="Ignore Users"
@@ -70,7 +76,7 @@
         class="mt-3"
       />
 
-      <!-- Ignore -->
+      <!-- Recursive Ignore -->
       <v-switch
         v-model="recursiveIgnore"
         :disabled="!useIgnore"
