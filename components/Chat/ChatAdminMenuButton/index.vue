@@ -31,8 +31,6 @@
   export default {
     name: 'ChatAdminMenuButton',
 
-    props: {},
-
     data () {
       return {
         adminActionsMenu: false,

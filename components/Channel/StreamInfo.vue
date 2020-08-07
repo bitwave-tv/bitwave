@@ -88,7 +88,7 @@
       </div>
 
       <!-- Share Stream Dialog -->
-      <lazy-share-stream :user="name" />
+      <share-stream :user="name" />
     </div>
 
     <v-divider />
@@ -145,29 +145,30 @@
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
-  import VueMarkdown from '@/components/VueMarkdown';
   import { timeAgo } from '@/assets/js/time-ago';
+
+  // Imported Components
+  import VueMarkdown from '@/components/VueMarkdown';
+  import ShareStream from '@/components/Channel/ShareStream';
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
 
   // Async Components - We don't expect these components to be required frequently
-  // const ShareStream    = async () => await import ( '@/components/Channel/ShareStream' );
-  // const EditStreamData = async () => await import ( '@/components/Channel/EditStreamData' );
-  // const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
-  // const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
-
+  const EditStreamData = async () => await import ( '@/components/Channel/EditStreamData' );
+  const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
+  const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
   const DebugStream = async () => await import ( '@/components/Analytics/DebugStream' );
 
   export default {
     name: 'LiveStreamInfo',
 
     components: {
-      // ShareStream,
-      // EditStreamData,
-      // StreamArchives,
-      // RestreamDialog,
+      EditStreamData,
+      StreamArchives,
+      RestreamDialog,
+      DebugStream,
+      ShareStream,
       SimpleFooter,
       VueMarkdown,
-      DebugStream,
     },
 
     props: {
