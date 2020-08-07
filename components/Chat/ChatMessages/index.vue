@@ -93,7 +93,7 @@
             <!-- Append messages -->
             <div
               v-else
-              class="msg append"
+              class="msg append content"
               :class="{ 'no-avatar': !showAvatars }"
             >
               <div
@@ -114,10 +114,10 @@
         <v-btn
           v-show="showFAB"
           fab
-          x-small
-          color="primary"
+          small
+          color="accent"
           @click="scrollToBottom( true )"
-          class="black--text mt-3"
+          class="white--text mt-3"
         >
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
@@ -404,7 +404,7 @@
 
     .dense .content .msg {
       h1, h2, h3 {
-        font-size: 1rem;
+        font-size: .95rem;
       }
 
       img {
