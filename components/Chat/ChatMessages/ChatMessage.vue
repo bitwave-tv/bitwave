@@ -128,6 +128,8 @@
 </script>
 
 <style lang='scss'>
+  $chat-avatar-size: 32px;
+
   .msg {
     word-break: break-word;
     max-height: 20rem;
@@ -156,13 +158,13 @@
       text-align: center;
       vertical-align: middle;
 
-      height: 32px;
-      min-width: 32px;
-      width: 32px;
+      height: $chat-avatar-size;
+      min-width: $chat-avatar-size;
+      width: $chat-avatar-size;
     }
 
     .v-list-item__avatar {
-      min-width: 42px;
+      min-width: $chat-avatar-size;
     }
 
     .content {

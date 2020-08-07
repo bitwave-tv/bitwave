@@ -42,7 +42,7 @@
           v-for="( msg, index ) in messages"
           kkey="msg._id"
           :key="index"
-          class="pb-1 pl-3 pr-1"
+          class="mb-1 pl-2 pr-1"
         >
 
           <!-- Chat Alert -->
@@ -314,7 +314,7 @@
             }
 
             this.onScrollTimer = null;
-          }, 100 );
+          }, 50 );
         }
       },
 
