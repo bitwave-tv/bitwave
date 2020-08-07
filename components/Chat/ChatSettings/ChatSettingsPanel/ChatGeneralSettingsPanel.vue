@@ -57,7 +57,7 @@
         </template>
       </v-switch>
 
-      <v-divider class="divider" />
+      <v-divider class="my-3" />
 
       <!-- Ignore -->
       <v-switch
@@ -67,6 +67,7 @@
         hide-details
         dense
         inset
+        class="mt-3"
       />
 
       <!-- Ignore -->
@@ -93,7 +94,7 @@
         </template>
       </v-switch>
 
-      <v-divider class="divider" />
+      <v-divider class="my-3" />
 
       <!-- Notification Sounds -->
       <v-switch
@@ -103,6 +104,7 @@
         hide-details
         dense
         inset
+        class="mt-3"
       />
 
       <!-- Autocomplete -->
@@ -266,15 +268,5 @@
 </script>
 
 <style lang="scss">
-  #general-chat-settings > * {
-    height: 45px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin: 0 0 0 0;
-    align-self: center;
-  }
-  #general-chat-settings > .divider {
-    margin: 11.25px 0 11.25px 0;
-    padding: 0 0 0 0;
-  }
+  
 </style>

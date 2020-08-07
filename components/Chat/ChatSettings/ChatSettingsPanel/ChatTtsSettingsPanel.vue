@@ -62,13 +62,13 @@
         />
 
 
-        <div class="d-flex my-3">
+        <div class="d-flex align-center my-3">
           <!-- TTS Voice Settings Labels -->
-          <span class="overline align-self-center mr-2">
+          <span class="overline mr-2 grey--text">
             TTS Voice Settings
           </span>
 
-          <v-divider id="divider"/>
+          <v-divider />
         </div>
 
         <!-- TTS Voice -->
