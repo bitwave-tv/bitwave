@@ -27,22 +27,25 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/checkout@v1
+
+      - name: setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      
       - name: npm ci and build
         run: |
           npm ci
           npm run build
       
-      - uses: actions/upload-artifact@v2
       - name: Create Artifact
+        uses: actions/upload-artifact@v2
         with:
           name: dev-build
           path: .nuxt/*
-          
+
       - name: Copy file via scp
         uses: appleboy/scp-action@master
         env:
