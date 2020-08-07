@@ -87,7 +87,7 @@
               :show-channel="true"
               @reply="addUserTag"
               @whisper="addWhisper"
-              @select="onMessageClick"
+              @select="onMessageClick( msg )"
               @goto="onGoto"
             ></chat-message>
 

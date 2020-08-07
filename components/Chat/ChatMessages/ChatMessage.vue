@@ -55,7 +55,7 @@
           class="username text-truncate subtitle-2 pl-1"
           :style="props.userStyling"
           v-html="props.displayName"
-          @click="listeners.select( props )"
+          @click="listeners.select"
         />
 
         <div class="flex-grow-1"></div>
