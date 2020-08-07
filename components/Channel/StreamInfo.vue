@@ -62,9 +62,7 @@
           <div
             class="d-inline-block"
             :key="lastStreamed"
-          >
-            {{ lastStreamed }}
-          </div>
+          >{{ lastStreamed }}</div>
         </v-fade-transition>
       </div>
 
@@ -72,7 +70,7 @@
 
       <div class="d-flex">
         <!-- Edit Stream Info Dialog -->
-        <edit-stream-data
+        <lazy-edit-stream-data
           v-if="channelOwner"
           :username="username"
           :title="title"
@@ -81,7 +79,7 @@
         />
 
         <!-- Restream Dialog -->
-        <restream-dialog
+        <lazy-restream-dialog
           v-if="channelOwner"
           :username="name"
           :owner="uid"
@@ -90,7 +88,7 @@
       </div>
 
       <!-- Share Stream Dialog -->
-      <ShareStream :user="name" />
+      <lazy-share-stream :user="name" />
     </div>
 
     <v-divider />
@@ -98,7 +96,7 @@
     <!-- Stream Data -->
     <v-tabs-items
       v-model="tabData"
-      style="background: transparent"
+      style="background: transparent; min-height: 500px;"
       touchless
     >
       <!-- Description -->
@@ -107,10 +105,9 @@
           id="description"
           ref="description"
           class="pa-3"
-          style="min-height: 750px"
         >
           <!-- Stream Description -->
-          <vue-markdown
+          <lazy-vue-markdown
             v-if="description && !replay"
             :source="description"
           />
@@ -119,10 +116,8 @@
 
       <!-- Archives -->
       <v-tab-item>
-        <div
-          style="min-height: 500px"
-        >
-          <stream-archives
+        <div>
+          <lazy-stream-archives
             :streamer="name"
           />
         </div>
@@ -132,20 +127,17 @@
       <v-tab-item
         v-if="!replay"
       >
-        <div
-          style="min-height: 500px"
-        >
-          <debug-stream
+        <div>
+          <lazy-debug-stream
             :streamer="name"
           />
         </div>
       </v-tab-item>
-
     </v-tabs-items>
-
 
     <!-- Footer -->
     <simple-footer :version="version" />
+
   </div>
 </template>
 
@@ -158,10 +150,10 @@
   import SimpleFooter from '@/components/SubLayout/SimpleFooter';
 
   // Async Components - We don't expect these components to be required frequently
-  const ShareStream    = async () => await import ( '@/components/Channel/ShareStream' );
-  const EditStreamData = async () => await import ( '@/components/Channel/EditStreamData' );
-  const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
-  const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
+  // const ShareStream    = async () => await import ( '@/components/Channel/ShareStream' );
+  // const EditStreamData = async () => await import ( '@/components/Channel/EditStreamData' );
+  // const StreamArchives = async () => await import ( '@/components/Channel/StreamArchives' );
+  // const RestreamDialog = async () => await import ( '@/components/Restream/RestreamDialog' );
 
   const DebugStream = async () => await import ( '@/components/Analytics/DebugStream' );
 
@@ -169,12 +161,12 @@
     name: 'LiveStreamInfo',
 
     components: {
+      // ShareStream,
+      // EditStreamData,
+      // StreamArchives,
+      // RestreamDialog,
       SimpleFooter,
-      StreamArchives,
       VueMarkdown,
-      ShareStream,
-      EditStreamData,
-      RestreamDialog,
       DebugStream,
     },
 
