@@ -1,12 +1,39 @@
 <template>
   <div>
 
+    <!-- Category Label -->
     <div class="overline text-center grey--text my-1 tight--text">
       LIVE NOW
     </div>
 
+    <!-- Skeleton loading until fetch completes -->
+    <template
+      v-if="liveChannelList === null"
+      v-for="i in 4"
+    >
+      <v-list-item
+        :key="i"
+        class="py-1"
+      >
+        <v-list-item-avatar
+          class="my-1"
+        >
+          <v-avatar
+            :size="42"
+          >
+            <v-skeleton-loader type="avatar" />
+          </v-avatar>
+        </v-list-item-avatar>
+        <v-list-item-content class="py-0">
+          <v-list-item-title>Loading...</v-list-item-title>
+          <v-list-item-subtitle>still loading</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+
     <!-- List of streams live now -->
     <transition-group
+      v-if="liveChannelList"
       name="fade-transition"
       tag="div"
     >
@@ -77,15 +104,22 @@
 
     data() {
       return {
-        liveChannelList: [],
+        liveChannelList: null,
         userListTimer: null,
+        updatingList: false,
       };
     },
 
-    fetchOnServer: true,
+    fetchOnServer: false,
 
     async fetch () {
+      if ( this.updatingList ) {
+        console.log( `A streamer list update is already in progresss!` );
+        return;
+      }
+
       const getLiveChannelList = async () => {
+        this.updatingList = true;
         try {
           const { data } = await this.$axios.get( 'https://api.bitwave.tv/api/channels/live', { progress: false }  );
           if ( data && data.hasOwnProperty( 'users' ) ) return  data.users;
@@ -98,6 +132,8 @@
       if ( liveChannels ) {
         this.liveChannelList = liveChannels;
       }
+
+      this.updatingList = false;
     },
 
     methods: {
