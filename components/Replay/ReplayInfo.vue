@@ -178,7 +178,6 @@
   import VueMarkdown from '@/components/VueMarkdown';
   import ReplayComments from '@/components/Replay/ReplayComments';
   import ShareReplay from '@/components/Replay/ShareReplay';
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
 
   // Async Components - We don't expect these components to be required frequently
   const ShareStream    = async () => await import ( '@/components/Channel/ShareStream' );
@@ -192,7 +191,6 @@
     name: 'ReplayStreamInfo',
 
     components: {
-      SimpleFooter,
       ShareReplay,
       ReplayComments,
       VueMarkdown,

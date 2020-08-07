@@ -56,15 +56,12 @@
       </v-container>
 
       <!-- Footer -->
-      <simple-footer
-        :version="version"
-      />
+      <simple-footer :version="version" />
     </div>
   </div>
 </template>
 
 <script>
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
   import ReplayGrid from '@/components/Replay/ReplayGrid';
   import TrendingReplays from '@/components/Replay/TrendingReplays';
 
@@ -104,7 +101,6 @@
     components: {
       TrendingReplays,
       ReplayGrid,
-      SimpleFooter,
     },
 
     methods: {

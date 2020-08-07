@@ -300,19 +300,19 @@
     </v-container>
 
     <!-- Footer -->
-    <simple-footer />
+    <simple-footer :version="version" />
 
   </div>
 </template>
 
 <script>
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
-
   export default {
     name: 'tos',
 
-    components: {
-      SimpleFooter,
+    computed: {
+      version () {
+        return `v${process.env.version}`;
+      },
     },
   }
 </script>

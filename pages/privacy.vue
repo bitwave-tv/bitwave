@@ -212,31 +212,19 @@
     </div>
 
     <!-- Footer -->
-    <simple-footer />
+    <simple-footer :version="version" />
 
   </div>
 </template>
 
 <script>
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
-
   export default {
     name: 'privacy',
 
-    components: {
-      SimpleFooter,
-    },
-
-    data() {
-      return {};
-    },
-
-    methods: {},
-
-    computed: {},
-
-    mounted() {
-
+    computed: {
+      version () {
+        return `v${process.env.version}`;
+      },
     },
   };
 </script>

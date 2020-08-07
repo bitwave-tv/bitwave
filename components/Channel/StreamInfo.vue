@@ -158,7 +158,6 @@
   // Imported Components
   import VueMarkdown from '@/components/VueMarkdown';
   import ShareStream from '@/components/Channel/ShareStream';
-  import SimpleFooter from '@/components/SubLayout/SimpleFooter';
 
   // Async Components - We don't expect these components to be required frequently
   const EditStreamData = async () => await import ( '@/components/Channel/EditStreamData' );
@@ -170,7 +169,6 @@
     name: 'LiveStreamInfo',
 
     components: {
-      SimpleFooter,
       VueMarkdown,
       ShareStream,
       EditStreamData,
