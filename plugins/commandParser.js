@@ -2,7 +2,7 @@ import { Chat } from '@/store/chat';
 import { VStore } from "@/store";
 
 let _store, _ga, _sentry,
-    _store_state, _store_commit;
+  _store_state, _store_commit;
 
 const functions = {
 
@@ -253,7 +253,11 @@ const functions = {
     return [{ insertMessage: `Badge ${ newstate ? 'on' : 'off' }` }]
   },
 
-  skipTts() { speechSynthesis.cancel(); }, // Skip TTS
+  // Skip TTS
+  skipTts() {
+    speechSynthesis.cancel();
+    return [];
+  },
 
   async bugReport() {
     _sentry.withScope(
