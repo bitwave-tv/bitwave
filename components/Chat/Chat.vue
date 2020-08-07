@@ -186,9 +186,14 @@
             return m;
           },
           m => {
-            if( this.getRecursiveIgnore )
+            if( this.useIgnore && this.getRecursiveIgnore ) {
+              // TODO: This should be reversed.
+              // That is, we should get the @'s in a mention
+              // Then check if the @'d user is in the ignore list
+              // if they are, return null early.
               for( const i of this.ignoreList )
                 if( m.message.toLowerCase().includes( `@${i}` ) ) return null;
+            }
             return m;
           }
         ],

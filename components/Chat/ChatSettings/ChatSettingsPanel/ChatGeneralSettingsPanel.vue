@@ -73,6 +73,7 @@
       <!-- Ignore -->
       <v-switch
         v-model="recursiveIgnore"
+        :disabled="!useIgnore"
         label="Recursively ignore"
         color="primary"
         hide-details
@@ -268,5 +269,5 @@
 </script>
 
 <style lang="scss">
-  
+
 </style>
