@@ -61,7 +61,7 @@
         <div class="flex-grow-1"></div>
 
         <!-- Room Label -->
-        <a
+        <!--<a
           v-if="props.showChannel"
           :href="props.routePrefix + props.channel"
           @click="listeners.goto( props.routePrefix + props.channel )"
@@ -70,7 +70,8 @@
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
-        </a>
+        </a>-->
+
       </div>
 
       <!-- Chat Body -->
