@@ -66,6 +66,7 @@
         <div
           v-if="props.showChannel"
           @click="listeners.goto( props.routePrefix + props.channel )"
+          style="cursor:pointer;"
         >
           <kbd
             v-text="props.channel"

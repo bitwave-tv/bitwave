@@ -25,13 +25,10 @@
 
   export default {
     name: 'StreamerList',
+
     components: { LiveStreamers, FollowedStreamers },
-    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 30 ) ),
 
-    data() {
-      return {}
-    },
-
+    // serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 60 * 2 ) ),
   }
 </script>
 
