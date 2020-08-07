@@ -64,7 +64,7 @@
         <a
           v-if="props.showChannel"
           :href="props.routePrefix + props.channel"
-          @click.prevent="listeners.goto( props.routePrefix + props.channel )"
+          @click="listeners.goto( props.routePrefix + props.channel )"
         >
           <kbd
             v-text="props.channel"
