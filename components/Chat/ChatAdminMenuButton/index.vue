@@ -13,7 +13,7 @@
         v-on="on"
         small
         icon
-        class="px-0"
+        class="px-0 mr-2"
       >
         <v-icon>verified_user</v-icon>
       </v-btn>
