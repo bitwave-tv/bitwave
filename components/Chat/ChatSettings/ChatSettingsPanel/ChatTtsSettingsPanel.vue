@@ -36,7 +36,21 @@
           hide-details
           dense
           inset
-        />
+        >
+          <template #label>
+            <div>
+              <span>Alert TTS</span>
+              <v-tooltip top color="blue-grey darken-4">
+                <template #activator="{ on: tooltip }">
+                  <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+                    <v-icon color="grey">help_outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>TTS will read contents of chat alerts</span>
+              </v-tooltip>
+            </div>
+          </template>
+        </v-switch>
 
         <!-- Troll TTS -->
         <v-switch
@@ -67,7 +81,6 @@
           <span class="overline mr-2 grey--text">
             TTS Voice Settings
           </span>
-
           <v-divider />
         </div>
 
