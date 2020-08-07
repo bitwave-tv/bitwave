@@ -65,16 +65,17 @@
         <!-- :href="props.routePrefix + props.channel" -->
         <!-- I HAVE NO IDEA WHY THIS CANT BE AN A TAG -->
         <!-- BUT I GIVE UP IT BREAKS SO MUCH SHIT -->
-        <div
+        <a
           v-if="props.showChannel"
-          @click="listeners.goto( props.routePrefix + props.channel )"
+          :href="props.routePrefix + props.channel"
+          @click.prevent="listeners.goto( props.routePrefix + props.channel )"
           style="cursor:pointer;"
         >
           <kbd
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
-        </div>
+        </a>
 
       </div>
 
