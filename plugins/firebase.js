@@ -100,7 +100,6 @@ export default async ( { app, store }, inject ) => {
       if ( user ) await store.dispatch( VStore.$actions.login, user );
       else await store.dispatch( VStore.$actions.logout );
     });
-    inject( `auth`, auth );
 
     // Listen to the configuration, and dispatch updates
     console.log( `Listening to configuration updates.` );

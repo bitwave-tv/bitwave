@@ -75,6 +75,7 @@ const $mutations = {
 };
 
 const $actions = {
+  registerUser : 'REGISTER_USER',
   loginUser    : 'LOGIN_USER',
   login        : 'LOGIN',
   logout       : 'LOGOUT',
@@ -305,8 +306,7 @@ export const mutations = {
 export const actions = {
 
   async nuxtServerInit ({ dispatch, commit }, { req, params, route }) {
-    let authUser = null;
-    // let user = null;
+    let authUser = null, user = null;
     const cookies = this.$cookies.getAll();
     if ( cookies ) {
       try {
@@ -336,6 +336,33 @@ export const actions = {
 
     // Run all our API actions in parallel
     await Promise.all( runParallel );
+  },
+
+  // not used due since we couldn't catch errors well here
+  async [$actions.registerUser] ({ dispatch, commit }, { credential, stayLoggedIn }) {
+    // Create user & update credential
+    const userCredential = await auth.createUserWithEmailAndPassword( credential.email, credential.password );
+    await userCredential.user.updateProfile({ displayName: credential.username });
+
+    // Create user document
+    const userId = userCredential.user.uid;
+
+    const token = await userCredential.user.getIdToken();
+    this.$axios.setToken( token, 'Bearer' );
+
+    const endpoint = `https://api.bitwave.tv/v1/user/create`;
+    const payload = { user: credential.username };
+    try {
+      const result = await this.$axios.post(
+        endpoint,
+        payload,
+      );
+      console.log( result.data );
+    } catch ( error ) {
+      console.error( error );
+    }
+
+    return true;
   },
 
   // not used due since we couldn't catch errors well here

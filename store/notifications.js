@@ -1,4 +1,5 @@
 // Created by xander on 6/13/2020
+import { auth, db } from '@/plugins/firebase.js';
 
 const toastErrorConfig = {
   icon: 'error',

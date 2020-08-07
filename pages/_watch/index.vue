@@ -37,7 +37,7 @@
             >
               <countdown
                 :timestamp="scheduled"
-                :key="scheduled.getTime()"
+                :key="scheduled"
               />
             </div>
           </div>

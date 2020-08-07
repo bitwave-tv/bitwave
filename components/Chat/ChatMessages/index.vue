@@ -42,7 +42,7 @@
           v-for="( msg, index ) in messages"
           kkey="msg._id"
           :key="index"
-          class="mb-1 pl-2 pr-1"
+          class="pb-1 pl-3 pr-1"
         >
 
           <!-- Chat Alert -->
@@ -87,8 +87,7 @@
               :show-channel="true"
               @reply="addUserTag"
               @whisper="addWhisper"
-              @select="onMessageClick"
-              @goto="onGoto"
+              @select="onMessageClick( msg )"
             ></chat-message>
 
             <!-- Append messages -->
@@ -111,18 +110,18 @@
 
     <!-- FAB for Scroll Down -->
     <div class="stb-fab d-flex justify-center">
-      <v-slide-y-reverse-transition>
+      <v-slide-y-transition>
         <v-btn
           v-show="showFAB"
           fab
           small
           color="accent"
           @click="scrollToBottom( true )"
-          class="white--text mb-4"
+          class="white--text mt-3"
         >
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
-      </v-slide-y-reverse-transition>
+      </v-slide-y-transition>
     </div>
 
     <!-- Chat Message Menu -->
@@ -314,7 +313,7 @@
             }
 
             this.onScrollTimer = null;
-          }, 50 );
+          }, 100 );
         }
       },
 
@@ -340,10 +339,6 @@
 
       onUnignore ( username ) {
         this.$emit( 'unignore', username );
-      },
-
-      onGoto ( location ) {
-        this.$router.push( location );
       },
     },
 
@@ -401,7 +396,7 @@
 
     .stb-fab {
       position: absolute;
-      bottom: 0;
+      top: 0;
       left: 50%;
       transform: translateX(-50%);
       z-index: 3;

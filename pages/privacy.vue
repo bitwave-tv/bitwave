@@ -212,7 +212,7 @@
     </div>
 
     <!-- Footer -->
-    <simple-footer :version="version" />
+    <simple-footer />
 
   </div>
 </template>
@@ -233,11 +233,7 @@
 
     methods: {},
 
-    computed: {
-      version () {
-        return `v${process.env.version}`;
-      },
-    },
+    computed: {},
 
     mounted() {
 

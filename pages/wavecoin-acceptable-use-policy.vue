@@ -170,7 +170,7 @@
     </v-container>
 
     <!-- Footer -->
-    <simple-footer :version="version" />
+    <simple-footer />
 
   </div>
 </template>
@@ -178,11 +178,5 @@
 <script>
   export default {
     name: 'wavecoin-acceptable-use-policy',
-
-    computed: {
-      version () {
-        return `v${process.env.version}`;
-      },
-    },
   };
 </script>
