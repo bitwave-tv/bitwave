@@ -70,7 +70,7 @@
 
       <div class="d-flex">
         <!-- Edit Stream Info Dialog -->
-        <lazy-edit-stream-data
+        <edit-stream-data
           v-if="channelOwner"
           :username="username"
           :title="title"
@@ -79,7 +79,7 @@
         />
 
         <!-- Restream Dialog -->
-        <lazy-restream-dialog
+        <restream-dialog
           v-if="channelOwner"
           :username="name"
           :owner="uid"
@@ -107,7 +107,7 @@
           class="pa-3"
         >
           <!-- Stream Description -->
-          <lazy-vue-markdown
+          <vue-markdown
             v-if="description && !replay"
             :source="description"
           />
@@ -117,7 +117,7 @@
       <!-- Archives -->
       <v-tab-item>
         <div>
-          <lazy-stream-archives
+          <stream-archives
             :streamer="name"
           />
         </div>
@@ -128,7 +128,7 @@
         v-if="!replay"
       >
         <div>
-          <lazy-debug-stream
+          <debug-stream
             :streamer="name"
           />
         </div>
