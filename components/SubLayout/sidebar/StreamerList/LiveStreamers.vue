@@ -1,9 +1,37 @@
 <template>
   <div>
 
+    <!-- Category Label -->
     <div class="overline text-center grey--text my-1 tight--text">
       LIVE NOW
     </div>
+
+
+    <!-- Skeleton loading until fetch completes -->
+    <template
+      v-if="liveChannelList === null"
+      v-for="i in 4"
+    >
+      <v-list-item
+        :key="i"
+        class="py-1"
+      >
+        <v-list-item-avatar
+          class="my-1"
+        >
+          <v-avatar
+            :size="42"
+          >
+            <v-skeleton-loader type="avatar" />
+          </v-avatar>
+        </v-list-item-avatar>
+        <v-list-item-content class="py-0">
+          <v-list-item-title>Loading...</v-list-item-title>
+          <v-list-item-subtitle>still loading</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+
 
     <!-- List of streams live now -->
     <transition-group
@@ -11,6 +39,7 @@
       tag="div"
     >
       <v-list-item
+        v-if="liveChannelList"
         v-for="( user ) in liveChannelList"
         :key="user.owner"
         :to="user.to"
@@ -77,12 +106,12 @@
 
     data() {
       return {
-        liveChannelList: [],
+        liveChannelList: null,
         userListTimer: null,
       };
     },
 
-    fetchOnServer: true,
+    fetchOnServer: false,
 
     async fetch () {
       const getLiveChannelList = async () => {
