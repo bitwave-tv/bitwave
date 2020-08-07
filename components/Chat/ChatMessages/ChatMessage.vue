@@ -62,19 +62,19 @@
 
         <!-- Room Label -->
         <!-- Using an A tag fucking destorys shit idk why -->
-        <!-- Maybe it's just some dumb fucking caching??? -->
         <!-- :href="props.routePrefix + props.channel" -->
-        <a
+        <!-- I HAVE NO IDEA WHY THIS CANT BE AN A TAG -->
+        <!-- BUT I GIVE UP IT BREAKS SO MUCH SHIT -->
+        <div
           v-if="props.showChannel"
-          :href="props.routePrefix + props.channel"
-          @click.prevent="listeners.goto( props.routePrefix + props.channel )"
+          @click="listeners.goto( props.routePrefix + props.channel )"
           style="cursor:pointer;"
         >
           <kbd
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
-        </a>
+        </div>
 
       </div>
 
