@@ -111,18 +111,18 @@
 
     <!-- FAB for Scroll Down -->
     <div class="stb-fab d-flex justify-center">
-      <v-slide-y-transition>
+      <v-slide-y-reverse-transition>
         <v-btn
           v-show="showFAB"
           fab
           small
           color="accent"
           @click="scrollToBottom( true )"
-          class="white--text mt-3"
+          class="white--text mb-4"
         >
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
-      </v-slide-y-transition>
+      </v-slide-y-reverse-transition>
     </div>
 
     <!-- Chat Message Menu -->
@@ -401,7 +401,7 @@
 
     .stb-fab {
       position: absolute;
-      top: 0;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       z-index: 3;
