@@ -300,7 +300,7 @@
     </v-container>
 
     <!-- Footer -->
-    <simple-footer />
+    <simple-footer :version="version" />
 
   </div>
 </template>
@@ -313,6 +313,12 @@
 
     components: {
       SimpleFooter,
+    },
+
+    computed: {
+      version () {
+        return `v${process.env.version}`;
+      },
     },
   }
 </script>
