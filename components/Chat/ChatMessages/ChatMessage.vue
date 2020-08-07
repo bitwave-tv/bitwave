@@ -61,16 +61,17 @@
         <div class="flex-grow-1"></div>
 
         <!-- Room Label -->
-        <!--<a
+        <!-- Using an A tag fucking destorys shit idk why -->
+        <!-- :href="props.routePrefix + props.channel" -->
+        <div
           v-if="props.showChannel"
-          :href="props.routePrefix + props.channel"
           @click="listeners.goto( props.routePrefix + props.channel )"
         >
           <kbd
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
-        </a>-->
+        </div>
 
       </div>
 
