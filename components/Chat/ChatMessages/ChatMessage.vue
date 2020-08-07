@@ -46,7 +46,7 @@
         <!-- User Badge -->
         <div
           v-if="props.badge"
-          class="badge pl-1 d-flex align-center"
+          class="badge pl-1 d-flex align-center text-no-wrap"
           v-html="props.badge"
         ></div>
 
@@ -55,22 +55,22 @@
           class="username text-truncate subtitle-2 pl-1"
           :style="props.userStyling"
           v-html="props.displayName"
-          @click="listeners.select"
+          @click="listeners.select( props )"
         />
 
         <div class="flex-grow-1"></div>
 
         <!-- Room Label -->
-        <nuxt-link
+        <a
           v-if="props.showChannel"
-          :to="props.routePrefix + props.channel"
-          no-prefetch
+          :href="props.routePrefix + props.channel"
+          @click.prevent="listeners.goto( props.routePrefix + props.channel )"
         >
           <kbd
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
-        </nuxt-link>
+        </a>
       </div>
 
       <!-- Chat Body -->
@@ -128,6 +128,8 @@
 </script>
 
 <style lang='scss'>
+  $chat-avatar-size: 32px;
+
   .msg {
     word-break: break-word;
     max-height: 20rem;
@@ -156,13 +158,13 @@
       text-align: center;
       vertical-align: middle;
 
-      height: 32px;
-      min-width: 32px;
-      width: 32px;
+      height: $chat-avatar-size;
+      min-width: $chat-avatar-size;
+      width: $chat-avatar-size;
     }
 
     .v-list-item__avatar {
-      min-width: 42px;
+      min-width: $chat-avatar-size;
     }
 
     .content {
