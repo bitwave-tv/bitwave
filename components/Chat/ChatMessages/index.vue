@@ -88,6 +88,7 @@
               @reply="addUserTag"
               @whisper="addWhisper"
               @select="onMessageClick( msg )"
+              @goto="onGoto"
             ></chat-message>
 
             <!-- Append messages -->
@@ -339,6 +340,10 @@
 
       onUnignore ( username ) {
         this.$emit( 'unignore', username );
+      },
+
+      onGoto ( location ) {
+        this.$router.push( location );
       },
     },
 

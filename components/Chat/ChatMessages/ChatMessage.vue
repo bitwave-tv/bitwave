@@ -46,7 +46,7 @@
         <!-- User Badge -->
         <div
           v-if="props.badge"
-          class="badge pl-1 d-flex align-center"
+          class="badge pl-1 d-flex align-center text-no-wrap"
           v-html="props.badge"
         ></div>
 
@@ -61,16 +61,16 @@
         <div class="flex-grow-1"></div>
 
         <!-- Room Label -->
-        <nuxt-link
+        <a
           v-if="props.showChannel"
-          :to="props.routePrefix + props.channel"
-          no-prefetch
+          :href="props.routePrefix + props.channel"
+          @click.prevent="listeners.goto( props.routePrefix + props.channel )"
         >
           <kbd
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
-        </nuxt-link>
+        </a>
       </div>
 
       <!-- Chat Body -->
