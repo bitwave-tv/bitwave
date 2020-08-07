@@ -92,6 +92,8 @@
         <!-- Action items -->
         <div class="mt-3">
           <div class="d-flex align-center">
+
+            <!-- Report User Option -->
             <v-btn
               color="red darken-2"
               class=""
@@ -101,28 +103,32 @@
 
             <v-spacer />
 
-            <v-btn
+            <!-- Channel Owner Mute Settings -->
+            <template
               v-if="isChannelOwner"
-              color="error"
-              class="mr-2"
-              outlined
-              small
-              @click="banUser"
-            >Mute</v-btn>
-            <v-btn
-              v-if="isChannelOwner"
-              color="success"
-              class="mr-2"
-              outlined
-              small
-              @click="unbanUser"
-            >Un-Mute</v-btn>
+            >
+              <v-btn
+                color="error"
+                class="mr-2"
+                outlined
+                small
+                @click="banUser"
+              >Mute</v-btn>
+              <v-btn
+                color="success"
+                class="mr-2"
+                outlined
+                small
+                @click="unbanUser"
+              >Un-Mute</v-btn>
 
-            <v-divider
-              vertical
-              class="mr-2"
-            />
+              <v-divider
+                vertical
+                class="mr-2"
+              />
+            </template>
 
+            <!-- General Use Ignore Settings -->
             <v-btn
               color="error"
               class="mr-2"
