@@ -305,7 +305,8 @@ export const mutations = {
 export const actions = {
 
   async nuxtServerInit ({ dispatch, commit }, { req, params, route }) {
-    let authUser = null, user = null;
+    let authUser = null;
+    // let user = null;
     const cookies = this.$cookies.getAll();
     if ( cookies ) {
       try {
