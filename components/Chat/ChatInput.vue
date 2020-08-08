@@ -324,17 +324,13 @@
       },
 
       onDetectAutocomplete ( event ) {
+        this.updateMessage( event );
 
         // Remove all existing emotes so we can end early
-        const msg = this.getMessage.substring( 0, event.target.selectionStart );
+        const msg = this.getMessage.substring( 0, event.target.selectionEnd );
         console.log( `check: ${msg}` );
 
-        this.autocompleteFlexible = this.detectAutocompleteFlexible( msg );
-
-        if ( this.autocompleteFlexibl ) {
-          this.autocompleteSelection = 0;
-          return;
-        }
+        this.detectAutocompleteFlexible( msg, event.target.selectionEnd );
 
         // Detect keystrokes that trigger autocomplete
         if ( event.key === '@' || event.key === '/' || event.key === ':' ) {
@@ -366,7 +362,7 @@
       },
 
 
-      detectAutocompleteFlexible ( msg ) {
+      detectAutocompleteFlexible ( msg, offset ) {
         if ( !msg ) return;
 
         const usernameMatch = msg.match( /@[\w:\-_]*$/g );
@@ -390,17 +386,34 @@
           return commandMatch;
         }
 
-        // Remove all existing emotes so we can end early
-        const emoteMatch = msg
+        // THIS IS THE ONLY ONE THAT WORKS
+        //-------------------------------
+
+        const sz = this.getMessage.length;
+
+        console.log( `Full String: ${this.getMessage} OFFSET: ${offset}` );
+
+        const str = this.getMessage.substring( 0, offset );
+        const str2 = this.getMessage.substring( offset, sz );
+
+        console.log( `checking string: '${str}'` );
+        console.log( `end string: '${str2}'` );
+
+        console.log( str.match( /:\w*$/g ) );
+
+        const emoteMatch = str
           .replace( /:\w+:/gi, '' )
-          .match( /:[\w]*$/g );
+          .match( /:\w*$/g );
 
         if ( emoteMatch ) {
           this.autocompleteData = this.emoteList;
           // this.acSize = 7;
           this.autocompleteKey = 'emotes';
-          return emoteMatch;
+          console.log( `emotes: '${emoteMatch}'` );
+          this.autocompleteFlexible = emoteMatch;
+          return;
         }
+        this.autocompleteFlexible = null;
       },
 
 
