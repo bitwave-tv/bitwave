@@ -127,23 +127,31 @@
 
     <!-- Chat Message Menu -->
     <div>
-      <chat-message-menu
+      <v-dialog
         v-model="showChatMessageMenu"
-        :avatar="selectedChatMessage.avatar"
-        :username="selectedChatMessage.username"
-        :displayName="selectedChatMessage.displayName"
-        :user-styling="{ color: selectedChatMessage.userStyling ? selectedChatMessage.userStyling : '#9e9e9e' }"
-        :message="selectedChatMessage.message"
-        :badge="selectedChatMessage.badge"
-        :timestamp="selectedChatMessage.timestamp"
-        :channel="selectedChatMessage.channel"
-        :global="selectedChatMessage.global"
-        :is-channel-owner="isChannelOwner"
-        @ignore="onIgnore"
-        @unignore="onUnignore"
-      />
-    </div>
+        transition="slide-x-transition"
+        :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '40%'"
+      >
 
+        <lazy-chat-message-menu
+          :key="selectedChatMessage.username"
+          :avatar="selectedChatMessage.avatar"
+          :username="selectedChatMessage.username"
+          :displayName="selectedChatMessage.displayName"
+          :user-styling="{ color: selectedChatMessage.userStyling ? selectedChatMessage.userStyling : '#9e9e9e' }"
+          :message="selectedChatMessage.message"
+          :badge="selectedChatMessage.badge"
+          :timestamp="selectedChatMessage.timestamp"
+          :channel="selectedChatMessage.channel"
+          :global="selectedChatMessage.global"
+          :is-channel-owner="isChannelOwner"
+          @close="showChatMessageMenu = false"
+          @ignore="onIgnore"
+          @unignore="onUnignore"
+        />
+
+      </v-dialog>
+    </div>
   </v-flex>
 </template>
 
@@ -151,7 +159,6 @@
   import moment from 'moment';
 
   import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
-  import ChatMessageMenu from '@/components/Chat/ChatMessages/ChatMessageMenu';
 
   import { mapState } from 'vuex';
   import { Chat } from '@/store/chat';
@@ -160,7 +167,6 @@
     name: 'ChatMessages',
 
     components: {
-      ChatMessageMenu,
       ChatMessage,
     },
 

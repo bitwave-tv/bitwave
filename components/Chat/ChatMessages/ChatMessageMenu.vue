@@ -1,11 +1,6 @@
 <template>
-  <v-dialog
-    :value="value"
-    transition="slide-x-transition"
-    :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '40%'"
-    @input=" val => $emit('input', val )"
-  >
-    <v-card>
+  <div>
+    <v-card tile raised elevation="24">
       <!-- Title Bar -->
       <v-sheet
         tile
@@ -26,9 +21,12 @@
 
       <div class="pa-3">
 
-        <div class="d-flex align-center grey--text mb-4">
+        <div class="d-flex align-center grey--text mb-3">
           <!-- Avatar -->
-          <v-avatar size="32">
+          <v-avatar
+            size="32"
+            class="mr-2"
+          >
             <img
               v-if="avatar"
               :src="avatar"
@@ -38,7 +36,7 @@
             <img
               v-else
               src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-              alt="hazmat suit trolll"
+              alt="hazmat suit troll"
               :style="{ background: color }"
               :key="username"
               crossorigin
@@ -48,7 +46,7 @@
           <!-- User Badge -->
           <div
             v-show="badge"
-            class="badge pl-1 d-flex align-center"
+            class="badge mr-1 d-flex align-center"
             v-html="badge"
           ></div>
 
@@ -58,17 +56,6 @@
             :style="userStyling"
           >{{ username }}</div>
 
-          <v-spacer></v-spacer>
-
-
-          <!-- Action Buttons for user -->
-          <!--<v-btn
-            color="primary"
-            class="mr-2"
-            disabled
-            small
-          >Whisper</v-btn>-->
-
           <v-btn
             color="primary"
             :disabled="isTroll"
@@ -77,23 +64,21 @@
           >Profile</v-btn>
         </div>
 
-        <div class="body-2 mb-2">
-          This menu is still in development, but the ignore and unignore button both work. Confirmation messages will appear in chat.
+        <div class="mb-4">
+          <div class="body-2 mb-2">
+            This menu is still in development, but the ignore and unignore button both work. Confirmation messages will appear in chat.
+          </div>
+
+          <div class="caption mb-2">
+            Type <kbd>/ignorelist</kbd> to view a list of all users you currently ignore.<br>
+          </div>
         </div>
 
-        <div class="caption mb-2">
-          Type <kbd>/ignorelist</kbd> to view a list of all users you currently ignore.<br>
-          If you are still seeing messages in chat, ensure you have enabled "ignore messages" in chat settings.<br>
-          Ignoring users without this setting enabled will block TTS from reading their messages.
-        </div>
-
-        <hr color="grey" />
+        <v-divider />
 
         <!-- Action items -->
-        <div class="mt-3">
+        <div class="mt-2">
           <div class="d-flex align-center">
-
-            <!-- Report User Option -->
             <v-btn
               color="red darken-2"
               class=""
@@ -103,10 +88,13 @@
 
             <v-spacer />
 
-            <!-- Channel Owner Mute Settings -->
+            <!-- Sorry -->
             <template
               v-if="isChannelOwner"
             >
+              <!-- v-if="both || !isBanned" -->
+              <!-- :loading="loading" -->
+              <!-- :disabled="bannedUsers === null" -->
               <v-btn
                 color="error"
                 class="mr-2"
@@ -114,6 +102,10 @@
                 small
                 @click="banUser"
               >Mute</v-btn>
+
+              <!-- v-if="both || isBanned" -->
+              <!-- :loading="loading" -->
+              <!-- :disabled="bannedUsers === null" -->
               <v-btn
                 color="success"
                 class="mr-2"
@@ -128,14 +120,15 @@
               />
             </template>
 
-            <!-- General Use Ignore Settings -->
             <v-btn
+              v-if="!isIgnored"
               color="error"
               class="mr-2"
               small
               @click="ignoreUser"
             >Ignore</v-btn>
             <v-btn
+              v-if="isIgnored"
               color="success"
               class="mr-2"
               small
@@ -145,10 +138,14 @@
         </div>
       </div>
     </v-card>
-  </v-dialog>
+  </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+  import { Chat } from '@/store/chat';
+  import { auth } from '@/plugins/firebase';
+
   export default {
     name: 'ChatMessageMenu',
 
@@ -173,12 +170,15 @@
     },
 
     data() {
-      return {};
+      return {
+        bannedUsers: null,
+        loading: false,
+      };
     },
 
     methods: {
       close () {
-        this.$emit( 'input', false );
+        this.$emit( 'close' );
       },
 
       ignoreUser () {
@@ -189,7 +189,31 @@
         this.$emit( 'unignore', ( this.username || this.displayName ).toLowerCase() );
       },
 
+      async getFreshIdToken () {
+        const token = await auth.currentUser.getIdToken( true );
+        this.$axios.setToken( token, 'Bearer' );
+      },
+
+      async getBans () {
+        this.loading = true;
+        await this.getFreshIdToken();
+
+        const endpoint = `https://api.bitwave.tv/v1/chat/bans`;
+
+        try {
+          const { data } = await this.$axios.get( endpoint );
+          console.log( `Banned users:`, data );
+
+          this.bannedUsers = data.users;
+        } catch ( error ) {
+          console.error( error )
+          this.bannedUsers = null;
+        }
+        this.loading = false;
+      },
+
       async banUser () {
+        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/chat/ban`;
         const payload =  {
           user: this.username,
@@ -211,6 +235,7 @@
       },
 
       async unbanUser () {
+        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/chat/unban`;
         const payload =  {
           user: this.username,
@@ -233,13 +258,29 @@
     },
 
     computed: {
+      ...mapState ( Chat.namespace, {
+        ignoreList: Chat.$states.ignoreList,
+      }),
+
       isTroll () {
         return this.username && this.username.startsWith( 'troll:' );
       },
+
+      isIgnored () {
+        return this.ignoreList.includes( this.$utils.normalize( this.username ) );
+      },
+
+      isBanned () {
+        return this.bannedUsers?.includes( this.$utils.normalize( this.username ) );
+      },
+
+      both () {
+        return this.bannedUsers === null;
+      },
     },
 
-    mounted() {
-
+    async mounted() {
+      // await this.getBans();
     },
   };
 </script>
