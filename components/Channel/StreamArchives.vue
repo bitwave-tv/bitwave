@@ -379,8 +379,6 @@
       async deleteArchive ( archive ) {
         if ( this.processing ) return;
 
-        await this.updateToken();
-
         this.processing = true;
         archive.loading = true;
         this.showConfirmDelete = true;
@@ -484,12 +482,6 @@
         });
       },
 
-      async updateToken () {
-        if ( !auth.currentUser ) return;
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       mapReplayDoc ( doc ) {
         const data = doc.data();
         const streamer = data.user && data.user.name || data.name;
@@ -556,7 +548,6 @@
     async mounted () {
       console.log( 'StreamArchives loading...' );
       this.showDeletedArchives = this.channelOwner;
-      await this.updateToken();
       setTimeout( async () => await this.loadArchives(), 500 );
       try {
         this.$ga.event({

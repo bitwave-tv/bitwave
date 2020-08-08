@@ -64,11 +64,6 @@
     },
 
     methods: {
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async getWebhooks () {
         const result = await db
           .collection('webhooks')
@@ -117,7 +112,6 @@
 
       async testWebhooks () {
         this.testingWebhooks = true;
-        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/webhooks/test`;
         const payload = { user: this.username };
         try {

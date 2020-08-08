@@ -153,14 +153,8 @@
     },
 
     methods: {
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async getConfig () {
         this.saving = true;
-        await this.getFreshIdToken();
 
         const endpoint = `https://api.bitwave.tv/v1/chat/config`;
 
@@ -191,7 +185,6 @@
 
       async updateConfig () {
         this.saving = true;
-        await this.getFreshIdToken();
 
         const endpoint = `https://api.bitwave.tv/v1/chat/config`;
         const payload = {

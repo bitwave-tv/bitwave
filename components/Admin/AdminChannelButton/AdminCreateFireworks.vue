@@ -93,14 +93,7 @@
     },
 
     methods: {
-      async updateToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async createFireworks () {
-        await this.updateToken();
-
         const payload = {
           message: this.FireworksMessage,
           subtext: this.FireworksSubtext,

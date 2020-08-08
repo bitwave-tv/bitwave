@@ -135,6 +135,7 @@ export default async ( { app, store, $axios }, inject ) => {
       return;
     }
 
+    // Forces grabbing a refreshed token
     const getFreshIdToken = async () => {
       return await auth.currentUser.getIdToken(true);
     };
@@ -149,10 +150,13 @@ export default async ( { app, store, $axios }, inject ) => {
         return store.state[VStore.$states.auth];
       }
       if (process.client) {
+        // Promise soup. It likely works.
         return new Promise((resolve, reject) => {
           const unsubscribe = listenToAuthState((user) => {
             unsubscribe();
             if (user) {
+              // If within 5 mins before expiration, force a token refresh
+              // Otherwise, return what you already got (idToken)
               user.getIdToken().then( async (idToken) => {
                 if(jwt_decode(idToken).exp - Date.now() / 1000 <= (5 * 60)) {
                   resolve( await getFreshIdToken() );

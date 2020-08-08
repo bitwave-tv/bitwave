@@ -170,13 +170,6 @@
     },
 
     methods: {
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-        console.log( `Fresh ID token:`, { token } );
-        return token;
-      },
-
       async setNSFW ( nsfw ) {
         try {
           const endpoint = nsfwEndpoint + this.streamer;
@@ -189,15 +182,13 @@
         } catch ( error ) {
           console.error( error );
           this.error( error.message );
-          await this.getFreshIdToken();
         }
       },
 
       async kickStreamer ( resetKey ) {
         try {
-          const token = await this.getFreshIdToken();
           const { data } = await this.$axios.post(
-            this.createEndpoint( endpoint, token, !!resetKey ),
+            this.createEndpoint( endpoint, !!resetKey ),
             { streamer: this.streamer },
           );
           console.log( data );
@@ -218,7 +209,6 @@
 
       async transcodeStreamer ( mode, options ) {
         try {
-          await this.getFreshIdToken();
           const { data } = await this.$axios.post(
             transcodeEndpoint + mode,
             { user: this.streamer, ...options },
@@ -244,7 +234,7 @@
         this.$toast.error( error, { icon: 'error', duration: 5000, position: 'top-center' } );
       },
 
-      createEndpoint ( base, token, reset ) {
+      createEndpoint ( base, reset ) {
         return `${base}?reset=${!!reset}`;
       },
 

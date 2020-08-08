@@ -129,11 +129,6 @@
     },
 
     methods: {
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async getArchives () {
         this.loading = true;
         const { data } = await this.$axios.get('https://api.bitwave.tv/v1/archives/old');
@@ -150,9 +145,6 @@
       },
 
       async deleteArchive ( archive ) {
-        // Refresh auth token
-        await this.getFreshIdToken();
-
         const endpoint = `https://api.bitwave.tv/v1/replays/${archive.id}`;
         const options = {
           data: {
@@ -167,7 +159,6 @@
           else this.$toast.success( data.message, { duration: 2500, icon: 'error', position: 'bottom-center' } );
           this.archives = this.archives.filter( a => a.id !== archive.id );
         } catch ( error ) {
-          await this.getFreshIdToken();
           console.log( error );
           this.$toast.error( error.message, { duration: 2500, icon: 'error', position: 'bottom-center' } );
         }
