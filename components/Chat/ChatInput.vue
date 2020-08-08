@@ -121,7 +121,7 @@
     },
     {
       label: 'ignore channel',
-      value: '/ignorechannel ',
+      value: '/ignorechannel @',
     },
     {
       label: 'unignore',
@@ -129,7 +129,7 @@
     },
     {
       label: 'unignore channel',
-      value: '/unignorechannel ',
+      value: '/unignorechannel @',
     },
     {
       label: 'purge channel ignores',
@@ -174,6 +174,10 @@
     {
       label: 'Bug Report',
       value: '/bugreport ',
+    },
+    {
+      label: 'Hide Trolls',
+      value: '/trolls ',
     },
   ];
 
@@ -342,14 +346,14 @@
         const usernameMatch = this.getMessage.match( /@[\w:-_]*$/g );
         if ( usernameMatch ) {
           this.autocompleteData = this.userlist;
-          this.acSize = 5;
+          this.acSize = 7;
           return usernameMatch;
         }
 
         const commandMatch = this.getMessage.match( /^\/[\w:-_]*$/g );
         if ( commandMatch ) {
           this.autocompleteData = commands;
-          this.acSize = 5;
+          this.acSize = 7;
           return commandMatch;
         }
 
@@ -360,7 +364,7 @@
 
         if ( emoteMatch ) {
           this.autocompleteData = this.emoteList;
-          this.acSize = 5;
+          this.acSize = 7;
           return emoteMatch;
         }
       },
