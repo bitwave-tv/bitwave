@@ -51,12 +51,13 @@
           ></div>
 
           <!-- Username -->
-          <div
-            class="username text-truncate flex-grow-1 subtitle-2 pl-1"
+          <h1
+            class="username text-truncate flex-grow-1 pl-1"
             :style="userStyling"
           >{{ username }}</div>
 
           <v-btn
+            class="align-self-center"
             color="primary"
             :disabled="isTroll"
             :to="`/${username}`"
