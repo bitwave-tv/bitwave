@@ -111,6 +111,7 @@
           id="description"
           ref="description"
           class="pa-3"
+          style="min-height: 300px"
         >
           <!-- Stream Description -->
           <vue-markdown
@@ -124,6 +125,7 @@
       <v-tab-item>
         <div>
           <stream-archives
+            style="min-height: 300px"
             :streamer="name"
           />
         </div>
@@ -135,6 +137,7 @@
       >
         <div>
           <debug-stream
+            style="min-height: 300px"
             :streamer="name"
           />
         </div>

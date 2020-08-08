@@ -8,7 +8,7 @@
       id="chat-settings"
     >
       <!-- Tab Slider Color -->
-      <v-tabs-slider/>
+      <v-tabs-slider />
 
       <!-- Tabs -->
       <v-tab
@@ -18,13 +18,8 @@
       >
         {{ tab.label }}
       </v-tab>
-    </v-tabs>
 
-
-    <!-- TAB: General Settings -->
-    <v-tabs-items
-      v-model="settingsTab"
-    >
+      <!-- Tab Content -->
       <v-tab-item
         v-for="tab in tabs"
         :key="tab.value"
@@ -36,7 +31,7 @@
           :key="tab.value"
         />
       </v-tab-item>
-    </v-tabs-items>
+    </v-tabs>
   </div>
 </template>
 
@@ -54,7 +49,7 @@
       ChatGeneralSettingsPanel,
     },
 
-    data() {
+    data () {
       return {
         // Current tab selection
         settingsTab: 'chat-settings-general',
@@ -83,12 +78,6 @@
 </script>
 
 <style lang="scss">
-  /*#chat-settings .v-window__container {
-    width: 350px;
-    height: 20rem;
-    overflow-y: auto;
-  }*/
-
   .chat-settings-panel {
     height: 30rem;
     width: 320px;
