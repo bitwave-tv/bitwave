@@ -7,6 +7,8 @@
   >
 
     <!-- Text Input Field -->
+
+    <!-- :prepend-inner-icon="mobile && 'insert_emoticon'" -->
     <v-text-field
       ref="chatmessageinput"
       :value="getMessage"
@@ -26,16 +28,21 @@
       validate-on-blur
       outlined
       clearable
+
       @change="value => this.setChatMessage( value )"
+
       @keyup.delete="updateMessage"
       @keyup.enter.prevent="sendMessage"
-      @keyup.prevent="event => lastMessageHandler( event )"
-      @cut="event => lastMessageHandler( event )"
+      @keyup.prevent="lastMessageHandler"
+
+      @cut="lastMessageHandler"
+
       @keydown="onDetectAutocomplete"
+      @keydown.tab.prevent="onTab"
+      @keydown.down="onArrow"
+      @keydown.up="onArrow"
+
       @click:clear="setChatMessage( '' )"
-      @keydown.tab.prevent="event => onTab( event )"
-      @keydown.down="event => onArrow( event )"
-      @keydown.up="event => onArrow( event )"
       @drop="onDrop"
     />
 
@@ -91,6 +98,7 @@
     <!-- Popup -->
       <autocomplete-chat
         v-if="autocomplete && enableAutocomplete"
+        :key="autocompleteKey"
         :data="autocompleteData"
         :filter="autocompleteFilter"
         :index="autocompleteSelection"
@@ -116,15 +124,15 @@
 
   const commands = [
     {
-      label: 'ignore',
+      label: 'Ignore a User',
       value: '/ignore @',
     },
     {
-      label: 'ignore channel',
+      label: 'ignore a channel',
       value: '/ignorechannel @',
     },
     {
-      label: 'unignore',
+      label: 'unignore a user',
       value: '/unignore @',
     },
     {
@@ -144,19 +152,19 @@
       value: '/w @',
     },
     {
-      label: 'ignorelist',
+      label: 'Ignorelist',
       value: '/ignorelist ',
     },
     {
-      label: 'local',
+      label: 'lLcal',
       value: '/local ',
     },
     {
-      label: 'global',
+      label: 'Global',
       value: '/global ',
     },
     {
-      label: 'cleantts',
+      label: 'TTS Cleanup Crew (clean tts)',
       value: '/cleantts ',
     },
     {
@@ -164,11 +172,11 @@
       value: '/graph ',
     },
     {
-      label: 'Toggle User Badge (if available)',
+      label: 'Toggle username badge (if available)',
       value: '/badge ',
     },
     {
-      label: 'Toggle high density',
+      label: 'Dense chat messages',
       value: '/dense ',
     },
     {
@@ -176,7 +184,7 @@
       value: '/bugreport ',
     },
     {
-      label: 'Hide Trolls',
+      label: 'I need a safe space',
       value: '/trolls ',
     },
   ];
@@ -198,16 +206,19 @@
 
     data() {
       return {
+        mounted: false,
+
         showChatCoins: false,
 
         messageBufferIndex: -1,
         showUsernameSuggestions: false,
 
         autocomplete: null,
+        autocompleteKey: null,
         autocompleteData: [],
         autocompleteSelection: 0,
         autocompleteValue: null,
-        acSize: 5,
+        acSize: 6,
 
         emoteList: [],
       }
@@ -343,17 +354,24 @@
       detectAutocomplete () {
         if ( !this.getMessage ) return;
 
-        const usernameMatch = this.getMessage.match( /@[\w:-_]*$/g );
+        const usernameMatch = this.getMessage.match( /@[\w:\-_]*(?:[\w:\-_]|$)/g );
         if ( usernameMatch ) {
-          this.autocompleteData = this.userlist;
-          this.acSize = 7;
+          // only set data once
+          if ( this.autocompleteKey !== 'users' ) {
+            this.autocompleteData = JSON.parse( JSON.stringify( this.userlist ) );
+          }
+
+          // this.acSize = 7;
+
+          this.autocompleteKey = 'users';
           return usernameMatch;
         }
 
         const commandMatch = this.getMessage.match( /^\/[\w:-_]*$/g );
         if ( commandMatch ) {
           this.autocompleteData = commands;
-          this.acSize = 7;
+          // this.acSize = 7;
+          this.autocompleteKey = 'commands';
           return commandMatch;
         }
 
@@ -364,7 +382,8 @@
 
         if ( emoteMatch ) {
           this.autocompleteData = this.emoteList;
-          this.acSize = 7;
+          // this.acSize = 7;
+          this.autocompleteKey = 'emotes';
           return emoteMatch;
         }
       },
@@ -418,6 +437,16 @@
           ? this.autocomplete[0].substr(1)
           : '';
       },
+
+      mobile () {
+        return this.mounted
+          ? this.$vuetify.breakpoint.smAndDown
+          : !this.$device.isDesktopOrTablet;
+      },
+    },
+
+    async mounted () {
+      this.mounted = true;
     },
   }
 </script>

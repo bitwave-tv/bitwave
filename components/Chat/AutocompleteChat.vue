@@ -7,16 +7,17 @@
     <!-- This can be one of a few options -->
     <!-- ( users / emotes / commands ) -->
     <template
-      v-for="( item, index ) in filteredData"
+      v-for="( item, i ) in filteredData"
     >
       <v-lazy
-        min-height="32"
-        :key="item.username"
+        min-height="36"
+        :key="i"
+        :value="true"
       >
         <v-sheet
-          :color="index === selection ? 'blue darken-2' : 'transparent'"
+          :color="i === index ? 'blue darken-2' : 'transparent'"
           class="d-flex px-3 py-1 mb-1 align-center"
-          @click="onClick( index )"
+          @click="onClick( i )"
         >
           <v-avatar
             v-if="item.hasOwnProperty( 'image' ) || item.hasOwnProperty( 'color' )"
@@ -60,7 +61,16 @@
       </v-avatar>
 
       <!-- Let users know that no results -->
-      <div>No result</div>
+      <div class="red--text font-weight-bold">No result found!</div>
+      <v-spacer />
+      <img
+        class="mr-1"
+        crossorigin=""
+        height="28"
+        data-emote-tooltip=":think2:"
+        title=":think2:"
+        alt=":think2:"
+        src="https://cdn.bitwave.tv/static/emotes/think2.gif?5">
     </div>
 
   </v-sheet>
@@ -85,6 +95,8 @@
       return {
         acData: this.data,     // local autocomplete data value
         selection: this.index, // selected autocomplete index
+
+        filteredData: [],
       };
     },
 
@@ -93,14 +105,17 @@
       onClick ( index ) {
         this.selection = index;
         this.$emit( 'update:index', this.selection );
-        this.$nextTick( () => this.$emit('click') );
+        this.$nextTick( () => this.$emit( 'click' ) );
       },
-    },
 
-    computed: {
       // returns a subset of the source data - this.data
       // filtered by user input - this.filter
-      filteredData () {
+      filterData ( input ) {
+        if ( !this.data || !this.data.length ) return;
+
+
+        //// --- --- FILTERING LOGIC --- --- ////
+
         // normalize our input and make sure it exists
         const filter = this.filter
           ? this.filter.toLowerCase()
@@ -111,7 +126,11 @@
          * @param val - element from source data array
          * @return {boolean} - returns true if elements contains filter string
          */
-        const filterFn = val => ( val.value.toLowerCase() ).includes( filter );
+        const filterFn = val => !filter || ( val.value.toLowerCase() ).includes( filter );
+
+
+
+        //// --- --- SORTING LOGIC --- --- ////
 
         // Sort helper functions for what's about to come up
         // checkStartsWith creates a function that returns a function that allows
@@ -157,12 +176,40 @@
         }
 
         // returns an array formed by filtering the copied source data array
-        return this.acData
+        this.filteredData = this.data
           .filter( filterFn )       // does the (normalized) source value string contain our filter string
           .sort( sortFn )           // sort results that start with our filter value first (or alphabetically)
           .splice( 0, this.size );  // limit number of results
+
+        // Make sure index stays updated
+        this.calculateIndex();
       },
 
+
+      calculateIndex () {
+        // clamps value
+        const clamp = ( min, max ) => val => Math.max( Math.min( val, max ), min );
+        const clampToArray = clamp( 0, this.filteredData.length -1 );
+
+        // Set value bounds
+        // This will limit between 0 and the size of filteredData array
+        this.selection = clampToArray( this.index );
+
+
+        console.log( `AutoComplete: calulcating for '${this.index}' : '${this.selection}'` );
+
+
+        // Trigger update:index event with new (and validated) selection index
+        this.$emit( 'update:index', this.selection );
+
+        /*if ( this.index !== clampedIndex ) {
+          this.selection = clampedIndex;
+          this.$emit( 'update:index', this.selection );
+        }*/
+      },
+    },
+
+    computed: {
       // is used to get a single value out from
       // the array we just filtered above using
       // the currently specified input selection index
@@ -174,32 +221,36 @@
     },
 
     watch: {
+      filter: function ( newFilter ) {
+        this.filterData( newFilter );
+      },
+
       // Watch when our prop is updated,
       // update local autocomplete data variable to new value
-      data: function ( newVal ) {
-        this.acData = newVal;
+      data: function ( newVal, oldVal ) {
+        this.filterData();
       },
 
       // Watch selected index autocomplete value
       // Ensure it's value is within valid bounds
       // Then trigger an event for parent to listen to
       index: function ( newVal ) {
-        // Set value bounds
-        // This will limit between 0 and the size of filteredData array
-        this.selection = Math.max( Math.min( newVal, this.filteredData.length - 1 ), 0 );
-
-        // Trigger update:index event with new (and validated) selection index
-        this.$emit( 'update:index', this.selection );
+        console.log( `AutoComplete: INDEX was updated! '${newVal}'` )
+        this.calculateIndex();
       },
 
       // Watch the value of the selected autocomplete value
       // Trigger an event for parent to listen to on change
       selectedValue: function ( newVal ) {
+        console.log( `AutoComplete: SELECTEDVALUE Updated:`, newVal );
         this.$emit( 'update:value', newVal );
       },
     },
 
     mounted () {
+      console.log( `AutoComplete: MOUNTED!` );
+      this.filterData( 'STARTING' );
+
       // As soon as autocomplete suggestions are mounted,
       // trigger an update so our parent is in sync from the start
       this.$emit( 'update:value', this.selectedValue );
@@ -216,11 +267,10 @@
     width: 90%;
     max-height: 300px;
     overflow-y: hidden;
-    /*opacity: .9;*/
 
     .v-sheet {
       cursor: pointer;
-      transition: .1s;
+      transition: .2s;
 
       &:hover {
         background-color: #0D47A1 !important;
