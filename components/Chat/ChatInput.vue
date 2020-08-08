@@ -37,7 +37,7 @@
 
       @cut="lastMessageHandler"
 
-      @keydown="onDetectAutocomplete"
+      @keyup="onDetectAutocomplete"
       @keydown.tab.prevent="onTab"
       @keydown.down="onArrow"
       @keydown.up="onArrow"
