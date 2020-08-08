@@ -1,5 +1,6 @@
 import { auth, db } from '@/plugins/firebase.js';
 import { Chat } from '@/store/chat';
+import { parseCookiesForAuth } from "~/assets/js/Cookies/parse";
 
 import * as utils from '@/plugins/store-utils.js';
 const logger = ( message, data ) => utils.logger( 'STORE', message, data );
@@ -305,28 +306,23 @@ export const mutations = {
 export const actions = {
 
   async nuxtServerInit ({ dispatch, commit }, { req, params, route }) {
-    let authUser = null;
-    // let user = null;
     const cookies = this.$cookies.getAll();
-    if ( cookies ) {
-      try {
-        if ( cookies.auth ) {
-          authUser = cookies.auth;
-          // commit( $mutations.setAuth, authUser );
-
-          logger( `[${route.path}] ${authUser.username} logged in via nuxtServerInit: `, params );
-        } else {
-          logger( `[${route.path}] User is not logged in.` );
-        }
-      } catch ( error ) {
-        logger( `Failed to get cookies!`, error );
+    try {
+      const authUser = parseCookiesForAuth( cookies );
+      if ( authUser ) {
+        // commit( $mutations.setAuth, authUser );
+        logger( `[${route.path}] ${authUser.username} logged in via nuxtServerInit: `, params );
+      } else {
+        logger( `[${route.path}] User is not logged in.` );
       }
+    } catch ( error ) {
+      logger( `Failed to get cookies!`, error );
+    }
 
-      // cookie for global chat hydration flag
-      const bwGlobal = cookies._bw_global;
-      if ( bwGlobal !== undefined ) {
-        commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, bwGlobal );
-      }
+    // cookie for global chat hydration flag
+    const bwGlobal = cookies._bw_global;
+    if ( bwGlobal !== undefined ) {
+      commit( `${Chat.namespace}/${Chat.$mutations.setGlobalSSR}`, bwGlobal );
     }
 
     const runParallel = [

@@ -1,10 +1,16 @@
 import * as firebase from 'firebase/app'
+import jwt_decode from 'jwt-decode';
 
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/analytics'
 import 'firebase/performance'
 import 'firebase/messaging'
+/**
+ * Manage firebase authentication
+ */
+import {VStore} from '@/store';
+import {logger} from "~/plugins/store-utils";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCgIwubBz-nTd0mof6l7eklzJk1evuwzhg",
@@ -85,12 +91,7 @@ export const listenToFeatureFlags = callbacks => {
 };
 
 
-/**
- * Manage firebase authentication
- */
-import { VStore } from '@/store';
-
-export default async ( { app, store }, inject ) => {
+export default async ( { app, store, $axios }, inject ) => {
   // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
@@ -134,6 +135,58 @@ export default async ( { app, store }, inject ) => {
       return;
     }
 
+    const getFreshIdToken = async () => {
+      return await auth.currentUser.getIdToken(true);
+    };
+
+    const getIdToken = () => {
+      if (process.server) {
+        // When processing server-side, getIdToken() will only get called
+        //  during SSR, from components. This means nuxtServerInit() will have already
+        //  been called, and the auth token will have had(?) been saved.
+        //
+        // It is assumed that the token won't expire during SSR. I mean, what are the odds!
+        return store.state[VStore.$states.auth];
+      }
+      if (process.client) {
+        return new Promise((resolve, reject) => {
+          const unsubscribe = listenToAuthState((user) => {
+            unsubscribe();
+            if (user) {
+              user.getIdToken().then( async (idToken) => {
+                if(jwt_decode(idToken).exp - Date.now() / 1000 <= (5 * 60)) {
+                  resolve( await getFreshIdToken() );
+                } else {
+                  resolve(idToken);
+                }
+              }, () => {
+                resolve(null);
+              });
+            } else {
+              resolve(null);
+            }
+          });
+        });
+      }
+      return null
+    };
+
+    // Intercepts all axios requests and injects Bearer token
+    //  into the Authorization header. Equivalent to setToken(), except
+    //  it gets called implicitly on each request.
+    $axios.onRequest(async (config) => {
+      const idToken = await getIdToken();
+
+      if (config.headers != null && config.headers['X-Requested-With'] == null) {
+        config.headers = {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer ' + idToken,
+          ...config.headers
+        };
+      }
+
+      return config;
+    });
 
     const messaging = firebase.messaging();
     messaging.usePublicVapidKey( 'BMghbCgNLfIbIqsuJaz4HV8EHYgu71MnONedQM26co3WfF2w0ahxzS6eq56JzPhaKVRamh_NtbbM-FdQsB-qXew' );
