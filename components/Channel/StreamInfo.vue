@@ -259,6 +259,7 @@
             break;
 
           // Stream Stats
+          case 'stat':
           case 'stats':
           case 'stream-stats':
             this.tabData = 2;
