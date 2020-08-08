@@ -221,6 +221,8 @@
         acSize: 6,
 
         emoteList: [],
+
+        autocompleteFlexible: null,
       }
     },
 
@@ -322,6 +324,18 @@
       },
 
       onDetectAutocomplete ( event ) {
+
+        // Remove all existing emotes so we can end early
+        const msg = this.getMessage.substring( 0, event.target.selectionStart );
+        console.log( `check: ${msg}` );
+
+        this.autocompleteFlexible = this.detectAutocompleteFlexible( msg );
+
+        if ( this.autocompleteFlexibl ) {
+          this.autocompleteSelection = 0;
+          return;
+        }
+
         // Detect keystrokes that trigger autocomplete
         if ( event.key === '@' || event.key === '/' || event.key === ':' ) {
           // ['@','/',':'].includes( event.key )
@@ -350,6 +364,45 @@
         const currentMessage = this.getMessage;
         this.setChatMessage( currentMessage + (currentMessage === '' ? '' : ' ') + msg );
       },
+
+
+      detectAutocompleteFlexible ( msg ) {
+        if ( !msg ) return;
+
+        const usernameMatch = msg.match( /@[\w:\-_]*$/g );
+        if ( usernameMatch ) {
+          // only set data once
+          if ( this.autocompleteKey !== 'users' ) {
+            this.autocompleteData = JSON.parse( JSON.stringify( this.userlist ) );
+          }
+
+          // this.acSize = 7;
+
+          this.autocompleteKey = 'users';
+          return usernameMatch;
+        }
+
+        const commandMatch = msg.match( /^\/[\w:\-_]*$/g );
+        if ( commandMatch ) {
+          this.autocompleteData = commands;
+          // this.acSize = 7;
+          this.autocompleteKey = 'commands';
+          return commandMatch;
+        }
+
+        // Remove all existing emotes so we can end early
+        const emoteMatch = msg
+          .replace( /:\w+:/gi, '' )
+          .match( /:[\w]*$/g );
+
+        if ( emoteMatch ) {
+          this.autocompleteData = this.emoteList;
+          // this.acSize = 7;
+          this.autocompleteKey = 'emotes';
+          return emoteMatch;
+        }
+      },
+
 
       detectAutocomplete () {
         if ( !this.getMessage ) return;
@@ -435,6 +488,12 @@
       autocompleteFilter () {
         return this.autocomplete
           ? this.autocomplete[0].substr(1)
+          : '';
+      },
+
+      autocompleteFilterFlexible () {
+        return this.autocompleteFlexible
+          ? this.autocompleteFlexible[0].substr(1)
           : '';
       },
 
