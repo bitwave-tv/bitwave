@@ -509,6 +509,8 @@
         // Return early if we are missing data
         if ( !messages ) return;
 
+        let needsScroll = false;
+
         messages.forEach( m => {
           // Filter messages
           if ( this.filterMessage( m ) ) return;
@@ -548,15 +550,21 @@
           // Add message to list
           this.messages.push( Object.freeze( m ) );
 
+          // Trigger scroll request
+          needsScroll = true;
+
           // Track message count
           if ( this.statInterval ) this.newMessageCount++;
         });
 
         if ( !this.$refs['chatmessages'].showFAB ) {
+          // Only trim message message history if auto scrolling
           // if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           if ( this.messages.length > this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
-          await this.scrollToBottom();
+
+          // Only trigger scroll if a message was added
           // this.$nextTick( async () => await this.scrollToBottom() );
+          if ( needsScroll ) await this.scrollToBottom();
         }
       },
 
