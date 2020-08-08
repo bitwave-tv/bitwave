@@ -354,7 +354,7 @@
       detectAutocomplete () {
         if ( !this.getMessage ) return;
 
-        const usernameMatch = this.getMessage.match( /@[\w:\-_]*(?:[\w:\-_]|$)/g );
+        const usernameMatch = this.getMessage.match( /@[\w:\-_]*$/g );
         if ( usernameMatch ) {
           // only set data once
           if ( this.autocompleteKey !== 'users' ) {
@@ -367,7 +367,7 @@
           return usernameMatch;
         }
 
-        const commandMatch = this.getMessage.match( /^\/[\w:-_]*$/g );
+        const commandMatch = this.getMessage.match( /^\/[\w:\-_]*$/g );
         if ( commandMatch ) {
           this.autocompleteData = commands;
           // this.acSize = 7;
