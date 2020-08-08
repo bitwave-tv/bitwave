@@ -97,10 +97,10 @@
 
     <!-- Popup -->
       <autocomplete-chat
-        v-if="autocomplete && enableAutocomplete"
+        v-if="( autocomplete || autocompleteFlexible ) && enableAutocomplete"
         :key="autocompleteKey"
         :data="autocompleteData"
-        :filter="autocompleteFilter"
+        :filter="autocompleteFilter || autocompleteFilterFlexible"
         :index="autocompleteSelection"
         :size="acSize"
         @update:index="val => this.autocompleteSelection = val"
