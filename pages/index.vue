@@ -254,6 +254,10 @@
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
       },
+
+      version () {
+        return `v${process.env.version}`;
+      },
     },
 
     mounted () {
