@@ -254,7 +254,7 @@
             this.jumpToBottom( scrollHeight );
             this.scrolling = false;
             this.atBottom = true;
-        }, 250 );
+        }, 120 );
       },
 
       jumpToBottom ( scrollGoal ) {

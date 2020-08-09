@@ -56,7 +56,11 @@
           color="grey"
         >restore</v-icon>
         <div class="d-inline-block">
-          {{ live ? 'Started Streaming: ' : replay ? 'Streamed: ' : 'Last Streamed: ' }}
+          {{ live
+          ? 'Started Streaming: '
+          : replay
+          ? 'Streamed: '
+          : 'Last Streamed: ' }}
         </div>
         <v-fade-transition mode="out-in">
           <div
@@ -107,7 +111,7 @@
           id="description"
           ref="description"
           class="pa-3"
-          style="min-height: 750px"
+          style="min-height: 300px"
         >
           <!-- Stream Description -->
           <vue-markdown
@@ -119,10 +123,9 @@
 
       <!-- Archives -->
       <v-tab-item>
-        <div
-          style="min-height: 500px"
-        >
+        <div>
           <stream-archives
+            style="min-height: 300px"
             :streamer="name"
           />
         </div>
@@ -132,15 +135,13 @@
       <v-tab-item
         v-if="!replay"
       >
-        <div
-          style="min-height: 500px"
-        >
+        <div>
           <debug-stream
+            style="min-height: 300px"
             :streamer="name"
           />
         </div>
       </v-tab-item>
-
     </v-tabs-items>
 
 
@@ -189,7 +190,7 @@
 
     data () {
       return {
-        tabData: null,
+        tabData: 0,
         lastStreamed: '• • •',
         updateInterval: null,
       };
@@ -245,9 +246,40 @@
       }
     },
 
+    created () {
+      const tabQuery = this.$route.query[ 'tab' ];
+      if ( !tabQuery ) return;
+      if ( typeof tabQuery === 'string' ) {
+        switch ( this.$utils.normalize( tabQuery ) ) {
+
+          // Replays
+          case 'replay':
+          case 'replays':
+          case 'archive':
+          case 'archives':
+            this.tabData = 1;
+            console.log( `replay tab` );
+            break;
+
+          // Stream Stats
+          case 'stat':
+          case 'stats':
+          case 'stream-stats':
+            this.tabData = 2;
+            console.log( `stream stats tab` );
+            break;
+
+          // Failsafe
+          default:
+            this.tabData = 0;
+            break;
+        }
+      }
+    },
+
     mounted () {
-      this.updateLastStreamedAt();
       this.updateInterval = setInterval( this.updateLastStreamedAt, 60 * 1000 );
+      this.updateLastStreamedAt();
     },
 
     beforeDestroy() {

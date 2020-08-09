@@ -28,13 +28,13 @@
         <div class="py-2 px-2">
           <v-btn
             color="primary"
-            class="px-0"
+            class="px-0 nav-ex-btn"
             block
             outlined
             x-small
             @click.stop="toggleCollapse"
           >
-            <v-icon>{{ `chevron_${collapsed ? 'right' : 'left'}` }}</v-icon>
+            <v-icon :class="{ expand: !collapsed }">chevron_right</v-icon>
           </v-btn>
         </div>
       </v-sheet>
@@ -87,5 +87,16 @@
   .offline {
     -webkit-filter: grayscale(60%);
     filter: grayscale(60%);
+  }
+
+  .nav-ex-btn {
+    .v-icon {
+      transition: .3s;
+      transform: rotate(0deg);
+
+      &.expand {
+        transform: rotate(180deg);
+      }
+    }
   }
 </style>
