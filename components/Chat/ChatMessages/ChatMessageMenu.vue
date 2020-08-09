@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card tile raised elevation="24">
+    <v-card tile raised elevation="24" style="overflow: hidden;">
       <!-- Title Bar -->
       <v-sheet
         tile
@@ -54,6 +54,7 @@
           <h1
             class="username text-truncate flex-grow-1 pl-1"
             :style="userStyling"
+            @click="showMessagesByUser"
           >{{ username }}</h1>
 
           <v-btn
@@ -141,6 +142,16 @@
           </div>
         </div>
       </div>
+
+      <v-expand-transition>
+        <v-card v-if="showMessageList" class="messageList">
+          <v-divider />
+          <chat-messages
+            class="mt-2 messages"
+            :messages="userMessages"
+          />
+        </v-card>
+      </v-expand-transition>
     </v-card>
   </div>
 </template>
@@ -150,9 +161,11 @@
   import { Chat } from '@/store/chat';
   import { auth } from '@/plugins/firebase';
 
+  import ChatMessages from "@/components/Chat/ChatMessages/index";
+
   export default {
     name: 'ChatMessageMenu',
-
+    components: {ChatMessages},
     props: {
       value: { Boolean },
       avatar: {},
@@ -167,6 +180,7 @@
       timestamp: {},
       global: {},
       attach: {},
+      messages: {},
       isChannelOwner: {
         type: Boolean,
         default: false,
@@ -177,6 +191,7 @@
       return {
         bannedUsers: null,
         loading: false,
+        showMessageList: false,
       };
     },
 
@@ -259,12 +274,20 @@
           this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
         }
       },
+
+      async showMessagesByUser ( who ) {
+        this.showMessageList = !this.showMessageList;
+      },
     },
 
     computed: {
       ...mapState ( Chat.namespace, {
         ignoreList: Chat.$states.ignoreList,
       }),
+
+      userMessages () {
+        return this.messages.filter( m => m.username === this.username ).reverse();
+      },
 
       isTroll () {
         return this.username && this.username.startsWith( 'troll:' );
@@ -288,3 +311,14 @@
     },
   };
 </script>
+
+<style lang="scss">
+  .messagesList {
+    /*max-height: 220px;*/
+  }
+
+  .messages {
+    height: 200px;
+    background: #101010 !important;
+  }
+</style>

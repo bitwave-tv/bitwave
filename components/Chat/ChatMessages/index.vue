@@ -144,6 +144,7 @@
           :timestamp="selectedChatMessage.timestamp"
           :channel="selectedChatMessage.channel"
           :global="selectedChatMessage.global"
+          :messages="messages"
           :is-channel-owner="isChannelOwner"
           @close="showChatMessageMenu = false"
           @ignore="onIgnore"
