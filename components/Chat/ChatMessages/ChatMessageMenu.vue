@@ -67,7 +67,10 @@
 
         <div class="mb-4">
           <div class="body-2 mb-2">
-            This menu is still in development, but the ignore and unignore button both work. Confirmation messages will appear in chat.
+            {{
+              `This menu is still in development, but the ignore${isChannelOwner ? " and mute" : ""} button${isChannelOwner ? "s both work" : " works"}.
+              Confirmation messages will appear in chat.`
+            }}
           </div>
 
           <div class="caption mb-2">
