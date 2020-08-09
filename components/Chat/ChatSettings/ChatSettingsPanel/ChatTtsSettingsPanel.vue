@@ -31,7 +31,7 @@
         <!-- Enable TTS Alerts -->
         <v-switch
           v-model="useTtsAlerts"
-          label="Alert TTS"
+          label="Enable Alert TTS"
           color="primary"
           hide-details
           dense
@@ -66,7 +66,7 @@
         <!-- Read username -->
         <v-switch
           v-model="ttsReadUsername"
-          :disabled="!useTts"
+          :disabled="!enableVoiceSettings"
           label="Read Username"
           color="primary"
           hide-details
@@ -76,8 +76,8 @@
         />
 
 
+        <!-- TTS Voice Settings label & divider -->
         <div class="d-flex align-center my-3">
-          <!-- TTS Voice Settings Labels -->
           <span class="overline mr-2 grey--text">
             TTS Voice Settings
           </span>
@@ -88,7 +88,7 @@
         <v-select
           v-model="ttsVoice"
           :items="ttsVoices"
-          :disabled="!useTts"
+          :disabled="!enableVoiceSettings"
           label="TTS Voice"
           hide-details
           class="mb-3"
@@ -99,7 +99,7 @@
         <!-- TTS Rate -->
         <v-slider
           v-model="ttsRate"
-          :disabled="!useTts"
+          :disabled="!enableVoiceSettings"
           label="Speed"
           class="align-center"
           :max="20"
@@ -123,7 +123,7 @@
         <!-- TTS Volume -->
         <v-slider
           v-model="ttsVolume"
-          :disabled="!useTts"
+          :disabled="!enableVoiceSettings"
           label="Vol."
           class="align-center"
           :max="10"
@@ -135,7 +135,7 @@
         <!-- TTS Timeout -->
         <v-slider
           v-model="ttsTimeout"
-          :disabled="!useTts"
+          :disabled="!enableVoiceSettings"
           label="Timeout"
           class="align-center"
           :max="60"
@@ -275,6 +275,10 @@
           this.setTtsVoice( val );
         },
         get () { return this.getTtsVoice }
+      },
+
+      enableVoiceSettings () {
+        return this.useTts || this.useTtsAlerts;
       },
     },
 

@@ -1,15 +1,45 @@
 import { Chat } from '@/store/chat';
 import { VStore } from "@/store";
 
-let _store, _ga, _sentry,
-  _store_state, _store_commit;
+/**
+ * Creates the functions that run for the chat commands
+ * */
+const createFunctions = ( _store, _store_state, _store_commit, _ga, _sentry ) => ({
 
-const functions = {
+  // --- LOCAL vs GLOBAL --- //
+  /**
+   * Enables local chat
+   * */
+  setLocalChat () {
+    _store_commit( Chat.$mutations.setGlobal, false );
+    return [
+      { insertMessage: `Local chat.` },
+    ];
+  },
 
+  /**
+   * Enables global chat
+   * */
+  setGlobalChat () {
+    _store_commit( Chat.$mutations.setGlobal, true );
+    return [
+      { insertMessage: `Global chat.` },
+    ];
+  },
+
+
+
+  // --- IGNORE USER COMMANDS --- //
   /**
    * IGNORE USER
    * */
   async ignoreUser ( who ) {
+    if ( !who ) {
+      return [
+        { insertMessage: `You did not specify a username to ignore.` }
+      ];
+    }
+
     if( who.toLowerCase() === '[bitwave.tv]' ) {
       return [
         { insertMessage: "I'm afraid I can't let you do that, Dave." }
@@ -46,6 +76,12 @@ const functions = {
    * UN-IGNORE USER
    * */
   async unignoreUser ( who ) {
+    if ( !who ) {
+      return [
+        { insertMessage: `You did not specify a username to unignore.` }
+      ];
+    }
+
     const ignoreList = _store_state[ Chat.$states.ignoreList ];
 
     who = who.replace( '@', '' ).toLowerCase();
@@ -95,10 +131,18 @@ const functions = {
   },
 
 
+
+  // --- IGNORE CHANNEL COMMANDS --- //
   /**
    * IGNORE CHANNEL
    * */
   async ignoreChannel ( who ) {
+    if ( !who ) {
+      return [
+        { insertMessage: `You did not specify a channel to ignore.` }
+      ];
+    }
+
     const ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
 
     who = who.replace( '@', '' ).toLowerCase();
@@ -129,6 +173,12 @@ const functions = {
    * UN-IGNORE CHANNEL
    * */
   async unignoreChannel ( who ) {
+    if ( !who ) {
+      return [
+        { insertMessage: `You did not specify a channel to unignore.` },
+      ];
+    }
+
     const ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
 
     who = who.replace( '@', '' ).toLowerCase();
@@ -150,7 +200,9 @@ const functions = {
         { insertMessage: `Unignored Channel: ${ who }` },
       ];
     } else {
-      return [{ insertMessage: `You do not ignore ${ who }'s channel` }];
+      return [
+        { insertMessage: `You do not ignore ${ who }'s channel` },
+      ];
     }
 
   },
@@ -175,23 +227,28 @@ const functions = {
     ];
   },
 
-  /**
-   * TOGGLE HIGH DENSITY
-   * */
-  async toggleHighDensity () {
-    const highDensity = !_store_state[ Chat.$states.highDensity ];
-    await _store_commit( Chat.$mutations.setHighDensity, highDensity );
 
-    // Analytics
+
+  /**
+   * Print user's ignore lists
+   * */
+  printIgnoreList () {
+    const _ignoreList = _store_state[Chat.$states.ignoreList];
+    const _ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
     _ga.event( {
       eventCategory: 'chat',
-      eventAction: 'QOL',
-      eventLabel: `${highDensity ? 'enable' : 'disable'}-high-density`,
-    } );
-
-    return [];
+      eventAction: 'ignorelist',
+      eventLabel: `show-ignore-list`
+    } ); // Analytics
+    return [
+      { insertMessage: `Ignored Users: ${ _ignoreList.join( ', ' ) }` },
+      { insertMessage: `Ignored Channels: ${ _ignoreChannelList.join( ', ' ) }` },
+    ]
   },
 
+
+
+  // --- DEVELOPMENT HELPERS --- ///
   /**
    * DEV HELPER- GET AUTH TOKEN
    * */
@@ -217,49 +274,10 @@ const functions = {
     }
   },
 
-  async hideTrolls() {
-    await _store_commit( Chat.$mutations.setHideTrolls, !_store_state[ Chat.$states.hideTrolls ] );
-    return [
-      { forceFilter: el => !el.username.startsWith( 'troll:' ) }
-    ];
-  },
-
-  async cleanTts() {
-    await _store_commit( Chat.$mutations.setCleanTts, !_store_state[ Chat.$states.cleanTts ] );
-    return [
-      { insertMessage: `Clean TTS: ${ _store_state[ Chat.$states.cleanTts ] }` }
-    ];
-  },
-
-  graph( stat, user ) { return [{ changeStatOnGraph: [stat, user] }] },
-
-  ignoreList() {
-    const _ignoreList = _store_state[Chat.$states.ignoreList];
-    const _ignoreChannelList = _store_state[Chat.$states.ignoreChannelList];
-    _ga.event( {
-      eventCategory: 'chat',
-      eventAction: 'ignorelist',
-      eventLabel: `show-ignore-list`
-    } ); // Analytics
-    return [
-      { insertMessage: `Ignored Users: ${ _ignoreList.join( ', ' ) }` },
-      { insertMessage: `Ignored Channels: ${ _ignoreChannelList.join( ', ' ) }` },
-    ]
-  },
-
-  async toggleBadge() {
-    const newstate = !_store_state[Chat.$states.showBadge];
-    await _store_commit( Chat.$mutations.setShowBadge, newstate );
-    return [{ insertMessage: `Badge ${ newstate ? 'on' : 'off' }` }]
-  },
-
-  // Skip TTS
-  skipTts() {
-    speechSynthesis.cancel();
-    return [];
-  },
-
-  async bugReport() {
+  /**
+   * Creates sentry bug report
+   * */
+  async bugReport () {
     _sentry.withScope(
       scope => {
         scope.setExtra( 'global_chat', _store_state[ Chat.$states.global ] );
@@ -275,77 +293,210 @@ const functions = {
       labelName: 'Username',
       labelSubmit: 'Submit Bug Report',
     } );
+    return [
+      { insertMessage: `Bug report sent. Thank you.` },
+    ];
+  },
+
+  /**
+   * Toggle badge on / off
+   * */
+  async toggleBadge () {
+    const newstate = !_store_state[Chat.$states.showBadge];
+    await _store_commit( Chat.$mutations.setShowBadge, newstate );
+    return [{ insertMessage: `Badge ${ newstate ? 'on' : 'off' }` }]
+  },
+
+
+
+  // --- ADDITIONAL FILTERING TOOLS --- //
+  /**
+   * Toggle trolls in chat
+   * */
+  async hideTrolls () {
+    const hideTrolls = !_store_state[ Chat.$states.hideTrolls ];
+    await _store_commit( Chat.$mutations.setHideTrolls, hideTrolls );
+    return [
+      { forceFilter: el => !el.username.startsWith( 'troll:' ) },
+      { insertMessage: `Trolls: ${!hideTrolls ? 'Allowed (Show Trolls)' : 'Disabled (Hide Trolls)'}` },
+    ];
+  },
+
+  /**
+   * Clean(er) TTS
+   * */
+  async cleanTts () {
+    await _store_commit( Chat.$mutations.setCleanTts, !_store_state[ Chat.$states.cleanTts ] );
+    return [
+      { insertMessage: `Clean TTS: ${ _store_state[ Chat.$states.cleanTts ] }` }
+    ];
+  },
+
+  /**
+   * TOGGLE HIGH DENSITY
+   * */
+  async toggleHighDensity () {
+    const highDensity = !_store_state[ Chat.$states.highDensity ];
+    await _store_commit( Chat.$mutations.setHighDensity, highDensity );
+
+    // Analytics
+    _ga.event( {
+      eventCategory: 'chat',
+      eventAction: 'QOL',
+      eventLabel: `${highDensity ? 'enable' : 'disable'}-high-density`,
+    } );
+
+    return [
+      { insertMessage: `High Density: ${highDensity ? 'enabled' : 'disabled'}` },
+    ];
+  },
+
+  /**
+   * Skips TTS Messages
+   * */
+  skipTts () {
+    speechSynthesis.cancel();
     return [];
   },
 
-  whisper( who, ...what ) {
+
+  // --- MISC. COMMANDS --- //
+  /**
+   * Magic VooDoo
+   * */
+  graph ( stat, user ) {
+    return [
+      { changeStatOnGraph: [ stat, user ] },
+    ];
+  },
+
+
+
+  // --- STILL NOT DONE YET HOLY SHIT --- //
+  /**
+   * Something that has taken way too long to fix
+   * */
+  whisper ( who, ...what ) {
     return [];
-  }
-};
+  },
+});
 
-const export_obj = {
 
+/**
+ * Creates the chat parsing object using the supplied functions
+ * */
+const createParser = parserFns => ({
+
+  // Creates a map of commands and their associated functions
   commands: new Map([
-    ["dev", () => [{ chatServer: 'DEV' }, { insertMessage: 'Enabled developer mode.\nAttempting to connect to local dev server.' }]],
-    ["prod", () => [{ chatServer: 'PROD' }, { insertMessage: 'Disabled developer mode.\nAttempting to connect to production chat server.' }]],
+    // Switching environments
+    ["dev",        () => [{ chatServer: 'DEV'  }, { insertMessage: 'Enabled developer mode.\nAttempting to connect to local dev server.' }]],
+    ["prod",       () => [{ chatServer: 'PROD' }, { insertMessage: 'Disabled developer mode.\nAttempting to connect to production chat server.' }]],
     ["production", () => [{ chatServer: 'PROD' }, { insertMessage: 'Disabled developer mode.\nAttempting to connect to production chat server.' }]],
-    ["local", () => { _store_commit( Chat.$mutations.setGlobal, false ); return []; } ],
-    ["global", () => { _store_commit( Chat.$mutations.setGlobal, true ); return []; } ],
-    ["ignore", functions.ignoreUser],
-    ["i", functions.ignoreUser],
-    ["unignore", functions.unignoreUser],
-    ["u", functions.unignoreUser],
-    ["purgeusers", functions.purgeIgnoreUser],
-    ["ignorechannel", functions.ignoreChannel],
-    ["ic", functions.ignoreChannel],
-    ["unignorechannel", functions.unignoreChannel],
-    ["uic", functions.unignoreChannel],
-    ["uc", functions.unignoreChannel],
-    ["purgechannels", functions.purgeIgnoreChannel],
-    ["highdensity", functions.toggleHighDensity],
-    ["dense", functions.toggleHighDensity],
-    ["troll", functions.hideTrolls],
-    ["trolls", functions.hideTrolls],
-    ["susi", functions.hideTrolls],
-    ["cuckrockchris", functions.cleanTts],
-    ["crc", functions.cleanTts],
-    ["cleantts", functions.cleanTts],
-    ["graph", functions.graph],
-    ["ignorelist", functions.ignoreList],
-    ["badge", functions.toggleBadge],
-    ["skip", functions.skipTts],
-    ["s", functions.skipTts],
-    ["bugreport", functions.bugReport],
-    ["token", functions.getAuthToken],
+
+    // Local vs. Global
+    [ "local",           parserFns.setLocalChat ],
+    [ "global",          parserFns.setGlobalChat ],
+
+    // Ignore Users
+    [ "ignore",          parserFns.ignoreUser ],
+    [ "i",               parserFns.ignoreUser ],
+    [ "unignore",        parserFns.unignoreUser ],
+    [ "u",               parserFns.unignoreUser ],
+    [ "purgeusers",      parserFns.purgeIgnoreUser ],
+
+    // Ignore Channels
+    [ "ignorechannel",   parserFns.ignoreChannel ],
+    [ "ic",              parserFns.ignoreChannel ],
+    [ "unignorechannel", parserFns.unignoreChannel ],
+    [ "uic",             parserFns.unignoreChannel ],
+    [ "uc",              parserFns.unignoreChannel ],
+    [ "purgechannels",   parserFns.purgeIgnoreChannel ],
+
+    // Ignore List
+    [ "ignorelist",      parserFns.printIgnoreList ],
+
+    // High Density
+    [ "highdensity",     parserFns.toggleHighDensity ],
+    [ "dense",           parserFns.toggleHighDensity ],
+
+    // Toggle trolls
+    [ "troll",           parserFns.hideTrolls ],
+    [ "trolls",          parserFns.hideTrolls ],
+    [ "safesapce",       parserFns.hideTrolls ],
+    [ "susi",            parserFns.hideTrolls ],
+
+    // Clean TTS
+    [ "cuckrockchris",   parserFns.cleanTts ],
+    [ "crc",             parserFns.cleanTts ],
+    [ "cleantts",        parserFns.cleanTts ],
+
+    // Skip TTS
+    [ "skip",            parserFns.skipTts ],
+    [ "s",               parserFns.skipTts ],
+
+    // Misc.
+    [ "badge",           parserFns.toggleBadge ],
+    [ "bugreport",       parserFns.bugReport ],
+    [ "graph",           parserFns.graph ],
+    [ "token",           parserFns.getAuthToken ],
+
+
     // TODO: fix whispers :trout:
-    ["whisper", functions.whisper],
-    ["w", functions.whisper],
+    // Whispers
+    [ "whisper", parserFns.whisper ],
+    [ "w",       parserFns.whisper ],
   ]),
 
-  ...functions,
 
-  async parseOne( string ) {
-    if( !string.startsWith( '/' ) ) return null;
-    const tokens = string.replace( '/', '' ).split( ' ' ).filter( t => t.length );
-    const command = this.commands.get( tokens[0] );
+  // Spread in all of our functions
+  ...parserFns,
 
-    if( command ) {
-      tokens.shift();
-      return await command( ...tokens );
-    }
 
+  /**
+   * parse command
+   * @param str
+   * @return {Promise<null|undefined|*>}
+   */
+  async parseOne ( str ) {
+
+    // All commands must start with a slash
+    if ( !str.startsWith( '/' ) ) return null;
+
+    // Extracts out command & arguments (I think)
+    const tokens = str
+      .replace ( '/', '' )        // strip slash from start of command
+      .split ( ' ' )              // split command at each space
+      .filter ( t => t.length );  // used to remove extra spaces
+
+    // token[0] is our command word.
+    // We use shift to both remove it
+    // from the array and get it's value.
+    // Then force lowercase to ignore casing
+    const commandToken = ( tokens.shift() ).toLowerCase();
+
+    // Attempt to find matching command
+    const command = this.commands.get( commandToken );
+
+    // if there is a matching command,
+    // then run it (with the arguments)!
+    if ( command ) return await command ( ...tokens );
+
+    // else return undefined
     return undefined;
   },
 
-};
+});
 
 export default async ( { $ga, store, $sentry }, inject ) => {
-  _store = store;
-  _store_state = await store.state[ Chat.namespace ];
-  _store_commit = async ( what, ...args ) => {
-    return await _store.commit( `${Chat.namespace}/${what}`, ...args );
-  };
-  _ga = $ga;
-  _sentry = $sentry;
-  inject( 'chatCommandParser', export_obj );
+  // Create shortcuts to parts of our store
+  const _state  = await store.state[ Chat.namespace ];
+  const _commit = async ( what, ...args ) => await store.commit ( `${Chat.namespace}/${what}`, ...args );
+
+  // Generate parser functions from context, then create parser object
+  const parserFunctions = createFunctions ( store, _state, _commit, $ga, $sentry );
+  const chatParser = createParser ( parserFunctions );
+
+  // Inject parser into context
+  inject ( 'chatCommandParser', chatParser );
 }

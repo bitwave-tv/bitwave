@@ -141,7 +141,7 @@
             or unlawful activity.
           </p>
           <p>Always consider the Terms of Services also apply to your use of Bitwave WaveCoins.</p>
-          <p>Do NOT attempt to forget or bypass a Bitwave WaveCoins requirement or checkpoint.</p>
+          <p>Do NOT attempt to forge, bypass, or disable a Bitwave WaveCoins requirement or checkpoint.</p>
         </div>
 
 
