@@ -1,7 +1,6 @@
 import { Chat } from '@/store/chat';
 import { VStore } from "@/store";
 
-
 /**
  * Creates the functions that run for the chat commands
  * */
@@ -359,7 +358,6 @@ const createFunctions = ( _store, _store_state, _store_commit, _ga, _sentry ) =>
     speechSynthesis.cancel();
     return [];
   },
-
 
 
   // --- MISC. COMMANDS --- //
