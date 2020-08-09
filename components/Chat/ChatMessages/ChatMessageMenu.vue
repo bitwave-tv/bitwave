@@ -54,7 +54,7 @@
           <h1
             class="username text-truncate flex-grow-1 pl-1"
             :style="userStyling"
-          >{{ username }}</div>
+          >{{ username }}</h1>
 
           <v-btn
             class="align-self-center"
