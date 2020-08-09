@@ -51,12 +51,18 @@
           ></div>
 
           <!-- Username -->
-          <nuxt-link :to="`/${username}`">
-            <h1
-              class="username text-truncate flex-grow-1 pl-1"
-              :style="userStyling"
-            >{{ username }}</h1>
-          </nuxt-link>
+          <h1
+            class="username text-truncate flex-grow-1 pl-1"
+            :style="userStyling"
+          >{{ username }}</h1>
+
+          <v-btn
+            class="align-self-center"
+            color="primary"
+            :disabled="isTroll"
+            :to="`/${username}`"
+            small
+          >Profile</v-btn>
         </div>
 
         <div class="mb-4">
