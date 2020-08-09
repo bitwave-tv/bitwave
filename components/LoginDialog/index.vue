@@ -234,7 +234,7 @@
         captchaToken: null,
 
         rules: {
-          adultCheck: [ val => val || 'You must be 18 to use this site!' ],
+          adultCheck: val => val || 'You must be 18 to use this site!',
           required: value => !!value || 'Required.',
           min: value => ( value && value.length >= 8 ) || 'Min 8 characters',
           name: v => !!v || 'Name is required',
@@ -469,7 +469,7 @@
         if ( user ) {
           if ( process.client ) console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
           if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
-          setTimeout( () => this.emit( 'close' ), 1000 );
+          setTimeout( () => this.$emit( 'close' ), 1000 );
         } else {
           if ( process.client ) console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
         }

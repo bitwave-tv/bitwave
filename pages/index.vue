@@ -120,7 +120,7 @@
     </div>
 
     <!-- Footer -->
-    <simple-footer />
+    <simple-footer :version="version" />
   </div>
 </template>
 
@@ -253,6 +253,10 @@
         return this.mounted
           ? this.$vuetify.breakpoint.smAndDown
           : !this.$device.isDesktopOrTablet;
+      },
+
+      version () {
+        return `v${process.env.version}`;
       },
     },
 

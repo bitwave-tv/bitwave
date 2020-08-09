@@ -42,7 +42,7 @@
           v-for="( msg, index ) in messages"
           kkey="msg._id"
           :key="index"
-          class="pb-1 pl-3 pr-1"
+          class="pb-1 pl-2 pr-1"
         >
 
           <!-- Chat Alert -->
@@ -88,12 +88,13 @@
               @reply="addUserTag"
               @whisper="addWhisper"
               @select="onMessageClick( msg )"
+              @goto="onGoto"
             ></chat-message>
 
             <!-- Append messages -->
             <div
               v-else
-              class="msg append"
+              class="msg append content"
               :class="{ 'no-avatar': !showAvatars }"
             >
               <div
@@ -110,39 +111,47 @@
 
     <!-- FAB for Scroll Down -->
     <div class="stb-fab d-flex justify-center">
-      <v-slide-y-transition>
+      <v-slide-y-reverse-transition>
         <v-btn
           v-show="showFAB"
           fab
-          x-small
-          color="primary"
+          small
+          color="accent"
           @click="scrollToBottom( true )"
-          class="black--text mt-3"
+          class="white--text mb-4"
         >
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
-      </v-slide-y-transition>
+      </v-slide-y-reverse-transition>
     </div>
 
     <!-- Chat Message Menu -->
     <div>
-      <chat-message-menu
+      <v-dialog
         v-model="showChatMessageMenu"
-        :avatar="selectedChatMessage.avatar"
-        :username="selectedChatMessage.username"
-        :displayName="selectedChatMessage.displayName"
-        :user-styling="{ color: selectedChatMessage.userStyling ? selectedChatMessage.userStyling : '#9e9e9e' }"
-        :message="selectedChatMessage.message"
-        :badge="selectedChatMessage.badge"
-        :timestamp="selectedChatMessage.timestamp"
-        :channel="selectedChatMessage.channel"
-        :global="selectedChatMessage.global"
-        :is-channel-owner="isChannelOwner"
-        @ignore="onIgnore"
-        @unignore="onUnignore"
-      />
-    </div>
+        transition="slide-x-transition"
+        :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '40%'"
+      >
 
+        <lazy-chat-message-menu
+          :key="selectedChatMessage.username"
+          :avatar="selectedChatMessage.avatar"
+          :username="selectedChatMessage.username"
+          :displayName="selectedChatMessage.displayName"
+          :user-styling="{ color: selectedChatMessage.userStyling ? selectedChatMessage.userStyling : '#9e9e9e' }"
+          :message="selectedChatMessage.message"
+          :badge="selectedChatMessage.badge"
+          :timestamp="selectedChatMessage.timestamp"
+          :channel="selectedChatMessage.channel"
+          :global="selectedChatMessage.global"
+          :is-channel-owner="isChannelOwner"
+          @close="showChatMessageMenu = false"
+          @ignore="onIgnore"
+          @unignore="onUnignore"
+        />
+
+      </v-dialog>
+    </div>
   </v-flex>
 </template>
 
@@ -150,7 +159,6 @@
   import moment from 'moment';
 
   import ChatMessage from '@/components/Chat/ChatMessages/ChatMessage'
-  import ChatMessageMenu from '@/components/Chat/ChatMessages/ChatMessageMenu';
 
   import { mapState } from 'vuex';
   import { Chat } from '@/store/chat';
@@ -159,7 +167,6 @@
     name: 'ChatMessages',
 
     components: {
-      ChatMessageMenu,
       ChatMessage,
     },
 
@@ -313,7 +320,7 @@
             }
 
             this.onScrollTimer = null;
-          }, 100 );
+          }, 50 );
         }
       },
 
@@ -339,6 +346,10 @@
 
       onUnignore ( username ) {
         this.$emit( 'unignore', username );
+      },
+
+      onGoto ( location ) {
+        this.$router.push( location );
       },
     },
 
@@ -396,7 +407,7 @@
 
     .stb-fab {
       position: absolute;
-      top: 0;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       z-index: 3;
@@ -404,7 +415,7 @@
 
     .dense .content .msg {
       h1, h2, h3 {
-        font-size: 1rem;
+        font-size: .95rem;
       }
 
       img {

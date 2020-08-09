@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    :value="value"
-    transition="slide-x-transition"
-    :max-width="$vuetify.breakpoint.mdAndDown ? '95%' : '40%'"
-    @input=" val => $emit('input', val )"
-  >
+  <div>
     <v-card tile raised elevation="24">
       <!-- Title Bar -->
       <v-sheet
@@ -26,9 +21,12 @@
 
       <div class="pa-3">
 
-        <div class="d-flex align-center grey--text mb-1">
+        <div class="d-flex align-center grey--text mb-3">
           <!-- Avatar -->
-          <v-avatar size="64">
+          <v-avatar
+            size="32"
+            class="mr-2"
+          >
             <img
               v-if="avatar"
               :src="avatar"
@@ -48,7 +46,7 @@
           <!-- User Badge -->
           <div
             v-show="badge"
-            class="badge pl-2 d-flex align-center"
+            class="badge mr-1 d-flex align-center"
             v-html="badge"
           ></div>
 
@@ -56,7 +54,7 @@
           <h1
             class="username text-truncate flex-grow-1 pl-1"
             :style="userStyling"
-          >{{ username }}</h1>
+          >{{ username }}</div>
 
           <v-btn
             class="align-self-center"
@@ -65,16 +63,22 @@
             :to="`/${username}`"
             small
           >Profile</v-btn>
-
         </div>
-      </div>
-    </v-card>
-    <v-card tile elevation="0" color="#151515">
-      <div class="pa-3">
-        <hr color="grey" />
+
+        <div class="mb-4">
+          <div class="body-2 mb-2">
+            This menu is still in development, but the ignore and unignore button both work. Confirmation messages will appear in chat.
+          </div>
+
+          <div class="caption mb-2">
+            Type <kbd>/ignorelist</kbd> to view a list of all users you currently ignore.<br>
+          </div>
+        </div>
+
+        <v-divider />
 
         <!-- Action items -->
-        <div class="mt-3">
+        <div class="mt-2">
           <div class="d-flex align-center">
             <v-btn
               color="red darken-2"
@@ -85,29 +89,37 @@
 
             <v-spacer />
 
-            <v-btn
-              v-if="isChannelOwner && both || !isBanned"
-              :loading="loading"
-              color="error"
-              class="mr-2"
-              outlined
-              small
-              @click="banUser"
-            >Mute</v-btn>
-            <v-btn
-              v-if="isChannelOwner && both || isBanned"
-              :loading="loading"
-              color="success"
-              class="mr-2"
-              outlined
-              small
-              @click="unbanUser"
-            >Un-Mute</v-btn>
+            <!-- Sorry -->
+            <template
+              v-if="isChannelOwner"
+            >
+              <!-- v-if="both || !isBanned" -->
+              <!-- :loading="loading" -->
+              <!-- :disabled="bannedUsers === null" -->
+              <v-btn
+                color="error"
+                class="mr-2"
+                outlined
+                small
+                @click="banUser"
+              >Mute</v-btn>
 
-            <v-divider
-              vertical
-              class="mr-2"
-            />
+              <!-- v-if="both || isBanned" -->
+              <!-- :loading="loading" -->
+              <!-- :disabled="bannedUsers === null" -->
+              <v-btn
+                color="success"
+                class="mr-2"
+                outlined
+                small
+                @click="unbanUser"
+              >Un-Mute</v-btn>
+
+              <v-divider
+                vertical
+                class="mr-2"
+              />
+            </template>
 
             <v-btn
               v-if="!isIgnored"
@@ -127,7 +139,7 @@
         </div>
       </div>
     </v-card>
-  </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -160,14 +172,14 @@
 
     data() {
       return {
-        bannedUsers: [],
+        bannedUsers: null,
         loading: false,
       };
     },
 
     methods: {
       close () {
-        this.$emit( 'input', false );
+        this.$emit( 'close' );
       },
 
       ignoreUser () {
@@ -191,9 +203,9 @@
 
         try {
           const { data } = await this.$axios.get( endpoint );
-          console.log( data );
+          console.log( `Banned users:`, data );
 
-          this.bannedUsers = data.users.map( ( user, _ ) => user ).reverse();
+          this.bannedUsers = data.users;
         } catch ( error ) {
           console.error( error )
           this.bannedUsers = null;
@@ -202,6 +214,7 @@
       },
 
       async banUser () {
+        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/chat/ban`;
         const payload =  {
           user: this.username,
@@ -223,6 +236,7 @@
       },
 
       async unbanUser () {
+        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/chat/unban`;
         const payload =  {
           user: this.username,
@@ -267,9 +281,7 @@
     },
 
     async mounted() {
-      setTimeout( async () => {
-        await this.getBans();
-      }, 1000 );
+      // await this.getBans();
     },
   };
 </script>

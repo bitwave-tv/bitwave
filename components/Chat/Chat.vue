@@ -185,6 +185,17 @@
             }
             return m;
           },
+          m => {
+            if( this.useIgnore && this.getRecursiveIgnore ) {
+              // TODO: This should be reversed.
+              // That is, we should get the @'s in a mention
+              // Then check if the @'d user is in the ignore list
+              // if they are, return null early.
+              for( const i of this.ignoreList )
+                if( m.message.toLowerCase().includes( `@${i}` ) ) return null;
+            }
+            return m;
+          }
         ],
 
         messages: null,
@@ -544,8 +555,8 @@
         if ( !this.$refs['chatmessages'].showFAB ) {
           // if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           if ( this.messages.length > this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
-          // await this.scrollToBottom();
-          this.$nextTick( async () => await this.scrollToBottom() );
+          await this.scrollToBottom();
+          // this.$nextTick( async () => await this.scrollToBottom() );
         }
       },
 
@@ -780,6 +791,7 @@
         getUseTts         : Chat.$states.useTts,
         getUseTtsAlerts   : Chat.$states.useTtsAlerts,
         useIgnore         : Chat.$states.useIgnore,
+        getRecursiveIgnore: Chat.$states.recursiveIgnore,
         getHideTrolls     : Chat.$states.hideTrolls,
         getTrollTts       : Chat.$states.trollTts,
         getCleanTts       : Chat.$states.cleanTts,
