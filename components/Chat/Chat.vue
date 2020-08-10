@@ -233,8 +233,9 @@
           },
         ],
 
-        shownMessages: null,
-        messages: null,
+        shownMessages: [],
+        messages: [],
+        localMessages: [],
 
         voicesListTTS: [],
 
@@ -271,7 +272,7 @@
         if ( a.saveToDb ) this.saveToDb( ...a.saveToDb );
         if ( a.forceFilter ) {
           if ( this.useIgnore )
-            this.shownMessages = this.messages.filter( a.forceFilter );
+            this.shownMessages = (this.messages.concat(this.localMessages)).filter( a.forceFilter );
           else
             await this.insertMessage( 'NOTE: You have ignore users turned off' );
         }
@@ -306,15 +307,15 @@
         // Get RECAPTCHA v3 Token
         // this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
 
-        bitwaveChat.onHydrate = d => { this.messages = d ?? []; this.onHydration( this.messages ); };
-        bitwaveChat.rcvMessageBulk = d => { this.messages = this.messages.concat( d ?? [] ); this.rcvMessageBulk( d ); };
-        bitwaveChat.alert = a => { a && this.messages.push(a); this.addAlert(a); };
+        bitwaveChat.onHydrate = this.onHydration;
+        bitwaveChat.rcvMessageBulk = this.rcvMessageBulk
+        bitwaveChat.alert = this.addAlert
         bitwaveChat.updateUsernames = this.updateViewers;
 
         bitwaveChat.socketReconnect = () => { this.connecting = false; this.loading = false; };
         bitwaveChat.socketError = () => { this.connecting = false; this.loading = true; };
 
-        bitwaveChat.global = this.global;
+        bitwaveChat.global = true;
 
         await bitwaveChat.init( this.page, this.userToken, this.chatServer );
 
@@ -489,13 +490,15 @@
         }
       },*/
 
+      /**
+       * Wrapper around bitwaveChat.hydrate() that shows error toasts
+       **/
       async hydrate () {
         // This can be removed if we put it in onHydration()
         // but placing it here forces chat to clear when toggling
         // Local vs. Global which looks nicer than having
         // Global and Local animated and mix when leaving local
         // this.messages = [];
-        if ( !this.messages ) this.messages = [];
 
         const success = await bitwaveChat.hydrate();
         if( !success ) {
@@ -519,35 +522,66 @@
         }
       },
 
+      /**
+       * The function that gets fed hydration data (bitwaveChat.onHydration)
+       */
       async onHydration ( messages ) {
-        this.shownMessages = [];
-
         // Return early if we are missing data
         if ( !messages ) return;
 
+        // We have data: trash currently shown messages
+        this.shownMessages = [];
+
+        // Combines all the message processors into one big happy function
         const processMessage =
           this.messageProcessors.reduce( this.maybeCompose, a => a );
 
         messages.forEach( m => {
+          // Dispatch message into the appropriate local list
+          if( m.channel === this.chatChannel ) {
+            this.localMessages.push( m );
+          } else {
+            this.messages.push( m );
+          }
+
           // Filter messages
           if ( this.filterMessage( m ) ) return;
 
+          // Process messages: username highlighting, etc
           processMessage(m);
 
-          // Add message to list
+          // After it passed the filter and was processed, add message to list
           this.shownMessages.push( Object.freeze( m ) );
         });
       },
 
+      /**
+       * This function gets called when the server pushes messages through the websocket
+       * i.e. when we already have some messages hydrated
+       * @param messages Array of messages
+       * @returns {Promise<void>}
+       */
       async rcvMessageBulk ( messages ) {
         // Return early if we are missing data
         if ( !messages ) return;
 
+        // Since this triggers after hydration (read: page load, bad connection),
+        //  processing a message involves both username highlighting *and* TTS,
+        //  notification sound.
+        //
+        // This reduces all those processing functions into one, even happier, function
         const processMessage =
           (this.messageProcessors.concat(this.messageNotificationProcessors))
             .reduce( this.maybeCompose, a => a );
 
         messages.forEach( m => {
+          // Dispatch message into the appropriate local list
+          if( m.channel === this.chatChannel ) {
+            this.localMessages.push( m );
+          } else {
+            this.messages.push( m );
+          }
+
           // Filter messages
           if ( this.filterMessage( m ) ) return;
 
@@ -561,16 +595,19 @@
         });
 
         if ( !this.$refs['chatmessages'].showFAB ) {
-          if ( this.messages.length > 2 * this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
+          // Trim message buffers to limit
+          if ( this.localMessages.length > this.chatLimit ) this.localMessages.splice( 0, this.localMessages.length - this.chatLimit );
+          if ( this.messages.length > this.chatLimit ) this.messages.splice( 0, this.messages.length - this.chatLimit );
           if ( this.shownMessages.length > this.chatLimit ) this.messages.splice( 0, this.shownMessages.length - this.chatLimit );
-          // await this.scrollToBottom();
+
+          // Scroll down to the latest message
           this.$nextTick( async () => await this.scrollToBottom() );
         }
       },
 
       // Applies all active filters on messages
       applyChatFilters () {
-        this.shownMessages = this.messages?.filter( message => !this.filterMessage( message ) ) ;
+        this.shownMessages = (this.messages.concat(this.localMessages))?.filter( message => !this.filterMessage( message ) ) ;
       },
 
       addAlert ( data ) {
@@ -588,8 +625,11 @@
 
         // Only show local alerts
         if ( m.channel && !this.$utils.normalizedCompare( m.channel, this.page ) ) {
+          this.messages.push( m );
           return;
         }
+
+        this.localMessages.push( m );
 
         // If alert is to us, make sound and read it
         if ( this.$utils.normalizedCompare( m.channel, this.username ) ) {
@@ -607,6 +647,13 @@
         }
       },
 
+      /**
+       * Composes two function in such a way that if any intermediate value is falsy,
+       * the entire composition will be falsy (undefined)
+       * @param f Outer function in f(g(x))
+       * @param g Inner function in f(g(x))
+       * @returns {function(...[*]=)} The composed function f . g
+       */
       maybeCompose ( f, g ) {
         return x => {
           if( !f || !g ) return undefined;
@@ -617,8 +664,23 @@
         };
       },
 
+      /**
+       * Takes a message and runs it through all the filters
+       * @param message Message object
+       * @returns {boolean}
+       */
       filterMessage ( message ) {
-        //    allFilters = foldl (>=>) id this.messageFilters
+        // Every single message function can either return the message, or drop it (return falsy)
+        // Knowing this, we can glue all of the filters together in such a way that we check for falsy values
+        //  and propagate them down the line.
+        // maybeCompose is this gluing function;
+        //  we start from the identity function a => a
+        //  we add on the first filter in line onto `id' with maybeCompose in between, and put that in the accumulator
+        //  repeat until we reach then end of this.messageFilters
+        // The resulting function will try send 'message' through all of the filters, and if one of them fails,
+        //  it will drop down through all the maybeCompose's in-between
+        //
+        //    allFilters = foldl (>=>) return this.messageFilters
         const allFilters = this.messageFilters.reduce( this.maybeCompose, a => a );
         return !allFilters( message );
       },
@@ -880,12 +942,8 @@
 
     watch: {
       async global ( val, old ) {
-        bitwaveChat.global = val;
-
-        // Forces chat to fully clear when toggling
-        // this.messages = [];
-
-        await this.hydrate();
+        await this.applyChatFilters();
+        this.$nextTick( async () => await this.scrollToBottom() );
       },
 
       // hydrate when turning trolls back on
