@@ -940,14 +940,12 @@
           }
 
           let h = 0;
-          for( const channel of channels ) {
-            const viewCount = channel.viewCount;
+          for( const viewCount of channels ) {
             let g = 0,  // i + r
                 i = 1,  // i := # of larger streams +1
                 r = -1; // r := # of other equally-sized streams
 
-            for( const channelIter of channels ) {
-              const viewCompare = channelIter.viewCount;
+            for( const viewCompare of channels ) {
               if( viewCount < viewCompare ) i++;
               else if( viewCount === viewCompare ) r++;
             }
@@ -955,8 +953,10 @@
             g = i + r;
             // Maximises h; g is the new candidate for h
             if( g > h ) {
-              if( i <= viewCount && viewCount < g ) {
-                h = viewCount;
+              if( g > viewCount ) {
+                if ( i <= viewCount ) {
+                  h = viewCount;
+                }
               } else {
                 h = g
               }
