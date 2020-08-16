@@ -54,6 +54,9 @@ const listenToAuthState = ( callback ) => {
   });
 };
 
+// Forces grabbing a refreshed token
+const getFreshIdToken = async () => await auth.currentUser.getIdToken( true );
+
 
 export const listenToConfiguationUpdates = callbacks => {
   return db
@@ -91,7 +94,7 @@ export const listenToFeatureFlags = callbacks => {
 };
 
 
-export default async ( { app, store, $axios }, inject ) => {
+export default async ( { app, store, $axios, $sentry }, inject ) => {
   // only run client side
   if ( process.client ) {
     if ( process.env.APP_DEBUG ) console.log( '[Firebase] Plugin ran (client only)', app );
@@ -127,6 +130,10 @@ export default async ( { app, store, $axios }, inject ) => {
     const analytics = firebase.analytics();
     inject( 'analytics', analytics );
 
+    if ( process.env.APP_DEBUG ) {
+      console.log( `[DEV ENV ONLY] Injecting auth module.` );
+      inject( 'auth', auth );
+    }
 
 
     // Add push notifications
@@ -135,53 +142,84 @@ export default async ( { app, store, $axios }, inject ) => {
       return;
     }
 
-    // Forces grabbing a refreshed token
-    const getFreshIdToken = async () => {
-      return await auth.currentUser.getIdToken(true);
-    };
-
-    const getIdToken = () => {
-      if (process.server) {
+    const getIdToken = async () => {
+      if ( process.server ) {
         // When processing server-side, getIdToken() will only get called
         //  during SSR, from components. This means nuxtServerInit() will have already
         //  been called, and the auth token will have had(?) been saved.
         //
         // It is assumed that the token won't expire during SSR. I mean, what are the odds!
-        return store.state[VStore.$states.auth];
+        return store.state [ VStore.$states.auth ];
       }
-      if (process.client) {
-        // Promise soup. It likely works.
-        return new Promise((resolve, reject) => {
-          const unsubscribe = listenToAuthState((user) => {
-            unsubscribe();
-            if (user) {
-              // If within 5 mins before expiration, force a token refresh
-              // Otherwise, return what you already got (idToken)
-              user.getIdToken().then( async (idToken) => {
-                if(jwt_decode(idToken).exp - Date.now() / 1000 <= (5 * 60)) {
-                  resolve( await getFreshIdToken() );
-                } else {
-                  resolve(idToken);
-                }
-              }, () => {
-                resolve(null);
-              });
+
+      if ( process.client ) {
+        // This should work fine
+
+        // If within 5 mins before expiration, force a token refresh
+        // Otherwise, return what you already got (idToken)
+        const processToken = async ( token ) => {
+          try {
+            if ( jwt_decode( token ).exp - Date.now() / 1000 <= ( 5 * 60 ) ) {
+              console.log( `ID Token expired, requesting new token.` );
+              return await getFreshIdToken();
             } else {
-              resolve(null);
+              return token;
             }
-          });
-        });
+          }
+          catch ( error ) {
+            console.error( `Error checking token expiration`, token );
+            $sentry.captureException( error );
+            return null;
+          }
+        }
+
+        try {
+          // Attempt to get current logged in user
+          const currentUser = auth.currentUser;
+
+          // We are logged in, so just get the token directly
+          if ( currentUser ) {
+            const idToken = await currentUser.getIdToken();
+            return await processToken( idToken );
+          }
+
+          // We are not logged in
+          // Either user is actually not logged in
+          // or auth has not finished initializing
+          // and we need to wait for auth state to change
+          if ( !currentUser ) {
+            // if not logged in, add an auth state listener to wait for a possible login
+            const waitForAuth = () => {
+              return new Promise ( async ( resolve ) => {
+                  const unsubscribe = listenToAuthState ( async ( user ) => {
+                    unsubscribe(); // immediately stop listening to auth state
+                    if ( user ) { // are we logged in now?
+                      return resolve( await processToken( await user.getIdToken() ) );
+                    } else { // nope, still not logged in
+                      return resolve( null );
+                    }
+                  });
+                }
+              )
+            };
+            return await waitForAuth();
+          }
+        }
+        catch ( error ) {
+          console.warn( `Error getting ID Token!`, error );
+          $sentry.captureException( error );
+          return null;
+        }
       }
-      return null
     };
 
     // Intercepts all axios requests and injects Bearer token
     //  into the Authorization header. Equivalent to setToken(), except
     //  it gets called implicitly on each request.
-    $axios.onRequest(async (config) => {
+    $axios.onRequest(async ( config ) => {
       const idToken = await getIdToken();
 
-      if (config.headers != null && config.headers['X-Requested-With'] == null) {
+      if ( config.headers != null && config.headers['X-Requested-With'] == null ) {
         config.headers = {
           'X-Requested-With': 'XMLHttpRequest',
           Authorization: 'Bearer ' + idToken,
