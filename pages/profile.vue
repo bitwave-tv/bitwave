@@ -448,7 +448,7 @@
     beforeDestroy () {
       if ( this.unsubAuthChanged ) {
         this.unsubAuthChanged();
-        console.log( `%cProfile.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+        console.log( `%cProfile.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '' );
       }
       if ( this.streamDocListener ) this.streamDocListener();
       if ( this.profileDocListener ) this.profileDocListener();

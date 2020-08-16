@@ -467,11 +467,11 @@
       // onAuth handlers
       async authenticated ( user ) {
         if ( user ) {
-          if ( process.client ) console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user );
+          if ( process.client ) console.log( `%cLoginDialog.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', user );
           if (user.displayName) this.showSuccess( `Logged in! Welcome back, ${user.displayName}.` );
           setTimeout( () => this.$emit( 'close' ), 1000 );
         } else {
-          if ( process.client ) console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+          if ( process.client ) console.log( `%cLoginDialog.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '' );
         }
       },
     },

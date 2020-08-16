@@ -78,7 +78,7 @@
     beforeDestroy () {
       if ( this.unsubAuthChanged ) {
         this.unsubAuthChanged();
-        console.log( `%cAdmin:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+        console.log( `%cAdmin:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '' );
       }
     },
   };

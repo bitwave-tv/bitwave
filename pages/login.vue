@@ -43,12 +43,12 @@
       async authenticated ( user ) {
         if ( user ) {
           if ( process.client )
-            console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', user);
+            console.log(`%cLogin.vue:%c Logged in! %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', user);
 
           setTimeout( () => this.$router.push( this.redirect ), 750 );
         } else {
           if ( process.client )
-            console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+            console.log(`%cLogin.vue:%c Not logged in!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '');
         }
       },
     },
@@ -68,7 +68,7 @@
     beforeDestroy () {
       if ( this.unsubAuthChanged ) {
         this.unsubAuthChanged();
-        console.log(`%cLogin.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '');
+        console.log(`%cLogin.vue:%c Unsubscribed!`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '');
       }
     },
   }

@@ -530,7 +530,7 @@ export const actions = {
       }
       if ( process.env.APP_DEBUG ) logger ( 'Set Chat Token' );
     } catch ( error ) {
-      console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .25rem;', '', error );
+      console.error( `%cCHAT STORE:%c ${error.message}: Failed to exchange token!\n%o`, 'background: red; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', error );
     }
   },
 

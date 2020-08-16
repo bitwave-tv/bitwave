@@ -11,13 +11,13 @@ export const saveToLocalStorage = ( key, values ) => {
 
 export const logger = ( key, message, data ) => {
   if ( process.client ) {
-    if ( data && typeof data === 'object' )
-      console.log( `%c${key}:%c ${message} %o`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '', data );
-    else
-      console.log( `%c${key}:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .25rem;', '' );
+    if ( data ) {
+      console.log( `%c${key}:%c ${message}:`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', data );
+    } else
+      console.log( `%c${key}:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '' );
   } else {
-    if ( data && typeof data === 'object' )
-      console.log( `${key}: ${message} %o`, data );
+    if ( data )
+      console.log( `${key}: ${message}`, data );
     else
       console.log( `${key}: ${message}` );
   }
@@ -46,6 +46,7 @@ export const readFromLocalStorage = key => {
 // 'commit' is the store commit function
 // 'props' is a map from property names to mutation names
 export const loadFromLocalStorage = ( key, commit, props ) => {
+  console.groupCollapsed(`%cLocal Storage:%c %s`, 'background: #006064; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', '⏳ Loading settings from local storage...' );
   let value = readFromLocalStorage( key );
 
   try {
@@ -70,6 +71,7 @@ export const loadFromLocalStorage = ( key, commit, props ) => {
     }
   }
 
+  console.groupEnd();
   return readAll;
 };
 
