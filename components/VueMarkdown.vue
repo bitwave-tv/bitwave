@@ -64,7 +64,7 @@
       white-space: pre;
       overflow-x: auto;
       display: inline-block;
-      min-width: 100%;
+      max-width: 100%;
     }
   }
 </style>
