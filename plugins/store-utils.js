@@ -46,7 +46,7 @@ export const readFromLocalStorage = key => {
 // 'commit' is the store commit function
 // 'props' is a map from property names to mutation names
 export const loadFromLocalStorage = ( key, commit, props ) => {
-  console.groupCollapsed(`%cLocal Storage:%c %s`, 'background: #006064; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', '⏳ Loading settings from local storage...' );
+  console.groupCollapsed(`%c${key}:%c %s`, 'background: #006064; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', '⏳ Loading settings from local storage...' );
   let value = readFromLocalStorage( key );
 
   try {
