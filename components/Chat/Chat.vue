@@ -790,6 +790,9 @@
         user            : VStore.$getters.getUser,
         _username       : VStore.$getters.getUsername,
         getChannelViews : VStore.$getters.getChannelViews,
+      }),
+
+      ...mapState({
         channelsViewers : VStore.$states.channelsViewers,
       }),
 
@@ -872,6 +875,22 @@
         },
         get () { return this.getCleanTts; }
       },
+
+      async liveStreamers () {
+        try {
+          const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/channels/live' );
+          if ( data && data.success ) {
+            return data.streamers;
+          } else {
+            console.log( `API Error:`, data );
+          }
+        } catch ( error ) {
+          console.error( `Failed to get live channels from API server: ${error.message}` );
+          return [];
+        }
+        console.log( `Failed to get live channels from API server` );
+        return [];
+      }
     },
 
     watch: {
@@ -932,22 +951,21 @@
       };
 
       this.userStats.calculate.hIndex = {
-        total: () => {
-          const channels = this.channelsViewers?.filter( c => c.viewCount !== 0 );
+        total: async () => {
+          const streamers = await this.liveStreamers;
+          const channels = streamers.map( l => this.getChannelViews( l.name ) ).filter( c => c !== 0 );
           if( !channels ) {
             this.userStats.stat.value.set( this.userStats.ALL_USER, "hIndex", 0 );
             return;
           }
 
           let h = 0;
-          for( const channel of channels ) {
-            const viewCount = channel.viewCount;
+          for( const viewCount of channels ) {
             let g = 0,  // i + r
                 i = 1,  // i := # of larger streams +1
                 r = -1; // r := # of other equally-sized streams
 
-            for( const channelIter of channels ) {
-              const viewCompare = channelIter.viewCount;
+            for( const viewCompare of channels ) {
               if( viewCount < viewCompare ) i++;
               else if( viewCount === viewCompare ) r++;
             }
@@ -955,8 +973,10 @@
             g = i + r;
             // Maximises h; g is the new candidate for h
             if( g > h ) {
-              if( i <= viewCount && viewCount < g ) {
-                h = viewCount;
+              if( g > viewCount ) {
+                if ( i <= viewCount ) {
+                  h = viewCount;
+                }
               } else {
                 h = g
               }
