@@ -113,11 +113,6 @@
     },
 
     methods: {
-      async updateToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       confirm ( confirm ) {
         this.showConfirmNotifications = false;
         this.confirmNotifications( confirm );
@@ -142,8 +137,6 @@
       },
 
       async togglePushNotifications () {
-        await this.updateToken();
-
         const followerDoc = await db
           .collection( 'followers' )
           .doc( `${this.user.uid}_${this.streamerId}` )

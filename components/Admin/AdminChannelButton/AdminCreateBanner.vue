@@ -86,14 +86,7 @@
     },
 
     methods: {
-      async updateToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async createSystemAlert () {
-        await this.updateToken();
-
         const payload = {
           message: this.systemAlertMessage,
         };

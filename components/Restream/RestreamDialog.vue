@@ -359,15 +359,7 @@
         };
       },
 
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        console.log( `Fresh ID token:\n${token}` );
-        return token;
-      },
-
       async startRestreamer () {
-        const token = await this.getFreshIdToken();
-        this.$axios.setToken( token, 'Bearer' );
         const payload = this.createPayload();
         console.log(payload);
         try {
@@ -385,8 +377,6 @@
 
       async stopRestreamer () {
         try {
-          const token = await this.getFreshIdToken();
-          this.$axios.setToken( token, 'Bearer' );
           const payload = this.createPayload();
           const { data } = await this.$axios.post(
             this.createEndpoint( 'stop' ),

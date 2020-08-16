@@ -189,14 +189,8 @@
         this.$emit( 'unignore', ( this.username || this.displayName ).toLowerCase() );
       },
 
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async getBans () {
         this.loading = true;
-        await this.getFreshIdToken();
 
         const endpoint = `https://api.bitwave.tv/v1/chat/bans`;
 
@@ -213,7 +207,6 @@
       },
 
       async banUser () {
-        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/chat/ban`;
         const payload =  {
           user: this.username,
@@ -235,7 +228,6 @@
       },
 
       async unbanUser () {
-        await this.getFreshIdToken();
         const endpoint = `https://api.bitwave.tv/v1/chat/unban`;
         const payload =  {
           user: this.username,

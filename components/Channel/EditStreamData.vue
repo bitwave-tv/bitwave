@@ -431,11 +431,6 @@
     },
 
     methods: {
-      async getFreshIdToken () {
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
-      },
-
       async getStreamData () {
         const stream = this.username.toLowerCase();
         try {
@@ -511,7 +506,6 @@
 
         // Trigger Start / Stop Archiving
         if ( this.live && this.archive !== this.streamData.archive ) {
-          await this.getFreshIdToken();
           const endpoint = `https://api.bitwave.tv/v1/streamer/recorder/${this.streamData.archive ? 'start' : 'stop' }`;
           const payload = { user: this.username.toLowerCase(), };
           try {
@@ -568,7 +562,6 @@
 
       /* Upload Cover Image */
       async uploadFile () {
-        await this.updateToken();
         if ( !this.imageFile ) return false;
         this.uploadingAvatar = true;
         const formData = new FormData();
@@ -624,13 +617,6 @@
           this.$toast.error( `Failed to delete old cover image: ${error.response.data}`, { icon: 'error', duration: 5000 } );
         }
         this.oldCoverImage = this.streamData.cover;
-      },
-
-      // In case our token expires
-      async updateToken () {
-        if ( !auth.currentUser ) return;
-        const token = await auth.currentUser.getIdToken( true );
-        this.$axios.setToken( token, 'Bearer' );
       },
     },
 
