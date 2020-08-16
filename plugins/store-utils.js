@@ -11,12 +11,12 @@ export const saveToLocalStorage = ( key, values ) => {
 
 export const logger = ( key, message, data ) => {
   if ( process.client ) {
-    if ( data ) {
+    if ( data !== undefined ) {
       console.log( `%c${key}:%c ${message}:`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '', data );
     } else
       console.log( `%c${key}:%c ${message}`, 'background: #2196f3; color: #fff; border-radius: 3px; padding: .2rem .5rem;', '' );
   } else {
-    if ( data )
+    if ( data !== undefined )
       console.log( `${key}: ${message}`, data );
     else
       console.log( `${key}: ${message}` );
