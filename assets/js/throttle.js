@@ -3,6 +3,10 @@
 /*
 The throttle function is a handy utility function.
 
+There are many ways to throttle and debounce, so allow me to write a novel
+about how this one throttles, what it's goals are, how it achieves those goals,
+some well-intended use cases, and a warning about when NOT to use this utility.
+
 Throttle's goals are:
   1. Fire instantly if possible
   2. Prevent additional calls from executing within a period of time
@@ -45,44 +49,69 @@ it merely ensures that a function does not get called more often than the delay 
 e.g. this should not be used for throttling how often chat is updated receiving chat messages,
  as it would only add the first and last message, dropping all intermediate chats between updates.
 
- I'm not sure why I wrote more documentation than code for this, but it's too late now.
+ Lastly, when the wrapper function is called it returns a boolean variable that returns true if throttled.
+
+ I'm not sure why I wrote more documentation than code for this, but it's too late now (⊙_⊙;)
  */
+
 
 /**
- * A function wrapper that returns a function that will limit
- * how frequently the callback is called. This fires instantly
- * and returns early for subsequent calls within the delay
- * @param callback
- * @param delay
- * @return {wrapper}
+ * A utility function wrapper that returns a `function` that will limit
+ * how frequently the `callback` is called. This fires instantly
+ * and returns early for subsequent calls within the delay.
+ * @param {function} callback
+ *   Some function to be throttled
+ * @param {number} delay
+ *   Minimum amount of time between calls
+ * @return {function} wrapper: A function that when called invokes the callback at most once per `delay` interval
+ *
+ *   - This also guarantees a final call at the end of `delay`, called with the most recent context and arguments.
+ *   - Intermediate calls are dropped.
  */
-const throttle = ( callback, delay ) => {
+export const throttle = ( callback, delay ) => {
   let isThrottled = false, args, context;
 
+  // Create function wrapper preserving arguments and context
   const wrapper = () => {
+    // if we are throttled, set or update context & args
+    // then return early as true, indicating we were throttled
     if ( isThrottled ) {
       args = arguments;
       context = this;
       return true;
     }
 
+    // set flag for throttling check
     isThrottled = true;
+
+    // immediately invoke when we are not throttled
     callback.apply( this, arguments );
 
+    // set a time out for when our delay ends
     setTimeout(() => {
+
+      // reset throttled flag
       isThrottled = false;
+
+      // check if we need to execute our callback
+      // at the end of our throttle delay
+      // (this occurs when we call the wrapper more than once within the delay)
       if ( args ) {
+
+        // execute our callback with the most recent context & args
         wrapper.apply( context, args );
+
+        // reset to null to prepare for the next delay window
         args = context = null;
       }
     }, delay);
 
+    // return false to indicate we were not throttled
     return false;
   }
 
+  // returns an instance of throttle so this function is reusable
   return wrapper;
 }
 
-export {
-  throttle,
-}
+// the end.
