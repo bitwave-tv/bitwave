@@ -3,11 +3,13 @@ import { Chat } from '@/store/chat';
 import { parseCookiesForAuth } from "~/assets/js/Cookies/parse";
 
 import * as utils from '@/plugins/store-utils.js';
+import { throttle } from '@/assets/js/throttle';
 const logger = ( message, data ) => utils.logger( 'STORE', message, data );
 const saveToLocalStorage = values => utils.saveToLocalStorage( 'store', values );
 const loadFromLocalStorage = ( commit, props ) => utils.loadFromLocalStorage( 'store', commit, props );
 
 let unsubscribeUser = null;
+let throttledUpdateViewers = null;
 
 // Define Store
 const $states = {
@@ -488,32 +490,44 @@ export const actions = {
   },
 
   async [$actions.updateViewers] ( { commit } ) {
-    const updateChannelViewers = async () => {
-      try {
-        const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/chat/channels', { progress: false } );
-        if ( data && data.success ) {
-          commit( $mutations.setChannelViewers,  data.data );
-        }
-      } catch ( error ) {
-        console.error( `Failed to hydrate channels`, error.message );
-      }
-    };
+    if ( !throttledUpdateViewers ) {
+      // How long (in seconds) to wait between subsequent API requests
+      const throttleDelay = 15;
 
-    const updateUserList = async () => {
-      try {
-        const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/chat/users', { progress: false } );
-        if ( data && data.success ) {
-          commit( $mutations.setUserList, data.data );
-        }
-      } catch ( error ) {
-        console.error( `Failed to hydrate userlist.`, error.message );
-      }
-    };
+      // Combines update methods
+      const update = async () => {
+        const updateChannelViewers = async () => {
+          try {
+            const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/chat/channels', { progress: false } );
+            if ( data && data.success ) {
+              commit( $mutations.setChannelViewers,  data.data );
+            }
+          } catch ( error ) {
+            console.error( `Failed to hydrate channels`, error.message );
+          }
+        };
 
-    await Promise.all([
-      updateChannelViewers(),
-      updateUserList(),
-    ]);
+        const updateUserList = async () => {
+          try {
+            const { data } = await this.$axios.get( 'https://api.bitwave.tv/v1/chat/users', { progress: false } );
+            if ( data && data.success ) {
+              commit( $mutations.setUserList, data.data );
+            }
+          } catch ( error ) {
+            console.error( `Failed to hydrate userlist.`, error.message );
+          }
+        };
+
+        await Promise.all([
+          updateChannelViewers(),
+          updateUserList(),
+        ]);
+      }
+      throttledUpdateViewers = throttle( update, throttleDelay * 1000 );
+      return;
+    }
+    const throttled = throttledUpdateViewers();
+    logger( `Throttled $actions.updateViewers`, throttled );
   },
 
   async [$actions.loadSettings] ( { commit } ) {
