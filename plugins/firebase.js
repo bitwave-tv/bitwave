@@ -216,19 +216,22 @@ export default async ( { app, store, $axios, $sentry }, inject ) => {
     // Intercepts all axios requests and injects Bearer token
     //  into the Authorization header. Equivalent to setToken(), except
     //  it gets called implicitly on each request.
-    $axios.onRequest(async ( config ) => {
-      const idToken = await getIdToken();
+    $axios.onRequest(
+      async ( config ) => {
 
-      if ( config.headers != null && config.headers['X-Requested-With'] == null ) {
-        config.headers = {
-          'X-Requested-With': 'XMLHttpRequest',
-          Authorization: 'Bearer ' + idToken,
-          ...config.headers
-        };
-      }
+        const addBearerToken = async ( config ) => {
+          if ( config.skipAuth ) return config;
+          const token = await getIdToken();
+          if ( config.headers != null && config.headers['X-Requested-With'] == null ) {
+            if ( token ) {
+              config.headers['Authorization'] = 'Bearer ' + token;
+            }
+          }
+          return config;
+        }
 
-      return config;
-    });
+        return await addBearerToken( config );
+      });
 
     const messaging = firebase.messaging();
     messaging.usePublicVapidKey( 'BMghbCgNLfIbIqsuJaz4HV8EHYgu71MnONedQM26co3WfF2w0ahxzS6eq56JzPhaKVRamh_NtbbM-FdQsB-qXew' );
