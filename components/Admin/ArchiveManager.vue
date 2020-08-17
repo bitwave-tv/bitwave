@@ -27,8 +27,8 @@
           <div>
             <div class="title">Stream Archive Manager</div>
             <img
-              src="https://netdata.stream.bitwave.tv/api/v1/badge.svg?chart=disk_space._mnt_bitwave_archives&alarm=disk_space_usage&refresh=auto"
-              alt="Remaining archive storage space"
+              src="https://img.shields.io/badge/replays-%5Bbitwave.tv%5D-blue?style=for-the-badge"
+              alt="Stream Archive Manager"
             >
           </div>
           <v-spacer/>
@@ -82,7 +82,6 @@
 </template>
 
 <script>
-  import { auth } from '@/plugins/firebase';
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 
