@@ -10,7 +10,7 @@
       <v-img
         :src="image"
         :key="image"
-        lazy-src="https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg"
+        :lazy-src="lazyImg"
         :aspect-ratio="16/9"
         class="stream-card-thumbnail"
         :class="{ 'blur': blurImage, 'no-blur': !blurImage }"
@@ -74,12 +74,20 @@
     },
 
     data () {
-      return {}
+      return {
+        lazyImg: 'https://cdn.bitwave.tv/static/img/Bitwave_Banner-256.jpg',
+      }
     },
 
     computed: {
       blurImage () {
         return this.blur && this.nsfw && this.live;
+      },
+    },
+
+    watch: {
+      image ( newValue, oldValue ) {
+        this.lazyImg = oldValue;
       },
     },
   }

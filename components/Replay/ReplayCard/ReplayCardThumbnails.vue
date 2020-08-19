@@ -126,7 +126,7 @@
 
     computed: {
       thumbnailImage () {
-        if ( !this.thumbnails || !this.thumbnails.length ) return 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
+        if ( !this.thumbnails || !this.thumbnails.length ) return 'hhttps://cdn.bitwave.tv/static/img/Bitwave_Banner-256.jpg';
         return this.thumbnails[ this.thumbnailIndex ];
       },
     },
