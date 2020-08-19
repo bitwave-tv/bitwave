@@ -5,7 +5,6 @@
     :mini-variant-width="64"
     :clipped="true"
     fixed
-    color="accentwave"
     app
     @input="$emit( 'input', $event )"
   >
