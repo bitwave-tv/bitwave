@@ -57,7 +57,7 @@
   export default {
     name: 'StreamGrid',
 
-    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 10 ) ),
+    serverCacheKey: () => Math.trunc( Date.now() / ( 1000 * 30 ) ),
 
     props: {
       streamers: {},

@@ -69,7 +69,7 @@
 
           <!-- Display a grid of trending replays -->
           <v-lazy
-            :min-height="200"
+            :min-height="300"
           >
             <lazy-trending-replays
               :limit="6"
@@ -99,7 +99,7 @@
 
           <!-- Replay Grid -->
           <v-lazy
-            :min-height="200"
+            :min-height="300"
           >
             <lazy-replay-grid
               :limit="6"
@@ -125,15 +125,6 @@
 </template>
 
 <script>
-  // import StreamGrid from '@/components/StreamGrid'
-  // import BannerVideo from '@/components/Homepage/BannerVideo';
-  // import MessageOfTheDay from '@/components/Homepage/MessageOfTheDay';
-  // import SimpleFooter from '@/components/SubLayout/SimpleFooter';
-  // import AboutUs from '@/components/Homepage/AboutUs';
-
-  // const TrendingReplays = async () => await import ( '@/components/Replay/TrendingReplays' );
-  // const ReplayGrid = async () => await import ( '@/components/Replay/ReplayGrid' );
-
   import { mapState, mapMutations, mapActions } from 'vuex';
   import { VStore } from "@/store";
 
@@ -160,16 +151,6 @@
         ],
       }
     },
-
-    /*components: {
-      TrendingReplays,
-      ReplayGrid,
-      AboutUs,
-      SimpleFooter,
-      MessageOfTheDay,
-      BannerVideo,
-      StreamGrid,
-    },*/
 
     data () {
       return {
