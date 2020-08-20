@@ -26,16 +26,14 @@
             text
             icon
             small
-            @click="close"
+            @click="close( false )"
           >
             <v-icon>close</v-icon>
           </v-btn>
         </v-sheet>
 
         <!-- Component to display on load -->
-        <lazy-chat-ignore-list-content
-          @close="close"
-        />
+        <lazy-chat-ignore-list-content />
 
       </v-card>
     </v-dialog>
