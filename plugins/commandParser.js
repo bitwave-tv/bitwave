@@ -425,7 +425,8 @@ const createParser = parserFns => ({
     // Toggle trolls
     [ "troll",           parserFns.hideTrolls ],
     [ "trolls",          parserFns.hideTrolls ],
-    [ "safesapce",       parserFns.hideTrolls ],
+    [ "safespace",       parserFns.hideTrolls ],
+    [ "hugbox",          parserFns.hideTrolls ],
     [ "susi",            parserFns.hideTrolls ],
 
     // Clean TTS
