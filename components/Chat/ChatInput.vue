@@ -156,7 +156,7 @@
       value: '/ignorelist ',
     },
     {
-      label: 'lLcal',
+      label: 'Local',
       value: '/local ',
     },
     {
@@ -265,37 +265,71 @@
 
         // Don't send a message if auto completing
         if ( this.autocomplete ) {
+
           // Add exception for instances where we have no match or an exact match.
-          const send = !this.autocompleteValue || this.$utils.normalizedCompare ( this.autocomplete[0], this.autocompleteValue.value.trim() );
-          if ( !send ) return this.onTab();
+          const send = !this.autocompleteValue ||
+            this.$utils.normalizedCompare (
+              this.autocomplete[0],
+              this.autocompleteValue?.value?.trim(),
+            );
+
+          // Update field value
+          if ( !send ) {
+            event.srcElement.value = this.onTab();
+            return;
+          }
         }
 
-        if ( this.getMessage.length > 300 ) return;
-        if ( this.autocomplete ) this.onTab();
+        // Prevent sending empty and messages that are too long
+        if ( !this.getMessage
+          ||  this.getMessage?.length > 300
+          ||  this.getMessage?.length === 0
+        ) return;
 
-        if ( this.getMessage.length === 0 || /^[\s(\\n)]+$/.test( this.getMessage ) ) return;
 
+        // Why would we call this again?
+        if ( this.autocomplete ) {
+          // TODO: Is it safe to delete this?
+          console.log( 'Is this important?' );
+          // this.onTab();
+        }
+
+        // Test for blank messages
+        if (  /^[\s(\\n)]+$/.test( this.getMessage ) ) return;
+
+        // SEND IT
         this.$emit( 'send' );
 
+        // reset our buffer index offset after each message
         this.addToMessageBuffer( this.getMessage );
         this.messageBufferIndex = -1;
 
+        // Clear it
         this.setChatMessage( '' );
       },
 
       lastMessageHandler ( event ) {
-        if ( !event.srcElement.value || event.srcElement.value === this.getMessageBuffer[ this.messageBufferIndex ] ) {
+        if ( !event.srcElement.value
+          || event.srcElement.value === this.getMessageBuffer[ this.messageBufferIndex ] ) {
+          const buf = this.getMessageBuffer;
+
+          // const getFromBuffer = ( location ) => this.getMessageBuffer[ location ];
+          // const currentBuffer = () => getFromBuffer( this.messageBufferIndex );
+
           // Up Arrow (keyCode 38)
           if ( event.key === 'ArrowUp' ) {
-            this.messageBufferIndex += ( this.messageBufferIndex < this.getMessageBuffer.length - 1 ) ? 1 : 0;
-            this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
+            this.messageBufferIndex += ( this.messageBufferIndex < buf.length - 1 ) ? 1 : 0;
+            this.setMessage( buf[ this.messageBufferIndex ] );
             event.preventDefault();
           }
+
           // Down Arrow (keyCode 40)
           else if ( event.key === 'ArrowDown' ) {
             this.messageBufferIndex -= ( this.messageBufferIndex > -1 ) ? 1 : 0;
+
+            // Clear input when we hit the end
             if ( this.messageBufferIndex === -1 ) this.setMessage( '' );
-            else this.setMessage( this.getMessageBuffer[ this.messageBufferIndex ] );
+            else this.setMessage( buf[ this.messageBufferIndex ] );
             event.preventDefault();
           }
         }
@@ -338,6 +372,7 @@
         } else {
           const msg = this.getMessage.replace( new RegExp( this.autocomplete[0] + '$' ), this.autocompleteValue.value );
           this.setChatMessage( msg );
+          return msg;
         }
       },
 

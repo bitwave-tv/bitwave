@@ -426,7 +426,7 @@ export const mutations = {
   [$mutations.addToMessageBuffer] ( state, data ) {
     const bufferSize = state[$states.messageBuffer].length;
     if ( bufferSize === 0 ) state[$states.messageBuffer].unshift( data );
-    if ( bufferSize > 0 && state[$states.messageBuffer][bufferSize - 1] !== data ) {
+    if ( bufferSize > 0 && state[$states.messageBuffer][0] !== data ) {
       state[$states.messageBuffer].unshift( data );
       state[$states.messageBuffer] = state[$states.messageBuffer].slice( 0, state[$states.messageBufferLimit] );
     }
