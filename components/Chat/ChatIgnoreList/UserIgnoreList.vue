@@ -63,8 +63,11 @@
 </template>
 
 <script>
-  import { mapMutations, mapState } from 'vuex';
+  import { mapGetters, mapMutations, mapState } from 'vuex';
   import { Chat } from '@/store/chat';
+  import * as storeUtils from '@/plugins/store-utils';
+  import { db } from '@/plugins/firebase';
+  import { VStore } from '@/store';
 
   export default {
     name: 'UserIgnoreList',
@@ -95,24 +98,39 @@
         removeIgnoreList: Chat.$mutations.removeIgnoreList,
       }),
 
+      saveToDb ( collection, field, value ) {
+        if( this.isAuth ) {
+          storeUtils.saveToDb( db, this.user.uid, collection, field, value );
+        }
+      },
+
+      async executeAction ( a ) {
+        if ( a.saveToDb ) this.saveToDb( ...a.saveToDb );
+      },
+
       async unignoreUser ( user ) {
         try {
           // Reusing the command parser for this,
-          // but without executing it's returned actions.
-          await this.$chatCommandParser.unignoreUser( user.username.toLowerCase() );
+          const actions = await this.$chatCommandParser.unignoreUser( user.username.toLowerCase() );
+          actions?.forEach( a => this.executeAction( a ) );
 
           // success toast 🍞
-          this.$toast.success( `Unignored user! :)`, { icon: 'done', duration: 5000, position: 'top-center' } );
+          this.$toast.success( `Unignored user! :)`, { icon: 'done', duration: 1000, position: 'top-center' } );
 
         } catch ( error ) {
           // ERROR toast 🍞
-          this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          this.$toast.error( error.message, { icon: 'done', duration: 1000, position: 'top-center' } );
           console.error( error );
         }
       },
     },
 
     computed: {
+      ...mapGetters( {
+        isAuth: VStore.$getters.isAuth,
+        user: VStore.$getters.getUser,
+      }),
+
       ...mapState ( Chat.namespace, {
         getIgnoreList: Chat.$states.ignoreList,
       }),
