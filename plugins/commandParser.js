@@ -244,7 +244,7 @@ const createFunctions = ( _store, _store_state, _store_commit, _ga, _sentry ) =>
     return [
       { insertMessage: `Ignored Users: ${ _ignoreList.join( ', ' ) }` },
       { insertMessage: `Ignored Channels: ${ _ignoreChannelList.join( ', ' ) }` },
-    ]
+    ];
   },
 
 
@@ -381,6 +381,30 @@ const createFunctions = ( _store, _store_state, _store_commit, _ga, _sentry ) =>
   whisper ( who, ...what ) {
     return [];
   },
+
+  // Dialogs
+  /**
+   * Shows a specific dialog to user
+   * */
+  showIgnoreList () {
+    const _ignoreList        = _store_state[ Chat.$states.ignoreList ];
+    const _ignoreChannelList = _store_state[ Chat.$states.ignoreChannelList ];
+
+    _ga.event ({
+      eventCategory: 'chat',
+      eventAction: 'ignorelist',
+      eventLabel: `show-ignore-list`
+    }); // Analytics
+
+    return [
+      // Show ignore list dialog
+      { showDialog: 'ignorelist' },
+
+      // Show ignore list in chat
+      { insertMessage: `Ignored Users: ${ _ignoreList.join( ', ' ) }` },
+      { insertMessage: `Ignored Channels: ${ _ignoreChannelList.join( ', ' ) }` },
+    ];
+  },
 });
 
 
@@ -416,7 +440,7 @@ const createParser = parserFns => ({
     [ "purgechannels",   parserFns.purgeIgnoreChannel ],
 
     // Ignore List
-    [ "ignorelist",      parserFns.printIgnoreList ],
+    [ "ignorelist",      parserFns.showIgnoreList ],
 
     // High Density
     [ "highdensity",     parserFns.toggleHighDensity ],

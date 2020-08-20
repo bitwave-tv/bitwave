@@ -2,6 +2,7 @@
   <div
     id="sidechat"
     class="d-flex flex-grow-1 flex-column"
+    style="position: relative"
     v-resize.quiet="onResize"
   >
 
@@ -75,6 +76,10 @@
       @send="sendMessage"
     />
 
+    <chat-ignore-list
+      v-model="showIgnoreList"
+    />
+
   </div>
 </template>
 
@@ -106,6 +111,7 @@
 
   import { ChatConfig } from '@/store/channel/chat-config';
   import * as storeUtils from '@/plugins/store-utils.js'
+  import ChatIgnoreList from '@/components/Chat/ChatIgnoreList/index';
 
   // Creates server map for switching chat servers
   const chatServers = new Map([
@@ -122,6 +128,7 @@
     },
 
     components: {
+      ChatIgnoreList,
       AddOns,
       ChatHeader,
       ChatInput,
@@ -220,6 +227,8 @@
         userStats: new UserStats( this.getStatTickRate ),
 
         requestResize: false,
+
+        showIgnoreList: false,
       }
     },
 
@@ -244,6 +253,9 @@
           this.chatServer = chatServers.get( a.chatServer );
           await this.disconnectChat();
           await this.connectToChat();
+        }
+        if ( a.showDialog ) {
+          if ( a.showDialog === 'ignorelist' ) this.showIgnoreList = true;
         }
       },
 
