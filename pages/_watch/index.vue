@@ -107,6 +107,19 @@
       </v-btn>
     </v-fab-transition>
 
+    <v-divider />
+
+    <!-- Banned Alert -->
+    <v-alert
+      v-if="banned"
+      class="ma-4"
+      type="error"
+      outlined
+      dense
+    >
+      {{ banMessage }}
+    </v-alert>
+
     <!-- Stream Info -->
     <stream-info
       :name="name"
@@ -193,6 +206,9 @@
         type: null,
         timestamp: null,
         scheduled: null,
+        banned: false,
+
+        banMessage: 'This channel has been banned for breaching our Terms of Service.',
       }
     },
 
@@ -245,6 +261,10 @@
       },
 
       async streamDataChanged ( data ) {
+        // Ban flag
+        const banned = data.banned || false;
+        this.banned = banned;
+
         // Streamer user properties
         this.name   = data.user.name;
         this.avatar = data.user.avatar;
@@ -452,6 +472,7 @@
               url: data.url,
               owner: data.owner,
               scheduled: data.scheduled,
+              banned: data.banned || false,
             };
 
             console.log( `Bypass should be successfull...` );
@@ -471,6 +492,9 @@
 
         try {
           const data = channelData;
+
+          // Ban flag
+          const banned = data.banned || false;
 
           // Streamer user properties
           const name   = data.name;
@@ -533,6 +557,7 @@
               type,
               timestamp,
               scheduled,
+              banned,
             }
           }
         }
@@ -555,12 +580,19 @@
 
       // Get Channel data for page
       const channelData = await getChannelHydration();
-      if ( channelData.success === false  ) {
+      if ( channelData.success === false ) {
         console.error( `Channel Data API failed.`, channelData.error );
         if ( channelData && !channelData.success ) {
           error( { ...channelData.error } );
           return;
         }
+      }
+
+      // Intercept for banned
+      if ( channelData.banned ) {
+        console.log( `Channel is banned` );
+        error( { statusCode: 401, message: banMessage } );
+        return;
       }
 
       return {
