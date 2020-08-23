@@ -107,6 +107,19 @@
       </v-btn>
     </v-fab-transition>
 
+    <v-divider />
+
+    <!-- Banned Alert -->
+    <v-alert
+      v-if="banned"
+      class="ma-4"
+      type="error"
+      outlined
+      dense
+    >
+      {{ banMessage }}
+    </v-alert>
+
     <!-- Stream Info -->
     <stream-info
       :name="name"
@@ -193,6 +206,9 @@
         type: null,
         timestamp: null,
         scheduled: null,
+        banned: false,
+
+        banMessage: 'This channel has been banned for breaching our Terms of Service.',
       }
     },
 
@@ -245,6 +261,10 @@
       },
 
       async streamDataChanged ( data ) {
+        // Ban flag
+        const banned = data.banned || false;
+        this.banned = banned;
+
         // Streamer user properties
         this.name   = data.user.name;
         this.avatar = data.user.avatar;
@@ -440,7 +460,6 @@
 
             // Re-map channel data
             channelData = {
-              banned: data.banned || false,
               name: data.user.name,
               avatar: data.user.avatar,
               to: `/${data.user.name}`,
@@ -453,6 +472,7 @@
               url: data.url,
               owner: data.owner,
               scheduled: data.scheduled,
+              banned: data.banned || false,
             };
 
             console.log( `Bypass should be successfull...` );
@@ -525,7 +545,6 @@
           return {
             success: true,
             data: {
-              banned,
               name,
               avatar,
               title,
@@ -538,6 +557,7 @@
               type,
               timestamp,
               scheduled,
+              banned,
             }
           }
         }
@@ -560,7 +580,7 @@
 
       // Get Channel data for page
       const channelData = await getChannelHydration();
-      if ( channelData.success === false  ) {
+      if ( channelData.success === false ) {
         console.error( `Channel Data API failed.`, channelData.error );
         if ( channelData && !channelData.success ) {
           error( { ...channelData.error } );
@@ -570,7 +590,8 @@
 
       // Intercept for banned
       if ( channelData.banned ) {
-        error( { statusCode: 401, message: `This channel has been banned for breaching our Terms of Service.` } );
+        console.log( `Channel is banned` );
+        error( { statusCode: 401, message: banMessage } );
         return;
       }
 
