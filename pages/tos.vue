@@ -79,7 +79,7 @@
           Bitwave may take all appropriate actions to enforce its rights including removing specific videos or suspending or removing your account.
         </p>
 
-        <h3>4.2 Restrictions</h3>
+        <h3>4.1 Restrictions</h3>
         <p>
           We do not allow material to be posted that is deemed purely pornographic, unlawful, obscene, fraudulent, or that is violating third party rights.
         </p>
