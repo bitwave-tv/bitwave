@@ -4,7 +4,7 @@
       <div>
         <h1>Basic Guidelines</h1>
         <ul>
-          <li>1) You must to be at least 18 or older</li>
+          <li>1) You must to be at least 18 years or older</li>
           <li>2) No exploiting minors or CP / CSAM (<strong>including loli</strong>)</li>
           <li>3) No 24/7 pornography streams</li>
           <li>4) Do not <strong>promote</strong> or <strong>endorse</strong> "furry" content (criticism / commentary is ok)</li>
@@ -78,8 +78,18 @@
           Bitwave may (but is not obligated to) monitor your account, content, and conduct, regardless of your privacy settings.
           Bitwave may take all appropriate actions to enforce its rights including removing specific videos or suspending or removing your account.
         </p>
+
+        <h3>4.2 Restrictions</h3>
         <p>
-          We do not allow material to be posted that is deemed pornographic, unlawful, obscene, fraudulent, or that is violating third party rights.
+          We do not allow material to be posted that is deemed purely pornographic, unlawful, obscene, fraudulent, or that is violating third party rights.
+        </p>
+
+        <h3>4.2 Prohibited Use Policy</h3>
+        <p>
+          In some scenarios we may explicitly prevent or remove content or users as outlined below.
+        </p>
+        <p>
+          We do not allow usage of this site by convicted or registered sex offenders.
         </p>
 
         <h3>5. Licenses Granted by You</h3>
