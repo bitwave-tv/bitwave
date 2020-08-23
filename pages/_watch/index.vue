@@ -440,6 +440,7 @@
 
             // Re-map channel data
             channelData = {
+              banned: data.banned || false,
               name: data.user.name,
               avatar: data.user.avatar,
               to: `/${data.user.name}`,
@@ -471,6 +472,9 @@
 
         try {
           const data = channelData;
+
+          // Ban flag
+          const banned = data.banned || false;
 
           // Streamer user properties
           const name   = data.name;
@@ -521,6 +525,7 @@
           return {
             success: true,
             data: {
+              banned,
               name,
               avatar,
               title,
@@ -561,6 +566,12 @@
           error( { ...channelData.error } );
           return;
         }
+      }
+
+      // Intercept for banned
+      if ( channelData.banned ) {
+        error( { statusCode: 401, message: `This channel has been banned for breaching our Terms of Service.` } );
+        return;
       }
 
       return {
