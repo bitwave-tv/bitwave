@@ -181,6 +181,29 @@
               counter="600"
             ></v-text-field>
 
+            <v-checkbox
+              v-model="sendAsTroll"
+              class="mt-0"
+              dense
+            >
+              <template #label>
+                <div class="d-flex align-center">
+                  <span>send as troll</span>
+                  <v-tooltip top color="blue-grey darken-4">
+                    <template #activator="{ on: tooltip }">
+                      <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+                        <v-icon color="grey">help_outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>
+                      Enabling this will make the alert show up in chat as from "troll"<br>
+                      <i>note: the channel owner can still see the username in their dashboard</i>
+                    </span>
+                  </v-tooltip>
+                </div>
+              </template>
+            </v-checkbox>
+
             <div class="d-flex align-end mt-3">
               <v-spacer />
               <v-btn
@@ -189,7 +212,7 @@
                 small
                 :loading="processing"
                 @click="createAlert"
-              >Create</v-btn>
+              >Send</v-btn>
               <v-btn
                 class="d-flex ml-2"
                 color="red"
@@ -234,6 +257,7 @@
 
         alertColor: 'grey',
         alertMessage: '',
+        sendAsTroll: false,
         processing: false,
       };
     },
@@ -268,6 +292,7 @@
               color: this.alertColor,
               message: this.alertMessage,
               channel: this.room,
+              anon: this.sendAsTroll,
             }
           );
           this.redeemAlertPopup = false;
