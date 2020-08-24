@@ -49,20 +49,12 @@
           <template
             v-if="msg.type === 'alert'"
           >
-            <div>
-              <v-alert
-                dense
-                outlined
-                text
-                border="left"
-                :color="msg.color"
-                class="my-1"
-                style="font-size: 14px; word-break: break-word;"
-              >
-                <div class="overline grey--text">{{ msg.username }}</div>
-                <div class="white--text font-weight-bold body-1">{{ msg.message }}</div>
-              </v-alert>
-            </div>
+            <chat-alert-message
+              :amount="msg.amount"
+              :color="msg.color"
+              :username="msg.username"
+              :message="msg.meessage"
+            />
           </template>
 
           <!-- Chat Message -->
