@@ -25,8 +25,8 @@
       <!-- Cards -->
       <v-col
         v-if="!loading"
-        v-for="stream in streamerList"
-        :key="stream.name"
+        v-for="(stream, index) in streamerList"
+        :key="index"
         :cols="cols"
         :sm="sm"
         :md="md"
