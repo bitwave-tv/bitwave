@@ -20,7 +20,7 @@
       return {
         bottomText: process.env.BITWAVE_ENV === 'development'
           ? 'makeshift freedom of expression'
-          : 'viewer discretion is advised';
+          : 'viewer discretion is advised',
       }
     }
   };
