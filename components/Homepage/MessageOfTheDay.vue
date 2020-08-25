@@ -1,4 +1,4 @@
-<template functional>
+<template>
   <v-row class="justify-center">
     <div class="d-flex align-center">
       <div class="title text-center mx-3 d-flex flex-column">
@@ -15,13 +15,15 @@
 <script>
   export default {
     name: 'MessageOfTheDay',
+
     serverCacheKey: () => 'MOTD',
+
     data () {
       return {
         bottomText: process.env.BITWAVE_ENV === 'development'
           ? 'makeshift freedom of expression'
           : 'viewer discretion is advised',
       }
-    }
+    },
   };
 </script>
