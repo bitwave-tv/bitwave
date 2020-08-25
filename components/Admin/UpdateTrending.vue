@@ -9,14 +9,13 @@
         :loading="updating"
         @click="updateTrending"
       >
-        Update
+        Update Replays
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-  import { auth } from '@/plugins/firebase';
   import { mapGetters } from 'vuex';
   import { VStore } from '@/store';
 

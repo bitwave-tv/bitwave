@@ -8,14 +8,14 @@
         cols="12"
         md="6"
       >
-        <stream-manager />
+        <update-trending />
       </v-col>
 
       <v-col
         cols="12"
         md="6"
       >
-        <reports />
+        <add-emote />
       </v-col>
 
       <v-col
@@ -28,7 +28,14 @@
         cols="12"
         md="6"
       >
-        <update-trending />
+        <stream-manager />
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <reports />
       </v-col>
 
     </v-row>

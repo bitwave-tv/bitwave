@@ -7,7 +7,7 @@
       :loading="processing || loading"
       :search="search"
       loading-text="Loading... Please wait"
-      no-data-text="No archives found"
+      no-data-text="No replays found"
       dense
     >
 
@@ -28,7 +28,7 @@
             <div class="title">Stream Archive Manager</div>
             <img
               src="https://img.shields.io/badge/replays-%5Bbitwave.tv%5D-blue?style=for-the-badge"
-              alt="Stream Archive Manager"
+              alt="(old) Stream Replays"
             >
           </div>
           <v-spacer/>
@@ -86,7 +86,7 @@
   import { VStore } from '@/store';
 
   export default {
-    name: 'ArchiveManager',
+    name: 'ReplayManager',
 
     data () {
       return {
