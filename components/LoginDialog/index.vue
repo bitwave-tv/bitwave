@@ -118,6 +118,7 @@
         >
           <v-hcaptcha
             tabindex="5"
+            :key="attempts"
             @verify="onCaptchaVerify"
             @expired=""
             @error="onCaptchaError"
@@ -232,6 +233,7 @@
         usernameSuccess: '',
 
         captchaToken: null,
+        attempts: 0,
 
         rules: {
           adultCheck: val => val || 'You must be 18 to use this site!',
@@ -310,12 +312,16 @@
             this.showSuccess( result.message + '\nSigning in to new account...' );
           } else {
             this.showError( result.message );
+            this.captchaToken = null;
+            this.attempts += 1;
             this.loading = false;
             return false;
           }
         } catch ( error ) {
           console.error( error );
           this.showError( error.message );
+          this.captchaToken = null;
+          this.attempts += 1;
           this.loading = false;
           return false;
         }
