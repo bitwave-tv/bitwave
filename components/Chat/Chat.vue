@@ -80,6 +80,12 @@
       v-model="showIgnoreList"
     />
 
+    <!-- Fireworks overlay -->
+    <fireworks
+      :absolute="true"
+      ref="fireworks"
+    />
+
   </div>
 </template>
 
@@ -524,6 +530,15 @@
         let needsScroll = false;
 
         messages.forEach( m => {
+          // fireworks event
+          if ( m.type === 'fireworks') {
+            if ( !this.$utils.normalizedCompare( m.channel, this.page ) ) return;
+
+            console.log( `Fireworks: ${m.topText}, ${m.bottomText}` );
+            this.showChatFireworks( m.topText, m.bottomText );
+            return;
+          }
+
           // Filter messages
           if ( this.filterMessage( m ) ) return;
 
@@ -754,6 +769,11 @@
         if ( this.getTtsTimeout > 0 ) {
           this.ttsTimeout = setTimeout( () => speechSynthesis.cancel(), this.getTtsTimeout * 1000 );
         }
+      },
+
+      showChatFireworks ( text, bottomText ) {
+        this.$refs[ 'fireworks' ]
+          .start( text, bottomText );
       },
 
       ...mapMutations ({

@@ -57,8 +57,8 @@ class Fireworks {
     this.PARTICLE_BRIGHTNESS_MIN = 50;
     // Maximum particle brightness.
     this.PARTICLE_BRIGHTNESS_MAX = 80;
-    // Base particle count per firework.
-    this.PARTICLE_COUNT = 100;
+    // Base particle count per firework. (def: 100)
+    this.PARTICLE_COUNT = 35;
     // Minimum particle decay rate.
     this.PARTICLE_DECAY_MIN = 0.015;
     // Maximum particle decay rate.
@@ -96,8 +96,13 @@ class Fireworks {
     this.canvas = getCanvas( canvas );
 
     // TODO: don't override the canvas size
-    this.canvas.width  = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    // this.canvas.width  = window.innerWidth;
+    // this.canvas.height = window.innerHeight;
+
+    console.log( `canvas:`,  this.canvas );
+
+    this.canvas.width  = this.canvas.offsetWidth;
+    this.canvas.height = this.canvas.offsetHeight;
 
     // Set the context, 2d in this case.
     this.context = this.canvas.getContext( '2d' );

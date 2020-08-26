@@ -68,7 +68,7 @@
         const endpoint = 'https://api.bitwave.tv/v1/emotes';
 
         try {
-          await this.$axios.post( endpoint, { key: this.key, url: this.url } );
+          await this.$axios.post( endpoint, { key: this.key, url: this.url, user: '' } );
           this.key = this.url = '';
           this.showAlert( `success`, `Emote Added` );
         } catch ( error ) {
