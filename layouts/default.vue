@@ -85,7 +85,10 @@
     </v-content>
 
     <!-- Fireworks overlay -->
-    <fireworks ref="fireworks" />
+    <fireworks
+      :fixed="true"
+      ref="fireworks"
+    />
 
   </v-app>
 </template>

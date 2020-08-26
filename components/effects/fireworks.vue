@@ -1,12 +1,17 @@
 <template>
     <div
-      id="fireworks"
+      ref="fireworks"
+      class="fireworks"
       :class="{
         darken: darken,
       }"
+      :style="{
+        position: position,
+      }"
     >
       <canvas
-        id="canvas"
+        ref="canvas"
+        class="canvas"
         :class="{
           show: showCanvas
         }"
@@ -33,6 +38,11 @@
   export default {
     name: 'fireworks',
 
+    props: {
+      absolute : { type: Boolean, default: false, },
+      fixed    : { type: Boolean, default: false, },
+    },
+
     data() {
       return {
         darken: false,
@@ -51,7 +61,7 @@
         this.message = msg || 'dlive is the future';
         this.subtext = subtxt || '[bitwave.tv]';
 
-        fireworks = new Fireworks();
+        fireworks = new Fireworks( this.$refs[ 'canvas' ] );
 
         console.log( 'Starting Fireworks', fireworks );
 
@@ -88,16 +98,25 @@
         this.showCanvas = false;
       },
     },
+
+    computed: {
+      position () {
+        if ( this.absolute ) return 'absolute';
+        if ( this.fixed ) return 'fixed';
+        else return 'relative';
+      },
+    },
+
   };
 </script>
 
 <style lang='scss'>
-  #fireworks {
+  .fireworks {
     pointer-events: none;
 
     z-index: 100;
 
-    position: fixed;;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -123,7 +142,7 @@
     }
 
     .hero {
-      position: fixed;
+      position: absolute;
       top: 25%;
       color: white;
       text-align: center;
