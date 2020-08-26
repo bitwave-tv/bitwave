@@ -19,7 +19,7 @@
         Your browser does not support the 'canvas' element. :(
       </canvas>
       <div
-        class="hero"
+        class="overlay-hero"
         :class="{
           show: showHero
         }"
@@ -141,7 +141,7 @@
       }
     }
 
-    .hero {
+    .overlay-hero {
       position: absolute;
       top: 25%;
       color: white;
