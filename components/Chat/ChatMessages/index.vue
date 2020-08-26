@@ -53,7 +53,7 @@
               :amount="msg.amount"
               :color="msg.color"
               :username="msg.username"
-              :message="msg.meessage"
+              :message="msg.message"
             />
           </template>
 

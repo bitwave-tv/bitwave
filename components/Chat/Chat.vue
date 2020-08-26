@@ -602,11 +602,13 @@
 
       addAlert ( data ) {
         const m = {
-          _id: data._id,
           type: 'alert',
-          message: data.message,
+          _id: data._id,
+          amount: data.amount || 0,
           color: data.color || 'primary',
+          message: data.message || '',
           channel: data.channel,
+          username: data.username || 'TROLL',
         };
 
         console.log( `New alert:`, m );
