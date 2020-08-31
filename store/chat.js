@@ -143,6 +143,8 @@ const $actions = {
   logout : 'LOGOUT',
 
   loadSettings : 'LOAD_SETTINGS',
+
+  sendWhisper : 'SEND_WHISPER',
 };
 
 
@@ -665,6 +667,37 @@ export const actions = {
     commit( Chat.$mutations.setIgnoreChannelList, oldIgnoreChannelList.map( i => i.toLowerCase() ) );
 
     loadFromLocalStorage( commit, settings );
+  },
+
+  async [$actions.sendWhisper] ( { state }, { receiver, message } ) {
+
+    const endpoint = 'https://api.bitwave.tv/v1/whispers/send';
+    const payload = {
+      chatToken: state[$states.chatToken],
+      receiver: receiver,
+      message: message,
+    };
+
+    try {
+      const { data } = await this.$axios.post( endpoint, payload, { progress: false, skipAuth: true } );
+      if ( !data ) {
+        console.error( `whisper: No response from server` );
+      }
+      else if ( data.success ) {
+        console.log( `Whisper Success` );
+      }
+      else if ( !data.success && data.message ) {
+        console.error( `Whisper Error: ${data.message}` );
+      }
+      else {
+        console.error( `Whisper Unknown Error` );
+      }
+      return data;
+    } catch ( error ) {
+      console.error( `Failed to send whisper`, error.message );
+      return null;
+    }
+
   },
 };
 

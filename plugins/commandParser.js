@@ -5,7 +5,7 @@ import { VStore } from "@/store";
 /**
  * Creates the functions that run for the chat commands
  * */
-const createFunctions = ( _store, _store_state, _store_commit, _ga, _sentry ) => ({
+const createFunctions = ( _store, _store_state, _store_commit, _store_action, _ga, _sentry ) => ({
 
   // --- LOCAL vs GLOBAL --- //
   /**
@@ -378,8 +378,25 @@ const createFunctions = ( _store, _store_state, _store_commit, _ga, _sentry ) =>
   /**
    * Something that has taken way too long to fix
    * */
-  whisper ( who, ...what ) {
-    return [];
+  async whisper ( who, ...what ) {
+    try {
+      const result = await _store_action( Chat.$actions.sendWhisper, { receiver: who, message: what.join( ' ' ) } );
+      console.log( `Whisper result:`, result );
+      if ( result && result.success ) {
+        return [
+          { insertMessage: `Sent Whisper to ${who}: ${result.success} - ${result.message}` },
+        ];
+      } else {
+        return [
+          { insertMessage: `🛑 Whisper Failed: ${result.message} 🛑` },
+        ];
+      }
+    } catch ( error ) {
+      console.error( error.message );
+      return [
+        { insertMessage: `Whisper Failed: ${result.message}` },
+      ];
+    }
   },
 
   // Dialogs
@@ -518,10 +535,11 @@ const createParser = parserFns => ({
 export default async ( { $ga, store, $sentry }, inject ) => {
   // Create shortcuts to parts of our store
   const _state  = await store.state[ Chat.namespace ];
-  const _commit = async ( what, ...args ) => await store.commit ( `${Chat.namespace}/${what}`, ...args );
+  const _commit = async ( what, ...args ) => await store.commit   ( `${Chat.namespace}/${what}`, ...args );
+  const _action = async ( what, ...args ) => await store.dispatch ( `${Chat.namespace}/${what}`, ...args );
 
   // Generate parser functions from context, then create parser object
-  const parserFunctions = createFunctions ( store, _state, _commit, $ga, $sentry );
+  const parserFunctions = createFunctions ( store, _state, _commit, _action, $ga, $sentry );
   const chatParser = createParser ( parserFunctions );
 
   // Inject parser into context
