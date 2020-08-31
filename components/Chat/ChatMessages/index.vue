@@ -7,14 +7,6 @@
       id="chat-scroll"
       ref="scroller"
     >
-      <!-- fade-transition -->
-      <!-- This appears to be the primary source of chat lag sadly -->
-      <!--<transition-group
-        name="fade-transition"
-        :duration="150"
-        tag="div"
-        :class="{ dense: highDensity }"
-      >-->
       <!-- It is much quicker to simply directly render into chat and re-use by index -->
       <div
         :class="{ dense: highDensity }"
@@ -98,7 +90,6 @@
 
         </div>
       </div>
-      <!--</transition-group>-->
     </div>
 
     <!-- FAB for Scroll Down -->
