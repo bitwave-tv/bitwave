@@ -205,7 +205,7 @@
               // Then check if the @'d user is in the ignore list
               // if they are, return null early.
               for( const i of this.ignoreList )
-                if( new RegExp(`@${i}(\\s|\\s?$)`, 'gi').test( m.message ) ) return null;
+                if( new RegExp(`@${i}(\\s|\\b|$)`, 'gi').test( m.message ) ) return null;
             }
             return m;
           }
