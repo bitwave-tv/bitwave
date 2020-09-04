@@ -25,7 +25,7 @@
       </v-chip>
 
       <!-- Stream Title -->
-      <h3 class="mx-2 flex-grow-1 subtitle-1 font-weight-medium text-truncate">
+      <h3 class="mx-2 flex-grow-1 subtitle-1 font-weight-medium text-truncate" :title="title">
         {{ title }}
       </h3>
 
