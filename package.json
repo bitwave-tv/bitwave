@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@bitwave/chat-client": "^0.3.8",
-    "@hcaptcha/vue-hcaptcha": "^0.2.2",
+    "@hcaptcha/vue-hcaptcha": "github:bitwave-tv/vue-hcaptcha#dfca6ed64ccb24144965b0dc8ee1446fdecab759",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/component-cache": "^1.1.6",
     "@nuxtjs/device": "^1.2.7",
@@ -43,7 +43,7 @@
     "jwt-decode": "^2.2.0",
     "marked": "^0.7.0",
     "moment": "^2.27.0",
-    "nuxt": "^2.14.3",
+    "nuxt": "^2.14.4",
     "nuxt-stripe-module": "^2.1.0",
     "sass-loader": "^10.0.2",
     "socket.io-client": "^2.3.0",
