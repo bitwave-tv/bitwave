@@ -24,4 +24,4 @@ In compliance with these guidelines, we may offer a bug bounty for bugs and expl
 
 Bug bounties are awarded as a courtesy, and makes no guarentee or promise of reward. We will communicate via email all relevant information, and welcome inquiry messages asking about our policies.
 
-Please do not attempt to make demands from us in relation to a bug bounty, as this will be result in an immediate disqualification.
+Please do not attempt to make demands from us in relation to a bug bounty, as this will result in an immediate disqualification.
