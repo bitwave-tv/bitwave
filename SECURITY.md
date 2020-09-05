@@ -19,6 +19,7 @@ We respectfully request you respect the following guidelines:
 - Notify us as soon as possible after you discover a real or potential security issue.
 - Make every effort to avoid privacy violations, degradation of user experience, disruption to production systems, and destruction or manipulation of data.
 - Please allow us a reasonable amount of time (30 days) to evaluate and resolve the issue before you disclose it publicly.
+- If a vulnerability is resolved sooner than the requested allotment of time, we will update you letting you know, and may revise our requested disclosure date.
 
 In compliance with these guidelines, we may offer a bug bounty for bugs and exploits that have high potential for abuse, or otherwise greatly compromises our service or user base.
 
