@@ -181,6 +181,9 @@
               return m;
           },
           m => {
+            if ( m.type === 'whisper' ) {
+              return m;
+            }
             const isLocal = !this.global && !this.forceGlobal;
             if( isLocal ) {
               // Include mentions
