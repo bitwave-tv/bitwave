@@ -384,7 +384,7 @@ const createFunctions = ( _store, _store_state, _store_commit, _store_action, _g
       console.log( `Whisper result:`, result );
       if ( result && result.success ) {
         return [
-          { insertMessage: `Sent Whisper to ${who}: ${result.success} - ${result.message}` },
+          // { insertMessage: `Sent Whisper to ${who}: ${result.success} - ${result.message}` },
         ];
       } else {
         return [
