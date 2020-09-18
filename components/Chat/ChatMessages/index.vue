@@ -69,6 +69,7 @@
               :color="msg.color"
               :global="getGlobalTag( msg.global )"
               :show-channel="true"
+              :label-color="$utils.normalizedCompare( channel, msg.channel ) && global ? 'blue darken-2 white--text' : null"
               @reply="addUserTag"
               @whisper="addWhisper"
               @select="onMessageClick( msg )"
@@ -154,12 +155,21 @@
     },
 
     props: {
-      messages: { type: Array },
-      global: { type: Boolean },
-      showTimestamps: { type: Boolean },
+      messages: {
+        type: Array
+      },
+      global: {
+        type: Boolean
+      },
+      showTimestamps: {
+        type: Boolean
+      },
       showAvatars: {
         type: Boolean,
         default: true,
+      },
+      channel: {
+        type: String,
       },
       isChannelOwner: {
         type: Boolean,

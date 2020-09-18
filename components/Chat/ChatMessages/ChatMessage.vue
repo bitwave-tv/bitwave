@@ -67,6 +67,7 @@
           @click.prevent="listeners.goto( props.routePrefix + props.channel )"
         >
           <kbd
+            :class="props.labelColor"
             v-text="props.channel"
             :title="props.channel"
           ></kbd>
@@ -123,7 +124,11 @@
       global: {
         type: Boolean | undefined,
         required: false,
-      }
+      },
+      labelColor: {
+        type: String,
+        required: false,
+      },
     },
   }
 </script>

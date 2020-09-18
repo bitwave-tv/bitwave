@@ -61,6 +61,7 @@
       :messages="messages"
       :show-timestamps="showTimestamps"
       :global="global"
+      :channel="page"
       :is-channel-owner="isChannelOwner"
       @reply="addUserTag"
       @whisper="addWhisper"
