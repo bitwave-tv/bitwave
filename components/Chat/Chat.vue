@@ -300,6 +300,22 @@
         bitwaveChat.socketReconnect = () => { this.connecting = false; this.loading = false; };
         bitwaveChat.socketError = () => { this.connecting = false; this.loading = true; };
 
+        bitwaveChat.blocked = ( data ) => {
+          console.log( `Socket Blocked: `, data );
+
+          const msLeft = data?.errData?.msBeforeNext || 1000;
+
+          this.setInputRateLimit( true );
+          this.setInputRateLimitMs( msLeft );
+
+          setTimeout( () => {
+            this.setInputRateLimit( false );
+            this.setInputRateLimitMs( 0 );
+          }, msLeft );
+
+          this.appendChatMessage( data.message );
+        }
+
         bitwaveChat.global = this.global;
 
         await bitwaveChat.init( this.page, this.userToken, this.chatServer );
@@ -801,6 +817,8 @@
         setIgnoreChannelList     : Chat.$mutations.setIgnoreChannelList,
         addIgnoreChannelList     : Chat.$mutations.addIgnoreChannelList,
         removeIgnoreChannelList  : Chat.$mutations.removeIgnoreChannelList,
+        setInputRateLimit        : Chat.$mutations.setInputRateLimit,
+        setInputRateLimitMs      : Chat.$mutations.setInputRateLimitMs,
       }),
 
       ...mapActions ({
@@ -865,6 +883,7 @@
         displayName       : Chat.$states.displayName,
 
         chatBadge         : Chat.$states.showBadge,
+        inputRateLimit    : Chat.$states.inputRateLimit,
       }),
 
       username () {
@@ -965,6 +984,20 @@
     },
 
     async mounted () {
+      // Reset UI
+      this.setInputRateLimit( false );
+      this.setInputRateLimitMs( 0 );
+
+      /*setInterval( () => {
+        const timeLeft = this.inputRateLimitMs - 1000;
+        if ( timeLeft > 1000 ) {
+          this.setInputRateLimitMs( timeLeft );
+        } else {
+          this.setInputRateLimit( false );
+          this.setInputRateLimitMs( 0 );
+        }
+      }, 1000 );*/
+
       // Load settings from localstorage
       await this.loadSettings();
 

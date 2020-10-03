@@ -60,6 +60,9 @@ const $states = {
   pinnedMessage : 'PINNED_MESSAGE',
 
   showBadge : 'SHOW_BADGE',
+
+  inputRateLimit   : 'INPUT_RATE_LIMIT',
+  inputRateLimitMs : 'INPUT_RATE_LIMIT_MS',
 };
 
 const $getters = {
@@ -129,6 +132,9 @@ const $mutations = {
   setPinnedMessage : 'SET_PINNED_MESSAGE',
 
   setShowBadge : 'SET_SHOW_BADGE',
+
+  setInputRateLimit   : 'SET_INPUT_RATE_LIMIT',
+  setInputRateLimitMs : 'SET_INPUT_RATE_LIMIT_MS',
 };
 
 const $actions = {
@@ -194,6 +200,8 @@ export const state = () => ({
   [$states.pinnedMessage] : null,
 
   [$states.showBadge] : true,
+  [$states.inputRateLimit] : false,
+  [$states.inputRateLimitMs] : 0,
 });
 
 
@@ -483,6 +491,16 @@ export const mutations = {
   [$mutations.setShowBadge] ( state, data ) {
     state[$states.showBadge] = JSON.parse( data );
     saveToLocalStorage( { [$states.showBadge]: data } );
+  },
+
+  // Whether or not to show input as rate limited
+  [$mutations.setInputRateLimit] ( state, data ) {
+    state[$states.inputRateLimit] = data;
+  },
+
+  // Remaining rate limit ms
+  [$mutations.setInputRateLimitMs] ( state, data ) {
+    state[$states.inputRateLimitMs] = data;
   },
 };
 

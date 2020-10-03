@@ -28,6 +28,7 @@
       validate-on-blur
       outlined
       clearable
+      :error-messages="setInputRateLimit ? `${(setInputRateLimitMs / 1000).toFixed(0)}s before you can send a chat` : ''"
 
       @change="value => this.setChatMessage( value )"
 
@@ -446,11 +447,13 @@
       }),
 
       ...mapState( Chat.namespace, {
-        global             : Chat.$states.global,
-        getMessage         : Chat.$states.message,
-        enableAutocomplete : Chat.$states.autocomplete,
-        getMessageBuffer   : Chat.$states.messageBuffer,
-        emoteMap           : Chat.$states.emoteMap,
+        global              : Chat.$states.global,
+        getMessage          : Chat.$states.message,
+        enableAutocomplete  : Chat.$states.autocomplete,
+        getMessageBuffer    : Chat.$states.messageBuffer,
+        emoteMap            : Chat.$states.emoteMap,
+        setInputRateLimit   : Chat.$states.inputRateLimit,
+        setInputRateLimitMs : Chat.$states.inputRateLimitMs,
       }),
 
       userlist () {

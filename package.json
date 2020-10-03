@@ -1,6 +1,6 @@
 {
   "name": "bitwave.tv",
-  "version": "1.24.13",
+  "version": "1.24.14",
   "description": "An open platform live streaming service for creators to freely express themselves.",
   "author": "Dispatch",
   "scripts": {
@@ -19,7 +19,7 @@
     "rollout:status": "kubectl rollout status deployment/bitwave-app -n bitwave-node"
   },
   "dependencies": {
-    "@bitwave/chat-client": "^0.3.8",
+    "@bitwave/chat-client": "^0.3.10",
     "@hcaptcha/vue-hcaptcha": "github:bitwave-tv/vue-hcaptcha#dfca6ed64ccb24144965b0dc8ee1446fdecab759",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/component-cache": "^1.1.6",
