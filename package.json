@@ -50,7 +50,7 @@
     "video.js": "^7.9.6",
     "videojs-contrib-dash": "^2.11.0",
     "videojs-contrib-quality-levels": "^2.0.9",
-    "videojs-hls-quality-selector": "^1.1.1",
+    "videojs-hls-quality-selector": "^1.1.4",
     "vue-awesome-countdown": "^1.1.2",
     "vue-chartjs": "^3.5.1",
     "vue-clipboard2": "^0.3.1"
