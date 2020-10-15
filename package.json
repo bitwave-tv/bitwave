@@ -42,7 +42,7 @@
     "firebase": "^7.22.1",
     "jwt-decode": "^2.2.0",
     "marked": "^0.7.0",
-    "moment": "^2.29.0",
+    "moment": "^2.29.1",
     "nuxt": "^2.14.6",
     "nuxt-stripe-module": "^2.1.0",
     "sass-loader": "^10.0.2",
