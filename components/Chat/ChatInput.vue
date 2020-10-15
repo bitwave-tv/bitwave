@@ -287,16 +287,8 @@
           ||  this.getMessage?.length === 0
         ) return;
 
-
-        // Why would we call this again?
-        if ( this.autocomplete ) {
-          // TODO: Is it safe to delete this?
-          console.log( 'Is this important?' );
-          // this.onTab();
-        }
-
         // Test for blank messages
-        if (  /^[\s(\\n)]+$/.test( this.getMessage ) ) return;
+        if (  /^(\s|\\n)+$/.test( this.getMessage ) ) return;
 
         // SEND IT
         this.$emit( 'send' );
