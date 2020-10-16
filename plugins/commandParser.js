@@ -276,6 +276,30 @@ const createFunctions = ( _store, _store_state, _store_commit, _store_action, _g
   },
 
   /**
+   * DEV HELPER- GET CHAT TOKEN
+   * */
+  async getChatToken () {
+    console.log( _store.state );
+    const token = _store_state[ Chat.$states.chatToken ];
+    if ( token ) {
+      try {
+        await navigator.clipboard.writeText( token );
+        return [
+          { insertMessage: `Token copied to clipboard!` },
+        ];
+      } catch ( error ) {
+        return [
+          { insertMessage: `Failed to copy token: ${error.message}` },
+        ];
+      }
+    } else {
+      return [
+        { insertMessage: `No token! you broke it... way to go.` },
+      ];
+    }
+  },
+
+  /**
    * Creates sentry bug report
    * */
   async bugReport () {
@@ -484,6 +508,7 @@ const createParser = parserFns => ({
     [ "bugreport",       parserFns.bugReport ],
     [ "graph",           parserFns.graph ],
     [ "token",           parserFns.getAuthToken ],
+    [ "chattoken",       parserFns.getChatToken ],
 
 
     // TODO: fix whispers :trout:

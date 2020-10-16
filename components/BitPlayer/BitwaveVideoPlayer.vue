@@ -54,6 +54,8 @@
   import 'videojs-hls-quality-selector';
   import '@/assets/js/VideoPlayer/TriSpinner';
 
+  import 'videojs-youtube';
+
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 
   import { Player } from '@/store/player';
@@ -216,7 +218,7 @@
               this.player.playbackRate( 1 );
               return;
             }
-            
+
             // This is currently an opt-in feature
             if ( !this.pinToLive ) return;
 
@@ -353,6 +355,9 @@
         }
         console.log( `Reloading player with source: ${this.url} / ${this.type}` );
         this.player.poster = this.poster;
+        
+        this.player.poster = ( () => this.poster );
+
         this.player.src( { src: this.url, type: this.type } );
       },
 
@@ -402,6 +407,12 @@
 
         // Update for next loop
         this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
+      },
+
+      belle () {
+        this.url = 'https://www.youtube.com/watch?v=TL470fJMi7w';
+        this.type = 'video/youtube';
+        this.reloadPlayer();
       },
 
       ...mapMutations( Player.namespace, {
