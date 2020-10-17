@@ -355,7 +355,7 @@
         }
         console.log( `Reloading player with source: ${this.url} / ${this.type}` );
         this.player.poster = this.poster;
-        
+
         this.player.poster = ( () => this.poster );
 
         this.player.src( { src: this.url, type: this.type } );
