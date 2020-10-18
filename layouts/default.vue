@@ -205,7 +205,7 @@
         console.warn( `Failed to read 'hide-system-alert from localStorage'`, error.message );
       }
 
-      const workbox = await $workbox;
+      const workbox = await window.$workbox;
       if ( workbox ) {
         workbox.addEventListener( 'waiting', async (event) => {
           console.log( event );

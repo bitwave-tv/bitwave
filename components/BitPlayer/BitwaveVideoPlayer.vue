@@ -145,6 +145,7 @@
           player: this.player,
           getVideoLogs: this.player.log.history,
           hls: null,
+          vhs: null,
         };
 
         // --- Video.js plugin functions
@@ -317,7 +318,7 @@
 
         // Begin playing when new media is loaded
         this.player.on( 'loadeddata', () => {
-          if ( !window.$bw.hls && this.live ) window.$bw.hls = this.player.tech({ IWillNotUseThisInPlugins: true }).hls;
+          if ( !window.$bw.vhs && this.live ) window.$bw.vhs = this.player.tech({ IWillNotUseThisInPlugins: true }).vhs;
         });
 
         this.player.on( 'ended', async () => {
@@ -367,14 +368,14 @@
         if ( !this.live ) return;
 
         // Ensure we have access to HLS tech & stats
-        if ( !$bw || !$bw.hls || !$bw.hls.stats ) return;
+        if ( !$bw || !$bw.vhs || !$bw.vhs.stats ) return;
 
         if ( !this.lastVPQ ) {
-          this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
+          this.lastVPQ = { ...$bw.vhs.stats.videoPlaybackQuality };
           return;
         }
 
-        const playbackQuality = { ...$bw.hls.stats.videoPlaybackQuality };
+        const playbackQuality = { ...$bw.vhs.stats.videoPlaybackQuality };
 
         // Ensure we have enough data to prevent false positives
         if ( !playbackQuality.totalVideoFrames > 600 ) return;
@@ -406,7 +407,7 @@
           this.$analytics.logEvent( 'dropped_frames', { value: percentDroppedFrames } );
 
         // Update for next loop
-        this.lastVPQ = { ...$bw.hls.stats.videoPlaybackQuality };
+        this.lastVPQ = { ...$bw.vhs.stats.videoPlaybackQuality };
       },
 
       belle () {

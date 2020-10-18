@@ -147,6 +147,7 @@
         window.$bw = {
           getVideoLogs: this.player.log.history,
           hls: this.player.tech({ IWillNotUseThisInPlugins: true }).vhs,
+          vhs: this.player.tech({ IWillNotUseThisInPlugins: true }).vhs,
           player: this.player,
         };
 

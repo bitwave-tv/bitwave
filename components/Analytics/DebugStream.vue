@@ -458,21 +458,21 @@
         this.data = this.data.splice( -this.maxHistory );
         // this.data[ 0 ].currentKbps = 0;
 
-        this.hlsStats.push( JSON.parse(JSON.stringify($bw.hls.stats)) );
+        this.hlsStats.push( JSON.parse(JSON.stringify($bw.vhs.stats)) );
         this.hlsStats = this.hlsStats.splice( -this.maxHistory );
 
-        minBandwidth = minBandwidth === null ? $bw.hls.stats.bandwidth : Math.min($bw.hls.stats.bandwidth, minBandwidth);
+        minBandwidth = minBandwidth === null ? $bw.vhs.stats.bandwidth : Math.min($bw.vhs.stats.bandwidth, minBandwidth);
 
         this.points.push( data.targetSize / data.frames );
         this.points = this.points.splice(-60);
 
-        this.points2.push( $bw.hls.stats.bandwidth );
+        this.points2.push( $bw.vhs.stats.bandwidth );
         this.points2 = this.points2.splice(-60);
 
-        this.points3.push( $bw.hls.stats.videoPlaybackQuality.droppedVideoFrames / $bw.hls.stats.videoPlaybackQuality.totalVideoFrames * 100 );
+        this.points3.push( $bw.vhs.stats.videoPlaybackQuality.droppedVideoFrames / $bw.vhs.stats.videoPlaybackQuality.totalVideoFrames * 100 );
         this.points3 = this.points3.splice(-60);
 
-        this.points4.push( $bw.hls.stats.bandwidth );
+        this.points4.push( $bw.vhs.stats.bandwidth );
         this.points4 = this.points4.splice(-60);
 
       },

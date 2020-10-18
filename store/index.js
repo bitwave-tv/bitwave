@@ -528,7 +528,7 @@ export const actions = {
     }
     const throttled = throttledUpdateViewers();
     // logger( `Throttled $actions.updateViewers`, throttled );
-    console.log( `Throttled $actions.updateViewers`, throttled );
+    console.debug( `Throttled $actions.updateViewers`, throttled );
   },
 
   async [$actions.loadSettings] ( { commit } ) {
