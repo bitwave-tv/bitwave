@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@bitwave/chat-client": "^0.3.10",
-    "@hcaptcha/vue-hcaptcha": "github:bitwave-tv/vue-hcaptcha#dfca6ed64ccb24144965b0dc8ee1446fdecab759",
+    "@hcaptcha/vue-hcaptcha": "^0.2.3",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/component-cache": "^1.1.6",
     "@nuxtjs/device": "^1.2.7",
