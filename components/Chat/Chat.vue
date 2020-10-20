@@ -151,7 +151,7 @@
 
         loading: true,
         connecting: true,
-        chatLimit: 50,
+        chatLimit: 150,
         userToken: null,
 
         // [ Message -> Maybe Message ]
