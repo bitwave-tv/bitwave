@@ -9,7 +9,7 @@
       <v-text-field
         v-model="key"
         solo-inverted
-        label=":emote:"
+        label="emotename"
       />
       <v-text-field
         v-model="url"
