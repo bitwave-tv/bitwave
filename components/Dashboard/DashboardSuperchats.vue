@@ -65,7 +65,7 @@
               <v-spacer />
               <div class="overline grey--text">{{ getTimeAgo( alert.timestamp._seconds * 1000 ) }}</div>
             </div>
-            <div class="white--text">
+            <div class="white--text" style="word-break: break-word;">
               {{ alert.message }}
             </div>
           </v-alert>
