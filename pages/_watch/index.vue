@@ -47,6 +47,7 @@
             :live="live"
             :autoplay="live || !disableBumps"
             :docked="smartDetach"
+            clickOverlay
             @ended="onEnded"
             @stats="trackWatchTime"
           >

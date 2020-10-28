@@ -4,16 +4,24 @@
       'detach-player': docked,
       'elevation-6': docked,
     }">
-      <video
-        id="streamplayer"
-        class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
-        controls
-        playsinline
-        :autoplay="autoplay"
-        preload="auto"
-        :poster="posterCacheBusted"
-        :style="{ width: '100%' }"
-      ></video>
+      <div>
+        <ClickOverlay
+          v-if="clickOverlay"
+          :style="{zIndex: 1010,}"
+        />
+        <div :style="{ zIndex: 1000, }">
+          <video
+            id="streamplayer"
+            class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
+            controls
+            playsinline
+            :autoplay="autoplay"
+            preload="auto"
+            :poster="posterCacheBusted"
+            :style="{ width: '100%' }"
+          />
+        </div>
+      </div>
 
       <!-- Detached player topbar overlay -->
       <slot name="minioverlay">
@@ -59,6 +67,7 @@
   import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 
   import { Player } from '@/store/player';
+  import ClickOverlay from "@/components/BitPlayer/ClickOverlay";
 
   export default {
     name: 'bitwave-video-player',
@@ -67,9 +76,11 @@
       live: { type: Boolean },
       autoplay: { type: Boolean },
       docked: { type: Boolean },
+      clickOverlay: { type: Boolean },
     },
 
     components: {
+      ClickOverlay
 
     },
 
@@ -425,6 +436,11 @@
         loadPlayerSettings: Player.$actions.loadSettings,
       }),
 
+      clickOverlayHandle( e ) {
+        console.log( e );
+        //e.preventDefault();
+        //return e;
+      }
     },
 
     computed: {
