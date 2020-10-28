@@ -57,8 +57,8 @@
     },
     methods: {
       clickOverlayHandle( e ) {
-        const x = Math.round( e.layerX * 1920 / this.$refs.clickOverlay.offsetWidth  ),
-              y = Math.round( e.layerY * 1080 / this.$refs.clickOverlay.offsetHeight );
+        const x = e.layerX * 1 / this.$refs.clickOverlay.offsetWidth,
+              y = e.layerY * 1 / this.$refs.clickOverlay.offsetHeight;
         const d = this.temp.find( e => e.x === x && e.y === y );
         if( d ) d.value++;
         else this.temp.push({x:x,y:y,value:1});
