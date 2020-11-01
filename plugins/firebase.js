@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import jwt_decode from 'jwt-decode';
 
 import 'firebase/auth'
