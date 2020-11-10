@@ -181,7 +181,7 @@ export const state = () => ({
   [$states.statTickRate]      : 3,
   [$states.statHistogramSize] : 25,
 
-  [$states.receiveMentionsInLocal] : true,
+  [$states.receiveMentionsInLocal] : false,
 
   [$states.message]            : '',
   [$states.messageBufferLimit] : 10,
