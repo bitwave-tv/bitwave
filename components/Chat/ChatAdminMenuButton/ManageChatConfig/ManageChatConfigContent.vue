@@ -15,6 +15,18 @@
 
         <!-- Config Adjustments -->
         <div class="px-3 mt-2">
+          <!-- Allow Trolls in Chat -->
+          <v-switch
+            v-model="config.allowTrolls"
+            label="Allow Troll Chats"
+            color="primary"
+            hide-details
+            dense
+            inset
+            class="mt-2"
+            :disabled="saving"
+          />
+
           <!-- Allow Links in Chat -->
           <v-switch
             v-model="config.allowLinks"
@@ -141,6 +153,7 @@
         saving: true,
         shortRateTicks: [ 1, 2, 2.5, 5, 10 ],
         config: {
+          allowTrolls: true,
           allowLinks: true,
           blockSpam: false,
           rates: {
@@ -165,6 +178,7 @@
 
           if ( data.success ) {
             this.config = {
+              allowTrolls: data.config?.allowTrolls ?? true,
               allowLinks: data.config?.allowLinks,
               blockSpam: data.config?.blockSpam,
               rates: {
@@ -190,6 +204,7 @@
         const payload = {
           user: 'thisdoesnotmatter',
           config: {
+            allowTrolls: this.config.allowTrolls,
             allowLinks: this.config.allowLinks,
             blockSpam: this.config.blockSpam,
             shortRate: this.config.rates.short ?? 5,
