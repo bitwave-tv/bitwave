@@ -88,6 +88,13 @@
         <p>
           In some scenarios we may explicitly prevent or remove content or users as outlined below.
         </p>
+        <!-- Clarifies a specific case of fraudulent content from Section 4.1 -->
+        <p>
+          We do not allow impersonation of any person or entity,
+          false claims of an affiliation with any person or entity,
+          misrepresentions of the source, identity, or content of information transmitted via our services,
+          or any other similar fraudulent activity.
+        </p>
         <p>
           We do not allow usage of this site by convicted or registered sex offenders.
         </p>
