@@ -104,7 +104,6 @@
       <!-- Ignore ALL Trolls -->
       <v-switch
         v-model="ignoreTrolls"
-        :disabled="!useIgnore"
         label="Hide All Trolls"
         color="primary"
         hide-details
