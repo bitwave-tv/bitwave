@@ -43,6 +43,21 @@
           ></span>
         </div>
 
+        <!-- Streamer / Mod / VIP / Channel Badge -->
+        <div
+          v-if="props.username.toLowerCase() === props.channel.toLowerCase()"
+          class="pl-1 d-flex align-center text-no-wrap"
+          title="streamer"
+        >
+          <!-- Other decent icons... -->
+          <!-- signal_cellular_alt / settings_voice -->
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons scan-1-d--text"
+            style="font-size: 21px;"
+          >settings_voice</i>
+        </div>
+
         <!-- User Badge -->
         <div
           v-if="props.badge"

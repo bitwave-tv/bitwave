@@ -53,7 +53,9 @@ $c6: #113a5a;*/
 
 $rgbSpeed: 8s;
 
-.rgb-text {
+.rgb-text,
+.rgb--text
+{
   animation: rainbow $rgbSpeed linear infinite;
   background-image: repeating-linear-gradient(45deg, red, orange, yellow, #00ff11, blue, #00ff11, yellow, orange, red );
   background-size: 1000% 1000%;
@@ -67,4 +69,91 @@ $rgbSpeed: 8s;
   0%   { background-position: 0 50% }
   50%  { background-position: 100% 25% }
   100% { background-position: 0 50% }
+}
+
+
+$scanSpeed: 2s;
+
+.red-scan--text
+{
+  animation: scan $scanSpeed linear infinite;
+  background-image: repeating-linear-gradient(90deg, red, white, white, white, white, red, white, white, white, white, red );
+  background-size: 1000% 1000%;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+
+$scan1BgColor: #455A64;
+$scan1Ac1Color: #2196f3;
+$scan1Ac2Color: #42A5F5;
+$scan1Ac1Color: #FFEB3B;
+
+.scan-1-r--text
+{
+  animation: scanRight $scanSpeed linear infinite;
+  background-image: repeating-linear-gradient(90deg, $scan1Ac1Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac2Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac1Color );
+  background-size: 1000% 1000%;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+.scan-1-l--text
+{
+  animation: scanLeft $scanSpeed linear infinite;
+  background-image: repeating-linear-gradient(90deg, $scan1Ac1Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac2Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac1Color );
+  background-size: 1000% 1000%;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+.scan-1-u--text
+{
+  animation: scanUp $scanSpeed linear infinite;
+  background-image: repeating-linear-gradient(0deg, $scan1Ac1Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac2Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac1Color );
+  background-size: 1000% 1000%;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+.scan-1-d--text
+{
+  animation: scanDown $scanSpeed linear infinite;
+  background-image: repeating-linear-gradient(0deg, $scan1Ac1Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac2Color, $scan1BgColor, $scan1BgColor, $scan1BgColor, $scan1Ac1Color );
+  background-size: 1000% 1000%;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
+@keyframes scanRight {
+  0%   { background-position: 100% 0 }
+  50%  { background-position:  50% 0 }
+  100% { background-position:   0% 0 }
+}
+
+@keyframes scanLeft {
+  0%   { background-position:   0% 0 }
+  50%  { background-position:  50% 0 }
+  100% { background-position: 100% 0 }
+}
+
+@keyframes scanUp {
+  0%   { background-position: 0   0% }
+  50%  { background-position: 0  50% }
+  100% { background-position: 0 100% }
+}
+
+@keyframes scanDown {
+  0%   { background-position: 0 100% }
+  50%  { background-position: 0  50% }
+  100% { background-position: 0   0% }
 }
