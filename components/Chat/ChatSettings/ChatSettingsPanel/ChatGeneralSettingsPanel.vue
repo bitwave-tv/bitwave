@@ -76,18 +76,6 @@
         class="mt-3"
       />
 
-      <!-- Ignore ALL Trolls -->
-      <v-switch
-        v-model="ignoreTrolls"
-        :disabled="!useIgnore"
-        label="Hide Trolls"
-        color="primary"
-        hide-details
-        dense
-        inset
-        class="mt-3"
-      />
-
       <!-- Recursive Ignore -->
       <v-switch
         v-model="recursiveIgnore"
@@ -112,6 +100,18 @@
           </div>
         </template>
       </v-switch>
+
+      <!-- Ignore ALL Trolls -->
+      <v-switch
+        v-model="ignoreTrolls"
+        :disabled="!useIgnore"
+        label="Hide All Trolls"
+        color="primary"
+        hide-details
+        dense
+        inset
+        class="mt-3"
+      />
 
       <v-divider class="my-3" />
 

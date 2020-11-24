@@ -208,7 +208,7 @@
             <v-flex shrink>
               <v-switch
                 v-model="streamData.archive"
-                label="Archive"
+                label="Stream Replays"
                 color="primary"
                 hide-details
                 dense
