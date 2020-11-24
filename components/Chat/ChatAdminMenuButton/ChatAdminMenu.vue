@@ -20,7 +20,7 @@
           </v-btn>
         </v-sheet>
 
-        <div class="px-3 pt-3 pb-1">
+        <div class="px-3 py-1">
 
           <!-- View Muted Users -->
           <lazy-view-muted-users-dialog />

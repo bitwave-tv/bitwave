@@ -1,24 +1,24 @@
 <template>
     <div>
-      <div class="pa-3">
-        <!-- Current Settings -->
-        <div class="d-flex px-3 caption" v-if="false">
-          <div class="flex-grow-1">
-            <div>Allow Links: {{ config.allowLinks }}</div>
-            <div>Block Spam: {{ config.blockSpam }}</div>
-          </div>
-          <div class="flex-grow-1">
-            <div>Short Rate: {{ ( 1 / ( config.rates.short / 10 ) ).toFixed( 2 ) }} per 1 Second</div>
-            <div>Long Rate: {{ ( 1 / ( config.rates.long / 20 ) ).toFixed( 2 ) }} per 30 Seconds</div>
-          </div>
-        </div>
+
+      <!-- Skeleton Loader -->
+      <div v-if="loading">
+        <v-skeleton-loader
+          v-bind="attrs"
+          type="article, article, divider, actions"
+        ></v-skeleton-loader>
+      </div>
+
+      <!-- Controls -->
+      <div class="pa-3" v-else>
 
         <!-- Config Adjustments -->
         <div class="px-3 mt-2">
+
           <!-- Allow Trolls in Chat -->
           <v-switch
             v-model="config.allowTrolls"
-            label="Allow Troll Chats"
+            label="Allow Trolls to Chat"
             color="primary"
             hide-details
             dense
@@ -98,7 +98,7 @@
         </div>
 
         <div class="mb-4">
-          <v-subheader>Short Rate: {{ ( 1 / ( config.rates.short / 10 ) ).toFixed( 2 ) }} per 1 Second</v-subheader>
+          <v-subheader>Short Rate: {{ shortRate }}</v-subheader>
           <div class="px-3">
             <v-slider
               v-model="config.rates.short"
@@ -112,7 +112,7 @@
             ></v-slider>
           </div>
 
-          <v-subheader>Long Rate: {{ ( 1 / ( config.rates.long / 20 ) ).toFixed( 2 ) }} per 30 Seconds</v-subheader>
+          <v-subheader>Long Rate: {{ longRate }}</v-subheader>
           <div class="px-3">
             <v-slider
               v-model="config.rates.long"
@@ -127,6 +127,7 @@
           </div>
         </div>
 
+        <!-- Actions -->
         <div class="d-flex">
           <v-spacer />
           <v-btn
@@ -139,17 +140,17 @@
           </v-btn>
         </div>
       </div>
+
     </div>
 </template>
 
 <script>
-  import { auth } from '@/plugins/firebase';
-
   export default {
     name: 'ManageChatConfigContent',
 
     data() {
       return {
+        loading: true,
         saving: true,
         shortRateTicks: [ 1, 2, 2.5, 5, 10 ],
         config: {
@@ -168,6 +169,7 @@
     methods: {
       async getConfig () {
         this.saving = true;
+        this.loading = true;
 
         const endpoint = `https://api.bitwave.tv/v1/chat/config`;
 
@@ -195,6 +197,7 @@
           this.$nextTick( () => this.$toast.error( `Error: Failed to get chat config`, { icon: 'warning', duration: 1000 } ) );
         }
         this.saving = false;
+        this.loading = false;
       },
 
       async updateConfig () {
@@ -232,10 +235,21 @@
       },
     },
 
+    computed: {
+      shortRate () {
+        const rate = 1 / ( this.config.rates.short / 10 );
+        return `${rate.toFixed(2)} per 1 Second`;
+      },
+      longRate () {
+        const rate = 1 / ( this.config.rates.long / 20 );
+        return `${rate.toFixed(2)} per 30 Seconds`;
+      },
+    },
+
     async mounted () {
       setTimeout( async () => {
         await this.getConfig();
-      }, 1000 );
+      }, 350 );
     },
   };
 </script>
