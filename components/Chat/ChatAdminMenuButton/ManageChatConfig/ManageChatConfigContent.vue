@@ -4,100 +4,146 @@
       <!-- Skeleton Loader -->
       <div v-if="loading">
         <v-skeleton-loader
-          v-bind="attrs"
-          type="article, article, divider, actions"
+          type="article@2, divider, actions"
         ></v-skeleton-loader>
       </div>
 
       <!-- Controls -->
-      <div class="pa-3" v-else>
+      <div v-else>
 
         <!-- Config Adjustments -->
-        <div class="px-3 mt-2">
+        <div class="px-3 pb-3 my-3">
 
-          <!-- Allow Trolls in Chat -->
-          <v-switch
-            v-model="config.allowTrolls"
-            label="Allow Trolls to Chat"
-            color="primary"
-            hide-details
-            dense
-            inset
-            class="mt-2"
-            :disabled="saving"
-          />
+          <!-- Toggles Features -->
+          <div class="d-flex align-center my-3">
+            <span class="overline mr-2 grey--text font-weight-bold">
+              Chat Feature Control
+            </span>
+            <v-divider />
+          </div>
 
-          <!-- Allow Links in Chat -->
-          <v-switch
-            v-model="config.allowLinks"
-            label="Allow Links"
-            color="primary"
-            hide-details
-            dense
-            inset
-            class="mt-2"
-            :disabled="saving"
-          />
+          <div class="px-3">
+            <!-- Allow Trolls in Chat -->
+            <v-switch
+              v-model="config.allowTrolls"
+              label="Allow Trolls to Chat"
+              color="primary"
+              hide-details
+              dense
+              inset
+              class="mt-2"
+              :disabled="saving"
+            />
 
-          <!-- Block Spam in Chat -->
-          <v-switch
-            v-model="config.blockSpam"
-            label="Block Repetitive Spam"
-            color="primary"
-            hide-details
-            dense
-            inset
-            class="mt-2"
-            :disabled="saving"
-          />
+            <!-- Allow Links in Chat -->
+            <v-switch
+              v-model="config.allowLinks"
+              label="Allow Links"
+              color="primary"
+              hide-details
+              dense
+              inset
+              class="mt-2"
+              :disabled="saving"
+            />
+
+            <!-- Block Spam in Chat -->
+            <v-switch
+              v-model="config.blockSpam"
+              label="Block Repetitive Spam"
+              color="primary"
+              hide-details
+              dense
+              inset
+              class="mt-2"
+              :disabled="saving"
+            />
+          </div>
         </div>
 
         <!-- Quick config rate limiter -->
-        <v-subheader>Rate Limiter Configuration</v-subheader>
-        <div class="d-flex mt-4 justify-space-around">
-          <v-btn
-            outlined
-            small
-            color="red"
-            class="mx-2"
-            :disabled="saving"
-            @click="() => { this.config.rates.short = 10; this.config.rates.long = 20; }"
-          >
-            slow
-          </v-btn>
-          <v-btn
-            outlined
-            small
-            color="green"
-            class="mx-2"
-            :disabled="saving"
-            @click="() => { this.config.rates.short = 5; this.config.rates.long = 5; }"
-          >
-            default
-          </v-btn>
-          <v-btn
-            outlined
-            small
-            color="blue"
-            class="mx-2"
-            :disabled="saving"
-            @click="() => { this.config.rates.short = 2.5; this.config.rates.long = 2.5; }"
-          >
-            double
-          </v-btn>
-          <v-btn
-            outlined
-            small
-            color="purple"
-            class="mx-2"
-            :disabled="saving"
-            @click="() => { this.config.rates.short = 1; this.config.rates.long = 1; }"
-          >
-            insane
-          </v-btn>
+        <div class="px-3 pb-4">
+            <div class="d-flex align-center my-3">
+              <span class="overline mr-2 grey--text font-weight-bold">
+                Quick Config Rate Limits
+              </span>
+              <v-divider />
+            </div>
+
+            <!-- Buttons -->
+          <div class="d-flex flex-wrap">
+            <div class="flex" style="flex-basis: 0;">
+
+              <div class="d-flex flex-wrap">
+                <div class="flex flex-shrink-0 ma-2">
+                  <v-btn
+                    outlined
+                    small
+                    block
+                    color="red"
+                    :disabled="saving"
+                    @click="() => { this.config.rates.short = 10; this.config.rates.long = 20; }"
+                  >
+                    slow
+                  </v-btn>
+                </div>
+                <div class="flex flex-shrink-0 ma-2">
+                  <v-btn
+                    outlined
+                    small
+                    block
+                    color="green"
+                    :disabled="saving"
+                    @click="() => { this.config.rates.short = 5; this.config.rates.long = 5; }"
+                  >
+                    default
+                  </v-btn>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex" style="flex-basis: 0;">
+              <div class="d-flex flex-wrap">
+                <div class="flex flex-shrink-0 ma-2">
+                  <v-btn
+                    outlined
+                    small
+                    width="100%"
+                    color="blue"
+                    :disabled="saving"
+                    @click="() => { this.config.rates.short = 2.5; this.config.rates.long = 2.5; }"
+                  >
+                    double
+                  </v-btn>
+                </div>
+                <div class="flex flex-shrink-0 ma-2">
+                  <v-btn
+                    outlined
+                    small
+                    width="100%"
+                    color="purple"
+                    :disabled="saving"
+                    @click="() => { this.config.rates.short = 1; this.config.rates.long = 1; }"
+                  >
+                    insane
+                  </v-btn>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        <div class="mb-4">
+        <!-- Rate Limit Sliders -->
+        <div class="px-3 mb-4">
+
+          <div class="d-flex align-center my-3">
+            <span class="overline mr-2 grey--text font-weight-bold">
+              Advanced Rate Limiting
+            </span>
+            <v-divider />
+          </div>
+
           <v-subheader>Short Rate: {{ shortRate }}</v-subheader>
           <div class="px-3">
             <v-slider
@@ -127,8 +173,10 @@
           </div>
         </div>
 
+        <v-divider class="my-3" />
+
         <!-- Actions -->
-        <div class="d-flex">
+        <div class="d-flex px-3 pb-3">
           <v-spacer />
           <v-btn
             color="primary"
