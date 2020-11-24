@@ -54,7 +54,7 @@
           <i
             aria-hidden="true"
             class="v-icon notranslate material-icons scan-1-d--text"
-            style="font-size: 21px;"
+            style="font-size: 18px;"
           >settings_voice</i>
         </div>
 
