@@ -22,17 +22,6 @@
 
         <div class="px-3 pt-3 pb-1">
 
-          <!-- View Streamer Dashboard -->
-          <v-btn
-            class="d-flex mb-3"
-            color="primary black--text"
-            block
-            small
-            to="/dashboard"
-          >
-            Streamer Dashboard
-          </v-btn>
-
           <!-- View Muted Users -->
           <lazy-view-muted-users-dialog />
 
