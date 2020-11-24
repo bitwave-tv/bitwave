@@ -65,10 +65,22 @@
         <v-divider />
       </div>
 
-      <!-- User Ignore (users) -->
+      <!-- Enable Ignores -->
       <v-switch
         v-model="useIgnore"
         label="Ignore Users"
+        color="primary"
+        hide-details
+        dense
+        inset
+        class="mt-3"
+      />
+
+      <!-- Ignore ALL Trolls -->
+      <v-switch
+        v-model="ignoreTrolls"
+        :disabled="!useIgnore"
+        label="Hide Trolls"
         color="primary"
         hide-details
         dense
@@ -182,6 +194,7 @@
         setModeGlobal     : Chat.$mutations.setGlobal,
         setModeTimestamps : Chat.$mutations.setTimestamps,
         setUseIgnore      : Chat.$mutations.setUseIgnore,
+        setHideTrolls     : Chat.$mutations.setHideTrolls,
         setRecursiveIgnore: Chat.$mutations.setRecursiveIgnore,
         setNotify         : Chat.$mutations.setNotify,
         setAutocomplete   : Chat.$mutations.setAutocomplete,
@@ -200,6 +213,7 @@
         getModeGlobal     : Chat.$states.global,
         getModeTimestamps : Chat.$states.timestamps,
         getUseIgnore      : Chat.$states.useIgnore,
+        getHideTrolls     : Chat.$states.hideTrolls,
         getRecursiveIgnore: Chat.$states.recursiveIgnore,
         getNotify         : Chat.$states.notify,
         getAutocomplete   : Chat.$states.autocomplete,
@@ -229,6 +243,14 @@
           this.$analytics.logEvent( 'use_ignore', { value: val } );
         },
         get () { return this.getUseIgnore }
+      },
+
+      ignoreTrolls: {
+        set ( val ) {
+          this.setHideTrolls( val );
+          this.$analytics.logEvent( 'ignore_trolls', { value: val } );
+        },
+        get () { return this.getHideTrolls }
       },
 
       recursiveIgnore: {
