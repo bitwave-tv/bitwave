@@ -267,7 +267,7 @@ export const mutations = {
     saveToLocalStorage( { [$states.useIgnore]: data } );
   },
 
-  // Set use ignore
+  // Set use recursive ignore
   [$mutations.setRecursiveIgnore] ( state, data ) {
     state[$states.recursiveIgnore] = JSON.parse( data );
     saveToLocalStorage( { [$states.recursiveIgnore]: data } );
