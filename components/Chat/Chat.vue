@@ -542,14 +542,14 @@
           if ( m.type === 'fireworks') {
             if ( !this.$utils.normalizedCompare( m.channel, this.page ) ) return;
 
-            console.log( `Fireworks: ${m.topText}, ${m.bottomText}` );
+            console.debug( `Fireworks: ${m.topText}, ${m.bottomText}` );
             this.showChatFireworks( m.topText, m.bottomText );
             return;
           }
 
           // delete event
           if ( m.type === 'delete') {
-            console.log( `delete: ${m.ids}` );
+            console.debug( `delete: ${m.ids}` );
             this.messages = this.messages?.filter( message => !m.ids.includes( message._id) ) ;
             return;
           }
