@@ -21,7 +21,7 @@
     data () {
       return {
         bottomText: process.env.BITWAVE_ENV === 'development'
-          ? 'makeshift freedom of expression'
+          ? 'development build'
           : 'viewer discretion is advised',
       }
     },

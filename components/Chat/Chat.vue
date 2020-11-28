@@ -479,18 +479,6 @@
         });
       },
 
-      // TODO: replace with hcpatcha
-      /*async getRecaptchaToken ( action ) {
-        return null;
-        try {
-          await this.$recaptcha.init();
-          return await this.$recaptcha.execute( action );
-        } catch ( error ) {
-          console.error( error );
-          return null;
-        }
-      },*/
-
       async hydrate () {
         // This can be removed if we put it in onHydration()
         // but placing it here forces chat to clear when toggling
@@ -556,6 +544,13 @@
 
             console.log( `Fireworks: ${m.topText}, ${m.bottomText}` );
             this.showChatFireworks( m.topText, m.bottomText );
+            return;
+          }
+
+          // delete event
+          if ( m.type === 'delete') {
+            console.log( `delete: ${m.ids}` );
+            this.messages = this.messages?.filter( message => !m.ids.includes( message._id) ) ;
             return;
           }
 

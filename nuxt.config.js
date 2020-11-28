@@ -3,8 +3,6 @@ const pkg = require('./package');
 
 // noinspection PointlessArithmeticExpressionJS
 module.exports = {
-  mode: 'universal',
-
   components: true,
 
   /*
