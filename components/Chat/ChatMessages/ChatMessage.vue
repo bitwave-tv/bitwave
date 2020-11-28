@@ -231,12 +231,12 @@
     }
 
     h1 {
-      font-size: 1.375rem;
+      font-size: 1.25rem;
       font-weight: 700;
     }
 
     h2 {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 700;
     }
 
