@@ -29,10 +29,10 @@
         </v-sheet>
 
         <!-- Chat Messages -->
+        <!-- :data-message-id="msg._id" -->
         <div
           v-if="messages"
           v-for="( msg, index ) in messages"
-          :data-message-id="msg._id"
           :key="index"
           class="pb-1 pl-2 pr-1"
         >

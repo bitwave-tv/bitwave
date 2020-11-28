@@ -426,7 +426,7 @@
             // Sets active ignore list to list loaded from user data
             this.ignoreList = ignoreList;
 
-            // Apply's the current user's ignore list to chat (needed to filter hydration data
+            // Applies the current user's ignore list to chat (needed to filter hydration data
             this.applyChatFilters();
           } else {
             // Update account ignore list
@@ -610,7 +610,7 @@
         }
       },
 
-      // Apply's all active filters on messages
+      // Applies all active filters on messages
       applyChatFilters () {
         this.messages = this.messages?.filter( message => !this.filterMessage( message ) ) ;
       },
@@ -1067,9 +1067,6 @@
       // Setup Notification Sound
       this.sound.src = '/sounds/tweet.mp3';
       this.sound.volume = .25;
-
-      // Get channel chat configuration
-      // this.loadChatConfig( this.page );
     },
 
     beforeDestroy () {
