@@ -27,7 +27,7 @@
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/manifest": "^3.0.0-beta.16",
-    "@nuxtjs/pwa": "^3.2.2",
+    "@nuxtjs/pwa": "^3.3.1",
     "@nuxtjs/sentry": "^4.5.0",
     "@nuxtjs/toast": "^3.3.1",
     "@sentry/browser": "^5.27.6",
