@@ -74,6 +74,32 @@
           </div>
         </div>
 
+        <!-- Admin Purge Commands -->
+        <div
+          v-if="isAdmin"
+          class="d-flex align-center mb-2"
+        >
+          <div class="mb-2">Admin Purging</div>
+          <v-spacer />
+          <div>
+            <v-btn
+              v-if="!isIgnored"
+              color="error"
+              class="mr-2"
+              small
+              @click="purgeLocal"
+            >Local Purge</v-btn>
+
+            <v-btn
+              v-if="!isIgnored"
+              color="error"
+              class="mr-2"
+              small
+              @click="purgeGlobal"
+            >Global Purge</v-btn>
+          </div>
+        </div>
+
         <v-divider />
 
         <!-- Action items -->
@@ -142,9 +168,10 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
   import { Chat } from '@/store/chat';
   import { auth } from '@/plugins/firebase';
+import { VStore } from '@/store';
 
   export default {
     name: 'ChatMessageMenu',
@@ -247,11 +274,57 @@
           this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
         }
       },
+
+      async purgeLocal () {
+        // Run command
+        const endpoint = `https://api.bitwave.tv/v1/admin/chat/local-purge`;
+        const payload =  {
+          username: this.username,
+          channel: this.channel,
+        }
+        try {
+          const { data } = await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          if ( data.success )
+            this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          else
+            this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        } catch ( error ) {
+          console.error( error );
+          this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        }
+      },
+
+      async purgeGlobal () {
+        const endpoint = `https://api.bitwave.tv/v1/admin/chat/local-purge`;
+        const payload =  {
+          username: this.username,
+        }
+        try {
+          const { data } = await this.$axios.post(
+            endpoint,
+            payload,
+          );
+          if ( data.success )
+            this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          else
+            this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        } catch ( error ) {
+          console.error( error );
+          this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+        }
+      },
     },
 
     computed: {
       ...mapState ( Chat.namespace, {
         ignoreList: Chat.$states.ignoreList,
+      }),
+
+      ...mapGetters({
+        isAdmin  : VStore.$getters.isAdmin,
       }),
 
       isTroll () {
