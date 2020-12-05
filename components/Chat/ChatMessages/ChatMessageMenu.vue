@@ -33,10 +33,12 @@
               :alt="username"
               :key="username"
             >
+            <!-- src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
+              alt="hazmat suit bitwave troll" -->
             <img
               v-else
-              src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-              alt="hazmat suit troll"
+              src="https://cdn.bitwave.tv/static/img/santahat-100.png?_bw"
+              alt="santa hat troll"
               :style="{ background: color }"
               :key="username"
               crossorigin

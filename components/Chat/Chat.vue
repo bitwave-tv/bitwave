@@ -1,7 +1,7 @@
 <template>
   <div
     id="sidechat"
-    class="d-flex flex-grow-1 flex-column"
+    class="d-flex flex-grow-1 flex-column snow-bg"
     style="position: relative"
     v-resize.quiet="onResize"
   >

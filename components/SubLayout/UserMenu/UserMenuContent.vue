@@ -29,9 +29,11 @@
           color="grey darken-4"
         >
           <!-- Troll Hazzy -->
+          <!-- src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw" -->
+          <!-- alt="hazmat suit trolll" -->
           <img
-            src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-            alt="hazmat suit trolll"
+            src="https://cdn.bitwave.tv/static/img/santahat-100.png?_bw"
+            alt="santa hat trolll"
             crossorigin
           >
           <!--<v-icon v-else>person</v-icon>-->

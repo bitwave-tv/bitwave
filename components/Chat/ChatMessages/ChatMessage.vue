@@ -15,10 +15,12 @@
         :alt="props.username"
         :key="props.avatar"
       >
+      <!-- src="https://cdn.bitwave.tv/static/img/troll_hazzie.png"
+        alt="hazmat suit bitwave troll" -->
       <img
         v-else
-        src="https://cdn.bitwave.tv/static/img/troll_hazzie.png"
-        alt="hazmat suit bitwave troll"
+        src="https://cdn.bitwave.tv/static/img/santahat-100.png"
+        alt="santa hat bitwave troll"
         :style="{ background: props.color }"
       >
     </div>
