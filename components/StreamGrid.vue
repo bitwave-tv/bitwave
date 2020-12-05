@@ -115,7 +115,7 @@
         if ( this.imageIndex === this.streams.length ) this.imageIndex = 0;
 
         const coeff = 1000 * 60; // ms * sec
-        const timestamp = Math.round( Date.now() / coeff ) * coeff;
+        const timestamp = Math.round( Date.now() / coeff );
 
         const _thumbnail = this.thumbnails[this.imageIndex] || 'https://cdn.bitwave.tv/static/img/Bitwave_Banner.jpg';
 
