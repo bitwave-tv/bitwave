@@ -28,7 +28,7 @@
                   <div class="mb-2">Who are you?</div>
                   <v-text-field
                     v-model="name"
-                    label="legal name"
+                    label="name"
                     name="name"
                     color="primary"
                     required
@@ -80,6 +80,20 @@
                     :disabled="submitting || submitted"
                     counter
                   ></v-textarea>
+
+                  <!-- HCAPTCHA -->
+                  <div
+                    class="d-flex mb-4"
+                    style="min-height: 75px;"
+                  >
+                    <v-hcaptcha
+                      tabindex="5"
+                      :key="attempts"
+                      @verify="onCaptchaVerify"
+                      @expired=""
+                      @error="onCaptchaError"
+                    />
+                  </div>
                 </v-flex>
                 <v-btn
                   color="red"
@@ -117,6 +131,9 @@
 
         reportResult: '',
 
+        captchaToken: null,
+        attempts: 0,
+
         valid: true,
         submitting: false,
         submitted: false,
@@ -133,6 +150,24 @@
     },
 
     methods: {
+      // CAPTCHA verified
+      async onCaptchaVerify ( token ) {
+        this.captchaToken = token;
+        // await this.validate();
+      },
+
+      // CAPTCHA Expired
+      async onCpatchaExpired ( data ) {
+        this.captchaToken = null;
+        // await this.validate();
+      },
+
+      // CAPTCHA Error
+      async onCaptchaError ( data ) {
+        this.captchaToken = null;
+        // await this.validate();
+      },
+
       async createReport () {
         this.valid = this.$refs.report.validate();
 
@@ -147,6 +182,7 @@
           email: this.email,
           subject: this.subject,
           report: this.report,
+          captcha: this.captchaToken,
         };
 
         try {
