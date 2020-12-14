@@ -305,7 +305,7 @@
 
     .msg {
       word-break: break-word;
-      max-height: 20rem;
+      max-height: 15rem;
       overflow: hidden;
 
       &.append .msg {
