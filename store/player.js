@@ -47,7 +47,7 @@ export const state = () => ({
   [$states.inPiP]: false,
 
   [$states.keepLive]: false,
-  [$states.disableBumps]: false,
+  [$states.disableBumps]: true,
   [$states.detach]: false,
 });
 
