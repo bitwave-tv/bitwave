@@ -1,64 +1,70 @@
 <template>
-  <v-container>
-    <div>
+  <div>
+    <!-- Goal Progress -->
+    <goal-progress v-if="false" />
 
-      <div class="mb-3">
-        <h3>Quick n Dirty Shop <span class="grey--text subtitle-1">(but the products should be clean)</span></h3>
-        <hr class="grey" />
-      </div>
+    <!-- Content Container -->
+    <v-container>
+      <div>
 
-      <v-row>
-        <v-col cols="12" md="6">
-        <v-card color="white black--text pa-2">
-          <v-card-title>bitwave mask</v-card-title>
-          <v-card-subtitle class="grey--text">The Chinese swear it's an N95 mask. At worst, it's better than nothing.</v-card-subtitle>
+        <div class="mb-3">
+          <h3>Quick n Dirty Shop <span class="grey--text subtitle-1">(but the products should be clean)</span></h3>
+          <hr class="grey" />
+        </div>
 
-          <div class="d-flex mb-3">
-            <!--<v-img src="https://cdn.bitwave.tv/static/img/bitwave_mask.jpg" width="50%" />-->
-            <v-img src="https://cdn.bitwave.tv/static/img/bitwave_mask_box.jpg" width="50%" />
-          </div>
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-card color="white black--text pa-2">
+              <v-card-title>bitwave mask</v-card-title>
+              <v-card-subtitle class="grey--text">The Chinese swear it's an N95 mask. At worst, it's better than nothing.</v-card-subtitle>
 
-          <div>
-
-            <form action="https://www.paypal.com/cgi-bin/webscr" id="paypal-styling" method="post" target="_blank">
-              <input type="hidden" name="cmd" value="_s-xclick">
-              <input type="hidden" name="hosted_button_id" value="TKAX8MKF3SM7S">
-              <input type="hidden" name="currency_code" value="USD">
-
-              <div class="d-flex flex-column justify-space-between align-center">
-                <div>
-                  <input type="hidden" name="on0" value="Quantity">
-                  Quantity (click dropdown below to modify)
-                </div>
-                <div class="wrap my-3">
-                  <div class="select">
-                    <select class="select-text" name="os0">
-                      <option value="1 Mask">1 Mask $6.00 USD</option>
-                      <option value="2 Masks">2 Masks $10.00 USD</option>
-                      <option value="3 Masks">3 Masks $12.00 USD</option>
-                    </select>
-                    <span class="select-highlight"></span>
-                    <span class="select-bar"></span>
-                  </div>
-                </div>
-                <v-btn color="primary" class="black--text" name="submit" type="submit">Pay Now</v-btn>
+              <div class="d-flex mb-3">
+                <!--<v-img src="https://cdn.bitwave.tv/static/img/bitwave_mask.jpg" width="50%" />-->
+                <v-img src="https://cdn.bitwave.tv/static/img/bitwave_mask_box.jpg" width="50%" />
               </div>
-              <!--<input type="image"
-                     src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif"
-                     border="0"
-                     name="submit"
-                     alt="PayPal - The safer, easier way to pay online!"
-              >-->
-              <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-            </form>
 
-          </div>
-        </v-card>
-        </v-col>
-      </v-row>
+              <div>
 
-    </div>
-  </v-container>
+                <form action="https://www.paypal.com/cgi-bin/webscr" id="paypal-styling" method="post" target="_blank">
+                  <input type="hidden" name="cmd" value="_s-xclick">
+                  <input type="hidden" name="hosted_button_id" value="TKAX8MKF3SM7S">
+                  <input type="hidden" name="currency_code" value="USD">
+
+                  <div class="d-flex flex-column justify-space-between align-center">
+                    <div>
+                      <input type="hidden" name="on0" value="Quantity">
+                      Quantity (click dropdown below to modify)
+                    </div>
+                    <div class="wrap my-3">
+                      <div class="select">
+                        <select class="select-text" name="os0">
+                          <option value="1 Mask">1 Mask $6.00 USD</option>
+                          <option value="2 Masks">2 Masks $10.00 USD</option>
+                          <option value="3 Masks">3 Masks $12.00 USD</option>
+                        </select>
+                        <span class="select-highlight"></span>
+                        <span class="select-bar"></span>
+                      </div>
+                    </div>
+                    <v-btn color="primary" class="black--text" name="submit" type="submit">Pay Now</v-btn>
+                  </div>
+                  <!--<input type="image"
+                         src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif"
+                         border="0"
+                         name="submit"
+                         alt="PayPal - The safer, easier way to pay online!"
+                  >-->
+                  <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
+
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+
+      </div>
+    </v-container>
+  </div>
 </template>
 
 <script>

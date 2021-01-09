@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="gradient-background">
+      <!-- Goal Progress -->
+      <goal-progress v-if="false" />
+
       <v-container fluid>
 
         <!-- Site Banner -->
