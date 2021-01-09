@@ -13,7 +13,7 @@
         <img
           v-else
           src="https://cdn.bitwave.tv/static/img/troll_hazzie.png?_bw"
-          alt="hazmat suit trolll"
+          alt="hazmat suit troll"
           crossorigin
         >
       </v-avatar>
