@@ -109,6 +109,7 @@
               color="red darken-2"
               class=""
               text
+              small
               to="/report"
             >Report</v-btn>
 
@@ -244,10 +245,12 @@ import { VStore } from '@/store';
             endpoint,
             payload,
           );
-          if ( data.success )
+          if ( data.success ) {
             this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
-          else
+            this.close();
+          } else {
             this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          }
         } catch ( error ) {
           console.error( error );
           this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
@@ -287,10 +290,12 @@ import { VStore } from '@/store';
             endpoint,
             payload,
           );
-          if ( data.success )
+          if ( data.success ) {
             this.$toast.success( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
-          else
+            this.close();
+          } else {
             this.$toast.error( data.message, { icon: 'done', duration: 5000, position: 'top-center' } );
+          }
         } catch ( error ) {
           console.error( error );
           this.$toast.error( error.message, { icon: 'done', duration: 5000, position: 'top-center' } );
