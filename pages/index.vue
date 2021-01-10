@@ -17,6 +17,7 @@
           >
             <!-- Banner Stream -->
             <banner-video
+              v-if="live[0]"
               :src="live[0].src"
               :type="live[0].type"
               :poster="poster"
