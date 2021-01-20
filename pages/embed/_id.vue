@@ -5,7 +5,7 @@
         :source="url"
         :type="type"
         :autoplay="autoplay"
-
+        :class="{ 'odysee-skin': odyseeSkin }"
       />
       <!-- Footer -->
       <v-sheet
@@ -50,11 +50,18 @@
     computed: {
       autoplay () {
         if ( !this.live ) return false;
-        return this.$route.query.autoplay || false;
+        return this.$route.query.autoplay === 'true' ||
+          this.$route.query.autoplay === '1' ||
+          false;
       },
 
       overlayId () {
         return this.$route.params.id;
+      },
+
+      odyseeSkin () {
+        const skin = this.$route.query.skin || this.$route.query.s;
+        return skin && skin.toLowerCase() === 'odysee';
       },
 
       posterCacheBusted () {
@@ -121,7 +128,3 @@
     },
   };
 </script>
-
-<style lang='scss'>
-
-</style>
