@@ -78,18 +78,27 @@
       },
     },
 
-    async asyncData ( { $axios, params } ) {
+    async asyncData ( { $axios, params, query } ) {
       const user = params.id;
+      const skin = query.skin || query.s;
+      const isOdysee = skin && skin.toLowerCase() === 'odysee';
+
+      // adjust default image according to skin
+      const errorPoster = isOdysee
+        ? 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg'
+        : 'https://cdn.bitwave.tv/static/img/odysee-banner-live-mockup-2.jpg';
 
       // Timeout to prevent SSR from locking up
-      const timeout = process.server ? process.env.SSR_TIMEOUT : 0;
+      const timeout = process.server
+        ? process.env.SSR_TIMEOUT
+        : 0;
 
       try {
         const { data } = await $axios.getSSR( `https://api.bitwave.tv/api/channel/${user}`, { timeout } );
 
         const name   = data.name;
         const avatar = data.avatar;
-        let   poster = data.poster || 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg';
+        let   poster = data.poster || errorPoster;
         const title  = data.title ;
         const desc   = data.description;
         const live   = data.live;
@@ -103,12 +112,12 @@
 
         if ( !live ) {
           // Force override offline bump video for odysee
-          if ( this.isOdysee ) {
+          if ( isOdysee ) {
             url = ODYSEE_VID;
             type = 'video/mp4';
             return;
           }
-          
+
           const { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/bump', { timeout } );
           url = data.url;
           type = 'video/mp4';
@@ -122,7 +131,7 @@
         return {
           name   : '404 Error',
           avatar : 'https://cdn.bitwave.tv/static/img/glitchwave.gif',
-          poster : 'https://cdn.bitwave.tv/static/img/BitWave2.sm.jpg',
+          poster : errorPoster,
           title  : 'Streamer not found',
           description : 'Invalid Stream',
           live   : false,

@@ -188,7 +188,16 @@
 
       onError ( error ) {
         // Brush player errors under the rug
-        if ( !this.live ) console.log( 'streamer offline and got an error' );
+        if ( !this.live ) {
+          console.groupCollapsed('A video.js error occured! Expand for more info...')
+          console.log( 'streamer offline and got an error.' );
+          console.log( `Attempted to load URL / Type: ${this.url} / ${this.type}` );
+          console.log( `The current poster image is:`, this.poster );
+          console.log( `Autoplay: ${this.autoplay}, Odysee: ${this.odysee}, Player Initialized: ${this.initialized}` );
+          console.error( `Player Errors are critical failures, so here's the whole player object (set a breakpoint if you need it in context)`, this.player );
+          console.log( `good luck figuring it out.` );
+          console.groupEnd();
+        }
         console.warn( `player error:`, error );
       },
 
