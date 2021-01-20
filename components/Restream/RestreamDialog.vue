@@ -70,7 +70,7 @@
               outlined
               clearable
               dense
-              counter="300"
+              counter="500"
               id="new-stream-server"
               name="new-stream-server"
               autocomplete="new-stream-server"
@@ -87,7 +87,7 @@
               outlined
               clearable
               dense
-              counter="300"
+              counter="500"
               id="new-stream-key"
               name="new-stream-key"
               autocomplete="new-stream-key"
