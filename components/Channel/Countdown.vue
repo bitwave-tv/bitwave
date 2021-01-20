@@ -12,7 +12,7 @@
             slot-scope="{ timeObj }"
             class="display-1 white--text font-weight-bold"
           >
-            <div>
+            <div class="text-center">
               <span class="red--text display-2 font-weight-bold">OFFLINE</span>
             </div>
             <div>

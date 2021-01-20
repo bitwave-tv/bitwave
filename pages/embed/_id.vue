@@ -4,10 +4,10 @@
       <!-- Countdown to Live -->
       <div
         v-if="showCountdown"
-        style="position:absolute;"
+        style="position:absolute; right: 1rem;"
       >
         <div
-          style="position: relative; top: 1rem; left: 1rem; z-index: 10; opacity: 75%;"
+          style="position: relative; top: 1rem; z-index: 10; opacity: 75%;"
         >
           <countdown
             :timestamp="scheduled"
