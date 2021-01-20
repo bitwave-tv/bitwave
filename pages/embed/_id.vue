@@ -10,7 +10,7 @@
           style="position: relative; z-index: 10; opacity: 80%;"
         >
           <countdown
-            :timestamp="scheduled"
+            :timestamp="new Date( scheduled )"
             :key="scheduled"
           />
         </div>
