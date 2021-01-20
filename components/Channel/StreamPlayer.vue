@@ -1,13 +1,13 @@
 <template>
   <v-sheet color="black">
     <video
-      playsinline
       id="streamplayer"
       class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
       :class="{ 'vjs-odysee': odysee }"
       controls
-      :autoplay="autoplay"
+      playsinline
       preload="auto"
+      :autoplay="autoplay"
       :poster="poster"
       :style="{ width: '100%' }"
     >
@@ -65,6 +65,7 @@
               size: 58,
             },
           },
+          inactivityTimeout: 2000,
           poster: this.poster,
           html5: {
             vhs: {
@@ -76,7 +77,7 @@
           },
           liveTracker: {
             trackingThreshold: 0,
-            liveTolerance: 6,
+            liveTolerance: 15,
           },
         });
 
@@ -182,6 +183,14 @@
       },
 
       async onPlayerEnded () {
+        // Don't loop videos when stream is offline on odysee
+        // just play promo video once and reset player.
+        if ( !live && this.odysee ) {
+          this.player.load();
+          return;
+        }
+
+        // Get next bump video and play it
         this.url = await this.getRandomBump();
         this.reloadPlayer();
       },

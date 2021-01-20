@@ -9,8 +9,8 @@
         class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
         controls
         playsinline
-        :autoplay="autoplay"
         preload="auto"
+        :autoplay="autoplay"
         :poster="posterCacheBusted"
         :style="{ width: '100%' }"
       ></video>
@@ -130,14 +130,14 @@
             hls: {
               overrideNative: !videojs.browser.IS_SAFARI,
               allowSeeksWithinUnsafeLiveWindow: true,
-              enableLowInitialPlaylist: true,
+              enableLowInitialPlaylist: false,
               handlePartialData: true,
               smoothQualityChange: true,
             },
           },
           liveTracker: {
             trackingThreshold: 0,
-            liveTolerance: 5,
+            liveTolerance: 10,
           },
         });
 
