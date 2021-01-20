@@ -5,7 +5,8 @@
         :source="url"
         :type="type"
         :autoplay="autoplay"
-        :class="{ 'odysee-skin': odyseeSkin }"
+        :class="{ 'odysee-skin': isOdysee }"
+        :odysee="isOdysee"
       />
       <!-- Footer -->
       <v-sheet
@@ -20,6 +21,8 @@
 
 <script>
   import StreamPlayer from '@/components/Channel/StreamPlayer';
+
+  const ODYSEE_VID = 'https://cdn.bitwave.tv/static/odysee-intro.mp4';
 
   export default {
     name: 'embed-id',
@@ -59,7 +62,7 @@
         return this.$route.params.id;
       },
 
-      odyseeSkin () {
+      isOdysee () {
         const skin = this.$route.query.skin || this.$route.query.s;
         return skin && skin.toLowerCase() === 'odysee';
       },
@@ -99,6 +102,13 @@
         if ( data.thumbnail ) poster = live ? thumb : poster;
 
         if ( !live ) {
+          // Force override offline bump video for odysee
+          if ( this.isOdysee ) {
+            url = ODYSEE_VID;
+            type = 'video/mp4';
+            return;
+          }
+          
           const { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/bump', { timeout } );
           url = data.url;
           type = 'video/mp4';
