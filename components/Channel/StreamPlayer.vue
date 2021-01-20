@@ -185,7 +185,7 @@
       async onPlayerEnded () {
         // Don't loop videos when stream is offline on odysee
         // just play promo video once and reset player.
-        if ( !live && this.odysee ) {
+        if ( !this.live && this.odysee ) {
           this.player.load();
           return;
         }

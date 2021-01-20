@@ -1,5 +1,21 @@
 <template>
     <div>
+
+      <!-- Countdown to Live -->
+      <div
+        v-if="showCountdown"
+        style="position:absolute;"
+      >
+        <div
+          style="position: relative; top: 1rem; left: 1rem; z-index: 10; opacity: 75%;"
+        >
+          <countdown
+            :timestamp="scheduled"
+            :key="scheduled"
+          />
+        </div>
+      </div>
+
       <stream-player
         :poster="posterCacheBusted"
         :source="url"
@@ -43,6 +59,7 @@
         owner: null,
         url: null,
         type: null,
+        scheduled: null,
       };
     },
 
@@ -76,6 +93,19 @@
           return this.poster;
         }
       },
+
+
+      // TODO: hookup data to detect when the last stream was
+      showCountdown () {
+        if ( this.live ) return false;
+        if ( !this.scheduled ) return false;
+        // if ( !this.timestamp ) return false;
+
+        // Do not show countdown if last streamed timestamp is after scheduled
+        // if ( this.timestamp > this.scheduled ) return false;
+
+        return true;
+      },
     },
 
     async asyncData ( { $axios, params, query } ) {
@@ -104,6 +134,7 @@
         const live   = data.live;
         const nsfw   = data.nsfw;
         const owner  = data.owner;
+        const scheduled = data.scheduled || false;
         let   type   = data.type   || `application/x-mpegURL`; // DASH -> application/dash+xml
         let   url    = data.url;
 
@@ -122,7 +153,7 @@
           }
         }
 
-        return { name, avatar, title, description: desc, poster, live, nsfw, owner, url, type };
+        return { name, avatar, title, description: desc, poster, live, nsfw, owner, url, type, scheduled };
 
       } catch ( error ) {
         console.log( `ERROR: Failed to find user ${user}: ${error.message}` );
@@ -137,6 +168,7 @@
           nsfw   : false,
           url    : null,
           type   : null,
+          scheduled : false,
         }
       }
     },

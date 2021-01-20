@@ -10,11 +10,19 @@
           <div
             slot="process"
             slot-scope="{ timeObj }"
-            class="display-1 white--text"
+            class="display-1 white--text font-weight-bold"
           >
-            {{ label( timeObj ) }}
+            <div>
+              <span class="red--text display-2 font-weight-bold">OFFLINE</span>
+            </div>
+            <div>
+              <span class="grey--text font-weight-regular">Starting</span>
+              <span class="blink grey--text">:</span>
+              {{ label( timeObj ) }}
+            </div>
+
           </div>
-          <span slot="finish">STREAMER IS FUCKING LATE!</span>
+          <span slot="finish">Stream Starting Soon!</span>
         </vac>
       </client-only>
 
