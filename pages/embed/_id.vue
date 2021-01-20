@@ -115,12 +115,11 @@
           if ( isOdysee ) {
             url = ODYSEE_VID;
             type = 'video/mp4';
-            return;
+          } else {
+            const { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/bump', { timeout } );
+            url = data.url;
+            type = 'video/mp4';
           }
-
-          const { data } = await $axios.getSSR( 'https://api.bitwave.tv/api/bump', { timeout } );
-          url = data.url;
-          type = 'video/mp4';
         }
 
         return { name, avatar, title, description: desc, poster, live, nsfw, owner, url, type };
