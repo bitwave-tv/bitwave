@@ -18,8 +18,6 @@
 
       <stream-player
         :poster="posterCacheBusted"
-        :source="url"
-        :type="type"
         :autoplay="autoplay"
         :class="{ 'odysee-skin': isOdysee }"
         :odysee="isOdysee"
@@ -37,6 +35,12 @@
 
 <script>
   import StreamPlayer from '@/components/Channel/StreamPlayer';
+
+  import { mapMutations, mapState } from 'vuex';
+  import { Player } from '@/store/player';
+
+  import { db } from '@/plugins/firebase';
+
 
   const ODYSEE_VID = 'https://cdn.bitwave.tv/static/odysee-intro.mp4';
 
@@ -64,10 +68,142 @@
     },
 
     methods: {
+      ...mapMutations(Player.namespace, {
+        setSource: Player.$mutations.setSource,
+        setPoster: Player.$mutations.setPoster,
+      }),
 
+      getStreamData () {
+        const channel = this.$route.params.id;
+        const streamer  = (this.name || channel ).toLowerCase();
+        this.streamDataListener = db
+          .collection( 'streams' )
+          .doc( streamer )
+          .onSnapshot(
+            async doc => await this.streamDataChanged( doc.data() ),
+            error => {
+              this.$sentry.captureException( error );
+            }
+          );
+      },
+
+      async streamDataChanged ( data ) {
+        // Streamer user properties
+        this.name   = data.user.name;
+        this.avatar = data.user.avatar;
+        this.owner  = data.owner;
+
+        // Grab Stream Data
+        this.title       = data.title;
+        this.description = data.description;
+
+        // Stream properties
+        this.nsfw  = data.nsfw;
+        const live = data.live;
+
+        // Process timestamp
+        this.timestamp = data.timestamp
+          ? data.timestamp.toDate()
+          : null;
+
+        // Process scheduled date
+        this.scheduled = data.scheduled
+          ? data.scheduled.toDate().toString()
+          : null;
+
+        // Stream media
+        const url  = data.url;
+        const type = data.type || `application/x-mpegURL`; // DASH -> application/dash+xml
+
+        // Cover image
+        if ( live ) {
+          this.poster = data.thumbnail;
+          this.setPoster( data.thumbnail );
+        }
+
+        // Detect offline stream
+        if ( !this.live && !live ) {
+          console.debug( 'User is offline' );
+        }
+
+        // Detect user going LIVE
+        else if ( !this.live && live ) {
+          // immediately set to LIVE state
+          this.live = live;
+
+          console.log( 'Livestream starting' );
+          if ( this.offlineResetInterval ) clearInterval( this.offlineResetInterval );
+
+          // Load and Play stream
+          this.setSource({ url, type });
+        }
+
+        // Detect user going OFFLINE
+        else if ( this.live && !live ) {
+          // immediately set to OFFLINE state
+          this.live = live;
+
+          console.log( 'Livestream ending' );
+
+          // Experimental feature to prevent constant retries when player empties
+          // This should reduce erroneous 404's on the ingestion servers
+
+          const CHECK_INTERVAL = 5;
+          const MAX_TIME = 90;
+
+          // Try to prevent resetting while watching stale data
+          const canReset = () => {
+            const atLiveEdge = $bw.player.liveTracker && $bw.player.liveTracker.atLiveEdge();
+            const isPaused   = $bw.player.paused();
+            return atLiveEdge && !isPaused;
+          };
+
+          // Attempt to end stream and reset player
+          let TIME = 0;
+          const endStream = async () => {
+            // Abort if stream goes live
+            if ( this.live ) {
+              clearInterval( this.offlineResetInterval );
+              return;
+            }
+
+            // Always increment time
+            TIME += CHECK_INTERVAL;
+
+            // Check if satisfy requirements or have exceeded our max time
+            if ( !canReset() &&  TIME <= MAX_TIME ) return;
+
+            // Remove our interval
+            if ( this.offlineResetInterval ) clearInterval( this.offlineResetInterval );
+
+            // Reset basic player properties
+            this.poster = data.cover;
+
+            this.setPoster( data.thumbnail );
+            this.setSource({
+              url: ODYSEE_VID,
+              type: 'video/mp4',
+            });
+          };
+
+          // Keep timer ID so we can cancel early if stream recovers
+          this.offlineResetInterval = setInterval( async () => await endStream(), CHECK_INTERVAL * 1000 );
+        }
+
+        // Detect source change
+        else if ( this.source.url !== url  || this.source.type !== type ) {
+          this.setSource({ url, type });
+        }
+
+        this.live = live;
+      },
     },
 
     computed: {
+      ...mapState(Player.namespace, {
+        source : Player.$states.source,
+      }),
+
       autoplay () {
         if ( !this.live ) return false;
         return this.$route.query.autoplay === 'true' ||
@@ -174,7 +310,12 @@
     },
 
     mounted () {
+      this.getStreamData();
+    },
 
+    async created () {
+      this.setPoster( this.poster );
+      this.setSource({ url: this.url, type: this.type });
     },
   };
 </script>

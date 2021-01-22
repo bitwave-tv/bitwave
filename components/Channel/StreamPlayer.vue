@@ -10,12 +10,7 @@
       :autoplay="autoplay"
       :poster="poster"
       :style="{ width: '100%' }"
-    >
-      <source
-        :src="source"
-        :type="type"
-      >
-    </video>
+    ></video>
   </v-sheet>
 </template>
 
@@ -25,6 +20,8 @@
   import 'videojs-contrib-quality-levels';
   import 'videojs-hls-quality-selector';
   import '@/assets/js/VideoPlayer/TriSpinner';
+  import { mapActions, mapState } from 'vuex';
+  import { Player } from '@/store/player';
 
   const DEBUG_VIDEO_JS = false;
   const ODYSEE_VID = 'https://cdn.bitwave.tv/static/odysee-intro.mp4';
@@ -34,8 +31,6 @@
 
     props: {
       poster   : { type: String },
-      source   : { type: String },
-      type     : { type: String },
       autoplay : { type: Boolean },
       odysee   : { type: Boolean, default: false },
     },
@@ -44,16 +39,27 @@
       return {
         initialized: false,
         recentBumps: [],
+
+        url: null,
+        type: null,
       };
     },
 
     methods: {
+      /*...mapActions( Player.namespace, {
+        loadPlayerSettings: Player.$actions.loadSettings,
+      }),*/
 
       playerInitialize () {
+        console.log( `URL: ${this.source.url}\nTYPE: ${this.source.type}\nPOSTER: ${this.poster}\nAUTOPLAY: ${this.autoplay}` );
+
         this.initialized = false;
 
         // Create video.js player
         this.player = videojs( 'streamplayer', {
+          poster: this.poster,
+          sources: [{ src: this.source.url, type: this.source.type }],
+
           liveui: true,
           fluid: true,
           fill: true,
@@ -66,7 +72,6 @@
             },
           },
           inactivityTimeout: 2000,
-          poster: this.poster,
           html5: {
             vhs: {
               overrideNative: !videojs.browser.IS_SAFARI,
@@ -234,9 +239,25 @@
       },
     },
 
-    computed: {},
+    computed: {
+      ...mapState(Player.namespace, {
+        source : Player.$states.source,
+        playerPoster : Player.$states.poster,
+      }),
+    },
 
-    mounted () {
+    watch: {
+      source ( newSource ) {
+        // Always reload when source is changed
+        // Ensures that a stream will restart after brief drop out.
+        console.log( `Source Change\nOLD: ${this.url}\nNEW: ${newSource.url}` );
+        this.url  = newSource.url;
+        this.type = newSource.type;
+        this.reloadPlayer();
+      },
+    },
+
+    async mounted () {
       this.playerInitialize();
     },
 
