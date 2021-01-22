@@ -30,6 +30,14 @@
       >
         <div class="overline">Powered by Bitwave Media</div>
       </v-sheet>
+      
+      <div v-show="false">
+        <chat
+          dark
+          :chat-channel="name"
+          :force-global="false"
+        />
+      </div>
     </div>
 </template>
 
