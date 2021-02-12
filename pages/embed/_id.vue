@@ -22,15 +22,17 @@
         :class="{ 'odysee-skin': isOdysee }"
         :odysee="isOdysee"
       />
+
       <!-- Footer -->
       <v-sheet
+        v-if="!isOdysee"
         class="pa-2"
         color="grey darken-4"
         tile
       >
         <div class="overline">Powered by Bitwave Media</div>
       </v-sheet>
-      
+
       <div v-show="false">
         <chat
           dark
