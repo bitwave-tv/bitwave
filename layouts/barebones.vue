@@ -31,11 +31,11 @@
     </v-app-bar>
 
     <!-- Content -->
-    <v-content style="max-height: 100vh">
+    <v-main style="max-height: 100vh">
 
       <nuxt />
 
-    </v-content>
+    </v-main>
 
   </v-app>
 </template>

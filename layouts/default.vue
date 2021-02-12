@@ -80,9 +80,9 @@
     <sidebar v-model="drawer" />
 
     <!-- Content -->
-    <v-content>
+    <v-main>
       <nuxt />
-    </v-content>
+    </v-main>
 
     <!-- Fireworks overlay -->
     <fireworks
