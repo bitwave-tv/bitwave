@@ -157,9 +157,12 @@
             const streamers = data.streamers.map( stream => {
               return { ...stream, viewCount: this.getChannelViews( stream.name ) || 0 };
             });
+
             // optionally update sorting
             streamers.sort( ( a, b ) => b.viewCount - a.viewCount );
-            return streamers;
+
+            return streamers
+              .filter( stream => stream.name.toLowerCase() !== 'aflive' );
           }
         } catch ( error ) {
           console.warn( `Failed to update sidebar.`, error.message );
