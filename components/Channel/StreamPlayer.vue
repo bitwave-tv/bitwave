@@ -20,7 +20,7 @@
   import 'videojs-contrib-quality-levels';
   import 'videojs-hls-quality-selector';
   import '@/assets/js/VideoPlayer/TriSpinner';
-  import { mapActions, mapState } from 'vuex';
+  import { mapState } from 'vuex';
   import { Player } from '@/store/player';
 
   const DEBUG_VIDEO_JS = false;

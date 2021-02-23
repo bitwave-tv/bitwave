@@ -70,6 +70,18 @@
             {{ lastStreamed }}
           </div>
         </v-fade-transition>
+
+        <v-tooltip top color="blue-grey darken-4">
+          <template #activator="{ on: tooltip }">
+            <v-btn v-on="{ ...tooltip }" class="ml-1" x-small icon>
+              <v-icon color="grey">info</v-icon>
+            </v-btn>
+          </template>
+          <div class="text-center">
+            <span>{{ timestamp ? timestamp.toUTCString() : 'Never' }}</span>
+          </div>
+        </v-tooltip>
+
       </div>
 
       <v-spacer />

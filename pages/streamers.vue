@@ -41,7 +41,7 @@
           sm="6"
           md="4"
           lg="2"
-          v-for="(streamer, index) in filteredStreamers"
+          v-for="streamer in filteredStreamers"
           :key="streamer.name"
         >
           <v-lazy
@@ -61,34 +61,6 @@
           </v-lazy>
         </v-col>
       </v-row>
-
-      <!--<div>Literally every streamer:</div>
-      <v-row>
-        <v-col
-          cols="12"
-          sm="6"
-          md="4"
-          lg="2"
-          v-for="(streamer, index) in streamers"
-          :key="streamer.name"
-        >
-          <v-lazy
-            min-height="150px"
-            :options="{ threshold: 0.5 }"
-          >
-            <stream-card
-              :key="streamer.name"
-              :to="streamer.to.toString()"
-              :image="`${streamer.live ? streamer.thumbnail : streamer.avatar}`"
-              :live="streamer.live"
-              :nsfw="streamer.nsfw"
-              :title="streamer.title"
-              :name="streamer.name"
-              :viewers="getChannelViews( streamer.name )"
-            />
-          </v-lazy>
-        </v-col>
-      </v-row>-->
 
     </v-container>
   </div>

@@ -21,11 +21,20 @@
           size="10"
           class="mr-2"
         >lens</v-icon>
-        {{ live ? 'LIVE' : replay ? 'REPLAY' : 'offline' }}
+        {{
+          live
+          ? 'LIVE'
+          : replay
+          ? 'REPLAY'
+          : 'offline'
+        }}
       </v-chip>
 
       <!-- Stream Title -->
-      <h3 class="mx-2 flex-grow-1 subtitle-1 font-weight-medium text-truncate" :title="title">
+      <h3
+        class="mx-2 flex-grow-1 subtitle-1 font-weight-medium text-truncate"
+        :title="title"
+      >
         {{ title }}
       </h3>
 
@@ -56,11 +65,13 @@
           color="grey"
         >restore</v-icon>
         <div class="d-inline-block">
-          {{ live
-          ? 'Started Streaming: '
-          : replay
-          ? 'Streamed: '
-          : 'Last Streamed: ' }}
+          {{
+            live
+            ? 'Started Streaming: '
+            : replay
+            ? 'Streamed: '
+            : 'Last Streamed: '
+          }}
         </div>
         <v-fade-transition mode="out-in">
           <div
@@ -70,6 +81,17 @@
             {{ lastStreamed }}
           </div>
         </v-fade-transition>
+
+        <v-tooltip top color="blue-grey darken-4">
+          <template #activator="{ on: tooltip }">
+            <v-btn v-on="{ ...tooltip }" class="" x-small icon>
+              <v-icon color="grey">info</v-icon>
+            </v-btn>
+          </template>
+          <div class="text-center">
+            <span>{{ timestamp ? timestamp.toUTCString() : 'Never' }}</span>
+          </div>
+        </v-tooltip>
       </div>
 
       <v-spacer />
@@ -94,7 +116,9 @@
       </div>
 
       <!-- Share Stream Dialog -->
-      <share-stream :user="name" />
+      <share-stream
+        :user="name"
+      />
     </div>
 
     <v-divider />
