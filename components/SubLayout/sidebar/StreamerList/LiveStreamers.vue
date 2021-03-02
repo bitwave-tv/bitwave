@@ -162,7 +162,7 @@
             streamers.sort( ( a, b ) => b.viewCount - a.viewCount );
 
             return streamers
-              .filter( stream => stream.name.toLowerCase() !== 'aflive' );
+              .filter( stream => stream.name.toLowerCase() !== 'saltycracker1' );
           }
         } catch ( error ) {
           console.warn( `Failed to update sidebar.`, error.message );
