@@ -64,7 +64,7 @@
           fluid: true,
           fill: true,
           // aspectRation: '16:9',
-          playbackRates: [ 0.25, 0.5, 1, 1.25, 1.5, 2 ],
+          playbackRates: [ 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2 ],
           plugins: {
             qualityLevels: {},
             bitwaveTriSpinner: {
