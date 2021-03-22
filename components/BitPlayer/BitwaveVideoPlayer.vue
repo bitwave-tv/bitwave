@@ -7,6 +7,7 @@
       <video
         id="streamplayer"
         class="video-js vjs-custom-skin vjs-big-play-centered vjs-16-9"
+        :class="{ 'vjs-odysee': odysee }"
         controls
         playsinline
         preload="auto"
@@ -64,9 +65,10 @@
     name: 'bitwave-video-player',
 
     props: {
-      live: { type: Boolean },
-      autoplay: { type: Boolean },
-      docked: { type: Boolean },
+      live     : { type: Boolean, default: false },
+      autoplay : { type: Boolean },
+      docked   : { type: Boolean },
+      odysee   : { type: Boolean, default: false },
     },
 
     components: {

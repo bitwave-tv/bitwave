@@ -186,7 +186,13 @@ a {
 
 
 // Odysee Skin
+$odysee-accent-color: #fa6165;
+
 .odysee-skin {
+
+  a {
+    color: $odysee-accent-color;
+  }
 
   // Odysee vjs player skin
   .video-js.vjs-odysee {
@@ -207,5 +213,21 @@ a {
         content: none !important;
       }
     }
+
+    // Primary Color Progress
+    .vjs-slider-bar {
+      background-color: $odysee-accent-color;
+    }
+
+    // Inner Progress Bar
+    .vjs-play-progress {
+      background-color: $odysee-accent-color;
+      color: $odysee-accent-color;
+    }
+  }
+
+  // Tooltip
+  .vjs-mouse-display .vjs-time-tooltip {
+    color: $odysee-accent-color;
   }
 }
