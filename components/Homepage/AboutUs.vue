@@ -144,8 +144,9 @@
         test [bitwave.tv] and I look forward to bringing more exciting features in the future.
       </div>
 
-      <!-- Warrant canary -->
+      <!-- Warrant canary
       <warrant-canary class="mb-0" />
+      -->
 
       <div class="text-xs-right">
         <em><small>&mdash; Dispatch</small></em>
@@ -176,11 +177,9 @@
 </template>
 
 <script>
-  import WarrantCanary from '@/components/Homepage/WarrantCanary';
   export default {
     name: 'AboutUs',
     serverCacheKey: () => 'AboutUs',
-    components: { WarrantCanary },
     data() {
       return {
         copyrightText: `Bitwave Media ©  ${new Date().getFullYear()}`,
