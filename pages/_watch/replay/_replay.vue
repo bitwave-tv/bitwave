@@ -556,7 +556,7 @@
 
         // Begin playing when new media is loaded
         this.player.on( 'loadeddata', () => {
-          if ( !window.$bw.hls && this.live ) window.$bw.hls = this.player.tech({ IWillNotUseThisInPlugins: true }).hls;
+          if ( !window.$bw.vhs && this.live ) window.$bw.vhs = this.player.tech({ IWillNotUseThisInPlugins: true }).vhs;
         });
 
         this.player.on( 'ended', async () => {
