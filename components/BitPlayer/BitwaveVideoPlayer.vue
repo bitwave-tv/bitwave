@@ -57,7 +57,7 @@
 
   import 'videojs-youtube';
 
-  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+  import { mapState, mapMutations, mapActions } from 'vuex';
 
   import { Player } from '@/store/player';
 
@@ -69,10 +69,6 @@
       autoplay : { type: Boolean },
       docked   : { type: Boolean },
       odysee   : { type: Boolean, default: false },
-    },
-
-    components: {
-
     },
 
     data() {
@@ -160,34 +156,6 @@
         this.player.hlsQualitySelector({
           displayCurrentQuality: true,
         });
-
-
-        // Autoplay detection magic
-        /*const autoPlayEvents = [ 'loadedmetadata', 'durationchange' ];
-        const autoPlayListener = event => {
-          // Attempt Autoplay
-          const attemptAutoplay = () => {
-            this.player.play()
-              .then(() => {
-                if ( process.env.APP_DEBUG ) console.log( `Autoplayed` )
-              })
-              .catch ( error => {
-                if ( process.env.APP_DEBUG ) console.log( `Autoplay prevented, Attempting to autoplay muted.`, error );
-                this.player.muted( true );
-                this.player.play();
-              });
-          };
-          if (event.type === 'durationchange' && this.player.duration() === Infinity) {
-            attemptAutoplay();
-            this.player.off( autoPlayEvents, autoPlayListener );
-          }
-          if (event.type === 'loadedmetadata') {
-            attemptAutoplay();
-            this.player.off( autoPlayEvents, autoPlayListener );
-          }
-        };
-        this.player.on( autoPlayEvents, autoPlayListener ); //*/
-
 
         // Video Player Ready
         this.player.ready( async () => {
