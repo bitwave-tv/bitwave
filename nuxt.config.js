@@ -254,7 +254,6 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/device',
     '@nuxtjs/pwa',
-    /*'@nuxtjs/recaptcha',*/
     '@nuxtjs/toast',
     '@nuxtjs/sentry',
     'cookie-universal-nuxt',
@@ -295,15 +294,6 @@ module.exports = {
       './assets/vars/*.scss',
     ],
   },
-
-  /*
-  ** reCAPTCHA v3
-  */
-  /*recaptcha: {
-    hideBadge: true,
-    siteKey: '6LcEX8QUAAAAADjiUPfbzkyn0KYAaEK263quzCGh',
-    version: 3,
-  },*/
 
   /*
   ** Sentry

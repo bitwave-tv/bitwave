@@ -50,9 +50,5 @@
         return `${days}${timeObj.h}:${timeObj.m}:${timeObj.s}`;
       },
     },
-
-    mounted() {
-
-    },
   };
 </script>

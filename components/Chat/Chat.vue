@@ -287,10 +287,7 @@
 
         this.connecting = false;
 
-        // TODO: replace with hcaptcha
         this.userToken.recaptcha = null;
-        // Get RECAPTCHA v3 Token
-        // this.userToken.recaptcha = await this.getRecaptchaToken( 'connect' );
 
         bitwaveChat.onHydrate = this.onHydration;
         bitwaveChat.rcvMessageBulk = this.rcvMessageBulk;
