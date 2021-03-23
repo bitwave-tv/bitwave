@@ -226,36 +226,41 @@
 
     /* Big / Smol Text Styling */
 
-    h1, h2, h3, h4, h5, h6 {
+    chat-h1, h1,
+    chat-h2, h2,
+    chat-h3, h3,
+    chat-h4, h4,
+    chat-h5, h5,
+    chat-h6, h6 {
       line-height: 1.0;
     }
 
-    h1 {
+    chat-h1, h1 {
       font-size: 1.1rem;
-      font-weight: 700;
+      font-weight: 500;
     }
 
-    h2 {
+    chat-h2, h2 {
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 500;
     }
 
-    h3 {
+    chat-h3, h3 {
       font-size: 1.0rem;
-      font-weight: 700;
+      font-weight: 500;
     }
 
-    h4 {
+    chat-h4, h4 {
       font-size: 0.875rem;
       font-weight: 500;
     }
 
-    h5 {
+    chat-h5, h5 {
       font-size: 0.75rem;
       font-weight: 500;
     }
 
-    h6 {
+    chat-h6, h6 {
       font-size: 0.625rem;
       font-weight: 500;
     }
