@@ -112,6 +112,7 @@
             qualityLevels: {},
             bitwaveTriSpinner: {
               size: 58,
+              spinnerColor: this.odysee ? '#fa6165' : '#13a9fe',
             },
           },
           inactivityTimeout: 2000,

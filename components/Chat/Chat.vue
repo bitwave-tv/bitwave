@@ -486,14 +486,15 @@
 
         const success = await bitwaveChat.hydrate();
         if( !success ) {
-          this.$toast.error(
+          /*this.$toast.error(
             'Error hydrating chat!',
             {
               icon: 'error',
               duration: 2000,
               position: 'top-right'
             }
-          );
+          );*/
+          console.error( `Error hydrating chat!`, success );
           return;
         }
 

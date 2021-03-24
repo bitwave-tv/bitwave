@@ -10,6 +10,8 @@ const defaults = {
   thickness: 7,
   svgSize: 100,
   animationDuration: '1.5s',
+  spinnerColor: '#13a9fe',
+  backgroundColor: 'rgba(43, 51, 63, 0.5)',
 };
 
 
@@ -33,7 +35,7 @@ class TriSpinner extends VideoJsComponent {
         margin: -${size / 2}px 0 0 -${size / 2}px;
         opacity: 0.85;
         text-align: left;
-        border: ${this.options().thickness}px solid rgba(43, 51, 63, 0.5);
+        border: ${this.options().thickness}px solid ${this.options.backgroundColor};
         box-sizing: border-box;
         background-clip: padding-box;
         width: ${size}px;
@@ -50,8 +52,6 @@ class TriSpinner extends VideoJsComponent {
       }
 
       .vjs-spinner-container {
-        /*width: 10rem;*/
-        /*height: 10rem;*/
         width: ${size}px;
         height: ${size}px;
       }
@@ -105,12 +105,12 @@ class TriSpinner extends VideoJsComponent {
       `<svg viewBox="0 0 ${svgSize} ${svgSize}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="shadow">
-            <feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#13a9fe" />
+            <feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="${this.options.spinnerColor}" />
           </filter>
         </defs>
         <circle
           class="vjs-spinner"
-          style="fill:transparent;stroke:#13a9fe;stroke-width:${thickness}px;stroke-linecap: round;filter:url(#shadow);" cx="${svgSize / 2}" cy="${svgSize / 2}" r="45"
+          style="fill:transparent;stroke:${this.options.spinnerColor};stroke-width:${thickness}px;stroke-linecap: round;filter:url(#shadow);" cx="${svgSize / 2}" cy="${svgSize / 2}" r="45"
         />
       </svg>`;
 
