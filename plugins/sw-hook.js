@@ -18,5 +18,6 @@ if ('serviceWorker' in navigator) {
           }
         }
       }
-    });
+    })
+    .catch( error => console.warn( `service worker hook failed`, error ) );
 }
