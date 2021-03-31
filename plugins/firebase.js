@@ -127,8 +127,12 @@ export default async ( { app, store, $axios, $sentry }, inject ) => {
 
     // Inject analytics into context
     console.log( `Starting and injecting analytics module.` );
-    const analytics = firebase.analytics();
-    inject( 'analytics', analytics );
+    if ( await firebase.analytics.isSupported() ) {
+      const analytics = firebase.analytics();
+      inject( 'analytics', analytics );
+    } else {
+      console.warn( `Analytics is not supported` );
+    }
 
     if ( process.env.APP_DEBUG ) {
       console.log( `[DEV ENV ONLY] Injecting auth module.` );
