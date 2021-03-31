@@ -5,7 +5,7 @@ export const saveToLocalStorage = ( key, values ) => {
     const data = JSON.stringify( { ...existing, ...values } );
     if ( data ) localStorage.setItem( key, data );
   } catch ( error ) {
-    console.error( 'Failed to save to localStorage', error );
+    console.warn( 'Failed to save to localStorage', error );
   }
 };
 
@@ -26,16 +26,21 @@ export const logger = ( key, message, data ) => {
 // Simple read from 'key'. Returns value directly.
 export const readFromLocalStorage = key => {
   // Check if we have access to localStorage
-  if ( localStorage === null ) {
-    console.error( 'Cannot access localStorage' );
-    return;
+  try {
+    if ( localStorage === null ) {
+      console.warn( 'Cannot access localStorage' );
+      return;
+    }
+  } catch ( error ) {
+    console.warn( 'Cannot access localStorage', error.message );
   }
+
 
   let value = null;
   try {
     value = localStorage.getItem( key );
   } catch ( error ) {
-    console.error( `Failed to get ${key} from localStorage`, error );
+    console.warn( `Failed to get ${key} from localStorage`, error );
   }
 
   return value;

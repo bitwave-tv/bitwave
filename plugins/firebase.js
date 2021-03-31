@@ -136,12 +136,6 @@ export default async ( { app, store, $axios, $sentry }, inject ) => {
     }
 
 
-    // Add push notifications
-    if ( !firebase.messaging.isSupported() ) {
-      console.error( `FCM not supported` );
-      return;
-    }
-
     const getIdToken = async () => {
       if ( process.server ) {
         // When processing server-side, getIdToken() will only get called
@@ -213,6 +207,7 @@ export default async ( { app, store, $axios, $sentry }, inject ) => {
       }
     };
 
+
     // Intercepts all axios requests and injects Bearer token
     //  into the Authorization header. Equivalent to setToken(), except
     //  it gets called implicitly on each request.
@@ -232,6 +227,13 @@ export default async ( { app, store, $axios, $sentry }, inject ) => {
 
         return await addBearerToken( config );
       });
+
+
+    // Add push notifications
+    if ( !firebase.messaging.isSupported() ) {
+      console.error( `FCM not supported` );
+      return;
+    }
 
     const messaging = firebase.messaging();
     messaging.usePublicVapidKey( 'BMghbCgNLfIbIqsuJaz4HV8EHYgu71MnONedQM26co3WfF2w0ahxzS6eq56JzPhaKVRamh_NtbbM-FdQsB-qXew' );
