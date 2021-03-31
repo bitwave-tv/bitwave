@@ -15,6 +15,10 @@
       </template>
     </bitwave-video-player>
 
+    <div v-if="!mounted" class="ma-3 text-h5 text-center" style="position: absolute; top: 0; left: 0; right: 0;">
+      Please enable cookies if nothing appears...
+    </div>
+
 
     <!--  Chat (required for view count)  -->
     <div v-show="false">
