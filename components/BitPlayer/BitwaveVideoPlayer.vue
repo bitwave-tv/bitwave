@@ -327,8 +327,9 @@
         }
         console.log( `Reloading player with source: ${this.url} / ${this.type}` );
 
-        //this.player.poster = ( () => this.poster );
-        this.player.poster ( this.poster );
+        // TODO: optimize poster images and uncomment this
+        // TODO: Hydrate page with correct poster
+        // this.player.poster ( this.poster );
 
         this.player.src( { src: this.url, type: this.type } );
       },
@@ -409,7 +410,7 @@
 
       posterCacheBusted () {
         if ( this.live ) {
-          const coeff = 1000 * 60; // Cache bust poster every minute
+          const coeff = 1000 * 60 * 2; // Cache bust poster every 2 minutes
           const timestamp = Math.round( Date.now() / coeff ) * coeff;
           return `${this.poster}?${timestamp}`;
         } else {
