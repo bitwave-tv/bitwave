@@ -24,3 +24,6 @@ jobs:
         npm test --if-present
       env:
         CI: true
+        APP_DEBUG: true
+        STRIPE_PUBLISHABLE_KEY: pk_test_key
+        BRAINTREE_PUBLIC_KEY: pk_test_key
