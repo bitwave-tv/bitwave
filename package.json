@@ -33,7 +33,7 @@
     "@sentry/browser": "^6.2.5",
     "@videojs/http-streaming": "^2.6.4",
     "babel-runtime": "^6.26.0",
-    "braintree-web-drop-in": "^1.25.0",
+    "braintree-web-drop-in": "^1.27.0",
     "chart.js": "^2.9.4",
     "cookie-universal-nuxt": "^2.1.4",
     "cross-env": "^7.0.3",
