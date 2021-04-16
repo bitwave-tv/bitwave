@@ -188,8 +188,6 @@
   import { Player } from '@/store/player';
 
   const Stickers = async () => await import ( '@/components/effects/Stickers' );
-  const g_szHttp = "http";
-  const g_iHttpStringLength = g_szHttp.length;
 
   export default {
     name: 'replay',
@@ -614,12 +612,12 @@
           : null;
 
         // Fix relative urls...
-        let szTempString = data.url;
+        let szTempUrl = data.url;
         // Probably we don't need to check it against https or http, simple check is enough
-        if(szTempString.length > g_iHttpStringLength && !szTempString.startsWith(g_szHttp)) szTempString = `https://${szTempString}`;
+        szTempUrl = szTempUrl.startsWith( 'http' ) ? szTempUrl : `https://${szTempUrl}`;
 
         // Stream media
-        const url  = szTempString;
+        const url  = szTempUrl;
         const type = 'video/mp4';
 
         this.setSource({ url, type });
