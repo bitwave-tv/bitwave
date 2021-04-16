@@ -43,7 +43,7 @@
     "jwt-decode": "^3.1.2",
     "marked": "^0.7.0",
     "moment": "^2.29.1",
-    "nuxt": "^2.14.12",
+    "nuxt": "^2.15.4",
     "nuxt-stripe-module": "^3.1.7",
     "sass-loader": "^10.1.1",
     "socket.io-client": "^2.3.1",
