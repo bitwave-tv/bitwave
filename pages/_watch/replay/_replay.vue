@@ -616,7 +616,7 @@
         // Fix relative urls...
         let szTempString = data.url;
         // Probably we don't need to check it against https or http, simple check is enough
-        if(szTempString.length > g_iHttpStringLength && szTempString.startsWith(g_szHttp)) szTempString = `https://${szTempString}`;
+        if(szTempString.length > g_iHttpStringLength && !szTempString.startsWith(g_szHttp)) szTempString = `https://${szTempString}`;
 
         // Stream media
         const url  = szTempString;
