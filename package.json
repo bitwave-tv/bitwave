@@ -34,7 +34,7 @@
     "@videojs/http-streaming": "^2.8.1",
     "babel-runtime": "^6.26.0",
     "braintree-web-drop-in": "^1.27.0",
-    "chart.js": "^2.9.4",
+    "chart.js": "^3.2.1",
     "cookie-universal-nuxt": "^2.1.4",
     "cross-env": "^7.0.3",
     "dashjs": "^3.2.2",
