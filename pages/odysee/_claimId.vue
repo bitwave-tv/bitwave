@@ -19,16 +19,6 @@
       Please enable cookies if nothing appears...
     </div>
 
-
-    <!--  Chat (required for view count)  -->
-    <!--  not required anymore  -->
-    <div v-if="false">
-      <chat
-        dark
-        :chat-channel="claimId"
-        :force-global="false"
-      />
-    </div>
   </div>
 </template>
 
