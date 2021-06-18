@@ -21,7 +21,8 @@
 
 
     <!--  Chat (required for view count)  -->
-    <div v-show="false">
+    <!--  not required anymore  -->
+    <div v-if="false">
       <chat
         dark
         :chat-channel="claimId"
