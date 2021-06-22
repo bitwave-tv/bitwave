@@ -21,7 +21,7 @@
   "dependencies": {
     "@bitwave/chat-client": "^0.3.10",
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
-    "@nuxtjs/axios": "^5.13.4",
+    "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/component-cache": "^1.1.6",
     "@nuxtjs/device": "^2.1.0",
     "@nuxtjs/dotenv": "^1.4.1",
