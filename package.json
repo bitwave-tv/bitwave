@@ -44,7 +44,7 @@
     "marked": "^0.7.0",
     "moment": "^2.29.1",
     "nuxt": "^2.14.12",
-    "nuxt-stripe-module": "^3.1.7",
+    "nuxt-stripe-module": "^3.2.0",
     "sass-loader": "^10.1.1",
     "socket.io-client": "^2.3.1",
     "video.js": "^7.12.3",
