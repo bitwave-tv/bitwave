@@ -48,7 +48,7 @@
     "sass-loader": "^10.1.1",
     "socket.io-client": "^2.3.1",
     "video.js": "^7.12.3",
-    "videojs-contrib-dash": "^4.1.0",
+    "videojs-contrib-dash": "^5.0.0",
     "videojs-contrib-quality-levels": "^2.1.0",
     "videojs-hls-quality-selector": "^1.1.4",
     "videojs-youtube": "^2.6.1",
