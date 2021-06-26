@@ -59,7 +59,7 @@
   "devDependencies": {
     "@nuxtjs/style-resources": "^1.2.0",
     "@nuxtjs/vuetify": "^1.11.3",
-    "node-sass": "^6.0.0",
+    "node-sass": "^6.0.1",
     "nodemon": "^2.0.7",
     "stylus": "^0.54.8",
     "stylus-loader": "^4.3.3",
