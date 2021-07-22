@@ -30,7 +30,7 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/sentry": "^5.1.0",
     "@nuxtjs/toast": "^3.3.1",
-    "@sentry/browser": "^6.8.0",
+    "@sentry/browser": "^6.10.0",
     "@videojs/http-streaming": "^2.9.1",
     "babel-runtime": "^6.26.0",
     "braintree-web-drop-in": "^1.30.1",
