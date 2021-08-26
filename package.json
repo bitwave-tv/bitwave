@@ -57,7 +57,7 @@
     "vue-clipboard2": "^0.3.1"
   },
   "devDependencies": {
-    "@nuxtjs/style-resources": "^1.2.0",
+    "@nuxtjs/style-resources": "^1.2.1",
     "@nuxtjs/vuetify": "^1.11.3",
     "node-sass": "^6.0.1",
     "nodemon": "^2.0.8",
