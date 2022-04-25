@@ -46,7 +46,7 @@
     "nuxt": "^2.14.12",
     "nuxt-stripe-module": "^3.2.0",
     "sass-loader": "^10.1.1",
-    "socket.io-client": "^2.3.1",
+    "socket.io-client": "^4.5.0",
     "video.js": "^7.14.3",
     "videojs-contrib-dash": "^5.0.0",
     "videojs-contrib-quality-levels": "^2.1.0",
