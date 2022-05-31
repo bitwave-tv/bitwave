@@ -61,7 +61,7 @@
     "@nuxtjs/vuetify": "^1.11.3",
     "node-sass": "^6.0.1",
     "nodemon": "^2.0.8",
-    "stylus": "^0.54.8",
+    "stylus": "^0.58.1",
     "stylus-loader": "^4.3.3",
     "vue": "^2.6.12"
   }
